@@ -6,21 +6,32 @@
 
 class App {
 public:
-    App();
+    bool init();
 
     std::unique_ptr<GraphicsContext> gcx;
 };
 
-App::App()
+bool App::init()
 {
-    std::cout << "[info] Initializing video...\n";
-    gcx = GraphicsContext::create();
-    std::cout << "[info] Initializing video... ok\n";
+    try {
+        std::cout << "[info] Initializing video...\n";
+        gcx = GraphicsContext::create();
+        std::cout << "[info] Initializing video... ok\n";
+    }
+    catch(const std::exception& err) {
+        std::cerr << err.what() << std::endl;
+        return false;
+    }
+
+    return true;
 }
 
 
 int main(int argc, char const *argv[])
 {
     App app;
+    if (!app.init())
+        return 1;
+
     return 0;
 }
