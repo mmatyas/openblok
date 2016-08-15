@@ -1,6 +1,7 @@
 #include "system/GraphicsContext.h"
 
-#include <iostream>
+#include "system/Log.h"
+
 #include <memory>
 
 
@@ -13,13 +14,14 @@ public:
 
 bool App::init()
 {
+    const std::string log_tag = "init";
     try {
-        std::cout << "[info] Initializing video...\n";
+        Log::info(log_tag) << "Initializing video...\n";
         gcx = GraphicsContext::create();
-        std::cout << "[info] Initializing video... ok\n";
+        Log::info(log_tag) << "Initializing video... ok\n";
     }
     catch(const std::exception& err) {
-        std::cerr << err.what() << std::endl;
+        Log::error(log_tag) << err.what() << std::endl;
         return false;
     }
 
@@ -29,6 +31,7 @@ bool App::init()
 
 int main(int argc, char const *argv[])
 {
+    Log::info("main") << "OpenBlok v0.0.0 by Mátyás Mustoha\n";
     App app;
     if (!app.init())
         return 1;

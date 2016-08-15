@@ -1,4 +1,5 @@
 set(MOD_SYSTEM_SRC
+	Log.cpp
 	GraphicsContext.cpp
 
 	# SDL2
@@ -6,6 +7,7 @@ set(MOD_SYSTEM_SRC
 )
 
 set(MOD_SYSTEM_H
+	Log.h
 	GraphicsContext.h
 )
 
