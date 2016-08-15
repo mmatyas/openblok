@@ -2,7 +2,9 @@
 #include "system/GraphicsContext.h"
 #include "system/Log.h"
 
+#include <chrono>
 #include <memory>
+#include <thread>
 
 
 class App {
@@ -39,10 +41,20 @@ int main(int argc, char const *argv[])
     if (!app.init())
         return 1;
 
+
+    constexpr auto frame_duration = std::chrono::duration<int, std::ratio<1, 60>>(1);
+    auto frame_starttime = std::chrono::steady_clock::now();
+    auto frame_endtime = frame_starttime + frame_duration;
+
     while (!app.events->quit_requested()) {
         auto events = app.events->collect();
 
         app.gcx->render();
+
+        // frame rate limiting
+        std::this_thread::sleep_until(frame_endtime);
+        frame_starttime = std::chrono::steady_clock::now();
+        frame_endtime = frame_starttime + frame_duration;
     }
 
     return 0;
