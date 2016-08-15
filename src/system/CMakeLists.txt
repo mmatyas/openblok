@@ -1,13 +1,18 @@
 set(MOD_SYSTEM_SRC
 	Log.cpp
+	EventCollector.cpp
+	InputEvent.cpp
 	GraphicsContext.cpp
 
 	# SDL2
+	sdl/SDLEventCollector.cpp
 	sdl/SDLGraphicsContext.cpp
 )
 
 set(MOD_SYSTEM_H
 	Log.h
+	EventCollector.h
+	InputEvent.h
 	GraphicsContext.h
 )
 

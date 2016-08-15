@@ -1,5 +1,5 @@
+#include "system/EventCollector.h"
 #include "system/GraphicsContext.h"
-
 #include "system/Log.h"
 
 #include <memory>
@@ -10,6 +10,7 @@ public:
     bool init();
 
     std::unique_ptr<GraphicsContext> gcx;
+    std::unique_ptr<EventCollector> events;
 };
 
 bool App::init()
@@ -18,9 +19,11 @@ bool App::init()
     try {
         Log::info(log_tag) << "Initializing video...\n";
         gcx = GraphicsContext::create();
-        Log::info(log_tag) << "Initializing video... ok\n";
+
+        Log::info(log_tag) << "Initializing event system...\n";
+        events = EventCollector::create();
     }
-    catch(const std::exception& err) {
+    catch (const std::exception& err) {
         Log::error(log_tag) << err.what() << std::endl;
         return false;
     }
@@ -35,6 +38,10 @@ int main(int argc, char const *argv[])
     App app;
     if (!app.init())
         return 1;
+
+    while (!app.events->quit_requested()) {
+        auto events = app.events->collect();
+    }
 
     return 0;
 }
