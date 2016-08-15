@@ -1,45 +1,22 @@
-#include "system/EventCollector.h"
-#include "system/GraphicsContext.h"
+#include "game/AppContext.h"
 #include "system/Log.h"
+#include "game/InitState.h"
 
 #include <chrono>
 #include <memory>
 #include <thread>
-
-
-class App {
-public:
-    bool init();
-
-    std::unique_ptr<GraphicsContext> gcx;
-    std::unique_ptr<EventCollector> events;
-};
-
-bool App::init()
-{
-    const std::string log_tag = "init";
-    try {
-        Log::info(log_tag) << "Initializing video...\n";
-        gcx = GraphicsContext::create();
-
-        Log::info(log_tag) << "Initializing event system...\n";
-        events = EventCollector::create();
-    }
-    catch (const std::exception& err) {
-        Log::error(log_tag) << err.what() << std::endl;
-        return false;
-    }
-
-    return true;
-}
+#include <assert.h>
 
 
 int main(int argc, char const *argv[])
 {
     Log::info("main") << "OpenBlok v0.0.0 by Mátyás Mustoha\n";
-    App app;
+    AppContext app;
     if (!app.init())
         return 1;
+
+
+    app.states.emplace(std::make_unique<InitState>());
 
 
     constexpr auto frame_duration = std::chrono::duration<int, std::ratio<1, 60>>(1);
@@ -48,6 +25,10 @@ int main(int argc, char const *argv[])
 
     while (!app.events->quit_requested()) {
         auto events = app.events->collect();
+
+        assert(app.states.size());
+        app.states.top()->update(events, app);
+        app.states.top()->draw();
 
         app.gcx->render();
 
