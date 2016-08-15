@@ -9,6 +9,7 @@ class SDLGraphicsContext: public GraphicsContext {
 public:
     SDLGraphicsContext();
 
+    void render() final;
     void toggleFullscreen() final;
     uint16_t screenWidth() final;
     uint16_t screenHeight() final;

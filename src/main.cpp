@@ -41,6 +41,8 @@ int main(int argc, char const *argv[])
 
     while (!app.events->quit_requested()) {
         auto events = app.events->collect();
+
+        app.gcx->render();
     }
 
     return 0;
