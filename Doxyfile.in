@@ -1,0 +1,43 @@
+# Project name
+PROJECT_NAME           = "libSDL2pp"
+
+# Project version, substituded by CMake
+PROJECT_NUMBER         = @SDL2PP_VERSION@
+
+# Project description
+PROJECT_BRIEF          = "C++11 bindings/wrapper for SDL2"
+
+# Where to place generated files
+OUTPUT_DIRECTORY       = doxygen
+
+# No need for extra verbocity
+QUIET                  = YES
+
+# Process source and README file
+INPUT                  = @CMAKE_CURRENT_SOURCE_DIR@/SDL2pp \
+                         @CMAKE_CURRENT_SOURCE_DIR@/README.md
+
+# Recurse into subdirectories
+RECURSIVE              = YES
+
+# Exclude foreign files
+EXCLUDE                = @CMAKE_CURRENT_SOURCE_DIR@/SDL2pp/external
+
+# Examples (doesn't work atm)
+EXAMPLE_PATH           = @CMAKE_CURRENT_SOURCE_DIR@/examples
+
+# Filter through sed to remove badges which Doxygen fails to process properly
+INPUT_FILTER           = "sed -e '/^\[!\[/d'"
+FILTER_PATTERNS        = *.md
+
+# README file is the main page
+USE_MDFILE_AS_MAINPAGE = @CMAKE_CURRENT_SOURCE_DIR@/README.md
+
+# Include timestamp
+HTML_TIMESTAMP         = YES
+
+# We target web, no latex needed
+GENERATE_LATEX         = NO
+
+# Assume source preprocessed with all subsystems enable
+PREDEFINED             = SDL2PP_WITH_IMAGE SDL2PP_WITH_MIXER SDL2PP_WITH_TTF
