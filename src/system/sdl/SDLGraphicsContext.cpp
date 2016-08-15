@@ -1,9 +1,11 @@
 #include "SDLGraphicsContext.h"
+#include "system/Log.h"
 
 #include "SDL2/SDL.h"
 #include "SDL2pp/SDL2pp.hh"
 
 using namespace SDL2pp;
+
 
 SDLGraphicsContext::SDLGraphicsContext()
     : sdl(SDL_INIT_VIDEO)
@@ -12,7 +14,9 @@ SDLGraphicsContext::SDLGraphicsContext()
         640, 480,
         SDL_WINDOW_RESIZABLE)
     , renderer(window, -1, SDL_RENDERER_ACCELERATED)
-{}
+{
+    Log::info("video") << screenWidth() << "x" << screenHeight() << " window created\n";
+}
 
 void SDLGraphicsContext::toggleFullscreen()
 {

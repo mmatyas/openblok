@@ -17,6 +17,4 @@ private:
     SDL2pp::SDL sdl;
     SDL2pp::Window window;
     SDL2pp::Renderer renderer;
-
-    bool is_fullscreen;
 };
