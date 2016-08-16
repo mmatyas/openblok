@@ -52,7 +52,7 @@ void SDLGraphicsContext::loadFont(ResourceID slot, const std::string& path, unsi
     Log::info(LOG_TAG) << "Loading " << path << "\n";
 
     // emplace() returns an std::pair<Iter, bool>
-    auto result = fonts.emplace(slot, std::make_shared<SDL2pp::Font>(path, pt));
+    auto result = fonts.emplace(slot, std::make_unique<SDL2pp::Font>(path, pt));
     if (!result.second)
         throw std::runtime_error("Font already exists in slot " + std::to_string(slot));
 }
@@ -62,7 +62,7 @@ void SDLGraphicsContext::cacheText(ResourceID slot, const std::string& text, Res
     if (!fonts.count(font_id))
         throw std::runtime_error("No font loaded in slot " + std::to_string(font_id));
 
-    auto font = fonts.at(font_id);
+    auto& font = fonts.at(font_id);
     auto result = textures.emplace(slot, std::make_unique<SDL2pp::Texture>(
         renderer,
         font->RenderText_Blended(text, SDL_Color {color[0], color[1], color[2], color[3]})
@@ -76,6 +76,6 @@ void SDLGraphicsContext::drawTexture(ResourceID slot)
     if (!textures.count(slot))
         throw std::runtime_error("No texture loaded in slot " + std::to_string(slot));
 
-    auto tex = textures.at(slot);
+    auto& tex = textures.at(slot);
     renderer.Copy(*tex, NullOpt, Rect(0, 0, tex->GetWidth(), tex->GetHeight()));
 }

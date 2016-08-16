@@ -28,6 +28,6 @@ private:
     SDL2pp::Renderer renderer;
     SDL2pp::SDLTTF ttf;
 
-    std::unordered_map<ResourceID, std::shared_ptr<SDL2pp::Font>> fonts;
-    std::unordered_map<ResourceID, std::shared_ptr<SDL2pp::Texture>> textures;
+    std::unordered_map<ResourceID, std::unique_ptr<SDL2pp::Font>> fonts;
+    std::unordered_map<ResourceID, std::unique_ptr<SDL2pp::Texture>> textures;
 };
