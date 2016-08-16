@@ -1,1 +1,10 @@
+# ignore build dir
 build
+
+# ignore all dotfiles
+.*
+
+# except these
+!.gitignore
+!.travis.yml
+!.appveyor.yml
