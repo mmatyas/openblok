@@ -29,6 +29,7 @@ SDLGraphicsContext::SDLGraphicsContext()
 void SDLGraphicsContext::render()
 {
     renderer.Present();
+    renderer.Clear();
 }
 
 void SDLGraphicsContext::toggleFullscreen()

@@ -16,7 +16,7 @@ int main(int argc, char const *argv[])
         return 1;
 
 
-    app.states.emplace(std::make_unique<InitState>());
+    app.states.emplace(std::make_unique<InitState>(app));
 
 
     constexpr auto frame_duration = std::chrono::duration<int, std::ratio<1, 60>>(1);
@@ -28,7 +28,7 @@ int main(int argc, char const *argv[])
 
         assert(app.states.size());
         app.states.top()->update(events, app);
-        app.states.top()->draw();
+        app.states.top()->draw(*app.gcx);
 
         app.gcx->render();
 
