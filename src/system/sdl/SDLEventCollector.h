@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../EventCollector.h"
+#include "system/EventCollector.h"
 
 class SDLEventCollector: public EventCollector {
 public:

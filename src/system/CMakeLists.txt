@@ -1,7 +1,7 @@
 set(MOD_SYSTEM_SRC
 	EventCollector.cpp
-	InputEvent.cpp
 	GraphicsContext.cpp
+	InputEvent.cpp
 	Log.cpp
 
 	# SDL2
@@ -11,9 +11,13 @@ set(MOD_SYSTEM_SRC
 
 set(MOD_SYSTEM_H
 	EventCollector.h
-	InputEvent.h
 	GraphicsContext.h
+	InputEvent.h
 	Log.h
+
+	# SDL2
+	sdl/SDLEventCollector.h
+	sdl/SDLGraphicsContext.h
 )
 
 add_library(module_system ${MOD_SYSTEM_SRC} ${MOD_SYSTEM_H})

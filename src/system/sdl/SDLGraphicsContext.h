@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../GraphicsContext.h"
+#include "system/GraphicsContext.h"
 
 #include "SDL2pp/SDL2pp.hh"
 
