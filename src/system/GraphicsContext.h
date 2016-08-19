@@ -9,8 +9,6 @@
 
 class GraphicsContext {
 public:
-    static std::unique_ptr<GraphicsContext> create();
-
     virtual void render() = 0;
     virtual void toggleFullscreen() = 0;
     virtual uint16_t screenWidth() = 0;
@@ -21,4 +19,9 @@ public:
                            ResourceID font_id, const std::array<uint8_t, 4>& color) = 0;
 
     virtual void drawTexture(ResourceID) = 0;
+
+private:
+    static std::unique_ptr<GraphicsContext> create();
+
+friend class AppContext;
 };
