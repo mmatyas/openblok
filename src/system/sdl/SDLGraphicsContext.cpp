@@ -65,7 +65,7 @@ void SDLGraphicsContext::cacheText(ResourceID slot, const std::string& text, Res
     auto& font = fonts.at(font_id);
     auto result = textures.emplace(slot, std::make_unique<SDL2pp::Texture>(
         renderer,
-        font->RenderText_Blended(text, SDL_Color {color[0], color[1], color[2], color[3]})
+        font->RenderUTF8_Blended(text, SDL_Color {color[0], color[1], color[2], color[3]})
     ));
     if (!result.second)
         throw std::runtime_error("Cached text already exists in slot " + std::to_string(slot));
