@@ -22,6 +22,8 @@ public:
 
     void drawTexture(ResourceID) final;
 
+    void saveScreenshotBMP(const std::string& path);
+
 private:
     SDL2pp::SDL sdl;
     SDL2pp::Window window;

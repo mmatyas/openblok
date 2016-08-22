@@ -20,6 +20,8 @@ public:
 
     virtual void drawTexture(ResourceID) = 0;
 
+    virtual void saveScreenshotBMP(const std::string& path) = 0;
+
 private:
     static std::unique_ptr<GraphicsContext> create();
 

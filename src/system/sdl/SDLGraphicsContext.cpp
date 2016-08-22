@@ -79,3 +79,31 @@ void SDLGraphicsContext::drawTexture(ResourceID slot)
     auto& tex = textures.at(slot);
     renderer.Copy(*tex, NullOpt, Rect(0, 0, tex->GetWidth(), tex->GetHeight()));
 }
+
+void SDLGraphicsContext::saveScreenshotBMP(const std::string& path)
+{
+    SDL2pp::Surface info_surface = SDL_GetWindowSurface(window.Get());
+    const auto info_format = info_surface.Get()->format;
+
+    std::unique_ptr<uint8_t[]> pixels = std::make_unique<uint8_t[]>(
+        info_surface.GetWidth() * info_surface.GetHeight() * info_format->BytesPerPixel);
+
+    renderer.ReadPixels(
+        info_surface.GetClipRect(),
+        info_format->format,
+        pixels.get(),
+        info_surface.GetWidth() * info_format->BytesPerPixel);
+
+    SDL2pp::Surface save_surface(pixels.get(),
+        info_surface.GetWidth(),
+        info_surface.GetHeight(),
+        info_format->BitsPerPixel,
+        info_surface.GetWidth() * info_format->BytesPerPixel,
+        info_format->Rmask,
+        info_format->Gmask,
+        info_format->Bmask,
+        info_format->Amask);
+
+    SDL_SaveBMP(save_surface.Get(), path.c_str());
+    Log::info(LOG_TAG) << "Screenshot saved to " << path << "\n";
+}
