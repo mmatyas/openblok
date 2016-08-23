@@ -19,5 +19,5 @@ void InitState::update(const std::vector<InputEvent>&, AppContext&)
 
 void InitState::draw(GraphicsContext& gcx)
 {
-    gcx.drawTexture(ResourceID::TEX_LOADING);
+    gcx.drawTexture(ResourceID::TEX_LOADING, 10, 10);
 }

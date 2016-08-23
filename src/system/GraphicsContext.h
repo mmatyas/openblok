@@ -34,8 +34,8 @@ public:
     virtual void cacheText(ResourceID, const std::string& text,
                            ResourceID font_id, const std::array<uint8_t, 4>& color) = 0;
 
-    /// Draw a previously created texture, referred with a `ResourceID`, at coords (0;0)
-    virtual void drawTexture(ResourceID) = 0;
+    /// Draw a previously created texture, referred with a `ResourceID`, at coords (x,y)
+    virtual void drawTexture(ResourceID, unsigned x, unsigned y) = 0;
 
     /// Save a screenshot to the provided path at the end of the current render cycle
     virtual void requestScreenshot(const std::string& path) = 0;

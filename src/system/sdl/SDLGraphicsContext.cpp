@@ -74,13 +74,13 @@ void SDLGraphicsContext::cacheText(ResourceID slot, const std::string& text, Res
         throw std::runtime_error("Cached text already exists in slot " + std::to_string(slot));
 }
 
-void SDLGraphicsContext::drawTexture(ResourceID slot)
+void SDLGraphicsContext::drawTexture(ResourceID slot, unsigned x, unsigned y)
 {
     if (!textures.count(slot))
         throw std::runtime_error("No texture loaded in slot " + std::to_string(slot));
 
     auto& tex = textures.at(slot);
-    renderer.Copy(*tex, NullOpt, Rect(0, 0, tex->GetWidth(), tex->GetHeight()));
+    renderer.Copy(*tex, NullOpt, Point(x, y));
 }
 
 void SDLGraphicsContext::requestScreenshot(const std::string& path)

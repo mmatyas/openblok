@@ -20,7 +20,8 @@ public:
     void cacheText(ResourceID, const std::string& text,
                    ResourceID font_id, const std::array<uint8_t, 4>& color) final;
 
-    void drawTexture(ResourceID) final;
+    void drawTexture(ResourceID, unsigned x, unsigned y) final;
+
     void requestScreenshot(const std::string& path) final;
 
 private:
