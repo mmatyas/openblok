@@ -37,7 +37,8 @@ public:
     /// Draw a previously created texture, referred with a `ResourceID`, at coords (0;0)
     virtual void drawTexture(ResourceID) = 0;
 
-    virtual void saveScreenshotBMP(const std::string& path) = 0;
+    /// Save a screenshot to the provided path at the end of the current render cycle
+    virtual void requestScreenshot(const std::string& path) = 0;
 
 private:
     static std::unique_ptr<GraphicsContext> create();

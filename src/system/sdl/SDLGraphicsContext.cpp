@@ -18,6 +18,7 @@ SDLGraphicsContext::SDLGraphicsContext()
         SDL_WINDOW_RESIZABLE)
     , renderer(window, -1, SDL_RENDERER_ACCELERATED)
     , ttf()
+    , on_render_callback([](){})
 {
     renderer.SetDrawColor(0, 0, 0, 255);
     renderer.Clear();
@@ -29,6 +30,8 @@ SDLGraphicsContext::SDLGraphicsContext()
 void SDLGraphicsContext::render()
 {
     renderer.Present();
+    on_render_callback();
+
     renderer.Clear();
 }
 
@@ -78,6 +81,15 @@ void SDLGraphicsContext::drawTexture(ResourceID slot)
 
     auto& tex = textures.at(slot);
     renderer.Copy(*tex, NullOpt, Rect(0, 0, tex->GetWidth(), tex->GetHeight()));
+}
+
+void SDLGraphicsContext::requestScreenshot(const std::string& path)
+{
+    // TODO: if there'll be other callbacks, then this should be a FIFO list
+    on_render_callback = [this, &path](){
+        saveScreenshotBMP(path);
+        on_render_callback = [](){};
+    };
 }
 
 void SDLGraphicsContext::saveScreenshotBMP(const std::string& path)

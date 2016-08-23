@@ -28,7 +28,8 @@ TEST_FIXTURE(AppContext, Create) {
 }
 
 TEST_FIXTURE(AppContext, SaveScreenshot) {
-    gcx->saveScreenshotBMP("test_screen.bmp");
+    gcx->requestScreenshot("test_screen.bmp");
+    gcx->render();
 }
 
 TEST_FIXTURE(AppContext, TextRendering) {
@@ -44,6 +45,6 @@ TEST_FIXTURE(AppContext, TextRendering) {
 
     // TODO
     gcx->drawTexture(ResourceID::TEST_TEX_ASCII);
+    gcx->requestScreenshot("test_screen.bmp");
     gcx->render();
-    gcx->saveScreenshotBMP("test_screen.bmp");
 }

@@ -6,7 +6,7 @@
 #include <string>
 #include <unordered_map>
 
-
+/// A graphics context implementation, based on SDL2
 class SDLGraphicsContext: public GraphicsContext {
 public:
     SDLGraphicsContext();
@@ -21,8 +21,7 @@ public:
                    ResourceID font_id, const std::array<uint8_t, 4>& color) final;
 
     void drawTexture(ResourceID) final;
-
-    void saveScreenshotBMP(const std::string& path);
+    void requestScreenshot(const std::string& path) final;
 
 private:
     SDL2pp::SDL sdl;
@@ -30,6 +29,10 @@ private:
     SDL2pp::Renderer renderer;
     SDL2pp::SDLTTF ttf;
 
+    std::function<void()> on_render_callback;
+
     std::unordered_map<ResourceID, std::unique_ptr<SDL2pp::Font>> fonts;
     std::unordered_map<ResourceID, std::unique_ptr<SDL2pp::Texture>> textures;
+
+    void saveScreenshotBMP(const std::string& path);
 };
