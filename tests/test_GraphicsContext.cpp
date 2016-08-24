@@ -1,5 +1,6 @@
 #include "UnitTest++/UnitTest++.h"
 
+#include "TestUtils.h"
 #include "system/GraphicsContext.h"
 
 
@@ -61,4 +62,6 @@ TEST_FIXTURE(AppContext, TextRendering) {
     gcx->drawTexture(ResourceID::TEST_TEX_JAPANESE, 10, 170);
     gcx->requestScreenshot(SCREENSHOT_NAME);
     gcx->render();
+
+    CHECK(TestUtils::imageCompare("tests/references/regular_text.png", SCREENSHOT_NAME));
 }

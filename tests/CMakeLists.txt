@@ -1,10 +1,15 @@
 set(TEST_SRC
 	test_GraphicsContext.cpp
 
+	TestUtils.cpp
 	main.cpp
 )
 
-add_executable(openblok_test ${TEST_SRC})
+set(TEST_H
+	TestUtils.h
+)
+
+add_executable(openblok_test ${TEST_SRC} ${TEST_H})
 
 target_link_libraries(openblok_test UnitTest++)
 target_link_libraries(openblok_test module_system)
