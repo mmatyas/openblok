@@ -4,7 +4,7 @@
 #include "system/GraphicsContext.h"
 
 
-const std::string SCREENSHOT_NAME = "test.bmp";
+const std::string SCREENSHOT_NAME = std::tmpnam(nullptr);
 
 class AppContext {
 public:

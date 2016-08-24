@@ -27,7 +27,7 @@ bool imageCompare(const std::string& path1, const std::string& path2, double max
 {
     // TODO: multiplatform support
     try {
-        auto result = run_command("compare -metric NCC " + path1 + " " + path2 + " diff.png 2>&1");
+        auto result = run_command("compare -metric NCC " + path1 + " " + path2 + " " + std::tmpnam(nullptr) + " 2>&1");
         double value = std::stod(result); // throws invalid_argument on error
         return std::fabs(1.0 - value) <= max_difference;
     }
