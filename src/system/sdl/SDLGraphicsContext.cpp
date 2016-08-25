@@ -4,11 +4,23 @@
 #include "SDL2/SDL.h"
 #include "SDL2pp/SDL2pp.hh"
 #include <exception>
+#include <sstream>
 
 using namespace SDL2pp;
 
 
 const std::string LOG_TAG("video");
+
+std::vector<std::string> splitByNL(const std::string& str) {
+    std::vector<std::string> output;
+    std::istringstream isst(str);
+    std::string line;
+
+    while (std::getline(isst, line))
+        output.push_back(line);
+
+    return output;
+}
 
 SDLGraphicsContext::SDLGraphicsContext()
     : sdl(SDL_INIT_VIDEO)
@@ -65,13 +77,46 @@ void SDLGraphicsContext::cacheText(ResourceID slot, const std::string& text, Res
     if (!fonts.count(font_id))
         throw std::runtime_error("No font loaded in slot " + std::to_string(font_id));
 
-    auto& font = fonts.at(font_id);
-    auto result = textures.emplace(slot, std::make_unique<SDL2pp::Texture>(
-        renderer,
-        font->RenderUTF8_Blended(text, SDL_Color {color[0], color[1], color[2], color[3]})
-    ));
-    if (!result.second)
+    if (textures.count(slot))
         throw std::runtime_error("Cached text already exists in slot " + std::to_string(slot));
+
+    auto& font = fonts.at(font_id);
+    auto lines = splitByNL(text);
+
+    // shortcut for single lines
+    if (lines.size() <= 1) {
+        textures.emplace(slot, std::make_unique<SDL2pp::Texture>(
+            renderer,
+            font->RenderUTF8_Blended(text, SDL_Color {color[0], color[1], color[2], color[3]})
+        ));
+        return;
+    }
+
+    int line_height = font->GetLineSkip();
+    int width = 2; // to avoid zero size textures
+    for (const std::string& line : lines) {
+        auto line_width = font->GetSizeUTF8(line).GetX();
+        if (line_width > width)
+            width = line_width;
+    }
+
+    textures.emplace(slot, std::make_unique<SDL2pp::Texture>(
+        renderer,
+        SDL_PIXELFORMAT_RGBA8888,
+        SDL_TEXTUREACCESS_TARGET,
+        width,
+        line_height * lines.size()
+    ));
+
+    renderer.SetTarget(*textures.at(slot));
+    for (unsigned l = 0; l < lines.size(); l++) {
+        SDL2pp::Texture line_tex(
+            renderer,
+            font->RenderUTF8_Blended(lines.at(l), SDL_Color {color[0], color[1], color[2], color[3]})
+        );
+        renderer.Copy(line_tex, NullOpt, Point(0, l * line_height));
+    }
+    renderer.SetTarget(); // to default
 }
 
 void SDLGraphicsContext::drawTexture(ResourceID slot, unsigned x, unsigned y)

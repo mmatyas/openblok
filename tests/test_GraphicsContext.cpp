@@ -26,6 +26,9 @@ enum class ResourceID: uint8_t {
     T1_TEX_LATIN2,
     T1_TEX_CYRILLIC,
     T1_TEX_JAPANESE,
+
+    // Test 2
+    T2_TEX_LINEBREAK
 };
 
 
@@ -66,4 +69,16 @@ TEST_FIXTURE(AppContext, TextRendering) {
     gcx->render();
 
     CHECK(TestUtils::imageCompare("tests/references/regular_text.png", SCREENSHOT_NAME));
+}
+
+TEST_FIXTURE(AppContext, TextLinebreak) {
+    gcx->loadFont(ResourceID::FONT_REGULAR, "data/regular.otf", 30);
+    gcx->cacheText(ResourceID::T2_TEX_LINEBREAK, "There should be\nthree lines\non the screen",
+                   ResourceID::FONT_REGULAR, {0xFF, 0xFF, 0xFF, 0xFF});
+
+    gcx->drawTexture(ResourceID::T2_TEX_LINEBREAK, 10, 10);
+    gcx->requestScreenshot(SCREENSHOT_NAME);
+    gcx->render();
+
+    CHECK(TestUtils::imageCompare("tests/references/text_multiline.png", SCREENSHOT_NAME));
 }
