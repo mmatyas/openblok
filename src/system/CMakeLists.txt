@@ -13,6 +13,7 @@ set(MOD_SYSTEM_H
 	EventCollector.h
 	GraphicsContext.h
 	InputEvent.h
+	Localize.h
 	Log.h
 
 	# SDL2
