@@ -2,15 +2,10 @@
 
 #include "GameState.h"
 
-#include <future>
 
-
-class InitState: public GameState {
+class MainMenuState: public GameState {
 public:
-    InitState(AppContext&);
+    MainMenuState(AppContext&);
     void update(const std::vector<InputEvent>&, AppContext&) final;
     void draw(GraphicsContext& gcx) final;
-
-private:
-    std::future<void> worker;
 };

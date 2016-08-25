@@ -11,8 +11,12 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra") # TODO: multiplatform
 
+# Dependencies: SDL2
 set(SDL2PP_WITH_TTF ON)
 add_subdirectory(external/libSDL2pp)
+
+# Dependencies: C++11 std::future support
+find_package(Threads REQUIRED)
 
 
 include_directories("src")

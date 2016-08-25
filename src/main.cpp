@@ -28,8 +28,10 @@ int main(int argc, char const *argv[])
 
         assert(app.states.size());
         app.states.top()->update(events, app);
-        app.states.top()->draw(*app.gcx);
+        if (app.states.empty())
+            break;
 
+        app.states.top()->draw(*app.gcx);
         app.gcx->render();
 
         // frame rate limiting
