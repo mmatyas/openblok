@@ -18,12 +18,14 @@ protected:
 
 
 enum class ResourceID: uint8_t {
-    TEST_FONT,
-    TEST_TEX_ASCII,
-    TEST_TEX_LATIN1,
-    TEST_TEX_LATIN2,
-    TEST_TEX_CYRILLIC,
-    TEST_TEX_JAPANESE,
+    FONT_REGULAR,
+
+    // Test 1
+    T1_TEX_ASCII,
+    T1_TEX_LATIN1,
+    T1_TEX_LATIN2,
+    T1_TEX_CYRILLIC,
+    T1_TEX_JAPANESE,
 };
 
 
@@ -37,29 +39,29 @@ TEST_FIXTURE(AppContext, SaveScreenshot) {
 }
 
 TEST_FIXTURE(AppContext, TextRendering) {
-    gcx->loadFont(ResourceID::TEST_FONT, "data/regular.otf", 20);
+    gcx->loadFont(ResourceID::FONT_REGULAR, "data/regular.otf", 20);
 
     // The regular font must support all english characters
-    gcx->cacheText(ResourceID::TEST_TEX_ASCII, "The quick brown fox jumped over the lazy dog",
-                   ResourceID::TEST_FONT, {0xFF, 0xFF, 0xFF, 0xFF});
+    gcx->cacheText(ResourceID::T1_TEX_ASCII, "The quick brown fox jumped over the lazy dog",
+                   ResourceID::FONT_REGULAR, {0xFF, 0xFF, 0xFF, 0xFF});
     // Some games have german or greek letter (eg. über, alpha)
-    gcx->cacheText(ResourceID::TEST_TEX_LATIN1, "Zwölf Boxkämpfer über den großen αβγδεφχψω ΔΣΦΨΩ",
-                   ResourceID::TEST_FONT, {0xFF, 0xFF, 0xFF, 0xFF});
+    gcx->cacheText(ResourceID::T1_TEX_LATIN1, "Zwölf Boxkämpfer über den großen αβγδεφχψω ΔΣΦΨΩ",
+                   ResourceID::FONT_REGULAR, {0xFF, 0xFF, 0xFF, 0xFF});
     // TODO: for future localization, add Latin2 support
-    gcx->cacheText(ResourceID::TEST_TEX_LATIN2, "Árvíztűrő tükörfúrógép Pchnąć w tę łódź",
-                   ResourceID::TEST_FONT, {0xFF, 0xFF, 0xFF, 0xFF});
+    gcx->cacheText(ResourceID::T1_TEX_LATIN2, "Árvíztűrő tükörfúrógép Pchnąć w tę łódź",
+                   ResourceID::FONT_REGULAR, {0xFF, 0xFF, 0xFF, 0xFF});
     // TODO: for future localization, add non-latin language support
-    gcx->cacheText(ResourceID::TEST_TEX_CYRILLIC, "Широкая электрификация южных",
-                   ResourceID::TEST_FONT, {0xFF, 0xFF, 0xFF, 0xFF});
+    gcx->cacheText(ResourceID::T1_TEX_CYRILLIC, "Широкая электрификация южных",
+                   ResourceID::FONT_REGULAR, {0xFF, 0xFF, 0xFF, 0xFF});
     // The regular font must support hiragana, katakana and the most common kanjis
-    gcx->cacheText(ResourceID::TEST_TEX_JAPANESE, "色は匂へど散りぬるを イロハニホヘト 鳥啼く声す 夢覚ませ",
-                   ResourceID::TEST_FONT, {0xFF, 0xFF, 0xFF, 0xFF});
+    gcx->cacheText(ResourceID::T1_TEX_JAPANESE, "色は匂へど散りぬるを イロハニホヘト 鳥啼く声す 夢覚ませ",
+                   ResourceID::FONT_REGULAR, {0xFF, 0xFF, 0xFF, 0xFF});
 
-    gcx->drawTexture(ResourceID::TEST_TEX_ASCII, 10, 10);
-    gcx->drawTexture(ResourceID::TEST_TEX_LATIN1, 10, 50);
-    // gcx->drawTexture(ResourceID::TEST_TEX_LATIN2, 10, 90);
-    // gcx->drawTexture(ResourceID::TEST_TEX_CYRILLIC, 10, 130);
-    gcx->drawTexture(ResourceID::TEST_TEX_JAPANESE, 10, 170);
+    gcx->drawTexture(ResourceID::T1_TEX_ASCII, 10, 10);
+    gcx->drawTexture(ResourceID::T1_TEX_LATIN1, 10, 50);
+    // gcx->drawTexture(ResourceID::T1_TEX_LATIN2, 10, 90);
+    // gcx->drawTexture(ResourceID::T1_TEX_CYRILLIC, 10, 130);
+    gcx->drawTexture(ResourceID::T1_TEX_JAPANESE, 10, 170);
     gcx->requestScreenshot(SCREENSHOT_NAME);
     gcx->render();
 
