@@ -68,7 +68,7 @@ TEST_FIXTURE(AppContext, TextRendering) {
     gcx->requestScreenshot(SCREENSHOT_NAME);
     gcx->render();
 
-    CHECK(TestUtils::imageCompare("tests/references/regular_text.png", SCREENSHOT_NAME));
+    CHECK(TestUtils::imageCompare("tests/references/text_multilang.png", SCREENSHOT_NAME));
 }
 
 TEST_FIXTURE(AppContext, TextLinebreak) {
