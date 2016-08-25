@@ -92,6 +92,7 @@ void SDLGraphicsContext::cacheText(ResourceID slot, const std::string& text, Res
         return;
     }
 
+    // find out texture dimensions
     int line_height = font->GetLineSkip();
     int width = 2; // to avoid zero size textures
     for (const std::string& line : lines) {
@@ -100,6 +101,7 @@ void SDLGraphicsContext::cacheText(ResourceID slot, const std::string& text, Res
             width = line_width;
     }
 
+    // create base texture
     textures.emplace(slot, std::make_unique<SDL2pp::Texture>(
         renderer,
         SDL_PIXELFORMAT_RGBA8888,
@@ -108,6 +110,7 @@ void SDLGraphicsContext::cacheText(ResourceID slot, const std::string& text, Res
         line_height * lines.size()
     ));
 
+    // render every line to it
     renderer.SetTarget(*textures.at(slot));
     for (unsigned l = 0; l < lines.size(); l++) {
         SDL2pp::Texture line_tex(
