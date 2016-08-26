@@ -142,7 +142,11 @@ void SDLGraphicsContext::requestScreenshot(const std::string& path)
 
 void SDLGraphicsContext::saveScreenshotBMP(const std::string& path)
 {
-    SDL2pp::Surface info_surface = SDL_GetWindowSurface(window.Get());
+    auto window_surface_raw = SDL_GetWindowSurface(window.Get());
+    if (!window_surface_raw)
+        throw std::runtime_error(SDL_GetError());
+
+    SDL2pp::Surface info_surface(window_surface_raw);
     const auto info_format = info_surface.Get()->format;
 
     std::unique_ptr<uint8_t[]> pixels = std::make_unique<uint8_t[]>(
