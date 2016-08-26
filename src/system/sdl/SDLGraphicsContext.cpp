@@ -122,6 +122,18 @@ void SDLGraphicsContext::cacheText(ResourceID slot, const std::string& text, Res
     renderer.SetTarget(); // to default
 }
 
+void SDLGraphicsContext::loadTexture(ResourceID slot, const std::string& path)
+{
+    Log::info(LOG_TAG) << "Loading " << path << "\n";
+    textures.emplace(slot, std::make_unique<SDL2pp::Texture>(renderer, path));
+}
+
+void SDLGraphicsContext::loadTexture(ResourceID slot, const std::string& path, const std::array<uint8_t, 3>& color)
+{
+    loadTexture(slot, path);
+    textures.at(slot)->SetColorMod(color[0], color[1], color[2]);
+}
+
 void SDLGraphicsContext::drawTexture(ResourceID slot, unsigned x, unsigned y)
 {
     if (!textures.count(slot))

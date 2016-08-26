@@ -26,7 +26,6 @@ public:
     /// Load a font file (in OTF or TTF format) in the given size.
     /// The client should be able to use the same `ResourceID` later to refer to this font.
     virtual void loadFont(ResourceID, const std::string& path, unsigned pt) = 0;
-
     /// Render text to a texture, using a previously loaded font,
     /// using the provided RGBA color.
     /// Later, the client should be able to refer and draw this texture, using its `ResourceID`.
@@ -34,6 +33,12 @@ public:
     virtual void cacheText(ResourceID, const std::string& text,
                            ResourceID font_id, const std::array<uint8_t, 4>& color) = 0;
 
+    /// Load an image file as texture.
+    /// The client should be able to use the same `ResourceID` later to refer to this texture.
+    virtual void loadTexture(ResourceID, const std::string& path) = 0;
+    /// Load an image file as texture with additional tinting.
+    /// The client should be able to use the same `ResourceID` later to refer to this texture.
+    virtual void loadTexture(ResourceID, const std::string& path, const std::array<uint8_t, 3>& color) = 0;
     /// Draw a previously created texture, referred with a `ResourceID`, at coords (x,y)
     virtual void drawTexture(ResourceID, unsigned x, unsigned y) = 0;
 
