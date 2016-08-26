@@ -8,7 +8,7 @@
 #include <assert.h>
 
 
-int main(int argc, char const *argv[])
+int main(int, const char**)
 {
     Log::info("main") << "OpenBlok v0.0.0 by Mátyás Mustoha\n";
     AppContext app;
