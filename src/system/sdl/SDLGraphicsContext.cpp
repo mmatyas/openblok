@@ -101,25 +101,30 @@ void SDLGraphicsContext::cacheText(ResourceID slot, const std::string& text, Res
             width = line_width;
     }
 
-    // create base texture
+    // to create an optimal base surface,
+    // we are querying the current window's preferred pixel format
+    auto pixelformat = SDL_GetWindowPixelFormat(window.Get());
+    if (pixelformat == SDL_PIXELFORMAT_UNKNOWN)
+        throw std::runtime_error(SDL_GetError());
+
+    // extract the surface parameters from the SDL pixel format enum
+    int bpp;
+    Uint32 rmask, gmask, bmask, amask;
+    if (!SDL_PixelFormatEnumToMasks(pixelformat, &bpp, &rmask, &gmask, &bmask, &amask))
+        throw std::runtime_error(SDL_GetError());
+
+    // create the surface and blit the lines on it
+    SDL2pp::Surface basesurf(0, width,  line_height * lines.size(),
+                             bpp, rmask, gmask, bmask, amask);
+    for (unsigned l = 0; l < lines.size(); l++) {
+        auto surf = font->RenderUTF8_Blended(lines.at(l), {color[0], color[1], color[2], color[3]});
+        surf.Blit(NullOpt, basesurf, Rect(0, l * line_height, surf.GetWidth(), surf.GetHeight()));
+    }
+
     textures.emplace(slot, std::make_unique<SDL2pp::Texture>(
         renderer,
-        SDL_PIXELFORMAT_RGBA8888,
-        SDL_TEXTUREACCESS_TARGET,
-        width,
-        line_height * lines.size()
+        basesurf
     ));
-
-    // render every line to it
-    renderer.SetTarget(*textures.at(slot));
-    for (unsigned l = 0; l < lines.size(); l++) {
-        SDL2pp::Texture line_tex(
-            renderer,
-            font->RenderUTF8_Blended(lines.at(l), SDL_Color {color[0], color[1], color[2], color[3]})
-        );
-        renderer.Copy(line_tex, NullOpt, Point(0, l * line_height));
-    }
-    renderer.SetTarget(); // to default
 }
 
 void SDLGraphicsContext::loadTexture(ResourceID slot, const std::string& path)
