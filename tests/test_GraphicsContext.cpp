@@ -28,7 +28,10 @@ enum class ResourceID: uint8_t {
     T1_TEX_JAPANESE,
 
     // Test 2
-    T2_TEX_LINEBREAK
+    T2_TEX_LINEBREAK,
+
+    // Test 2
+    T3_TEX_EMPTY,
 };
 
 
@@ -81,4 +84,14 @@ TEST_FIXTURE(AppContext, TextLinebreak) {
     gcx->render();
 
     CHECK(TestUtils::imageCompare("tests/references/text_multiline.png", SCREENSHOT_NAME));
+}
+
+TEST_FIXTURE(AppContext, TextEmpty) {
+    gcx->loadFont(ResourceID::FONT_REGULAR, "data/regular.otf", 30);
+
+    CHECK_THROW(
+        gcx->cacheText(ResourceID::T2_TEX_LINEBREAK, "",
+                       ResourceID::FONT_REGULAR, {0xFF, 0xFF, 0xFF, 0xFF}),
+        std::runtime_error
+    );
 }
