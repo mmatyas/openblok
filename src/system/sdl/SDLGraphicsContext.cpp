@@ -77,18 +77,15 @@ void SDLGraphicsContext::cacheText(ResourceID slot, const std::string& text, Res
     if (!fonts.count(font_id))
         throw std::runtime_error("No font loaded in slot " + std::to_string(font_id));
 
-    if (textures.count(slot))
-        throw std::runtime_error("Cached text already exists in slot " + std::to_string(slot));
-
     auto& font = fonts.at(font_id);
     auto lines = splitByNL(text);
 
     // shortcut for single lines
     if (lines.size() <= 1) {
-        textures.emplace(slot, std::make_unique<SDL2pp::Texture>(
+        textures[slot] = std::make_unique<SDL2pp::Texture>(
             renderer,
             font->RenderUTF8_Blended(text, SDL_Color {color[0], color[1], color[2], color[3]})
-        ));
+        );
         return;
     }
 
@@ -121,16 +118,13 @@ void SDLGraphicsContext::cacheText(ResourceID slot, const std::string& text, Res
         surf.Blit(NullOpt, basesurf, Rect(0, l * line_height, surf.GetWidth(), surf.GetHeight()));
     }
 
-    textures.emplace(slot, std::make_unique<SDL2pp::Texture>(
-        renderer,
-        basesurf
-    ));
+    textures[slot] = std::make_unique<SDL2pp::Texture>(renderer, basesurf);
 }
 
 void SDLGraphicsContext::loadTexture(ResourceID slot, const std::string& path)
 {
     Log::info(LOG_TAG) << "Loading " << path << "\n";
-    textures.emplace(slot, std::make_unique<SDL2pp::Texture>(renderer, path));
+    textures[slot] = std::make_unique<SDL2pp::Texture>(renderer, path);
 }
 
 void SDLGraphicsContext::loadTexture(ResourceID slot, const std::string& path, const std::array<uint8_t, 3>& color)
