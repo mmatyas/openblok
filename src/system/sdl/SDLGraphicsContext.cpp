@@ -138,8 +138,7 @@ void SDLGraphicsContext::drawTexture(ResourceID slot, unsigned x, unsigned y)
     if (!textures.count(slot))
         throw std::runtime_error("No texture loaded in slot " + std::to_string(slot));
 
-    auto& tex = textures.at(slot);
-    renderer.Copy(*tex, NullOpt, Point(x, y));
+    renderer.Copy(*textures.at(slot), NullOpt, Point(x, y));
 }
 
 void SDLGraphicsContext::requestScreenshot(const std::string& path)
