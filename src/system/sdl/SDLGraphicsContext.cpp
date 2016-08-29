@@ -141,6 +141,14 @@ void SDLGraphicsContext::drawTexture(ResourceID slot, unsigned x, unsigned y)
     renderer.Copy(*textures.at(slot), NullOpt, Point(x, y));
 }
 
+void SDLGraphicsContext::drawTexture(ResourceID slot, const std::array<unsigned, 4>& rect)
+{
+    if (!textures.count(slot))
+        throw std::runtime_error("No texture loaded in slot " + std::to_string(slot));
+
+    renderer.Copy(*textures.at(slot), NullOpt, Rect(rect[0], rect[1], rect[2], rect[3]));
+}
+
 void SDLGraphicsContext::drawFilledRect(const std::array<unsigned, 4>& rectangle, const std::array<uint8_t, 3>& color)
 {
     Uint8 r, g, b, a;
