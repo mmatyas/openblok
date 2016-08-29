@@ -95,3 +95,13 @@ TEST_FIXTURE(AppContext, TextEmpty) {
         std::runtime_error
     );
 }
+
+TEST_FIXTURE(AppContext, DrawRect) {
+    gcx->drawFilledRect({10, 10, 100, 100}, {0xFF, 0, 0});
+    gcx->drawFilledRect({50, 50, 100, 100}, {0, 0xFF, 0});
+    gcx->drawFilledRect({100, 100, 100, 100}, {0, 0, 0xFF});
+    gcx->requestScreenshot(SCREENSHOT_NAME);
+    gcx->render();
+
+    CHECK(TestUtils::imageCompare("tests/references/draw_filledrect.png", SCREENSHOT_NAME));
+}

@@ -141,6 +141,15 @@ void SDLGraphicsContext::drawTexture(ResourceID slot, unsigned x, unsigned y)
     renderer.Copy(*textures.at(slot), NullOpt, Point(x, y));
 }
 
+void SDLGraphicsContext::drawFilledRect(const std::array<unsigned, 4>& rectangle, const std::array<uint8_t, 3>& color)
+{
+    Uint8 r, g, b, a;
+    renderer.GetDrawColor(r, g, b, a);
+    renderer.SetDrawColor(color[0], color[1], color[2]);
+    renderer.FillRect(rectangle[0], rectangle[1], rectangle[0] + rectangle[2], rectangle[1] + rectangle[3]);
+    renderer.SetDrawColor(r, g, b, a);
+}
+
 void SDLGraphicsContext::requestScreenshot(const std::string& path)
 {
     // TODO: if there'll be other callbacks, then this should be a FIFO list

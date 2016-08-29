@@ -41,6 +41,8 @@ public:
     virtual void loadTexture(ResourceID, const std::string& path, const std::array<uint8_t, 3>& color) = 0;
     /// Draw a previously created texture, referred with a `ResourceID`, at coords (x,y)
     virtual void drawTexture(ResourceID, unsigned x, unsigned y) = 0;
+    /// Draw a rectangle on the screen, defined by [x,y,w,h], filled with [r,g,b]
+    virtual void drawFilledRect(const std::array<unsigned, 4>& rectangle, const std::array<uint8_t, 3>& color) = 0;
 
     /// Save a screenshot to the provided path at the end of the current render cycle
     virtual void requestScreenshot(const std::string& path) = 0;
