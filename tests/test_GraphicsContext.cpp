@@ -49,19 +49,19 @@ TEST_FIXTURE(AppContext, TextRendering) {
 
     // The regular font must support all english characters
     gcx->cacheText(ResourceID::T1_TEX_ASCII, "The quick brown fox jumped over the lazy dog",
-                   ResourceID::FONT_REGULAR, {0xFF, 0xFF, 0xFF, 0xFF});
+                   ResourceID::FONT_REGULAR, 0xFFFFFFFF_rgba);
     // Some games have german or greek letter (eg. über, alpha)
     gcx->cacheText(ResourceID::T1_TEX_LATIN1, "Zwölf Boxkämpfer über den großen αβγδεφχψω ΔΣΦΨΩ",
-                   ResourceID::FONT_REGULAR, {0xFF, 0xFF, 0xFF, 0xFF});
+                   ResourceID::FONT_REGULAR, 0xFFFFFFFF_rgba);
     // TODO: for future localization, add Latin2 support
     gcx->cacheText(ResourceID::T1_TEX_LATIN2, "Árvíztűrő tükörfúrógép Pchnąć w tę łódź",
-                   ResourceID::FONT_REGULAR, {0xFF, 0xFF, 0xFF, 0xFF});
+                   ResourceID::FONT_REGULAR, 0xFFFFFFFF_rgba);
     // TODO: for future localization, add non-latin language support
     gcx->cacheText(ResourceID::T1_TEX_CYRILLIC, "Широкая электрификация южных",
-                   ResourceID::FONT_REGULAR, {0xFF, 0xFF, 0xFF, 0xFF});
+                   ResourceID::FONT_REGULAR, 0xFFFFFFFF_rgba);
     // The regular font must support hiragana, katakana and the most common kanjis
     gcx->cacheText(ResourceID::T1_TEX_JAPANESE, "色は匂へど散りぬるを イロハニホヘト 鳥啼く声す 夢覚ませ",
-                   ResourceID::FONT_REGULAR, {0xFF, 0xFF, 0xFF, 0xFF});
+                   ResourceID::FONT_REGULAR, 0xFFFFFFFF_rgba);
 
     gcx->drawTexture(ResourceID::T1_TEX_ASCII, 10, 10);
     gcx->drawTexture(ResourceID::T1_TEX_LATIN1, 10, 50);
@@ -77,7 +77,7 @@ TEST_FIXTURE(AppContext, TextRendering) {
 TEST_FIXTURE(AppContext, TextLinebreak) {
     gcx->loadFont(ResourceID::FONT_REGULAR, "data/regular.otf", 30);
     gcx->cacheText(ResourceID::T2_TEX_LINEBREAK, "There should be\nthree lines\non the screen",
-                   ResourceID::FONT_REGULAR, {0xFF, 0xFF, 0xFF, 0xFF});
+                   ResourceID::FONT_REGULAR, 0xFFFFFFFF_rgba);
 
     gcx->drawTexture(ResourceID::T2_TEX_LINEBREAK, 10, 10);
     gcx->requestScreenshot(SCREENSHOT_NAME);
@@ -91,15 +91,15 @@ TEST_FIXTURE(AppContext, TextEmpty) {
 
     CHECK_THROW(
         gcx->cacheText(ResourceID::T2_TEX_LINEBREAK, "",
-                       ResourceID::FONT_REGULAR, {0xFF, 0xFF, 0xFF, 0xFF}),
+                       ResourceID::FONT_REGULAR, 0xFFFFFFFF_rgba),
         std::runtime_error
     );
 }
 
 TEST_FIXTURE(AppContext, DrawRect) {
-    gcx->drawFilledRect({10, 10, 100, 100}, {0xFF, 0, 0});
-    gcx->drawFilledRect({50, 50, 100, 100}, {0, 0xFF, 0});
-    gcx->drawFilledRect({100, 100, 100, 100}, {0, 0, 0xFF});
+    gcx->drawFilledRect({10, 10, 100, 100}, 0xFF0000_rgb);
+    gcx->drawFilledRect({50, 50, 100, 100}, 0x00FF00_rgb);
+    gcx->drawFilledRect({100, 100, 100, 100}, 0x0000FF_rgb);
     gcx->requestScreenshot(SCREENSHOT_NAME);
     gcx->render();
 

@@ -6,6 +6,9 @@
 #include <memory>
 #include <stdint.h>
 
+std::array<uint8_t, 3> operator "" _rgb(unsigned long long color);
+std::array<uint8_t, 4> operator "" _rgba(unsigned long long color);
+
 /// The graphics context interface used by the game.
 ///
 /// The implementation's task is to provide a graphical window, and create drawable textures,
