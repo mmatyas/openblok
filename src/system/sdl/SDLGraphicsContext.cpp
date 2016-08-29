@@ -52,12 +52,12 @@ void SDLGraphicsContext::toggleFullscreen()
     window.SetFullscreen(window.GetFlags() ^ SDL_WINDOW_FULLSCREEN_DESKTOP);
 }
 
-uint16_t SDLGraphicsContext::screenWidth()
+uint16_t SDLGraphicsContext::screenWidth() const
 {
     return window.GetWidth();
 }
 
-uint16_t SDLGraphicsContext::screenHeight()
+uint16_t SDLGraphicsContext::screenHeight() const
 {
     return window.GetHeight();
 }
@@ -148,6 +148,16 @@ void SDLGraphicsContext::drawFilledRect(const std::array<unsigned, 4>& rectangle
     renderer.SetDrawColor(color[0], color[1], color[2]);
     renderer.FillRect(rectangle[0], rectangle[1], rectangle[0] + rectangle[2], rectangle[1] + rectangle[3]);
     renderer.SetDrawColor(r, g, b, a);
+}
+
+unsigned SDLGraphicsContext::textureWidth(ResourceID slot) const
+{
+    return textures.at(slot)->GetWidth();
+}
+
+unsigned SDLGraphicsContext::textureHeight(ResourceID slot) const
+{
+    return textures.at(slot)->GetHeight();
 }
 
 void SDLGraphicsContext::requestScreenshot(const std::string& path)

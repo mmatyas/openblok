@@ -13,8 +13,8 @@ public:
 
     void render() final;
     void toggleFullscreen() final;
-    uint16_t screenWidth() final;
-    uint16_t screenHeight() final;
+    uint16_t screenWidth() const final;
+    uint16_t screenHeight() const final;
 
     void loadFont(ResourceID, const std::string& path, unsigned pt) final;
     void cacheText(ResourceID, const std::string& text,
@@ -24,6 +24,9 @@ public:
     void loadTexture(ResourceID, const std::string&, const std::array<uint8_t, 3>& color) final;
     void drawTexture(ResourceID, unsigned x, unsigned y) final;
     void drawFilledRect(const std::array<unsigned, 4>& rectangle, const std::array<uint8_t, 3>& color) final;
+
+    unsigned textureWidth(ResourceID) const final;
+    unsigned textureHeight(ResourceID) const final;
 
     void requestScreenshot(const std::string& path) final;
 
