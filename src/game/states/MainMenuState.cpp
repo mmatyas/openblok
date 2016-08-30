@@ -1,5 +1,8 @@
 #include "MainMenuState.h"
 
+#include "game/Resources.h"
+
+
 MainMenuState::MainMenuState(AppContext&)
 {
 }

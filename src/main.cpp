@@ -1,6 +1,6 @@
 #include "game/AppContext.h"
+#include "game/states/InitState.h"
 #include "system/Log.h"
-#include "game/InitState.h"
 
 #include <chrono>
 #include <memory>

@@ -1,8 +1,8 @@
 #include "InitState.h"
 
 #include "game/AppContext.h"
-#include "game/MainMenuState.h"
 #include "game/Resources.h"
+#include "game/states/MainMenuState.h"
 #include "system/Localize.h"
 #include "system/Log.h"
 

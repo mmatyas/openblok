@@ -1,6 +1,6 @@
 #pragma once
 
-#include "GameState.h"
+#include "game/GameState.h"
 
 
 class MainMenuState: public GameState {

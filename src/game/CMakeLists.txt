@@ -1,14 +1,15 @@
 set(MOD_GAME_SRC
 	AppContext.cpp
-	InitState.cpp
-	MainMenuState.cpp
+	states/InitState.cpp
+	states/MainMenuState.cpp
 )
 
 set(MOD_GAME_H
 	AppContext.h
 	GameState.h
-	InitState.h
-	MainMenuState.h
+	Resources.h
+	states/InitState.h
+	states/MainMenuState.h
 )
 
 add_library(module_game ${MOD_GAME_SRC} ${MOD_GAME_H})
