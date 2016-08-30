@@ -23,8 +23,8 @@ public:
     void loadTexture(ResourceID, const std::string&) final;
     void loadTexture(ResourceID, const std::string&, const RGBColor& color) final;
     void drawTexture(ResourceID, unsigned x, unsigned y) final;
-    void drawTexture(ResourceID, const std::array<unsigned, 4>& rect) final;
-    void drawFilledRect(const std::array<unsigned, 4>& rect, const RGBColor& color) final;
+    void drawTexture(ResourceID, const Rectangle& rect) final;
+    void drawFilledRect(const Rectangle& rect, const RGBColor& color) final;
 
     unsigned textureWidth(ResourceID) const final;
     unsigned textureHeight(ResourceID) const final;

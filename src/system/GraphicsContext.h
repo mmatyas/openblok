@@ -7,6 +7,10 @@
 #include <stdint.h>
 
 
+struct Rectangle {
+    int x, y, w, h;
+};
+
 struct RGBColor {
     uint8_t r, g, b;
 };
@@ -50,9 +54,9 @@ public:
     virtual void drawTexture(ResourceID, unsigned x, unsigned y) = 0;
     /// Draw a previously created texture, referred with a `ResourceID`,
     /// moved and scaled to the position and size of a rectangle defined by [x,y,w,h]
-    virtual void drawTexture(ResourceID, const std::array<unsigned, 4>& rectangle) = 0;
+    virtual void drawTexture(ResourceID, const Rectangle& rectangle) = 0;
     /// Draw a rectangle on the screen, defined by [x,y,w,h], filled with [r,g,b]
-    virtual void drawFilledRect(const std::array<unsigned, 4>& rectangle, const RGBColor& color) = 0;
+    virtual void drawFilledRect(const Rectangle& rectangle, const RGBColor& color) = 0;
 
     virtual unsigned textureWidth(ResourceID) const = 0;
     virtual unsigned textureHeight(ResourceID) const = 0;

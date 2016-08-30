@@ -141,20 +141,20 @@ void SDLGraphicsContext::drawTexture(ResourceID slot, unsigned x, unsigned y)
     renderer.Copy(*textures.at(slot), NullOpt, Point(x, y));
 }
 
-void SDLGraphicsContext::drawTexture(ResourceID slot, const std::array<unsigned, 4>& rect)
+void SDLGraphicsContext::drawTexture(ResourceID slot, const Rectangle& rect)
 {
     if (!textures.count(slot))
         throw std::runtime_error("No texture loaded in slot " + std::to_string(slot));
 
-    renderer.Copy(*textures.at(slot), NullOpt, Rect(rect[0], rect[1], rect[2], rect[3]));
+    renderer.Copy(*textures.at(slot), NullOpt, Rect(rect.x, rect.y, rect.x + rect.w, rect.y + rect.h));
 }
 
-void SDLGraphicsContext::drawFilledRect(const std::array<unsigned, 4>& rectangle, const RGBColor& color)
+void SDLGraphicsContext::drawFilledRect(const Rectangle& rect, const RGBColor& color)
 {
     Uint8 r, g, b, a;
     renderer.GetDrawColor(r, g, b, a);
     renderer.SetDrawColor(color.r, color.g, color.b);
-    renderer.FillRect(rectangle[0], rectangle[1], rectangle[0] + rectangle[2], rectangle[1] + rectangle[3]);
+    renderer.FillRect(rect.x, rect.y, rect.x + rect.w, rect.y + rect.h);
     renderer.SetDrawColor(r, g, b, a);
 }
 
