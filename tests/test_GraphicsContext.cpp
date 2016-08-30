@@ -19,6 +19,7 @@ protected:
 
 enum class ResourceID: uint8_t {
     FONT_REGULAR,
+    TEX_GREENRECT,
 
     // Test 1
     T1_TEX_ASCII,
@@ -104,4 +105,13 @@ TEST_FIXTURE(AppContext, DrawRect) {
     gcx->render();
 
     CHECK(TestUtils::imageCompare("tests/references/draw_filledrect.png", SCREENSHOT_NAME));
+}
+
+TEST_FIXTURE(AppContext, LoadImage) {
+    gcx->loadTexture(ResourceID::TEX_GREENRECT, "tests/data/green_rect.png");
+    gcx->drawTexture(ResourceID::TEX_GREENRECT, 10, 10);
+    gcx->requestScreenshot(SCREENSHOT_NAME);
+    gcx->render();
+
+    CHECK(TestUtils::imageCompare("tests/references/draw_image.png", SCREENSHOT_NAME));
 }
