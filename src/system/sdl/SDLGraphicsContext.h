@@ -18,13 +18,13 @@ public:
 
     void loadFont(ResourceID, const std::string& path, unsigned pt) final;
     void cacheText(ResourceID, const std::string& text,
-                   ResourceID font_id, const std::array<uint8_t, 4>& color) final;
+                   ResourceID font_id, const RGBColor& color) final;
 
     void loadTexture(ResourceID, const std::string&) final;
-    void loadTexture(ResourceID, const std::string&, const std::array<uint8_t, 3>& color) final;
+    void loadTexture(ResourceID, const std::string&, const RGBColor& color) final;
     void drawTexture(ResourceID, unsigned x, unsigned y) final;
     void drawTexture(ResourceID, const std::array<unsigned, 4>& rect) final;
-    void drawFilledRect(const std::array<unsigned, 4>& rectangle, const std::array<uint8_t, 3>& color) final;
+    void drawFilledRect(const std::array<unsigned, 4>& rect, const RGBColor& color) final;
 
     unsigned textureWidth(ResourceID) const final;
     unsigned textureHeight(ResourceID) const final;

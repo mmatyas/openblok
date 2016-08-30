@@ -72,7 +72,7 @@ void SDLGraphicsContext::loadFont(ResourceID slot, const std::string& path, unsi
         throw std::runtime_error("Font already exists in slot " + std::to_string(slot));
 }
 
-void SDLGraphicsContext::cacheText(ResourceID slot, const std::string& text, ResourceID font_id, const std::array<uint8_t, 4>& color)
+void SDLGraphicsContext::cacheText(ResourceID slot, const std::string& text, ResourceID font_id, const RGBColor& color)
 {
     if (!fonts.count(font_id))
         throw std::runtime_error("No font loaded in slot " + std::to_string(font_id));
@@ -84,7 +84,7 @@ void SDLGraphicsContext::cacheText(ResourceID slot, const std::string& text, Res
     if (lines.size() <= 1) {
         textures[slot] = std::make_unique<SDL2pp::Texture>(
             renderer,
-            font->RenderUTF8_Blended(text, SDL_Color {color[0], color[1], color[2], color[3]})
+            font->RenderUTF8_Blended(text, {color.r, color.g, color.b, 255})
         );
         return;
     }
@@ -114,7 +114,7 @@ void SDLGraphicsContext::cacheText(ResourceID slot, const std::string& text, Res
     SDL2pp::Surface basesurf(0, width,  line_height * lines.size(),
                              bpp, rmask, gmask, bmask, amask);
     for (unsigned l = 0; l < lines.size(); l++) {
-        auto surf = font->RenderUTF8_Blended(lines.at(l), {color[0], color[1], color[2], color[3]});
+        auto surf = font->RenderUTF8_Blended(lines.at(l), {color.r, color.g, color.b, 255});
         surf.Blit(NullOpt, basesurf, Rect(0, l * line_height, surf.GetWidth(), surf.GetHeight()));
     }
 
@@ -127,10 +127,10 @@ void SDLGraphicsContext::loadTexture(ResourceID slot, const std::string& path)
     textures[slot] = std::make_unique<SDL2pp::Texture>(renderer, path);
 }
 
-void SDLGraphicsContext::loadTexture(ResourceID slot, const std::string& path, const std::array<uint8_t, 3>& color)
+void SDLGraphicsContext::loadTexture(ResourceID slot, const std::string& path, const RGBColor& color)
 {
     loadTexture(slot, path);
-    textures.at(slot)->SetColorMod(color[0], color[1], color[2]);
+    textures.at(slot)->SetColorMod(color.r, color.g, color.b);
 }
 
 void SDLGraphicsContext::drawTexture(ResourceID slot, unsigned x, unsigned y)
@@ -149,11 +149,11 @@ void SDLGraphicsContext::drawTexture(ResourceID slot, const std::array<unsigned,
     renderer.Copy(*textures.at(slot), NullOpt, Rect(rect[0], rect[1], rect[2], rect[3]));
 }
 
-void SDLGraphicsContext::drawFilledRect(const std::array<unsigned, 4>& rectangle, const std::array<uint8_t, 3>& color)
+void SDLGraphicsContext::drawFilledRect(const std::array<unsigned, 4>& rectangle, const RGBColor& color)
 {
     Uint8 r, g, b, a;
     renderer.GetDrawColor(r, g, b, a);
-    renderer.SetDrawColor(color[0], color[1], color[2]);
+    renderer.SetDrawColor(color.r, color.g, color.b);
     renderer.FillRect(rectangle[0], rectangle[1], rectangle[0] + rectangle[2], rectangle[1] + rectangle[3]);
     renderer.SetDrawColor(r, g, b, a);
 }
