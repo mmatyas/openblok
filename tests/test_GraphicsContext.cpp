@@ -33,9 +33,6 @@ enum class TexID: uint8_t {
 
     // Test 2
     T2_LINEBREAK,
-
-    // Test 3
-    T3_EMPTY,
 };
 
 
@@ -117,4 +114,13 @@ TEST_FIXTURE(AppContext, LoadImage) {
     gcx->render();
 
     CHECK(TestUtils::imageCompare("tests/references/draw_image.png", SCREENSHOT_NAME));
+}
+
+TEST_FIXTURE(AppContext, DrawScaled) {
+    gcx->loadTexture(TexID::GREENRECT, "tests/data/green_rect.png");
+    gcx->drawTexture(TexID::GREENRECT, {10, 20, 50, 50});
+    gcx->requestScreenshot(SCREENSHOT_NAME);
+    gcx->render();
+
+    CHECK(TestUtils::imageCompare("tests/references/draw_scaled.png", SCREENSHOT_NAME));
 }

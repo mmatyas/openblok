@@ -146,7 +146,7 @@ void SDLGraphicsContext::drawTexture(TexID slot, const Rectangle& rect)
     if (!textures.count(slot))
         throw std::runtime_error("No texture loaded in slot " + std::to_string(slot));
 
-    renderer.Copy(*textures.at(slot), NullOpt, Rect(rect.x, rect.y, rect.x + rect.w, rect.y + rect.h));
+    renderer.Copy(*textures.at(slot), NullOpt, Rect(rect.x, rect.y, rect.w, rect.h));
 }
 
 void SDLGraphicsContext::drawFilledRect(const Rectangle& rect, const RGBColor& color)
