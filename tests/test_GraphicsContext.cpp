@@ -98,9 +98,9 @@ TEST_FIXTURE(AppContext, TextEmpty) {
 }
 
 TEST_FIXTURE(AppContext, DrawRect) {
-    gcx->drawFilledRect({10, 10, 100, 100}, 0xFF0000_rgb);
-    gcx->drawFilledRect({50, 50, 100, 100}, 0x00FF00_rgb);
-    gcx->drawFilledRect({100, 100, 100, 100}, 0x0000FF_rgb);
+    gcx->drawFilledRect({10, 20, 120, 100}, 0xFF0000_rgb);
+    gcx->drawFilledRect({50, 60, 120, 100}, 0x00FF00_rgb);
+    gcx->drawFilledRect({100, 110, 120, 100}, 0x0000FF_rgb);
     gcx->requestScreenshot(SCREENSHOT_NAME);
     gcx->render();
 
