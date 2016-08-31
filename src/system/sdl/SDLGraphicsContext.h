@@ -16,18 +16,18 @@ public:
     uint16_t screenWidth() const final;
     uint16_t screenHeight() const final;
 
-    void loadFont(ResourceID, const std::string& path, unsigned pt) final;
-    void cacheText(ResourceID, const std::string& text,
-                   ResourceID font_id, const RGBColor& color) final;
+    void loadFont(FontID, const std::string& path, unsigned pt) final;
+    void cacheText(TexID, const std::string& text,
+                   FontID, const RGBColor&) final;
 
-    void loadTexture(ResourceID, const std::string&) final;
-    void loadTexture(ResourceID, const std::string&, const RGBColor& color) final;
-    void drawTexture(ResourceID, unsigned x, unsigned y) final;
-    void drawTexture(ResourceID, const Rectangle& rect) final;
+    void loadTexture(TexID, const std::string& path) final;
+    void loadTexture(TexID, const std::string& path, const RGBColor& tint) final;
+    void drawTexture(TexID, unsigned x, unsigned y) final;
+    void drawTexture(TexID, const Rectangle& rect) final;
     void drawFilledRect(const Rectangle& rect, const RGBColor& color) final;
 
-    unsigned textureWidth(ResourceID) const final;
-    unsigned textureHeight(ResourceID) const final;
+    unsigned textureWidth(TexID) const final;
+    unsigned textureHeight(TexID) const final;
 
     void requestScreenshot(const std::string& path) final;
 
@@ -39,8 +39,8 @@ private:
 
     std::function<void()> on_render_callback;
 
-    std::unordered_map<ResourceID, std::unique_ptr<SDL2pp::Font>> fonts;
-    std::unordered_map<ResourceID, std::unique_ptr<SDL2pp::Texture>> textures;
+    std::unordered_map<FontID, std::unique_ptr<SDL2pp::Font>, ResourceIDHash> fonts;
+    std::unordered_map<TexID, std::unique_ptr<SDL2pp::Texture>, ResourceIDHash> textures;
 
     void saveScreenshotBMP(const std::string& path);
 };

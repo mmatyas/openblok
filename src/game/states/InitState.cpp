@@ -12,9 +12,9 @@
 
 InitState::InitState(AppContext& app)
 {
-    app.gcx->loadFont(ResourceID::FONT_REGULAR, "data/regular.otf", 30);
-    app.gcx->cacheText(ResourceID::TEX_LOADING, tr("LOADING..."),
-                       ResourceID::FONT_REGULAR, 0xFFFFFF_rgb);
+    app.gcx->loadFont(FontID::REGULAR, "data/regular.otf", 30);
+    app.gcx->cacheText(TexID::LOADING, tr("LOADING..."),
+                       FontID::REGULAR, 0xFFFFFF_rgb);
 
     worker = std::async(std::launch::async, [&app](){
         Log::info("init") << "Worker launched\n";
@@ -41,5 +41,5 @@ void InitState::update(const std::vector<InputEvent>&, AppContext& app)
 
 void InitState::draw(GraphicsContext& gcx)
 {
-    gcx.drawTexture(ResourceID::TEX_LOADING, 10, 10);
+    gcx.drawTexture(TexID::LOADING, 10, 10);
 }

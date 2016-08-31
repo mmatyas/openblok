@@ -62,7 +62,7 @@ uint16_t SDLGraphicsContext::screenHeight() const
     return window.GetHeight();
 }
 
-void SDLGraphicsContext::loadFont(ResourceID slot, const std::string& path, unsigned pt)
+void SDLGraphicsContext::loadFont(FontID slot, const std::string& path, unsigned pt)
 {
     Log::info(LOG_TAG) << "Loading " << path << "\n";
 
@@ -72,7 +72,7 @@ void SDLGraphicsContext::loadFont(ResourceID slot, const std::string& path, unsi
         throw std::runtime_error("Font already exists in slot " + std::to_string(slot));
 }
 
-void SDLGraphicsContext::cacheText(ResourceID slot, const std::string& text, ResourceID font_id, const RGBColor& color)
+void SDLGraphicsContext::cacheText(TexID slot, const std::string& text, FontID font_id, const RGBColor& color)
 {
     if (!fonts.count(font_id))
         throw std::runtime_error("No font loaded in slot " + std::to_string(font_id));
@@ -121,19 +121,19 @@ void SDLGraphicsContext::cacheText(ResourceID slot, const std::string& text, Res
     textures[slot] = std::make_unique<SDL2pp::Texture>(renderer, basesurf);
 }
 
-void SDLGraphicsContext::loadTexture(ResourceID slot, const std::string& path)
+void SDLGraphicsContext::loadTexture(TexID slot, const std::string& path)
 {
     Log::info(LOG_TAG) << "Loading " << path << "\n";
     textures[slot] = std::make_unique<SDL2pp::Texture>(renderer, path);
 }
 
-void SDLGraphicsContext::loadTexture(ResourceID slot, const std::string& path, const RGBColor& color)
+void SDLGraphicsContext::loadTexture(TexID slot, const std::string& path, const RGBColor& tint)
 {
     loadTexture(slot, path);
-    textures.at(slot)->SetColorMod(color.r, color.g, color.b);
+    textures.at(slot)->SetColorMod(tint.r, tint.g, tint.b);
 }
 
-void SDLGraphicsContext::drawTexture(ResourceID slot, unsigned x, unsigned y)
+void SDLGraphicsContext::drawTexture(TexID slot, unsigned x, unsigned y)
 {
     if (!textures.count(slot))
         throw std::runtime_error("No texture loaded in slot " + std::to_string(slot));
@@ -141,7 +141,7 @@ void SDLGraphicsContext::drawTexture(ResourceID slot, unsigned x, unsigned y)
     renderer.Copy(*textures.at(slot), NullOpt, Point(x, y));
 }
 
-void SDLGraphicsContext::drawTexture(ResourceID slot, const Rectangle& rect)
+void SDLGraphicsContext::drawTexture(TexID slot, const Rectangle& rect)
 {
     if (!textures.count(slot))
         throw std::runtime_error("No texture loaded in slot " + std::to_string(slot));
@@ -158,12 +158,12 @@ void SDLGraphicsContext::drawFilledRect(const Rectangle& rect, const RGBColor& c
     renderer.SetDrawColor(r, g, b, a);
 }
 
-unsigned SDLGraphicsContext::textureWidth(ResourceID slot) const
+unsigned SDLGraphicsContext::textureWidth(TexID slot) const
 {
     return textures.at(slot)->GetWidth();
 }
 
-unsigned SDLGraphicsContext::textureHeight(ResourceID slot) const
+unsigned SDLGraphicsContext::textureHeight(TexID slot) const
 {
     return textures.at(slot)->GetHeight();
 }

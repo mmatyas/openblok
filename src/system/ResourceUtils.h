@@ -2,21 +2,23 @@
 
 #include <string>
 
-enum class ResourceID: uint8_t;
+enum class FontID: uint8_t;
+enum class TexID: uint8_t;
+
+/// Defines a hasher object for resource ids,
+/// so we can use them as a hashmap key
+struct ResourceIDHash {
+    template <typename T>
+    constexpr std::size_t operator()(T t) const {
+        return static_cast<std::size_t>(t);
+    }
+};
 
 namespace std {
-	/// Defines a hasher object for ResourceID,
-	/// so we can use it as a hashmap key
-    template <>
-    struct hash<ResourceID> {
-        std::size_t operator() (const ResourceID& elem) const {
-            return hash<uint8_t>()(static_cast<uint8_t>(elem));
-        }
-    };
-
-    /// Defines string coversion for ResourceID
-    template<class ResourceID>
-    std::string to_string(ResourceID& elem) {
+    /// Defines string coversion for resource ids
+    template<class FontID>
+    constexpr std::string to_string(FontID& elem) {
         return std::to_string(static_cast<uint8_t>(elem));
     }
+    // NOTE: for some reason, the template above applies to TexID too
 }

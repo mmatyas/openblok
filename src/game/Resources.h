@@ -2,7 +2,10 @@
 
 #include <stdint.h>
 
-enum class ResourceID: uint8_t {
-    FONT_REGULAR,
-    TEX_LOADING
+enum class FontID : uint8_t {
+    REGULAR,
+};
+
+enum class TexID : uint8_t {
+    LOADING,
 };

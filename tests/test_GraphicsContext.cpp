@@ -17,22 +17,25 @@ protected:
 };
 
 
-enum class ResourceID: uint8_t {
-    FONT_REGULAR,
-    TEX_GREENRECT,
+enum class FontID: uint8_t {
+    REGULAR,
+};
+
+enum class TexID: uint8_t {
+    GREENRECT,
 
     // Test 1
-    T1_TEX_ASCII,
-    T1_TEX_LATIN1,
-    T1_TEX_LATIN2,
-    T1_TEX_CYRILLIC,
-    T1_TEX_JAPANESE,
+    T1_ASCII,
+    T1_LATIN1,
+    T1_LATIN2,
+    T1_CYRILLIC,
+    T1_JAPANESE,
 
     // Test 2
-    T2_TEX_LINEBREAK,
+    T2_LINEBREAK,
 
-    // Test 2
-    T3_TEX_EMPTY,
+    // Test 3
+    T3_EMPTY,
 };
 
 
@@ -46,29 +49,29 @@ TEST_FIXTURE(AppContext, SaveScreenshot) {
 }
 
 TEST_FIXTURE(AppContext, TextRendering) {
-    gcx->loadFont(ResourceID::FONT_REGULAR, "data/regular.otf", 20);
+    gcx->loadFont(FontID::REGULAR, "data/regular.otf", 20);
 
     // The regular font must support all english characters
-    gcx->cacheText(ResourceID::T1_TEX_ASCII, "The quick brown fox jumped over the lazy dog",
-                   ResourceID::FONT_REGULAR, 0xFFFFFF_rgb);
+    gcx->cacheText(TexID::T1_ASCII, "The quick brown fox jumped over the lazy dog",
+                   FontID::REGULAR, 0xFFFFFF_rgb);
     // Some games have german or greek letter (eg. über, alpha)
-    gcx->cacheText(ResourceID::T1_TEX_LATIN1, "Zwölf Boxkämpfer über den großen αβγδεφχψω ΔΣΦΨΩ",
-                   ResourceID::FONT_REGULAR, 0xFFFFFF_rgb);
+    gcx->cacheText(TexID::T1_LATIN1, "Zwölf Boxkämpfer über den großen αβγδεφχψω ΔΣΦΨΩ",
+                   FontID::REGULAR, 0xFFFFFF_rgb);
     // TODO: for future localization, add Latin2 support
-    gcx->cacheText(ResourceID::T1_TEX_LATIN2, "Árvíztűrő tükörfúrógép Pchnąć w tę łódź",
-                   ResourceID::FONT_REGULAR, 0xFFFFFF_rgb);
+    gcx->cacheText(TexID::T1_LATIN2, "Árvíztűrő tükörfúrógép Pchnąć w tę łódź",
+                   FontID::REGULAR, 0xFFFFFF_rgb);
     // TODO: for future localization, add non-latin language support
-    gcx->cacheText(ResourceID::T1_TEX_CYRILLIC, "Широкая электрификация южных",
-                   ResourceID::FONT_REGULAR, 0xFFFFFF_rgb);
+    gcx->cacheText(TexID::T1_CYRILLIC, "Широкая электрификация южных",
+                   FontID::REGULAR, 0xFFFFFF_rgb);
     // The regular font must support hiragana, katakana and the most common kanjis
-    gcx->cacheText(ResourceID::T1_TEX_JAPANESE, "色は匂へど散りぬるを イロハニホヘト 鳥啼く声す 夢覚ませ",
-                   ResourceID::FONT_REGULAR, 0xFFFFFF_rgb);
+    gcx->cacheText(TexID::T1_JAPANESE, "色は匂へど散りぬるを イロハニホヘト 鳥啼く声す 夢覚ませ",
+                   FontID::REGULAR, 0xFFFFFF_rgb);
 
-    gcx->drawTexture(ResourceID::T1_TEX_ASCII, 10, 10);
-    gcx->drawTexture(ResourceID::T1_TEX_LATIN1, 10, 50);
-    // gcx->drawTexture(ResourceID::T1_TEX_LATIN2, 10, 90);
-    // gcx->drawTexture(ResourceID::T1_TEX_CYRILLIC, 10, 130);
-    gcx->drawTexture(ResourceID::T1_TEX_JAPANESE, 10, 170);
+    gcx->drawTexture(TexID::T1_ASCII, 10, 10);
+    gcx->drawTexture(TexID::T1_LATIN1, 10, 50);
+    // gcx->drawTexture(TexID::T1_LATIN2, 10, 90);
+    // gcx->drawTexture(TexID::T1_CYRILLIC, 10, 130);
+    gcx->drawTexture(TexID::T1_JAPANESE, 10, 170);
     gcx->requestScreenshot(SCREENSHOT_NAME);
     gcx->render();
 
@@ -76,11 +79,11 @@ TEST_FIXTURE(AppContext, TextRendering) {
 }
 
 TEST_FIXTURE(AppContext, TextLinebreak) {
-    gcx->loadFont(ResourceID::FONT_REGULAR, "data/regular.otf", 30);
-    gcx->cacheText(ResourceID::T2_TEX_LINEBREAK, "There should be\nthree lines\non the screen",
-                   ResourceID::FONT_REGULAR, 0xFFFFFF_rgb);
+    gcx->loadFont(FontID::REGULAR, "data/regular.otf", 30);
+    gcx->cacheText(TexID::T2_LINEBREAK, "There should be\nthree lines\non the screen",
+                   FontID::REGULAR, 0xFFFFFF_rgb);
 
-    gcx->drawTexture(ResourceID::T2_TEX_LINEBREAK, 10, 10);
+    gcx->drawTexture(TexID::T2_LINEBREAK, 10, 10);
     gcx->requestScreenshot(SCREENSHOT_NAME);
     gcx->render();
 
@@ -88,11 +91,11 @@ TEST_FIXTURE(AppContext, TextLinebreak) {
 }
 
 TEST_FIXTURE(AppContext, TextEmpty) {
-    gcx->loadFont(ResourceID::FONT_REGULAR, "data/regular.otf", 30);
+    gcx->loadFont(FontID::REGULAR, "data/regular.otf", 30);
 
     CHECK_THROW(
-        gcx->cacheText(ResourceID::T2_TEX_LINEBREAK, "",
-                       ResourceID::FONT_REGULAR, 0xFFFFFF_rgb),
+        gcx->cacheText(TexID::T2_LINEBREAK, "",
+                       FontID::REGULAR, 0xFFFFFF_rgb),
         std::runtime_error
     );
 }
@@ -108,8 +111,8 @@ TEST_FIXTURE(AppContext, DrawRect) {
 }
 
 TEST_FIXTURE(AppContext, LoadImage) {
-    gcx->loadTexture(ResourceID::TEX_GREENRECT, "tests/data/green_rect.png");
-    gcx->drawTexture(ResourceID::TEX_GREENRECT, 10, 10);
+    gcx->loadTexture(TexID::GREENRECT, "tests/data/green_rect.png");
+    gcx->drawTexture(TexID::GREENRECT, 10, 10);
     gcx->requestScreenshot(SCREENSHOT_NAME);
     gcx->render();
 
