@@ -8,13 +8,13 @@
 Mino MinoFactory::make(Mino::Type type)
 {
     switch(type) {
-    case Mino::Type::I : return Mino(TexID::MINO_I, 'I');
-    case Mino::Type::J : return Mino(TexID::MINO_J, 'J');
-    case Mino::Type::L : return Mino(TexID::MINO_L, 'L');
-    case Mino::Type::O : return Mino(TexID::MINO_O, 'O');
-    case Mino::Type::S : return Mino(TexID::MINO_S, 'S');
-    case Mino::Type::T : return Mino(TexID::MINO_T, 'T');
-    case Mino::Type::Z : return Mino(TexID::MINO_Z, 'Z');
+    case Mino::Type::I : return Mino(type, TexID::MINO_I);
+    case Mino::Type::J : return Mino(type, TexID::MINO_J);
+    case Mino::Type::L : return Mino(type, TexID::MINO_L);
+    case Mino::Type::O : return Mino(type, TexID::MINO_O);
+    case Mino::Type::S : return Mino(type, TexID::MINO_S);
+    case Mino::Type::T : return Mino(type, TexID::MINO_T);
+    case Mino::Type::Z : return Mino(type, TexID::MINO_Z);
     default:
         assert(false);
     }
