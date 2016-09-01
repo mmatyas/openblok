@@ -20,6 +20,21 @@ Mino MinoFactory::make(Piece::Type type)
     }
 }
 
+std::unique_ptr<Mino> MinoFactory::make_uptr(Piece::Type type)
+{
+    switch(type) {
+    case Piece::Type::I : return std::make_unique<Mino>(TexID::MINO_I, 'I');
+    case Piece::Type::J : return std::make_unique<Mino>(TexID::MINO_J, 'J');
+    case Piece::Type::L : return std::make_unique<Mino>(TexID::MINO_L, 'L');
+    case Piece::Type::O : return std::make_unique<Mino>(TexID::MINO_O, 'O');
+    case Piece::Type::S : return std::make_unique<Mino>(TexID::MINO_S, 'S');
+    case Piece::Type::T : return std::make_unique<Mino>(TexID::MINO_T, 'T');
+    case Piece::Type::Z : return std::make_unique<Mino>(TexID::MINO_Z, 'Z');
+    default:
+        assert(false);
+    }
+}
+
 RGBColor MinoFactory::color(Piece::Type type)
 {
     switch(type) {
