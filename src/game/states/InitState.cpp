@@ -1,6 +1,7 @@
 #include "InitState.h"
 
 #include "game/AppContext.h"
+#include "game/MinoFactory.h"
 #include "game/Resources.h"
 #include "game/states/MainMenuState.h"
 #include "system/Localize.h"
@@ -16,9 +17,21 @@ InitState::InitState(AppContext& app)
     app.gcx->cacheText(TexID::LOADING, tr("LOADING..."),
                        FontID::REGULAR, 0xFFFFFF_rgb);
 
+
+    app.gcx->loadTexture(TexID::MINO_I, "data/mino.png", MinoFactory::color(Mino::Type::I));
+    app.gcx->loadTexture(TexID::MINO_J, "data/mino.png", MinoFactory::color(Mino::Type::J));
+    app.gcx->loadTexture(TexID::MINO_L, "data/mino.png", MinoFactory::color(Mino::Type::L));
+    app.gcx->loadTexture(TexID::MINO_O, "data/mino.png", MinoFactory::color(Mino::Type::O));
+    app.gcx->loadTexture(TexID::MINO_S, "data/mino.png", MinoFactory::color(Mino::Type::S));
+    app.gcx->loadTexture(TexID::MINO_T, "data/mino.png", MinoFactory::color(Mino::Type::T));
+    app.gcx->loadTexture(TexID::MINO_Z, "data/mino.png", MinoFactory::color(Mino::Type::Z));
+
+    app.gcx->loadTexture(TexID::MATRIXBG, "data/matrix_pattern.png");
+
+
     worker = std::async(std::launch::async, [&app](){
         Log::info("init") << "Worker launched\n";
-        std::this_thread::sleep_for(std::chrono::seconds(1));
+        //std::this_thread::sleep_for(std::chrono::seconds(1));
         Log::info("init") << "Worker finished\n";
     });
     assert(worker.valid());
