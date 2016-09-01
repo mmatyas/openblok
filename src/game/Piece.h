@@ -3,11 +3,13 @@
 #include "Mino.h"
 
 #include <array>
+#include <bitset>
 #include <memory>
 #include <stdint.h>
 
 
-typedef std::array<std::unique_ptr<Mino>, 4> PieceGrid;
+// 4x4 grid of nullable Minos
+typedef std::array<std::array<std::unique_ptr<Mino>, 4>, 4> PieceGrid;
 
 /// A Piece is a collection of Minos, that can be controlled as one.
 /// It can have specific rotation grids for all four states,
@@ -19,8 +21,8 @@ public:
         I, J, L, O, S, T, Z
     };
 
-    /// Create a Piece of type
-    Piece(Type);
+    /// Create a Piece of type, with the four rotations as bitflags
+    Piece(Type, const std::array<std::bitset<16>, 4>&);
 
     /// Rotate the piece left
     void rotateLeft();
@@ -32,5 +34,5 @@ public:
 private:
     const Type type;
     uint8_t current_rotation;
-    std::array<std::array<std::unique_ptr<Mino>, 4>, 4> grids;
+    std::array<PieceGrid, 4> grids;
 };

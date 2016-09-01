@@ -1,6 +1,9 @@
 #include "Piece.h"
 
+#include "MinoFactory.h"
+
 #include <assert.h>
+
 
 char piecetype_as_ascii(Piece::Type type) {
     switch(type) {
@@ -15,10 +18,18 @@ char piecetype_as_ascii(Piece::Type type) {
     assert(false);
 }
 
-Piece::Piece(Type type)
+Piece::Piece(Type type, const std::array<std::bitset<16>, 4>& gridbits)
     : type(type)
     , current_rotation(0)
 {
+    // fill 4 frames of 4x4 grids
+    for (unsigned frame = 0; frame < 4; frame++) {
+        for (size_t i = 0; i < 16; i++) {
+            if (gridbits[frame].test(15 - i)) {
+                grids[frame][i / 4][i % 4] = MinoFactory::make_uptr(type);
+            }
+        }
+    }
 }
 
 void Piece::rotateLeft()
