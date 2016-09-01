@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ResourceUtils.h"
+#include "RGBColor.h"
 
 #include <memory>
 #include <stdint.h>
@@ -11,11 +12,6 @@
 struct Rectangle {
     int x, y, w, h;
 };
-
-struct RGBColor {
-    uint8_t r, g, b;
-};
-RGBColor operator "" _rgb(unsigned long long color);
 
 
 /// The graphics context interface used by the game.

@@ -3,6 +3,7 @@ set(MOD_SYSTEM_SRC
 	GraphicsContext.cpp
 	InputEvent.cpp
 	Log.cpp
+	RGBColor.cpp
 
 	# SDL2
 	sdl/SDLEventCollector.cpp
@@ -15,6 +16,7 @@ set(MOD_SYSTEM_H
 	InputEvent.h
 	Localize.h
 	Log.h
+	RGBColor.h
 
 	# SDL2
 	sdl/SDLEventCollector.h
