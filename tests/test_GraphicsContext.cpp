@@ -36,6 +36,8 @@ enum class TexID: uint8_t {
 };
 
 
+SUITE(GraphicsContext) {
+
 TEST_FIXTURE(AppContext, Create) {
     // do nothing
 }
@@ -124,3 +126,5 @@ TEST_FIXTURE(AppContext, DrawScaled) {
 
     CHECK(TestUtils::imageCompare("tests/references/draw_scaled.png", SCREENSHOT_NAME));
 }
+
+} // SUITE

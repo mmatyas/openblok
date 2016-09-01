@@ -1,5 +1,6 @@
 set(TEST_SRC
 	test_GraphicsContext.cpp
+	test_Piece.cpp
 
 	TestUtils.cpp
 	main.cpp
