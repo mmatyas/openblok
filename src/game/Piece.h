@@ -31,6 +31,9 @@ public:
     /// Read the rotation grid of the piece
     const PieceGrid& currentGrid() const;
 
+    /// Draw the Piece
+    void draw(GraphicsContext&, int x, int y);
+
 private:
     const Type type;
     uint8_t current_rotation;
