@@ -18,13 +18,13 @@ InitState::InitState(AppContext& app)
                        FontID::REGULAR, 0xFFFFFF_rgb);
 
 
-    app.gcx->loadTexture(TexID::MINO_I, "data/mino.png", MinoFactory::color(Mino::Type::I));
-    app.gcx->loadTexture(TexID::MINO_J, "data/mino.png", MinoFactory::color(Mino::Type::J));
-    app.gcx->loadTexture(TexID::MINO_L, "data/mino.png", MinoFactory::color(Mino::Type::L));
-    app.gcx->loadTexture(TexID::MINO_O, "data/mino.png", MinoFactory::color(Mino::Type::O));
-    app.gcx->loadTexture(TexID::MINO_S, "data/mino.png", MinoFactory::color(Mino::Type::S));
-    app.gcx->loadTexture(TexID::MINO_T, "data/mino.png", MinoFactory::color(Mino::Type::T));
-    app.gcx->loadTexture(TexID::MINO_Z, "data/mino.png", MinoFactory::color(Mino::Type::Z));
+    app.gcx->loadTexture(TexID::MINO_I, "data/mino.png", MinoFactory::color(Piece::Type::I));
+    app.gcx->loadTexture(TexID::MINO_J, "data/mino.png", MinoFactory::color(Piece::Type::J));
+    app.gcx->loadTexture(TexID::MINO_L, "data/mino.png", MinoFactory::color(Piece::Type::L));
+    app.gcx->loadTexture(TexID::MINO_O, "data/mino.png", MinoFactory::color(Piece::Type::O));
+    app.gcx->loadTexture(TexID::MINO_S, "data/mino.png", MinoFactory::color(Piece::Type::S));
+    app.gcx->loadTexture(TexID::MINO_T, "data/mino.png", MinoFactory::color(Piece::Type::T));
+    app.gcx->loadTexture(TexID::MINO_Z, "data/mino.png", MinoFactory::color(Piece::Type::Z));
 
     app.gcx->loadTexture(TexID::MATRIXBG, "data/matrix_pattern.png");
 

@@ -7,19 +7,18 @@ class GraphicsContext;
 enum class TexID : uint8_t;
 
 
+/// A Mino represents one block of a piece.
 class Mino {
 public:
-    enum class Type {
-        I, J, L, O, S, T, Z
-    };
+    /// Create a mino with the texture and Ascii value
+    Mino(TexID texture, char ascii_val);
 
-    Mino(Type, TexID);
-
+    /// Draw the Mino at the provided coordinates
     void draw(GraphicsContext&, int x, int y);
+    /// The Ascii value of the Mino, used mainly for debugging
     char asAscii() const { return ascii_val; }
 
 private:
-    const Type type;
     const TexID texture;
     const char ascii_val;
 

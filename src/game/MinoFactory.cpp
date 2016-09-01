@@ -5,31 +5,31 @@
 #include <assert.h>
 
 
-Mino MinoFactory::make(Mino::Type type)
+Mino MinoFactory::make(Piece::Type type)
 {
     switch(type) {
-    case Mino::Type::I : return Mino(type, TexID::MINO_I);
-    case Mino::Type::J : return Mino(type, TexID::MINO_J);
-    case Mino::Type::L : return Mino(type, TexID::MINO_L);
-    case Mino::Type::O : return Mino(type, TexID::MINO_O);
-    case Mino::Type::S : return Mino(type, TexID::MINO_S);
-    case Mino::Type::T : return Mino(type, TexID::MINO_T);
-    case Mino::Type::Z : return Mino(type, TexID::MINO_Z);
+    case Piece::Type::I : return Mino(TexID::MINO_I, 'I');
+    case Piece::Type::J : return Mino(TexID::MINO_J, 'J');
+    case Piece::Type::L : return Mino(TexID::MINO_L, 'L');
+    case Piece::Type::O : return Mino(TexID::MINO_O, 'O');
+    case Piece::Type::S : return Mino(TexID::MINO_S, 'S');
+    case Piece::Type::T : return Mino(TexID::MINO_T, 'T');
+    case Piece::Type::Z : return Mino(TexID::MINO_Z, 'Z');
     default:
         assert(false);
     }
 }
 
-RGBColor MinoFactory::color(Mino::Type type)
+RGBColor MinoFactory::color(Piece::Type type)
 {
     switch(type) {
-    case Mino::Type::I : return 0x00FFFF_rgb;
-    case Mino::Type::J : return 0x0000FF_rgb;
-    case Mino::Type::L : return 0xFFA500_rgb;
-    case Mino::Type::O : return 0xFFFF00_rgb;
-    case Mino::Type::S : return 0x80FF00_rgb;
-    case Mino::Type::T : return 0x800080_rgb;
-    case Mino::Type::Z : return 0xFF0000_rgb;
+    case Piece::Type::I : return 0x00FFFF_rgb;
+    case Piece::Type::J : return 0x0000FF_rgb;
+    case Piece::Type::L : return 0xFFA500_rgb;
+    case Piece::Type::O : return 0xFFFF00_rgb;
+    case Piece::Type::S : return 0x80FF00_rgb;
+    case Piece::Type::T : return 0x800080_rgb;
+    case Piece::Type::Z : return 0xFF0000_rgb;
     default:
         assert(false);
     }

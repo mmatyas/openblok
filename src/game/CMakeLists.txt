@@ -2,6 +2,7 @@ set(MOD_GAME_SRC
 	AppContext.cpp
 	Mino.cpp
 	MinoFactory.cpp
+	Piece.cpp
 	states/InitState.cpp
 	states/MainMenuState.cpp
 )
@@ -11,6 +12,7 @@ set(MOD_GAME_H
 	GameState.h
 	Mino.h
 	MinoFactory.h
+	Piece.h
 	Resources.h
 	states/InitState.h
 	states/MainMenuState.h
