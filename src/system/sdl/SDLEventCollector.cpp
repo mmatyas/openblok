@@ -21,16 +21,16 @@ std::vector<InputEvent> SDLEventCollector::collect()
         case SDL_KEYDOWN:
             switch (sdl_event.key.keysym.sym) {
             case SDLK_UP:
-                output.emplace_back(InputEvent(InputType::UP));
+                output.emplace_back(InputEvent(InputType::UP, sdl_event.type == SDL_KEYDOWN));
                 break;
             case SDLK_DOWN:
-                output.emplace_back(InputEvent(InputType::DOWN));
+                output.emplace_back(InputEvent(InputType::DOWN, sdl_event.type == SDL_KEYDOWN));
                 break;
             case SDLK_LEFT:
-                output.emplace_back(InputEvent(InputType::LEFT));
+                output.emplace_back(InputEvent(InputType::LEFT, sdl_event.type == SDL_KEYDOWN));
                 break;
             case SDLK_RIGHT:
-                output.emplace_back(InputEvent(InputType::RIGHT));
+                output.emplace_back(InputEvent(InputType::RIGHT, sdl_event.type == SDL_KEYDOWN));
                 break;
             case SDLK_F4:
                 if (SDL_GetModState() & KMOD_ALT)
