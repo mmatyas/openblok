@@ -6,6 +6,7 @@ set(MOD_GAME_SRC
 	PieceFactory.cpp
 	states/InitState.cpp
 	states/MainMenuState.cpp
+	states/SinglePlayState.cpp
 )
 
 set(MOD_GAME_H
@@ -18,6 +19,7 @@ set(MOD_GAME_H
 	Resources.h
 	states/InitState.h
 	states/MainMenuState.h
+	states/SinglePlayState.h
 )
 
 add_library(module_game ${MOD_GAME_SRC} ${MOD_GAME_H})
