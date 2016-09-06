@@ -1,5 +1,6 @@
 set(MOD_GAME_SRC
 	AppContext.cpp
+	GameBoard.cpp
 	Mino.cpp
 	MinoFactory.cpp
 	Piece.cpp
@@ -11,6 +12,7 @@ set(MOD_GAME_SRC
 
 set(MOD_GAME_H
 	AppContext.h
+	GameBoard.h
 	GameState.h
 	Matrix.h
 	Mino.h
