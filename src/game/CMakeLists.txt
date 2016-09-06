@@ -12,6 +12,7 @@ set(MOD_GAME_SRC
 set(MOD_GAME_H
 	AppContext.h
 	GameState.h
+	Matrix.h
 	Mino.h
 	MinoFactory.h
 	Piece.h

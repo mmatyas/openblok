@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Matrix.h"
 #include "Mino.h"
 
 #include <array>
@@ -9,7 +10,7 @@
 
 
 // 4x4 grid of nullable Minos
-typedef std::array<std::array<std::unique_ptr<Mino>, 4>, 4> PieceGrid;
+typedef Matrix<std::unique_ptr<Mino>, 4, 4> PieceGrid;
 
 /// A Piece is a collection of Minos, that can be controlled as one.
 /// It can have specific rotation grids for all four states,
