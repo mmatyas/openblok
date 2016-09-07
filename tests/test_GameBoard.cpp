@@ -5,17 +5,22 @@
 
 SUITE(GameBoard) {
 
-TEST(EmptyOnCreate) {
+struct BoardFixture {
     GameBoard board;
+    std::string emptyline_ascii;
 
-    std::string emptyness;
-    for (unsigned i = 0; i < 22; i++) {
+    BoardFixture() {
         for (unsigned i = 0; i < 10; i++)
-            emptyness += '.';
-        emptyness += '\n';
+            emptyline_ascii += '.';
     }
+};
 
-    CHECK_EQUAL(emptyness, board.asAscii());
+TEST_FIXTURE(BoardFixture, EmptyOnCreate) {
+    std::string expected_ascii;
+    for (unsigned i = 0; i < 22; i++)
+        expected_ascii += emptyline_ascii + '\n';
+
+    CHECK_EQUAL(expected_ascii, board.asAscii());
 }
 
 } // Suite
