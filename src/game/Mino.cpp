@@ -4,7 +4,7 @@
 
 
 // TODO: load from config maybe
-const int8_t Mino::texture_size_px = 24;
+const int8_t Mino::texture_size_px = 32;
 
 Mino::Mino(TexID texture, char ascii_val)
     : texture(texture)

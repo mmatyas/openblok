@@ -26,12 +26,13 @@ SDLGraphicsContext::SDLGraphicsContext()
     : sdl(SDL_INIT_VIDEO)
     , window("OpenBlok",
         SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-        640, 480,
+        800, 600,
         SDL_WINDOW_RESIZABLE)
     , renderer(window, -1, SDL_RENDERER_ACCELERATED)
     , ttf()
     , on_render_callback([](){})
 {
+    renderer.SetLogicalSize(960, 720);
     renderer.SetDrawColor(0, 0, 0, 255);
     renderer.Clear();
     renderer.Present();
@@ -54,12 +55,12 @@ void SDLGraphicsContext::toggleFullscreen()
 
 uint16_t SDLGraphicsContext::screenWidth() const
 {
-    return window.GetWidth();
+    return renderer.GetLogicalWidth();
 }
 
 uint16_t SDLGraphicsContext::screenHeight() const
 {
-    return window.GetHeight();
+    return renderer.GetLogicalHeight();
 }
 
 void SDLGraphicsContext::loadFont(FontID slot, const std::string& path, unsigned pt)
