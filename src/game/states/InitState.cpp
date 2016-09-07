@@ -27,6 +27,7 @@ InitState::InitState(AppContext& app)
     app.gcx->loadTexture(TexID::MINO_Z, "data/mino.png", MinoFactory::color(Piece::Type::Z));
 
     app.gcx->loadTexture(TexID::MATRIXBG, "data/matrix_pattern.png");
+    app.gcx->loadTexture(TexID::GAMEPLAYBG, "data/gamebg_pattern.png");
 
 
     worker = std::async(std::launch::async, [&app](){

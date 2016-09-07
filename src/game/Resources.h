@@ -9,6 +9,7 @@ enum class FontID : uint8_t {
 enum class TexID : uint8_t {
     LOADING,
 
+    GAMEPLAYBG,
     MATRIXBG,
     MINO_I,
     MINO_J,
