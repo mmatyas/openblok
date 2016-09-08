@@ -33,8 +33,12 @@ public:
 
 private:
     uint8_t active_piece_x, active_piece_y;
+    uint8_t ghost_piece_y;
     std::unique_ptr<Piece> active_piece;
 
     // TODO: set dimensions from config
     Matrix<std::unique_ptr<Mino>, 22, 10> matrix;
+
+    void calculateGhostOffset();
+    bool hasCollisionAt(int offset_x, unsigned offset_y);
 };
