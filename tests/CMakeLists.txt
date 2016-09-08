@@ -1,6 +1,6 @@
 set(TEST_SRC
 	test_GameBoard.cpp
-	test_GraphicsContext.cpp
+	# test_GraphicsContext.cpp
 	test_Piece.cpp
 
 	TestUtils.cpp

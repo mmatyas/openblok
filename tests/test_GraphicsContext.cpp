@@ -10,7 +10,9 @@ class AppContext {
 public:
     AppContext()
         : gcx(GraphicsContext::create())
-    {}
+    {
+        // TODO: set window and resolution to 640x480
+    }
 
 protected:
     std::unique_ptr<GraphicsContext> gcx;
