@@ -4,7 +4,6 @@
 #include "Resources.h"
 #include "system/GraphicsContext.h"
 
-#include <algorithm>
 #include <assert.h>
 
 
@@ -29,29 +28,62 @@ void GameBoard::addPiece(Piece::Type type)
 std::string GameBoard::asAscii()
 {
     // the piece must be inside the grid
-    assert(active_piece_x + 3 < matrix[0].size());
-    assert(active_piece_y + 3 < matrix.size());
+    assert(active_piece_x + 3u < matrix[0].size());
+    assert(active_piece_y + 3u < matrix.size());
 
-    std::string output;
+    std::string board_layer;
+    std::string piece_layer;
+
+    // print board
     for (size_t row = 0; row < matrix.size(); row++) {
-        for (size_t cell = 0; cell < matrix[row].size(); cell++) {
-            if (active_piece
-                && active_piece_x <= cell && cell < active_piece_x + 4
-                && active_piece_y <= row && row < active_piece_y + 4) {
-                const auto& mino = active_piece->currentGrid().at(row - active_piece_y)
-                                                              .at(cell - active_piece_x);
-                if (mino) {
-                    output += std::tolower(mino->asAscii());
-                    continue;
+        for (size_t cell = 0; cell < matrix[0].size(); cell++) {
+            if (matrix[row][cell])
+                board_layer += matrix[row][cell]->asAscii();
+            else
+                board_layer += '.';
+        }
+        board_layer += '\n';
+    }
+
+    // print piece layer
+    for (unsigned row = 0; row < matrix.size(); row++) {
+        for (unsigned cell = 0; cell < matrix[0].size(); cell++) {
+            char appended_char = '.';
+
+            if (active_piece) {
+                // if there may be some piece minos (real or ghost) in this column
+                if (active_piece_x <= cell && cell <= active_piece_x + 3u) {
+                    // check ghost first - it should be under the real piece
+                    if (ghost_piece_y <= row && row <= ghost_piece_y + 3u) {
+                        const auto& mino = active_piece->currentGrid().at(row - ghost_piece_y)
+                                                                      .at(cell - active_piece_x);
+                        if (mino)
+                            appended_char = 'g';
+                    }
+                    // check piece - overwrite the ascii char even if it has a value
+                    if (active_piece_y <= row && row <= active_piece_y + 3u) {
+                        const auto& mino = active_piece->currentGrid().at(row - active_piece_y)
+                                                                      .at(cell - active_piece_x);
+                        if (mino)
+                            appended_char = std::tolower(mino->asAscii());
+                    }
                 }
             }
 
-            if (matrix[row][cell])
-                output += matrix[row][cell]->asAscii();
-            else
-                output += '.';
+            piece_layer += appended_char;
         }
-        output += '\n';
+        piece_layer += '\n';
+    }
+
+    assert(board_layer.length() == piece_layer.length());
+    std::string output;
+    for (size_t i = 0; i < board_layer.length(); i++) {
+        if (piece_layer.at(i) != '.') {
+            output += piece_layer.at(i);
+            continue;
+        }
+
+        output += board_layer.at(i);
     }
     return output;
 }
@@ -62,8 +94,8 @@ void GameBoard::draw(GraphicsContext& gcx, unsigned int x, unsigned int y)
     for (size_t row = 0; row < 22; row++) {
         for (size_t col = 0; col < 10; col++) {
             gcx.drawTexture(TexID::MATRIXBG, {
-                x + col * Mino::texture_size_px,
-                y + row * Mino::texture_size_px,
+                static_cast<int>(x + col * Mino::texture_size_px),
+                static_cast<int>(y + row * Mino::texture_size_px),
                 Mino::texture_size_px,
                 Mino::texture_size_px
             });
@@ -86,24 +118,24 @@ bool GameBoard::hasCollisionAt(int offset_x, unsigned offset_y)
     // At least one line of the piece grid must be on the board.
     // Horizontally, a piece can go between -3 and width+3,
     // vertically from 0 to heigh+3 (it cannot be over the board)
-    assert(offset_x + 3 >= 0 && offset_x < matrix[0].size());
+    assert(offset_x + 3 >= 0 && offset_x < static_cast<int>(matrix[0].size()));
     assert(offset_y < matrix.size());
-
-    if (!active_piece)
-        return false;
-
-    const size_t last_row = std::min<size_t>(offset_y + 3, matrix.size() - 1);
-    const size_t first_col = std::max(0, offset_x);
-    const size_t last_col = std::min<size_t>(offset_x, matrix[0].size() - 1);
+    assert(active_piece);
 
     size_t piece_gridx = 0, piece_gridy = 0;
-    for (size_t row = offset_y; row < last_row; row++) {
-        for (size_t cell = first_col; cell < last_col; cell++) {
-            bool board_has_mino_here = matrix.at(row).at(cell).operator bool();
+    for (unsigned row = offset_y; row <= offset_y + 3; row++) {
+        for (int cell = offset_x; cell <= offset_x + 3; cell++) {
+            bool board_has_mino_here = true;
+            if (row < matrix.size() && cell >= 0 && cell < static_cast<int>(matrix[0].size()))
+                board_has_mino_here = matrix.at(row).at(cell).operator bool();
+
             bool piece_has_mino_here = active_piece->currentGrid()
                                        .at(piece_gridy).at(piece_gridx).operator bool();
+
             if (piece_has_mino_here && board_has_mino_here)
                 return true;
+
+            piece_gridx++;
         }
         piece_gridy++;
         piece_gridx = 0;
@@ -117,6 +149,6 @@ void GameBoard::calculateGhostOffset()
     assert(active_piece);
 
     ghost_piece_y = active_piece_y;
-    while (!hasCollisionAt(active_piece_x, ghost_piece_y) && ghost_piece_y < matrix.size())
+    while (ghost_piece_y + 1u < matrix.size() && !hasCollisionAt(active_piece_x, ghost_piece_y + 1))
         ghost_piece_y++;
 }

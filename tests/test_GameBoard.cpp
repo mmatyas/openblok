@@ -32,8 +32,9 @@ TEST_FIXTURE(BoardFixture, AddPiece) {
 
     std::string expected_ascii = emptyline_ascii;
     expected_ascii += "...iiii...\n";
-    for (unsigned i = 0; i < 20; i++)
+    for (unsigned i = 0; i < 19; i++)
         expected_ascii += emptyline_ascii;
+    expected_ascii += "...gggg...\n";
 
     CHECK_EQUAL(expected_ascii, board.asAscii());
 }
