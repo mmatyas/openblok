@@ -1,6 +1,7 @@
 set(MOD_GAME_SRC
 	AppContext.cpp
 	GameBoard.cpp
+	GameState.cpp
 	Mino.cpp
 	MinoFactory.cpp
 	Piece.cpp

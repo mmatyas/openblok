@@ -1,4 +1,5 @@
 #include "game/AppContext.h"
+#include "game/GameState.h"
 #include "game/states/InitState.h"
 #include "system/Log.h"
 
@@ -19,9 +20,8 @@ int main(int, const char**)
     app.states.emplace(std::make_unique<InitState>(app));
 
 
-    constexpr auto frame_duration = std::chrono::duration<int, std::ratio<1, 60>>(1);
     auto frame_starttime = std::chrono::steady_clock::now();
-    auto frame_endtime = frame_starttime + frame_duration;
+    auto frame_endtime = frame_starttime + GameState::frame_duration;
 
     while (!app.events->quit_requested()) {
         auto events = app.events->collect();
@@ -37,7 +37,7 @@ int main(int, const char**)
         // frame rate limiting
         std::this_thread::sleep_until(frame_endtime);
         frame_starttime = std::chrono::steady_clock::now();
-        frame_endtime = frame_starttime + frame_duration;
+        frame_endtime = frame_starttime + GameState::frame_duration;
     }
 
     return 0;
