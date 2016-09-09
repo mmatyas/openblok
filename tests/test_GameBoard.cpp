@@ -27,14 +27,16 @@ TEST_FIXTURE(BoardFixture, EmptyOnCreate) {
 
 TEST_FIXTURE(BoardFixture, AddPiece) {
     CHECK(board.activePiece() == nullptr);
-    board.addPiece(Piece::Type::I);
+    board.addPiece(Piece::Type::S);
     CHECK(board.activePiece() != nullptr);
 
-    std::string expected_ascii = emptyline_ascii;
-    expected_ascii += "...iiii...\n";
-    for (unsigned i = 0; i < 19; i++)
+    std::string expected_ascii;
+    expected_ascii += "....ss....\n";
+    expected_ascii += "...ss.....\n";
+    for (unsigned i = 0; i < 18; i++)
         expected_ascii += emptyline_ascii;
-    expected_ascii += "...gggg...\n";
+    expected_ascii += "....gg....\n";
+    expected_ascii += "...gg.....\n";
 
     CHECK_EQUAL(expected_ascii, board.asAscii());
 }
