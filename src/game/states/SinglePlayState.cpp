@@ -5,6 +5,7 @@
 
 SinglePlayState::SinglePlayState(AppContext&)
 {
+    board.addPiece(Piece::Type::S);
 }
 
 void SinglePlayState::update(const std::vector<InputEvent>&, AppContext&)

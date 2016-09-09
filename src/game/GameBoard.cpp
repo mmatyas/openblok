@@ -161,3 +161,35 @@ void GameBoard::calculateGhostOffset()
     while (ghost_piece_y + 1u < matrix.size() && !hasCollisionAt(active_piece_x, ghost_piece_y + 1))
         ghost_piece_y++;
 }
+
+void GameBoard::applyGravity()
+{
+    moveDownNow();
+}
+
+void GameBoard::moveLeftNow()
+{
+    if (!active_piece || active_piece_x - 1 <= -3)
+        return;
+
+    if (!hasCollisionAt(active_piece_x - 1, active_piece_y))
+        active_piece_x--;
+}
+
+void GameBoard::moveRightNow()
+{
+    if (!active_piece || active_piece_x + 1 >= static_cast<int>(matrix[0].size()))
+        return;
+
+    if (!hasCollisionAt(active_piece_x + 1, active_piece_y))
+        active_piece_x++;
+}
+
+void GameBoard::moveDownNow()
+{
+    if (!active_piece || active_piece_y + 1u >= matrix.size())
+        return;
+
+    if (!hasCollisionAt(active_piece_x, active_piece_y + 1))
+        active_piece_y++;
+}

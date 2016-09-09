@@ -10,6 +10,9 @@
 
 
 class GraphicsContext;
+namespace SuiteGameBoard {
+    class BoardFixtureMoveHelper;
+}
 
 class GameBoard {
 public:
@@ -45,4 +48,10 @@ private:
 
     void calculateGhostOffset();
     bool hasCollisionAt(int offset_x, unsigned offset_y);
+
+    void moveLeftNow();
+    void moveRightNow();
+    void moveDownNow();
+
+friend class SuiteGameBoard::BoardFixtureMoveHelper;
 };

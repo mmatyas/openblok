@@ -58,4 +58,44 @@ TEST_FIXTURE(BoardFixture, Gravity) {
     CHECK_EQUAL(expected_ascii, board.asAscii());
 }
 
+
+TEST_FIXTURE(BoardFixture, Move) {
+    CHECK(board.activePiece() == nullptr);
+    board.addPiece(Piece::Type::I);
+    CHECK(board.activePiece() != nullptr);
+
+    board.moveLeftNow();
+
+    std::string expected_ascii = emptyline_ascii;
+    expected_ascii += "..iiii....\n";
+    for (unsigned i = 0; i < 19; i++)
+        expected_ascii += emptyline_ascii;
+    expected_ascii += "..gggg....\n";
+
+    CHECK_EQUAL(expected_ascii, board.asAscii());
+
+
+    board.moveRightNow();
+
+    expected_ascii = emptyline_ascii;
+    expected_ascii += "...iiii...\n";
+    for (unsigned i = 0; i < 19; i++)
+        expected_ascii += emptyline_ascii;
+    expected_ascii += "...gggg...\n";
+
+    CHECK_EQUAL(expected_ascii, board.asAscii());
+
+
+    board.moveDownNow();
+
+    expected_ascii = emptyline_ascii;
+    expected_ascii += emptyline_ascii;
+    expected_ascii += "...iiii...\n";
+    for (unsigned i = 0; i < 18; i++)
+        expected_ascii += emptyline_ascii;
+    expected_ascii += "...gggg...\n";
+
+    CHECK_EQUAL(expected_ascii, board.asAscii());
+}
+
 } // Suite
