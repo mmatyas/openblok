@@ -104,7 +104,7 @@ void GameBoard::draw(GraphicsContext& gcx, unsigned int x, unsigned int y)
         }
     }
 
-    // Draw Minos
+    // Draw board Minos
     for (size_t row = 0; row < 22; row++) {
         for (size_t col = 0; col < 10; col++) {
             if (matrix[row][col])
@@ -113,18 +113,13 @@ void GameBoard::draw(GraphicsContext& gcx, unsigned int x, unsigned int y)
                                        y + row * Mino::texture_size_px);
         }
     }
-}
 
-void GameBoard::applyGravity()
-{
-    if (!active_piece)
-        return;
-
-    if (active_piece_y + 1u >= matrix.size())
-        return;
-
-    if (!hasCollisionAt(active_piece_x, active_piece_y + 1))
-        active_piece_y++;
+    // Draw current piece
+    if (active_piece) {
+        active_piece->draw(gcx,
+                           x + active_piece_x * Mino::texture_size_px,
+                           y + active_piece_y * Mino::texture_size_px);
+    }
 }
 
 bool GameBoard::hasCollisionAt(int offset_x, unsigned offset_y)
