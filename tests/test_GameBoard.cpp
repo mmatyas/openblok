@@ -41,4 +41,21 @@ TEST_FIXTURE(BoardFixture, AddPiece) {
     CHECK_EQUAL(expected_ascii, board.asAscii());
 }
 
+TEST_FIXTURE(BoardFixture, Gravity) {
+    CHECK(board.activePiece() == nullptr);
+    board.addPiece(Piece::Type::S);
+    CHECK(board.activePiece() != nullptr);
+
+    for (unsigned i = 0; i < 20; i++)
+        board.applyGravity();
+
+    std::string expected_ascii;
+    for (unsigned i = 0; i < 20; i++)
+        expected_ascii += emptyline_ascii;
+    expected_ascii += "....ss....\n";
+    expected_ascii += "...ss.....\n";
+
+    CHECK_EQUAL(expected_ascii, board.asAscii());
+}
+
 } // Suite

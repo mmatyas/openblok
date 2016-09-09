@@ -27,9 +27,10 @@ void GameBoard::addPiece(Piece::Type type)
 
 std::string GameBoard::asAscii()
 {
-    // the piece must be inside the grid
-    assert(active_piece_x + 3u < matrix[0].size());
-    assert(active_piece_y + 3u < matrix.size());
+    // the piece must be inside the grid, at least partially
+    assert(0 <= active_piece_x + 3);
+    assert(active_piece_x < static_cast<int>(matrix[0].size()));
+    assert(active_piece_y < matrix.size());
 
     std::string board_layer;
     std::string piece_layer;
@@ -52,7 +53,8 @@ std::string GameBoard::asAscii()
 
             if (active_piece) {
                 // if there may be some piece minos (real or ghost) in this column
-                if (active_piece_x <= cell && cell <= active_piece_x + 3u) {
+                if (active_piece_x <= static_cast<int>(cell)
+                    && static_cast<int>(cell) <= active_piece_x + 3) {
                     // check ghost first - it should be under the real piece
                     if (ghost_piece_y <= row && row <= ghost_piece_y + 3u) {
                         const auto& mino = active_piece->currentGrid().at(row - ghost_piece_y)
@@ -111,6 +113,18 @@ void GameBoard::draw(GraphicsContext& gcx, unsigned int x, unsigned int y)
                                        y + row * Mino::texture_size_px);
         }
     }
+}
+
+void GameBoard::applyGravity()
+{
+    if (!active_piece)
+        return;
+
+    if (active_piece_y + 1u >= matrix.size())
+        return;
+
+    if (!hasCollisionAt(active_piece_x, active_piece_y + 1))
+        active_piece_y++;
 }
 
 bool GameBoard::hasCollisionAt(int offset_x, unsigned offset_y)

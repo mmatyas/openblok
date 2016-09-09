@@ -16,6 +16,9 @@ public:
     /// Create a new game board
     GameBoard();
 
+    /// Moves the active piece one row down, if it does not collide.
+    void applyGravity();
+
     /// Add a new, player-controllable piece to the game board.
     void addPiece(Piece::Type);
     /// Returns the current, active piece, controllable by the player.
@@ -32,7 +35,8 @@ public:
     void draw(GraphicsContext&, unsigned x, unsigned y);
 
 private:
-    uint8_t active_piece_x, active_piece_y;
+    int8_t active_piece_x;
+    uint8_t active_piece_y;
     uint8_t ghost_piece_y;
     std::unique_ptr<Piece> active_piece;
 
