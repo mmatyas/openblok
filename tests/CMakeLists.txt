@@ -3,12 +3,12 @@ set(TEST_SRC
 	# test_GraphicsContext.cpp
 	test_Piece.cpp
 
-	TestUtils.cpp
+	# TestUtils.cpp
 	main.cpp
 )
 
 set(TEST_H
-	TestUtils.h
+	# TestUtils.h
 )
 
 add_executable(openblok_test ${TEST_SRC} ${TEST_H})
