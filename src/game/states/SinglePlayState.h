@@ -1,7 +1,7 @@
 #pragma once
 
-#include "game/GameBoard.h"
 #include "game/GameState.h"
+#include "game/Well.h"
 
 
 class SinglePlayState: public GameState {
@@ -12,5 +12,5 @@ public:
 
 private:
     bool paused;
-    GameBoard board;
+    Well board;
 };

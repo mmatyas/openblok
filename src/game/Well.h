@@ -15,22 +15,22 @@ class AppContext;
 class InputEvent;
 
 class GraphicsContext;
-namespace SuiteGameBoard {
-    class BoardFixtureMoveHelper;
+namespace SuiteWell {
+    class WellFixtureMoveHelper;
 }
 
-class GameBoard {
+class Well {
 public:
-    /// Create a new game board
-    GameBoard();
+    /// Create a new well
+    Well();
 
-    /// Update the game board
+    /// Update the well
     void update(const std::vector<InputEvent>&, AppContext&);
 
     /// Moves the active piece one row down, if it does not collide.
     void applyGravity();
 
-    /// Add a new, player-controllable piece to the game board.
+    /// Add a new, player-controllable piece to the well.
     void addPiece(Piece::Type);
     /// Returns the current, active piece, controllable by the player.
     /// Can return nullptr, eg. during animations.
@@ -38,11 +38,11 @@ public:
     /// For actual input handling, call GameBoard's functions.
     const std::unique_ptr<Piece>& activePiece() const { return active_piece; }
 
-    /// Get the game board representation as a string.
+    /// Get the well's string representation.
     /// Can be useful for testing and debugging.
     std::string asAscii();
 
-    /// Draw the game board
+    /// Draw the well
     void draw(GraphicsContext&, unsigned x, unsigned y);
 
 private:
@@ -64,5 +64,5 @@ private:
     void moveRightNow();
     void moveDownNow();
 
-friend class SuiteGameBoard::BoardFixtureMoveHelper;
+friend class SuiteWell::WellFixtureMoveHelper;
 };

@@ -1,11 +1,11 @@
 set(MOD_GAME_SRC
 	AppContext.cpp
-	GameBoard.cpp
 	GameState.cpp
 	Mino.cpp
 	MinoFactory.cpp
 	Piece.cpp
 	PieceFactory.cpp
+	Well.cpp
 	states/InitState.cpp
 	states/MainMenuState.cpp
 	states/SinglePlayState.cpp
@@ -13,7 +13,6 @@ set(MOD_GAME_SRC
 
 set(MOD_GAME_H
 	AppContext.h
-	GameBoard.h
 	GameState.h
 	Matrix.h
 	Mino.h
@@ -21,6 +20,7 @@ set(MOD_GAME_H
 	Piece.h
 	PieceFactory.h
 	Resources.h
+	Well.h
 	states/InitState.h
 	states/MainMenuState.h
 	states/SinglePlayState.h

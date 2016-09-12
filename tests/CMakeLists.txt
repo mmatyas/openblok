@@ -1,7 +1,7 @@
 set(TEST_SRC
-	test_GameBoard.cpp
 	# test_GraphicsContext.cpp
 	test_Piece.cpp
+	test_Well.cpp
 
 	# TestUtils.cpp
 	main.cpp

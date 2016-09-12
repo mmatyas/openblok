@@ -1,4 +1,4 @@
-#include "GameBoard.h"
+#include "Well.h"
 
 #include "GameState.h"
 #include "PieceFactory.h"
@@ -10,7 +10,7 @@
 #include <assert.h>
 
 
-GameBoard::GameBoard()
+Well::Well()
     : active_piece_x(0)
     , active_piece_y(0)
     , ghost_piece_y(0)
@@ -19,7 +19,7 @@ GameBoard::GameBoard()
 {
 }
 
-void GameBoard::update(const std::vector<InputEvent>& events, AppContext&)
+void Well::update(const std::vector<InputEvent>& events, AppContext&)
 {
     bool movedDown = false;
     for (const auto& event : events) {
@@ -52,7 +52,7 @@ void GameBoard::update(const std::vector<InputEvent>& events, AppContext&)
     applyGravity();
 }
 
-void GameBoard::addPiece(Piece::Type type)
+void Well::addPiece(Piece::Type type)
 {
     // the player can only control one piece at a time
     assert(!active_piece);
@@ -63,7 +63,7 @@ void GameBoard::addPiece(Piece::Type type)
     calculateGhostOffset();
 }
 
-std::string GameBoard::asAscii()
+std::string Well::asAscii()
 {
     // the piece must be inside the grid, at least partially
     assert(0 <= active_piece_x + 3);
@@ -128,7 +128,7 @@ std::string GameBoard::asAscii()
     return output;
 }
 
-void GameBoard::draw(GraphicsContext& gcx, unsigned int x, unsigned int y)
+void Well::draw(GraphicsContext& gcx, unsigned int x, unsigned int y)
 {
     // Draw background
     for (size_t row = 0; row < 22; row++) {
@@ -174,7 +174,7 @@ void GameBoard::draw(GraphicsContext& gcx, unsigned int x, unsigned int y)
     }
 }
 
-bool GameBoard::hasCollisionAt(int offset_x, unsigned offset_y)
+bool Well::hasCollisionAt(int offset_x, unsigned offset_y)
 {
     // At least one line of the piece grid must be on the board.
     // Horizontally, a piece can go between -3 and width+3,
@@ -205,7 +205,7 @@ bool GameBoard::hasCollisionAt(int offset_x, unsigned offset_y)
     return false;
 }
 
-void GameBoard::calculateGhostOffset()
+void Well::calculateGhostOffset()
 {
     assert(active_piece);
 
@@ -214,12 +214,12 @@ void GameBoard::calculateGhostOffset()
         ghost_piece_y++;
 }
 
-void GameBoard::applyGravity()
+void Well::applyGravity()
 {
     moveDownNow();
 }
 
-void GameBoard::moveLeftNow()
+void Well::moveLeftNow()
 {
     if (!active_piece || active_piece_x - 1 <= -3)
         return;
@@ -228,7 +228,7 @@ void GameBoard::moveLeftNow()
         active_piece_x--;
 }
 
-void GameBoard::moveRightNow()
+void Well::moveRightNow()
 {
     if (!active_piece || active_piece_x + 1 >= static_cast<int>(matrix[0].size()))
         return;
@@ -237,7 +237,7 @@ void GameBoard::moveRightNow()
         active_piece_x++;
 }
 
-void GameBoard::moveDownNow()
+void Well::moveDownNow()
 {
     if (!active_piece || active_piece_y + 1u >= matrix.size())
         return;

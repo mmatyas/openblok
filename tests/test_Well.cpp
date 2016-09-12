@@ -1,34 +1,34 @@
 #include "UnitTest++/UnitTest++.h"
 
-#include "game/GameBoard.h"
+#include "game/Well.h"
 #include "game/PieceFactory.h"
 
 
-SUITE(GameBoard) {
+SUITE(Well) {
 
-struct BoardFixture {
-    GameBoard board;
+struct WellFixture {
+    Well well;
     std::string emptyline_ascii;
 
-    BoardFixture() {
+    WellFixture() {
         for (unsigned i = 0; i < 10; i++)
             emptyline_ascii += '.';
         emptyline_ascii += '\n';
     }
 };
 
-TEST_FIXTURE(BoardFixture, EmptyOnCreate) {
+TEST_FIXTURE(WellFixture, EmptyOnCreate) {
     std::string expected_ascii;
     for (unsigned i = 0; i < 22; i++)
         expected_ascii += emptyline_ascii;
 
-    CHECK_EQUAL(expected_ascii, board.asAscii());
+    CHECK_EQUAL(expected_ascii, well.asAscii());
 }
 
-TEST_FIXTURE(BoardFixture, AddPiece) {
-    CHECK(board.activePiece() == nullptr);
-    board.addPiece(Piece::Type::S);
-    CHECK(board.activePiece() != nullptr);
+TEST_FIXTURE(WellFixture, AddPiece) {
+    CHECK(well.activePiece() == nullptr);
+    well.addPiece(Piece::Type::S);
+    CHECK(well.activePiece() != nullptr);
 
     std::string expected_ascii;
     expected_ascii += "....ss....\n";
@@ -38,16 +38,16 @@ TEST_FIXTURE(BoardFixture, AddPiece) {
     expected_ascii += "....gg....\n";
     expected_ascii += "...gg.....\n";
 
-    CHECK_EQUAL(expected_ascii, board.asAscii());
+    CHECK_EQUAL(expected_ascii, well.asAscii());
 }
 
-TEST_FIXTURE(BoardFixture, Gravity) {
-    CHECK(board.activePiece() == nullptr);
-    board.addPiece(Piece::Type::S);
-    CHECK(board.activePiece() != nullptr);
+TEST_FIXTURE(WellFixture, Gravity) {
+    CHECK(well.activePiece() == nullptr);
+    well.addPiece(Piece::Type::S);
+    CHECK(well.activePiece() != nullptr);
 
     for (unsigned i = 0; i < 20; i++)
-        board.applyGravity();
+        well.applyGravity();
 
     std::string expected_ascii;
     for (unsigned i = 0; i < 20; i++)
@@ -55,16 +55,16 @@ TEST_FIXTURE(BoardFixture, Gravity) {
     expected_ascii += "....ss....\n";
     expected_ascii += "...ss.....\n";
 
-    CHECK_EQUAL(expected_ascii, board.asAscii());
+    CHECK_EQUAL(expected_ascii, well.asAscii());
 }
 
 
-TEST_FIXTURE(BoardFixture, Move) {
-    CHECK(board.activePiece() == nullptr);
-    board.addPiece(Piece::Type::I);
-    CHECK(board.activePiece() != nullptr);
+TEST_FIXTURE(WellFixture, Move) {
+    CHECK(well.activePiece() == nullptr);
+    well.addPiece(Piece::Type::I);
+    CHECK(well.activePiece() != nullptr);
 
-    board.moveLeftNow();
+    well.moveLeftNow();
 
     std::string expected_ascii = emptyline_ascii;
     expected_ascii += "..iiii....\n";
@@ -72,10 +72,10 @@ TEST_FIXTURE(BoardFixture, Move) {
         expected_ascii += emptyline_ascii;
     expected_ascii += "..gggg....\n";
 
-    CHECK_EQUAL(expected_ascii, board.asAscii());
+    CHECK_EQUAL(expected_ascii, well.asAscii());
 
 
-    board.moveRightNow();
+    well.moveRightNow();
 
     expected_ascii = emptyline_ascii;
     expected_ascii += "...iiii...\n";
@@ -83,10 +83,10 @@ TEST_FIXTURE(BoardFixture, Move) {
         expected_ascii += emptyline_ascii;
     expected_ascii += "...gggg...\n";
 
-    CHECK_EQUAL(expected_ascii, board.asAscii());
+    CHECK_EQUAL(expected_ascii, well.asAscii());
 
 
-    board.moveDownNow();
+    well.moveDownNow();
 
     expected_ascii = emptyline_ascii;
     expected_ascii += emptyline_ascii;
@@ -95,7 +95,7 @@ TEST_FIXTURE(BoardFixture, Move) {
         expected_ascii += emptyline_ascii;
     expected_ascii += "...gggg...\n";
 
-    CHECK_EQUAL(expected_ascii, board.asAscii());
+    CHECK_EQUAL(expected_ascii, well.asAscii());
 }
 
 } // Suite
