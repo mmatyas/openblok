@@ -18,4 +18,5 @@ enum class TexID : uint8_t {
     MINO_S,
     MINO_T,
     MINO_Z,
+    MINO_GHOST,
 };

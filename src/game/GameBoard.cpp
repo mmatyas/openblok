@@ -119,6 +119,20 @@ void GameBoard::draw(GraphicsContext& gcx, unsigned int x, unsigned int y)
         active_piece->draw(gcx,
                            x + active_piece_x * Mino::texture_size_px,
                            y + active_piece_y * Mino::texture_size_px);
+
+        // draw ghost
+        for (unsigned row = 0; row < 4; row++) {
+            for (unsigned col = 0; col < 4; col++) {
+                if (active_piece->currentGrid().at(row).at(col)) {
+                    gcx.drawTexture(TexID::MINO_GHOST, {
+                        static_cast<int>(x + (active_piece_x + col) * Mino::texture_size_px),
+                        static_cast<int>(y + (ghost_piece_y + row) * Mino::texture_size_px),
+                        Mino::texture_size_px,
+                        Mino::texture_size_px
+                    });
+                }
+            }
+        }
     }
 }
 

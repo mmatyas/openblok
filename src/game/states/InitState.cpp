@@ -25,6 +25,7 @@ InitState::InitState(AppContext& app)
     app.gcx->loadTexture(TexID::MINO_S, "data/mino.png", MinoFactory::color(Piece::Type::S));
     app.gcx->loadTexture(TexID::MINO_T, "data/mino.png", MinoFactory::color(Piece::Type::T));
     app.gcx->loadTexture(TexID::MINO_Z, "data/mino.png", MinoFactory::color(Piece::Type::Z));
+    app.gcx->loadTexture(TexID::MINO_GHOST, "data/ghost.png");
 
     app.gcx->loadTexture(TexID::MATRIXBG, "data/matrix_pattern.png");
     app.gcx->loadTexture(TexID::GAMEPLAYBG, "data/gamebg_pattern.png");
