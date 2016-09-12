@@ -25,6 +25,19 @@ TEST_FIXTURE(WellFixture, EmptyOnCreate) {
     CHECK_EQUAL(expected_ascii, well.asAscii());
 }
 
+TEST_FIXTURE(WellFixture, FromAscii) {
+    std::string expected_ascii;
+    for (unsigned i = 0; i < 22; i++) {
+        if (i % 3 == 0)
+            expected_ascii += emptyline_ascii;
+        else
+            expected_ascii += "SSSSZZZZTT\n";
+    }
+
+    well.fromAscii(expected_ascii);
+    CHECK_EQUAL(expected_ascii, well.asAscii());
+}
+
 TEST_FIXTURE(WellFixture, AddPiece) {
     CHECK(well.activePiece() == nullptr);
     well.addPiece(Piece::Type::S);

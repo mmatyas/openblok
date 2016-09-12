@@ -22,6 +22,10 @@ public:
         I, J, L, O, S, T, Z
     };
 
+    static char typeAsAscii(Type);
+    static Type typeFromAscii(char);
+
+
     /// Create a Piece of type, with the four rotations as bitflags
     Piece(Type, const std::array<std::bitset<16>, 4>&);
 

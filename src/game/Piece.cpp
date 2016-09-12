@@ -5,7 +5,7 @@
 #include <assert.h>
 
 
-char piecetype_as_ascii(Piece::Type type) {
+char Piece::typeAsAscii(Piece::Type type) {
     switch(type) {
     case Piece::Type::I : return 'I';
     case Piece::Type::J : return 'J';
@@ -14,6 +14,19 @@ char piecetype_as_ascii(Piece::Type type) {
     case Piece::Type::S : return 'S';
     case Piece::Type::T : return 'T';
     case Piece::Type::Z : return 'Z';
+    }
+    assert(false);
+}
+
+Piece::Type Piece::typeFromAscii(char type) {
+    switch(type) {
+    case 'I' : return Piece::Type::I;
+    case 'J' : return Piece::Type::J;
+    case 'L' : return Piece::Type::L;
+    case 'O' : return Piece::Type::O;
+    case 'S' : return Piece::Type::S;
+    case 'T' : return Piece::Type::T;
+    case 'Z' : return Piece::Type::Z;
     }
     assert(false);
 }

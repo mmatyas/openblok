@@ -1,6 +1,7 @@
 #include "Well.h"
 
 #include "GameState.h"
+#include "MinoFactory.h"
 #include "PieceFactory.h"
 #include "Resources.h"
 #include "system/GraphicsContext.h"
@@ -61,6 +62,25 @@ void Well::addPiece(Piece::Type type)
     active_piece_x = 3;
     active_piece_y = 0;
     calculateGhostOffset();
+}
+
+void Well::fromAscii(const std::string& text)
+{
+    assert(text.length() == matrix.size() * (matrix[0].size() + 1));
+
+    unsigned str_i = 0;
+    for (unsigned row = 0; row < matrix.size(); row++) {
+        for (unsigned cell = 0; cell < matrix[0].size(); cell++) {
+            if (text.at(str_i) == '.')
+                matrix[row][cell].release();
+            else
+                matrix[row][cell] = MinoFactory::make_uptr(Piece::typeFromAscii(text.at(str_i)));
+
+            str_i++;
+        }
+        // newline skip
+        str_i++;
+    }
 }
 
 std::string Well::asAscii()

@@ -41,6 +41,8 @@ public:
     /// Get the well's string representation.
     /// Can be useful for testing and debugging.
     std::string asAscii();
+    /// Set the contents of the well from an Ascii string.
+    void fromAscii(const std::string&);
 
     /// Draw the well
     void draw(GraphicsContext&, unsigned x, unsigned y);
