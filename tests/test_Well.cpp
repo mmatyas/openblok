@@ -59,6 +59,7 @@ TEST_FIXTURE(WellFixture, Gravity) {
     well.addPiece(Piece::Type::S);
     CHECK(well.activePiece() != nullptr);
 
+    // the piece will reach the bottom
     for (unsigned i = 0; i < 20; i++)
         well.applyGravity();
 
@@ -69,6 +70,47 @@ TEST_FIXTURE(WellFixture, Gravity) {
     expected_ascii += "...ss.....\n";
 
     CHECK_EQUAL(expected_ascii, well.asAscii());
+
+    // it will lock there
+    well.applyGravity();
+    expected_ascii = "";
+    for (unsigned i = 0; i < 20; i++)
+        expected_ascii += emptyline_ascii;
+    expected_ascii += "....SS....\n";
+    expected_ascii += "...SS.....\n";
+
+    CHECK_EQUAL(expected_ascii, well.asAscii());
+    CHECK(well.activePiece() == nullptr);
+
+    // a new piece will appear at the top
+    well.addPiece(Piece::Type::Z);
+    CHECK(well.activePiece() != nullptr);
+
+    expected_ascii =  "...zz.....\n";
+    expected_ascii += "....zz....\n";
+    for (unsigned i = 0; i < 16; i++)
+        expected_ascii += emptyline_ascii;
+    expected_ascii += "...gg.....\n";
+    expected_ascii += "....gg....\n";
+    expected_ascii += "....SS....\n";
+    expected_ascii += "...SS.....\n";
+
+    CHECK_EQUAL(expected_ascii, well.asAscii());
+
+    // and land on top of the previous
+    for (unsigned i = 0; i < 19; i++)
+        well.applyGravity();
+
+    expected_ascii = "";
+    for (unsigned i = 0; i < 18; i++)
+        expected_ascii += emptyline_ascii;
+    expected_ascii += "...ZZ.....\n";
+    expected_ascii += "....ZZ....\n";
+    expected_ascii += "....SS....\n";
+    expected_ascii += "...SS.....\n";
+
+    CHECK_EQUAL(expected_ascii, well.asAscii());
+    CHECK(well.activePiece() == nullptr);
 }
 
 

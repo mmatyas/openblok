@@ -62,6 +62,12 @@ const PieceGrid& Piece::currentGrid() const
     return grids.at(current_rotation);
 }
 
+PieceGrid& Piece::currentGridMut()
+{
+    assert(current_rotation < 4);
+    return grids[current_rotation];
+}
+
 void Piece::draw(GraphicsContext& gcx, int x, int y)
 {
     const auto& frame = currentGrid();

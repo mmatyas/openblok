@@ -262,6 +262,26 @@ void Well::moveDownNow()
     if (!active_piece || active_piece_y + 1u >= matrix.size())
         return;
 
+    auto pos_before = active_piece_y;
     if (!hasCollisionAt(active_piece_x, active_piece_y + 1))
         active_piece_y++;
+
+    // if the position of the piece didn't change,
+    // lock the piece and move the minos into the well
+    if (pos_before == active_piece_y) {
+        for (unsigned row = 0; row < 4; row++) {
+            for (unsigned cell = 0; cell < 4; cell++) {
+                if (active_piece_y + row < matrix.size()
+                    && active_piece_x + cell < matrix.at(0).size()
+                    && active_piece->currentGrid().at(row).at(cell))
+                {
+                    matrix[active_piece_y + row][active_piece_x + cell].swap(
+                        active_piece->currentGridMut()[row][cell]
+                    );
+                }
+            }
+        }
+
+        active_piece.release();
+    }
 }

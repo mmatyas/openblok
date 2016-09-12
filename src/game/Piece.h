@@ -35,6 +35,8 @@ public:
     void rotateRight();
     /// Read the rotation grid of the piece
     const PieceGrid& currentGrid() const;
+    /// Returns the rotation grid, allowing modifications.
+    PieceGrid& currentGridMut();
 
     /// Draw the Piece
     void draw(GraphicsContext&, int x, int y);
