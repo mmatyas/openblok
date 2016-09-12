@@ -1,9 +1,12 @@
 #include "GameBoard.h"
 
+#include "GameState.h"
 #include "PieceFactory.h"
 #include "Resources.h"
 #include "system/GraphicsContext.h"
+#include "system/EventCollector.h"
 
+#include <chrono>
 #include <assert.h>
 
 
@@ -11,7 +14,42 @@ GameBoard::GameBoard()
     : active_piece_x(0)
     , active_piece_y(0)
     , ghost_piece_y(0)
+    , gravity_update_rate(std::chrono::seconds(1))
+    , gravity_timer(std::chrono::seconds(0))
 {
+}
+
+void GameBoard::update(const std::vector<InputEvent>& events, AppContext&)
+{
+    bool movedDown = false;
+    for (const auto& event : events) {
+        if (event.down()) {
+            switch(event.type()) {
+            case InputType::LEFT:
+                moveLeftNow();
+                break;
+            case InputType::RIGHT:
+                moveRightNow();
+                break;
+            case InputType::DOWN:
+                moveDownNow();
+                movedDown = true;
+                break;
+            default:
+                break;
+            }
+        }
+    }
+
+    gravity_timer += GameState::frame_duration;
+    if (gravity_timer < gravity_update_rate)
+        return;
+
+    gravity_timer -= gravity_update_rate;
+    if (movedDown) // do not apply downward movement twice
+        return;
+
+    applyGravity();
 }
 
 void GameBoard::addPiece(Piece::Type type)

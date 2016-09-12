@@ -8,8 +8,9 @@ SinglePlayState::SinglePlayState(AppContext&)
     board.addPiece(Piece::Type::S);
 }
 
-void SinglePlayState::update(const std::vector<InputEvent>&, AppContext&)
+void SinglePlayState::update(const std::vector<InputEvent>& inputs, AppContext& ctx)
 {
+    board.update(inputs, ctx);
 }
 
 void SinglePlayState::draw(GraphicsContext& gcx)
