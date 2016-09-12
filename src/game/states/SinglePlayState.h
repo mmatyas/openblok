@@ -11,5 +11,6 @@ public:
     void draw(GraphicsContext&) final;
 
 private:
+    bool paused;
     GameBoard board;
 };

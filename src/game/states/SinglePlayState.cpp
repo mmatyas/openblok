@@ -4,12 +4,23 @@
 
 
 SinglePlayState::SinglePlayState(AppContext&)
+    : paused(false)
 {
     board.addPiece(Piece::Type::S);
 }
 
 void SinglePlayState::update(const std::vector<InputEvent>& inputs, AppContext& ctx)
 {
+    for (const auto& input : inputs) {
+        if (input.type() == InputType::PAUSE && input.down()) {
+            paused = !paused;
+            return;
+        }
+    }
+
+    if (paused)
+        return;
+
     board.update(inputs, ctx);
 }
 
