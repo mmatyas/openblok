@@ -19,20 +19,32 @@ std::vector<InputEvent> SDLEventCollector::collect()
             break;
         case SDL_KEYUP:
         case SDL_KEYDOWN:
-            switch (sdl_event.key.keysym.sym) {
-            case SDLK_UP:
+            switch (sdl_event.key.keysym.scancode) {
+            case SDL_SCANCODE_ESCAPE:
+                output.emplace_back(InputEvent(InputType::PAUSE, sdl_event.type == SDL_KEYDOWN));
+                break;
+            case SDL_SCANCODE_UP:
                 output.emplace_back(InputEvent(InputType::UP, sdl_event.type == SDL_KEYDOWN));
                 break;
-            case SDLK_DOWN:
+            case SDL_SCANCODE_DOWN:
                 output.emplace_back(InputEvent(InputType::DOWN, sdl_event.type == SDL_KEYDOWN));
                 break;
-            case SDLK_LEFT:
+            case SDL_SCANCODE_LEFT:
                 output.emplace_back(InputEvent(InputType::LEFT, sdl_event.type == SDL_KEYDOWN));
                 break;
-            case SDLK_RIGHT:
+            case SDL_SCANCODE_RIGHT:
                 output.emplace_back(InputEvent(InputType::RIGHT, sdl_event.type == SDL_KEYDOWN));
                 break;
-            case SDLK_F4:
+            case SDL_SCANCODE_Z:
+                output.emplace_back(InputEvent(InputType::A, sdl_event.type == SDL_KEYDOWN));
+                break;
+            case SDL_SCANCODE_X:
+                output.emplace_back(InputEvent(InputType::B, sdl_event.type == SDL_KEYDOWN));
+                break;
+            case SDL_SCANCODE_C:
+                output.emplace_back(InputEvent(InputType::C, sdl_event.type == SDL_KEYDOWN));
+                break;
+            case SDL_SCANCODE_F4:
                 if (SDL_GetModState() & KMOD_ALT)
                     m_quit_requested = true;
                 break;

@@ -3,12 +3,14 @@
 #include <stdint.h>
 
 enum class InputType: uint8_t {
+    PAUSE,
     UP,
     DOWN,
     LEFT,
     RIGHT,
     A,
     B,
+    C,
 };
 
 class InputEvent {
