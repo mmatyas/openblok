@@ -153,4 +153,23 @@ TEST_FIXTURE(WellFixture, Move) {
     CHECK_EQUAL(expected_ascii, well.asAscii());
 }
 
+TEST_FIXTURE(WellFixture, Rotate) {
+    CHECK(well.activePiece() == nullptr);
+    well.addPiece(Piece::Type::S);
+    CHECK(well.activePiece() != nullptr);
+
+    well.rotateCCWNow();
+
+    std::string expected_ascii = "...s......\n";
+    expected_ascii += "...ss.....\n";
+    expected_ascii += "....s.....\n";
+    for (unsigned i = 0; i < 16; i++)
+        expected_ascii += emptyline_ascii;
+    expected_ascii += "...g......\n";
+    expected_ascii += "...gg.....\n";
+    expected_ascii += "....g.....\n";
+
+    CHECK_EQUAL(expected_ascii, well.asAscii());
+}
+
 } // Suite

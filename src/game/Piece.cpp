@@ -45,13 +45,13 @@ Piece::Piece(Type type, const std::array<std::bitset<16>, 4>& gridbits)
     }
 }
 
-void Piece::rotateLeft()
+void Piece::rotateCCW()
 {
     // wrap around from right to remain unsigned
     current_rotation = (current_rotation + 3) % 4;
 }
 
-void Piece::rotateRight()
+void Piece::rotateCW()
 {
     current_rotation = (current_rotation + 1) % 4;
 }

@@ -36,6 +36,12 @@ void Well::update(const std::vector<InputEvent>& events, AppContext&)
                 moveDownNow();
                 movedDown = true;
                 break;
+            case InputType::A:
+                rotateCCWNow();
+                break;
+            case InputType::B:
+                rotateCWNow();
+                break;
             default:
                 break;
             }
@@ -284,4 +290,55 @@ void Well::moveDownNow()
 
         active_piece.release();
     }
+}
+
+void Well::rotateCWNow()
+{
+    if (!active_piece)
+        return;
+
+    active_piece->rotateCW();
+    if (!hasCollisionAt(active_piece_x, active_piece_y)) {
+        calculateGhostOffset();
+        return;
+    }
+
+    if (!hasCollisionAt(active_piece_x - 1, active_piece_y)) {
+        active_piece_x--;
+        calculateGhostOffset();
+        return;
+    }
+
+    if (!hasCollisionAt(active_piece_x + 1, active_piece_y)) {
+        active_piece_x++;
+        calculateGhostOffset();
+    }
+
+    // otherwise, fail
+}
+
+void Well::rotateCCWNow()
+{
+    if (!active_piece)
+        return;
+
+    active_piece->rotateCCW();
+    if (!hasCollisionAt(active_piece_x, active_piece_y)) {
+        calculateGhostOffset();
+        return;
+    }
+
+    if (!hasCollisionAt(active_piece_x + 1, active_piece_y)) {
+        active_piece_x++;
+        calculateGhostOffset();
+        return;
+    }
+
+    if (!hasCollisionAt(active_piece_x - 1, active_piece_y)) {
+        active_piece_x--;
+        calculateGhostOffset();
+        return;
+    }
+
+    // otherwise, fail
 }

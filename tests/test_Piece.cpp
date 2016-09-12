@@ -30,9 +30,9 @@ TEST_FIXTURE(PieceFixture, CtorFirstFrame)
     }
 }
 
-TEST_FIXTURE(PieceFixture, RotateRight)
+TEST_FIXTURE(PieceFixture, RotateCW)
 {
-    p.rotateRight();
+    p.rotateCW();
     const auto& grid = p.currentGrid();
 
     for (unsigned row = 0; row < 4; row++) {
@@ -45,9 +45,9 @@ TEST_FIXTURE(PieceFixture, RotateRight)
     }
 }
 
-TEST_FIXTURE(PieceFixture, RotateLeft)
+TEST_FIXTURE(PieceFixture, RotateCCW)
 {
-    p.rotateLeft();
+    p.rotateCCW();
     const auto& grid = p.currentGrid();
 
     for (unsigned row = 0; row < 4; row++) {
@@ -63,8 +63,8 @@ TEST_FIXTURE(PieceFixture, RotateLeft)
 TEST_FIXTURE(PieceFixture, RotateBack)
 {
     {
-        p.rotateLeft();
-        p.rotateRight();
+        p.rotateCCW();
+        p.rotateCW();
         const auto& grid = p.currentGrid();
 
         for (const auto& row : grid) {
@@ -75,8 +75,8 @@ TEST_FIXTURE(PieceFixture, RotateBack)
     }
 
     {
-        p.rotateRight();
-        p.rotateLeft();
+        p.rotateCW();
+        p.rotateCCW();
         const auto& grid = p.currentGrid();
 
         for (const auto& row : grid) {
@@ -90,10 +90,10 @@ TEST_FIXTURE(PieceFixture, RotateBack)
 TEST_FIXTURE(PieceFixture, RotateAround)
 {
     {
-        p.rotateLeft();
-        p.rotateLeft();
-        p.rotateLeft();
-        p.rotateLeft();
+        p.rotateCCW();
+        p.rotateCCW();
+        p.rotateCCW();
+        p.rotateCCW();
         const auto& grid = p.currentGrid();
 
         for (const auto& row : grid) {
@@ -104,10 +104,10 @@ TEST_FIXTURE(PieceFixture, RotateAround)
     }
 
     {
-        p.rotateRight();
-        p.rotateRight();
-        p.rotateRight();
-        p.rotateRight();
+        p.rotateCW();
+        p.rotateCW();
+        p.rotateCW();
+        p.rotateCW();
         const auto& grid = p.currentGrid();
 
         for (const auto& row : grid) {

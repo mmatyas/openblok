@@ -17,6 +17,7 @@ class InputEvent;
 class GraphicsContext;
 namespace SuiteWell {
     class WellFixtureMoveHelper;
+    class WellFixtureRotateHelper;
 }
 
 class Well {
@@ -65,6 +66,9 @@ private:
     void moveLeftNow();
     void moveRightNow();
     void moveDownNow();
+    void rotateCWNow(); // clockwise
+    void rotateCCWNow(); // counter-clockwise
 
 friend class SuiteWell::WellFixtureMoveHelper;
+friend class SuiteWell::WellFixtureRotateHelper;
 };

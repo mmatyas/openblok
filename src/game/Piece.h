@@ -29,10 +29,10 @@ public:
     /// Create a Piece of type, with the four rotations as bitflags
     Piece(Type, const std::array<std::bitset<16>, 4>&);
 
-    /// Rotate the piece left
-    void rotateLeft();
-    /// Rotate the piece right
-    void rotateRight();
+    /// Rotate the piece clockwise
+    void rotateCW();
+    /// Rotate the piece counter-clockwise
+    void rotateCCW();
     /// Read the rotation grid of the piece
     const PieceGrid& currentGrid() const;
     /// Returns the rotation grid, allowing modifications.
