@@ -50,13 +50,22 @@ public:
     void draw(GraphicsContext&, unsigned x, unsigned y);
 
 private:
+    using Duration = std::chrono::steady_clock::duration;
+
     int8_t active_piece_x;
     uint8_t active_piece_y;
     uint8_t ghost_piece_y;
     std::unique_ptr<Piece> active_piece;
 
-    const std::chrono::steady_clock::duration gravity_update_rate;
-    std::chrono::steady_clock::duration gravity_timer;
+    const Duration gravity_update_rate;
+    Duration gravity_timer;
+
+    const Duration autorepeat_delay; // the time it takes to activate turbo mode
+    const Duration keypress_normal_update_rate;
+    const Duration keypress_turbo_update_rate;
+    Duration autorepeat_timer; // counter, if reaches autorepeat_switch_time, turbo mode activates
+    Duration keypress_rate_now; // current input rate, either normal_update_rate or turbo_update_rate
+    Duration keypress_countdown; // when reaches zero, input is allowed, then its value becomes rate_now
 
     // TODO: set dimensions from config
     Matrix<std::unique_ptr<Mino>, 22, 10> matrix;

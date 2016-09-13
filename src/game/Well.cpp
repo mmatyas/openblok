@@ -7,6 +7,7 @@
 #include "system/EventCollector.h"
 #include "system/GraphicsContext.h"
 #include "system/InputEvent.h"
+#include "system/Log.h"
 
 #include <chrono>
 #include <assert.h>
@@ -17,7 +18,13 @@ Well::Well()
     , active_piece_y(0)
     , ghost_piece_y(0)
     , gravity_update_rate(std::chrono::seconds(1))
-    , gravity_timer(std::chrono::seconds(0))
+    , gravity_timer(Duration::zero())
+    , autorepeat_delay(std::chrono::milliseconds(300))
+    , keypress_normal_update_rate(std::chrono::milliseconds(150))
+    , keypress_turbo_update_rate(std::chrono::milliseconds(30))
+    , autorepeat_timer(Duration::zero())
+    , keypress_rate_now(keypress_normal_update_rate)
+    , keypress_countdown(Duration::zero())
 {
     keystates[InputType::LEFT] = false;
     keystates[InputType::RIGHT] = false;
@@ -36,35 +43,53 @@ void Well::update(const std::vector<InputEvent>& events, AppContext&)
             keystates[event.type()] = event.down();
     }
 
-    if (keystates.at(InputType::LEFT) != keystates.at(InputType::RIGHT)) {
-        if (keystates.at(InputType::LEFT))
-            moveLeftNow();
-        else if (keystates.at(InputType::RIGHT))
-            moveRightNow();
-    }
-
     bool movedDown = false;
-    if (keystates.at(InputType::DOWN)) {
-        moveDownNow();
-        movedDown = true;
-    }
+    keypress_countdown -= GameState::frame_duration;
 
-    if (keystates.at(InputType::A) != keystates.at(InputType::B)) {
-        if (keystates.at(InputType::A))
-            rotateCCWNow();
-        else if (keystates.at(InputType::B))
-            rotateCWNow();
+    if (keypress_countdown <= Duration::zero()) {
+        if (keystates.at(InputType::LEFT) != keystates.at(InputType::RIGHT)) {
+            if (keystates.at(InputType::LEFT))
+                moveLeftNow();
+            else
+                moveRightNow();
+
+            // activate turbo mode after some time
+            autorepeat_timer += keypress_rate_now + GameState::frame_duration;
+            if (autorepeat_timer > autorepeat_delay)
+                keypress_rate_now = keypress_turbo_update_rate;
+
+            keypress_countdown = keypress_rate_now;
+        }
+        else {
+            // reset autorepeat when none or both directions are pressed
+            autorepeat_timer = Duration::zero();
+            keypress_rate_now = keypress_normal_update_rate;
+        }
+
+        if (keystates.at(InputType::DOWN)) {
+            moveDownNow();
+            movedDown = true;
+            keypress_countdown = keypress_rate_now;
+        }
+
+        if (keystates.at(InputType::A) != keystates.at(InputType::B)) {
+            if (keystates.at(InputType::A))
+                rotateCCWNow();
+            else
+                rotateCWNow();
+
+            keypress_countdown = keypress_rate_now;
+        }
     }
 
     gravity_timer += GameState::frame_duration;
-    if (gravity_timer < gravity_update_rate)
-        return;
+    if (gravity_timer >= gravity_update_rate) {
+        gravity_timer -= gravity_update_rate;
 
-    gravity_timer -= gravity_update_rate;
-    if (movedDown) // do not apply downward movement twice
-        return;
-
-    applyGravity();
+        // do not apply downward movement twice
+        if (!movedDown)
+            applyGravity();
+    }
 }
 
 void Well::addPiece(Piece::Type type)
