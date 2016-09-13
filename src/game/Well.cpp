@@ -4,8 +4,9 @@
 #include "MinoFactory.h"
 #include "PieceFactory.h"
 #include "Resources.h"
-#include "system/GraphicsContext.h"
 #include "system/EventCollector.h"
+#include "system/GraphicsContext.h"
+#include "system/InputEvent.h"
 
 #include <chrono>
 #include <assert.h>
@@ -18,34 +19,41 @@ Well::Well()
     , gravity_update_rate(std::chrono::seconds(1))
     , gravity_timer(std::chrono::seconds(0))
 {
+    keystates[InputType::LEFT] = false;
+    keystates[InputType::RIGHT] = false;
+    keystates[InputType::UP] = false;
+    keystates[InputType::DOWN] = false;
+
+    keystates[InputType::A] = false;
+    keystates[InputType::B] = false;
+    keystates[InputType::C] = false;
 }
 
 void Well::update(const std::vector<InputEvent>& events, AppContext&)
 {
-    bool movedDown = false;
     for (const auto& event : events) {
-        if (event.down()) {
-            switch(event.type()) {
-            case InputType::LEFT:
-                moveLeftNow();
-                break;
-            case InputType::RIGHT:
-                moveRightNow();
-                break;
-            case InputType::DOWN:
-                moveDownNow();
-                movedDown = true;
-                break;
-            case InputType::A:
-                rotateCCWNow();
-                break;
-            case InputType::B:
-                rotateCWNow();
-                break;
-            default:
-                break;
-            }
-        }
+        if (keystates.count(event.type()))
+            keystates[event.type()] = event.down();
+    }
+
+    if (keystates.at(InputType::LEFT) != keystates.at(InputType::RIGHT)) {
+        if (keystates.at(InputType::LEFT))
+            moveLeftNow();
+        else if (keystates.at(InputType::RIGHT))
+            moveRightNow();
+    }
+
+    bool movedDown = false;
+    if (keystates.at(InputType::DOWN)) {
+        moveDownNow();
+        movedDown = true;
+    }
+
+    if (keystates.at(InputType::A) != keystates.at(InputType::B)) {
+        if (keystates.at(InputType::A))
+            rotateCCWNow();
+        else if (keystates.at(InputType::B))
+            rotateCWNow();
     }
 
     gravity_timer += GameState::frame_duration;

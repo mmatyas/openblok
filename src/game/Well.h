@@ -3,16 +3,17 @@
 #include "Matrix.h"
 #include "Mino.h"
 #include "Piece.h"
+#include "system/InputEvent.h"
 
 #include <chrono>
 #include <memory>
 #include <vector>
 #include <string>
+#include <unordered_map>
 #include <stdint.h>
 
 
 class AppContext;
-class InputEvent;
 
 class GraphicsContext;
 namespace SuiteWell {
@@ -68,6 +69,8 @@ private:
     void moveDownNow();
     void rotateCWNow(); // clockwise
     void rotateCCWNow(); // counter-clockwise
+
+    std::unordered_map<InputType, bool, InputTypeHash> keystates;
 
 friend class SuiteWell::WellFixtureMoveHelper;
 friend class SuiteWell::WellFixtureRotateHelper;
