@@ -68,6 +68,7 @@ private:
 
     // input handling
     std::unordered_map<InputType, bool, InputTypeHash> keystates;
+    decltype(keystates) previous_keystates;
 
     // autorepeat (aka DAS)
     const Duration autorepeat_delay; // the time it takes to activate turbo mode
@@ -76,6 +77,7 @@ private:
     Duration autorepeat_timer; // counter, if reaches autorepeat_switch_time, turbo mode activates
     Duration keypress_rate_now; // current input rate, either normal_update_rate or turbo_update_rate
     Duration keypress_countdown; // when reaches zero, input is allowed, then its value becomes rate_now
+    void reset_autorepeat();
 
     // active piece collision and ghost
     void calculateGhostOffset();

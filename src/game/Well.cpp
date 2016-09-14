@@ -21,7 +21,7 @@ Well::Well()
     , gravity_timer(Duration::zero())
     , autorepeat_delay(std::chrono::milliseconds(300))
     , keypress_normal_update_rate(std::chrono::milliseconds(150))
-    , keypress_turbo_update_rate(std::chrono::milliseconds(30))
+    , keypress_turbo_update_rate(std::chrono::milliseconds(40))
     , autorepeat_timer(Duration::zero())
     , keypress_rate_now(keypress_normal_update_rate)
     , keypress_countdown(Duration::zero())
@@ -34,42 +34,50 @@ Well::Well()
     keystates[InputType::A] = false;
     keystates[InputType::B] = false;
     keystates[InputType::C] = false;
+
+    previous_keystates = keystates;
 }
 
 void Well::update(const std::vector<InputEvent>& events, AppContext&)
 {
+    previous_keystates = keystates;
     for (const auto& event : events) {
         if (keystates.count(event.type()))
             keystates[event.type()] = event.down();
     }
 
-    bool movedDown = false;
-    keypress_countdown -= GameState::frame_duration;
+    // true only if down key is still down
+    bool movedDown = (keystates.at(InputType::DOWN) && previous_keystates.at(InputType::DOWN));
 
+    // if one of the previously hold buttons was released,
+    // reset the autorepeat timer
+    for (const auto& item : keystates) {
+        if (previous_keystates.at(item.first) && !item.second) {
+            reset_autorepeat();
+            break;
+        }
+    }
+
+    keypress_countdown -= GameState::frame_duration;
     if (keypress_countdown <= Duration::zero()) {
+        bool keypress_happened = false;
+        bool update_autorepeat_timer = false;
+
         if (keystates.at(InputType::LEFT) != keystates.at(InputType::RIGHT)) {
             if (keystates.at(InputType::LEFT))
                 moveLeftNow();
             else
                 moveRightNow();
 
-            // activate turbo mode after some time
-            autorepeat_timer += keypress_rate_now + GameState::frame_duration;
-            if (autorepeat_timer > autorepeat_delay)
-                keypress_rate_now = keypress_turbo_update_rate;
-
-            keypress_countdown = keypress_rate_now;
-        }
-        else {
-            // reset autorepeat when none or both directions are pressed
-            autorepeat_timer = Duration::zero();
-            keypress_rate_now = keypress_normal_update_rate;
+            keypress_happened = true;
+            update_autorepeat_timer = true;
         }
 
         if (keystates.at(InputType::DOWN)) {
             moveDownNow();
             movedDown = true;
-            keypress_countdown = keypress_rate_now;
+            keypress_happened = true;
+            update_autorepeat_timer = true;
         }
 
         if (keystates.at(InputType::A) != keystates.at(InputType::B)) {
@@ -78,7 +86,23 @@ void Well::update(const std::vector<InputEvent>& events, AppContext&)
             else
                 rotateCWNow();
 
+            keypress_happened = true;
+            reset_autorepeat();
+        }
+
+        if (keypress_happened) {
             keypress_countdown = keypress_rate_now;
+
+            // activate turbo mode after some time
+            if (update_autorepeat_timer) {
+                autorepeat_timer += keypress_rate_now + GameState::frame_duration;
+                if (autorepeat_timer > autorepeat_delay)
+                    keypress_rate_now = keypress_turbo_update_rate;
+            }
+            // or reset
+            else {
+                reset_autorepeat();
+            }
         }
     }
 
@@ -90,6 +114,12 @@ void Well::update(const std::vector<InputEvent>& events, AppContext&)
         if (!movedDown)
             applyGravity();
     }
+}
+
+void Well::reset_autorepeat()
+{
+    autorepeat_timer = Duration::zero();
+    keypress_rate_now = keypress_normal_update_rate;
 }
 
 void Well::addPiece(Piece::Type type)
