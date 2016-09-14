@@ -33,6 +33,6 @@ void SinglePlayState::draw(GraphicsContext& gcx)
     for (unsigned x = 0; x < gcx.screenWidth(); x += gcx.textureWidth(TexID::GAMEPLAYBG))
         gcx.drawTexture(TexID::GAMEPLAYBG, x, 0);
 
-    next_pieces.draw(gcx, gcx.screenWidth() / 2 + 5 + 5 * Mino::texture_size_px, 8);
+    next_pieces.draw(gcx, gcx.screenWidth() / 2 + Mino::texture_size_px + 5 * Mino::texture_size_px, 8);
     board.draw(gcx, gcx.screenWidth() / 2 - 5 * Mino::texture_size_px, 8);
 }
