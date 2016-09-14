@@ -5,6 +5,7 @@ set(MOD_GAME_SRC
 	MinoFactory.cpp
 	Piece.cpp
 	PieceFactory.cpp
+	PieceQueue.cpp
 	Well.cpp
 	states/InitState.cpp
 	states/MainMenuState.cpp
@@ -19,6 +20,7 @@ set(MOD_GAME_H
 	MinoFactory.h
 	Piece.h
 	PieceFactory.h
+	PieceQueue.h
 	Resources.h
 	Well.h
 	states/InitState.h

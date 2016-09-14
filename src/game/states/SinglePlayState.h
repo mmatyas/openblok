@@ -1,6 +1,7 @@
 #pragma once
 
 #include "game/GameState.h"
+#include "game/PieceQueue.h"
 #include "game/Well.h"
 
 
@@ -12,5 +13,6 @@ public:
 
 private:
     bool paused;
+    PieceQueue next_pieces;
     Well board;
 };
