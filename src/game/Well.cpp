@@ -320,8 +320,10 @@ void Well::moveLeftNow()
     if (!active_piece || active_piece_x - 1 <= -3)
         return;
 
-    if (!hasCollisionAt(active_piece_x - 1, active_piece_y))
+    if (!hasCollisionAt(active_piece_x - 1, active_piece_y)) {
         active_piece_x--;
+        calculateGhostOffset();
+    }
 }
 
 void Well::moveRightNow()
@@ -329,8 +331,10 @@ void Well::moveRightNow()
     if (!active_piece || active_piece_x + 1 >= static_cast<int>(matrix[0].size()))
         return;
 
-    if (!hasCollisionAt(active_piece_x + 1, active_piece_y))
+    if (!hasCollisionAt(active_piece_x + 1, active_piece_y)) {
         active_piece_x++;
+        calculateGhostOffset();
+    }
 }
 
 void Well::moveDownNow()
