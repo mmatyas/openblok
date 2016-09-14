@@ -14,7 +14,8 @@
 
 
 Well::Well()
-    : active_piece_x(0)
+    : gameover(false)
+    , active_piece_x(0)
     , active_piece_y(0)
     , ghost_piece_y(0)
     , gravity_update_rate(std::chrono::seconds(1))
@@ -40,6 +41,9 @@ Well::Well()
 
 void Well::update(const std::vector<InputEvent>& events, AppContext&)
 {
+    if (gameover)
+        return;
+
     previous_keystates = keystates;
     for (const auto& event : events) {
         if (keystates.count(event.type()))
@@ -122,14 +126,6 @@ void Well::update(const std::vector<InputEvent>& events, AppContext&)
     }
 }
 
-void Well::hardDrop()
-{
-    assert(active_piece);
-
-    active_piece_y = ghost_piece_y;
-    moveDownNow();
-}
-
 void Well::reset_autorepeat()
 {
     autorepeat_timer = Duration::zero();
@@ -139,7 +135,7 @@ void Well::reset_autorepeat()
 bool Well::requiresNewPiece() const
 {
     // TODO: update this function when there will be animations
-    return !active_piece;
+    return !active_piece && !gameover;
 }
 
 void Well::addPiece(Piece::Type type)
@@ -152,6 +148,11 @@ void Well::addPiece(Piece::Type type)
     active_piece_x = 3;
     active_piece_y = 0;
     calculateGhostOffset();
+
+    if (hasCollisionAt(active_piece_x, active_piece_y)) {
+        lockAndReleasePiece();
+        gameover = true;
+    }
 }
 
 void Well::fromAscii(const std::string& text)
@@ -362,22 +363,16 @@ void Well::moveDownNow()
 
     // if the position of the piece didn't change,
     // lock the piece and move the minos into the well
-    if (pos_before == active_piece_y) {
-        for (unsigned row = 0; row < 4; row++) {
-            for (unsigned cell = 0; cell < 4; cell++) {
-                if (active_piece_y + row < matrix.size()
-                    && active_piece_x + cell < matrix.at(0).size()
-                    && active_piece->currentGrid().at(row).at(cell))
-                {
-                    matrix[active_piece_y + row][active_piece_x + cell].swap(
-                        active_piece->currentGridMut()[row][cell]
-                    );
-                }
-            }
-        }
+    if (pos_before == active_piece_y)
+        lockAndReleasePiece();
+}
 
-        active_piece.release();
-    }
+void Well::hardDrop()
+{
+    assert(active_piece);
+
+    active_piece_y = ghost_piece_y;
+    moveDownNow();
 }
 
 void Well::rotateCWNow()
@@ -428,4 +423,21 @@ void Well::rotateCCWNow()
         calculateGhostOffset();
     else
         active_piece->rotateCW();
+}
+
+void Well::lockAndReleasePiece() {
+    for (unsigned row = 0; row < 4; row++) {
+        for (unsigned cell = 0; cell < 4; cell++) {
+            if (active_piece_y + row < matrix.size()
+                && active_piece_x + cell < matrix.at(0).size()
+                && active_piece->currentGrid().at(row).at(cell))
+            {
+                matrix[active_piece_y + row][active_piece_x + cell].swap(
+                    active_piece->currentGridMut()[row][cell]
+                );
+            }
+        }
+    }
+
+    active_piece.release();
 }

@@ -55,6 +55,9 @@ public:
 private:
     using Duration = std::chrono::steady_clock::duration;
 
+    // true when gameover detected
+    bool gameover;
+
     // the grid matrix
     // TODO: set dimensions from config
     Matrix<std::unique_ptr<Mino>, 22, 10> matrix;
@@ -85,6 +88,7 @@ private:
     // active piece collision and ghost
     void calculateGhostOffset();
     bool hasCollisionAt(int offset_x, unsigned offset_y);
+    void lockAndReleasePiece();
 
     // active piece movement
     void moveLeftNow();
