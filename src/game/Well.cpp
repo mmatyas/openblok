@@ -371,24 +371,24 @@ void Well::rotateCWNow()
     if (!active_piece)
         return;
 
+    bool success = false;
     active_piece->rotateCW();
     if (!hasCollisionAt(active_piece_x, active_piece_y)) {
-        calculateGhostOffset();
-        return;
+        success = true;
     }
-
-    if (!hasCollisionAt(active_piece_x - 1, active_piece_y)) {
+    else if (!hasCollisionAt(active_piece_x - 1, active_piece_y)) {
         active_piece_x--;
-        calculateGhostOffset();
-        return;
+        success = true;
     }
-
-    if (!hasCollisionAt(active_piece_x + 1, active_piece_y)) {
+    else if (!hasCollisionAt(active_piece_x + 1, active_piece_y)) {
         active_piece_x++;
-        calculateGhostOffset();
+        success = true;
     }
 
-    // otherwise, fail
+    if (success)
+        calculateGhostOffset();
+    else
+        active_piece->rotateCCW();
 }
 
 void Well::rotateCCWNow()
@@ -396,23 +396,22 @@ void Well::rotateCCWNow()
     if (!active_piece)
         return;
 
+    bool success = false;
     active_piece->rotateCCW();
     if (!hasCollisionAt(active_piece_x, active_piece_y)) {
-        calculateGhostOffset();
-        return;
+        success = true;
     }
-
-    if (!hasCollisionAt(active_piece_x + 1, active_piece_y)) {
+    else if (!hasCollisionAt(active_piece_x + 1, active_piece_y)) {
         active_piece_x++;
-        calculateGhostOffset();
-        return;
+        success = true;
     }
-
-    if (!hasCollisionAt(active_piece_x - 1, active_piece_y)) {
+    else if (!hasCollisionAt(active_piece_x - 1, active_piece_y)) {
         active_piece_x--;
-        calculateGhostOffset();
-        return;
+        success = true;
     }
 
-    // otherwise, fail
+    if (success)
+        calculateGhostOffset();
+    else
+        active_piece->rotateCW();
 }
