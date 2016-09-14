@@ -131,7 +131,7 @@ bool Well::requiresNewPiece() const
 void Well::addPiece(Piece::Type type)
 {
     // the player can only control one piece at a time
-    assert(!requiresNewPiece());
+    assert(requiresNewPiece());
     assert(!active_piece);
 
     active_piece = PieceFactory::make_uptr(type);
