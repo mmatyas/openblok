@@ -43,7 +43,7 @@ RGBColor MinoFactory::color(Piece::Type type)
     case Piece::Type::L : return 0xFFA500_rgb;
     case Piece::Type::O : return 0xFFFF00_rgb;
     case Piece::Type::S : return 0x80FF00_rgb;
-    case Piece::Type::T : return 0x800080_rgb;
+    case Piece::Type::T : return 0xAA00FF_rgb;
     case Piece::Type::Z : return 0xFF0000_rgb;
     default:
         assert(false);
