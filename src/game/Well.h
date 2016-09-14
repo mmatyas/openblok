@@ -3,6 +3,7 @@
 #include "Matrix.h"
 #include "Mino.h"
 #include "Piece.h"
+#include "PieceQueue.h"
 #include "system/InputEvent.h"
 
 #include <chrono>
@@ -32,6 +33,8 @@ public:
     /// Moves the active piece one row down, if it does not collide.
     void applyGravity();
 
+    /// Returns true when the well can accept a new Piece via addPiece().
+    bool requiresNewPiece() const;
     /// Add a new, player-controllable piece to the well.
     void addPiece(Piece::Type);
     /// Returns the current, active piece, controllable by the player.

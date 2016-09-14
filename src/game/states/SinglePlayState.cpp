@@ -7,7 +7,6 @@ SinglePlayState::SinglePlayState(AppContext&)
     : paused(false)
     , next_pieces(4)
 {
-    board.addPiece(Piece::Type::S);
 }
 
 void SinglePlayState::update(const std::vector<InputEvent>& inputs, AppContext& ctx)
@@ -21,6 +20,10 @@ void SinglePlayState::update(const std::vector<InputEvent>& inputs, AppContext& 
 
     if (paused)
         return;
+
+
+    if (board.requiresNewPiece())
+        board.addPiece(next_pieces.next());
 
     board.update(inputs, ctx);
 }

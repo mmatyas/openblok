@@ -172,4 +172,12 @@ TEST_FIXTURE(WellFixture, Rotate) {
     CHECK_EQUAL(expected_ascii, well.asAscii());
 }
 
+TEST_FIXTURE(WellFixture, RequiresNewPiece) {
+    CHECK_EQUAL(true, well.requiresNewPiece());
+    well.addPiece(Piece::Type::S);
+    CHECK_EQUAL(false, well.requiresNewPiece());
+
+    // TODO: landing
+}
+
 } // Suite

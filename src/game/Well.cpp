@@ -122,9 +122,16 @@ void Well::reset_autorepeat()
     keypress_rate_now = keypress_normal_update_rate;
 }
 
+bool Well::requiresNewPiece() const
+{
+    // TODO: update this function when there will be animations
+    return !active_piece;
+}
+
 void Well::addPiece(Piece::Type type)
 {
     // the player can only control one piece at a time
+    assert(!requiresNewPiece());
     assert(!active_piece);
 
     active_piece = PieceFactory::make_uptr(type);
