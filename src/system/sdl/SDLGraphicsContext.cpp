@@ -32,6 +32,7 @@ SDLGraphicsContext::SDLGraphicsContext()
     , ttf()
     , on_render_callback([](){})
 {
+    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
     renderer.SetLogicalSize(960, 720);
     renderer.SetDrawColor(0, 0, 0, 255);
     renderer.Clear();
