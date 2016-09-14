@@ -15,7 +15,7 @@ std::unique_ptr<Piece> PieceFactory::make_uptr(Piece::Type type)
     static const std::array<std::bitset<16>, 4> grid_J = {std::bitset<16>("1000111000000000"),
                                                           std::bitset<16>("0110010001000000"),
                                                           std::bitset<16>("0000111000100000"),
-                                                          std::bitset<16>("0100010001100000")};
+                                                          std::bitset<16>("0100010011000000")};
     static const std::array<std::bitset<16>, 4> grid_L = {std::bitset<16>("0010111000000000"),
                                                           std::bitset<16>("0100010001100000"),
                                                           std::bitset<16>("0000111010000000"),
