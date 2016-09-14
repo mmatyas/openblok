@@ -80,6 +80,12 @@ void Well::update(const std::vector<InputEvent>& events, AppContext&)
             update_autorepeat_timer = true;
         }
 
+        if (keystates.at(InputType::UP)) {
+            hardDrop();
+            movedDown = true;
+            keypress_happened = true;
+        }
+
         if (keystates.at(InputType::A) != keystates.at(InputType::B)) {
             if (keystates.at(InputType::A))
                 rotateCCWNow();
@@ -114,6 +120,14 @@ void Well::update(const std::vector<InputEvent>& events, AppContext&)
         if (!movedDown)
             applyGravity();
     }
+}
+
+void Well::hardDrop()
+{
+    assert(active_piece);
+
+    active_piece_y = ghost_piece_y;
+    moveDownNow();
 }
 
 void Well::reset_autorepeat()

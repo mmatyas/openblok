@@ -90,6 +90,7 @@ private:
     void moveLeftNow();
     void moveRightNow();
     void moveDownNow();
+    void hardDrop();
     void rotateCWNow(); // clockwise
     void rotateCCWNow(); // counter-clockwise
 
