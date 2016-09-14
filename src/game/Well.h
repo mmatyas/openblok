@@ -52,14 +52,24 @@ public:
 private:
     using Duration = std::chrono::steady_clock::duration;
 
+    // the grid matrix
+    // TODO: set dimensions from config
+    Matrix<std::unique_ptr<Mino>, 22, 10> matrix;
+
+    // the active piece
     int8_t active_piece_x;
     uint8_t active_piece_y;
     uint8_t ghost_piece_y;
     std::unique_ptr<Piece> active_piece;
 
+    // gravity
     const Duration gravity_update_rate;
     Duration gravity_timer;
 
+    // input handling
+    std::unordered_map<InputType, bool, InputTypeHash> keystates;
+
+    // autorepeat (aka DAS)
     const Duration autorepeat_delay; // the time it takes to activate turbo mode
     const Duration keypress_normal_update_rate;
     const Duration keypress_turbo_update_rate;
@@ -67,19 +77,16 @@ private:
     Duration keypress_rate_now; // current input rate, either normal_update_rate or turbo_update_rate
     Duration keypress_countdown; // when reaches zero, input is allowed, then its value becomes rate_now
 
-    // TODO: set dimensions from config
-    Matrix<std::unique_ptr<Mino>, 22, 10> matrix;
-
+    // active piece collision and ghost
     void calculateGhostOffset();
     bool hasCollisionAt(int offset_x, unsigned offset_y);
 
+    // active piece movement
     void moveLeftNow();
     void moveRightNow();
     void moveDownNow();
     void rotateCWNow(); // clockwise
     void rotateCCWNow(); // counter-clockwise
-
-    std::unordered_map<InputType, bool, InputTypeHash> keystates;
 
 friend class SuiteWell::WellFixtureMoveHelper;
 friend class SuiteWell::WellFixtureRotateHelper;
