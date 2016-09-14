@@ -22,6 +22,8 @@ public:
         I, J, L, O, S, T, Z
     };
 
+    static const std::array<Piece::Type, 7> allTypes;
+
     static char typeAsAscii(Type);
     static Type typeFromAscii(char);
 

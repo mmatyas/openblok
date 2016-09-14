@@ -5,6 +5,16 @@
 #include <assert.h>
 
 
+const std::array<Piece::Type,7> Piece::allTypes {
+    Piece::Type::I,
+    Piece::Type::J,
+    Piece::Type::L,
+    Piece::Type::O,
+    Piece::Type::S,
+    Piece::Type::T,
+    Piece::Type::Z
+};
+
 char Piece::typeAsAscii(Piece::Type type) {
     switch(type) {
     case Piece::Type::I : return 'I';

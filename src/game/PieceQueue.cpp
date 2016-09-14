@@ -3,20 +3,12 @@
 #include "PieceFactory.h"
 #include "system/GraphicsContext.h"
 
+#include <array>
 #include <algorithm>
-#include <vector>
 #include <assert.h>
 
 
-std::vector<Piece::Type> possible_pieces = {
-    Piece::Type::I,
-    Piece::Type::J,
-    Piece::Type::L,
-    Piece::Type::O,
-    Piece::Type::S,
-    Piece::Type::T,
-    Piece::Type::Z
-};
+std::array<Piece::Type, Piece::allTypes.size()> possible_pieces = Piece::allTypes;
 
 PieceQueue::PieceQueue(unsigned displayed_piece_count)
     : displayed_piece_count(displayed_piece_count)
@@ -24,7 +16,7 @@ PieceQueue::PieceQueue(unsigned displayed_piece_count)
     generate_pieces();
 
     size_t i = 0;
-    for(const auto p : possible_pieces) {
+    for(const auto p : Piece::allTypes) {
         piece_storage[i] = PieceFactory::make_uptr(p);
         i++;
     }
