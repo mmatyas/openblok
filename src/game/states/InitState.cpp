@@ -1,8 +1,8 @@
 #include "InitState.h"
 
 #include "game/AppContext.h"
-#include "game/MinoFactory.h"
 #include "game/Resources.h"
+#include "game/components/MinoFactory.h"
 #include "game/states/MainMenuState.h"
 #include "system/Localize.h"
 #include "system/Log.h"

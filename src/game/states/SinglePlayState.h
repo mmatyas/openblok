@@ -1,8 +1,8 @@
 #pragma once
 
 #include "game/GameState.h"
-#include "game/PieceQueue.h"
-#include "game/Well.h"
+#include "game/components/PieceQueue.h"
+#include "game/components/Well.h"
 
 
 class SinglePlayState: public GameState {

@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Matrix.h"
 #include "Mino.h"
 #include "Piece.h"
 #include "PieceQueue.h"
+#include "game/Matrix.h"
 #include "system/InputEvent.h"
 
 #include <chrono>

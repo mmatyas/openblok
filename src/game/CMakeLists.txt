@@ -1,12 +1,12 @@
 set(MOD_GAME_SRC
 	AppContext.cpp
 	GameState.cpp
-	Mino.cpp
-	MinoFactory.cpp
-	Piece.cpp
-	PieceFactory.cpp
-	PieceQueue.cpp
-	Well.cpp
+	components/Mino.cpp
+	components/MinoFactory.cpp
+	components/Piece.cpp
+	components/PieceFactory.cpp
+	components/PieceQueue.cpp
+	components/Well.cpp
 	states/InitState.cpp
 	states/MainMenuState.cpp
 	states/SinglePlayState.cpp
@@ -16,13 +16,13 @@ set(MOD_GAME_H
 	AppContext.h
 	GameState.h
 	Matrix.h
-	Mino.h
-	MinoFactory.h
-	Piece.h
-	PieceFactory.h
-	PieceQueue.h
 	Resources.h
-	Well.h
+	components/Mino.h
+	components/MinoFactory.h
+	components/Piece.h
+	components/PieceFactory.h
+	components/PieceQueue.h
+	components/Well.h
 	states/InitState.h
 	states/MainMenuState.h
 	states/SinglePlayState.h

@@ -1,6 +1,6 @@
 #include "MinoFactory.h"
 
-#include "Resources.h"
+#include "game/Resources.h"
 
 #include <assert.h>
 

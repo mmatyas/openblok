@@ -1,7 +1,7 @@
 #include "UnitTest++/UnitTest++.h"
 
-#include "game/Well.h"
-#include "game/PieceFactory.h"
+#include "game/components/PieceFactory.h"
+#include "game/components/Well.h"
 
 
 SUITE(Well) {

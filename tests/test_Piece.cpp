@@ -1,6 +1,6 @@
 #include "UnitTest++/UnitTest++.h"
 
-#include "game/Piece.h"
+#include "game/components/Piece.h"
 
 #include <string>
 #include <iostream>

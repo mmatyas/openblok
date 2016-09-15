@@ -1,9 +1,9 @@
 #include "Well.h"
 
-#include "GameState.h"
 #include "MinoFactory.h"
 #include "PieceFactory.h"
-#include "Resources.h"
+#include "game/GameState.h"
+#include "game/Resources.h"
 #include "system/EventCollector.h"
 #include "system/GraphicsContext.h"
 #include "system/InputEvent.h"

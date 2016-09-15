@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Matrix.h"
 #include "Mino.h"
+#include "game/Matrix.h"
 
 #include <array>
 #include <bitset>
