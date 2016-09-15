@@ -13,6 +13,7 @@ set(MOD_GAME_SRC
 )
 
 set(MOD_GAME_H
+	Animation.h
 	AppContext.h
 	GameState.h
 	Matrix.h
