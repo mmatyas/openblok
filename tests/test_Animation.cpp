@@ -110,4 +110,13 @@ TEST(StopReset) {
     CHECK_EQUAL(true, anim.running());
 }
 
+TEST(ReplaceFn) {
+    int val = 0;
+
+    Animation<void> anim(3s, [&val](double){ val = 10; });
+
+    anim.replaceFn([&val](double){ val = 30; });
+    CHECK_EQUAL(30, val);
+}
+
 } // Suite

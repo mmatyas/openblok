@@ -60,6 +60,12 @@ public:
         , last_value(animator(0.0))
     {}
 
+    /// Replace the on-update function.
+    void replaceFn(std::function<T(double)> on_update) {
+        animator = on_update;
+        update(Duration::zero());
+    }
+
     /// Update the animation's timer with the specified amount of time.
     /// The animator function will be called.
     void update(Duration elapsed) {
@@ -100,6 +106,11 @@ public:
         , animator(on_update)
     {
         on_update(0.0);
+    }
+
+    void replaceFn(std::function<void(double)> on_update) {
+        animator = on_update;
+        update(Duration::zero());
     }
 
     void update(Duration elapsed) {
