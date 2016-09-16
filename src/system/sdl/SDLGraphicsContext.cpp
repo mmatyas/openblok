@@ -160,6 +160,21 @@ void SDLGraphicsContext::drawFilledRect(const Rectangle& rect, const RGBColor& c
     renderer.SetDrawColor(r, g, b, a);
 }
 
+void SDLGraphicsContext::drawFilledRect(const Rectangle& rect, const RGBAColor& color)
+{
+    // TODO: fix duplication
+    Uint8 r, g, b, a;
+    auto blend = renderer.GetDrawBlendMode();
+    renderer.GetDrawColor(r, g, b, a);
+
+    renderer.SetDrawBlendMode(SDL_BLENDMODE_BLEND);
+    renderer.SetDrawColor(color.r, color.g, color.b, color.a);
+    renderer.FillRect(rect.x, rect.y, rect.x + rect.w, rect.y + rect.h);
+
+    renderer.SetDrawBlendMode(blend);
+    renderer.SetDrawColor(r, g, b, a);
+}
+
 unsigned SDLGraphicsContext::textureWidth(TexID slot) const
 {
     return textures.at(slot)->GetWidth();

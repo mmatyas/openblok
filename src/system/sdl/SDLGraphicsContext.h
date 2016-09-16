@@ -25,6 +25,7 @@ public:
     void drawTexture(TexID, unsigned x, unsigned y) final;
     void drawTexture(TexID, const Rectangle& rect) final;
     void drawFilledRect(const Rectangle& rect, const RGBColor& color) final;
+    void drawFilledRect(const Rectangle& rect, const RGBAColor& color) final;
 
     unsigned textureWidth(TexID) const final;
     unsigned textureHeight(TexID) const final;
