@@ -7,5 +7,10 @@ struct RGBColor {
     uint8_t r, g, b;
 };
 
-// C++11 custom literal
+struct RGBAColor {
+    uint8_t r, g, b, a;
+};
+
+// C++11 custom literals
 RGBColor operator "" _rgb(unsigned long long color);
+RGBAColor operator "" _rgba(unsigned long long color);

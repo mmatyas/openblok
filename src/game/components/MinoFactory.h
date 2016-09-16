@@ -2,7 +2,7 @@
 
 #include "Mino.h"
 #include "Piece.h"
-#include "system/RGBColor.h"
+#include "system/Color.h"
 
 #include <memory>
 

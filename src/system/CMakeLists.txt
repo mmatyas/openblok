@@ -1,9 +1,9 @@
 set(MOD_SYSTEM_SRC
+	Color.cpp
 	EventCollector.cpp
 	GraphicsContext.cpp
 	InputEvent.cpp
 	Log.cpp
-	RGBColor.cpp
 
 	# SDL2
 	sdl/SDLEventCollector.cpp
@@ -11,12 +11,12 @@ set(MOD_SYSTEM_SRC
 )
 
 set(MOD_SYSTEM_H
+	Color.h
 	EventCollector.h
 	GraphicsContext.h
 	InputEvent.h
 	Localize.h
 	Log.h
-	RGBColor.h
 
 	# SDL2
 	sdl/SDLEventCollector.h

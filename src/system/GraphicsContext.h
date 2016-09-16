@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ResourceUtils.h"
-#include "RGBColor.h"
+#include "Color.h"
 
 #include <memory>
 #include <stdint.h>
