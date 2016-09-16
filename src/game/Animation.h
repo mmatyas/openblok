@@ -12,6 +12,11 @@ public:
     /// Returns true if the animation did not finish yet.
     virtual bool running() const { return is_running; }
 
+    /// Stops the animation.
+    virtual void stop() {
+        is_running = false;
+    }
+
 protected:
     AnimationBase(Duration duration, std::function<void()> on_end)
         : duration(duration)
@@ -20,6 +25,11 @@ protected:
         , is_running(true)
     {
         assert(duration > Duration::zero());
+    }
+
+    void reset() {
+        is_running = true;
+        timer = Duration::zero();
     }
 
     Duration duration;
@@ -66,6 +76,12 @@ public:
             last_value = animator(timer / (duration * 1.0));
     }
 
+    /// Restart the animation.
+    void reset() {
+        AnimationBase::reset();
+        last_value = animator(0.0);
+    }
+
     /// Returns the last result of the animation function
     const T& value() const { return last_value; }
 
@@ -98,6 +114,11 @@ public:
         }
         else
             animator(timer / (duration * 1.0));
+    }
+
+    void reset() {
+        AnimationBase::reset();
+        animator(0.0);
     }
 
     void value() const {};

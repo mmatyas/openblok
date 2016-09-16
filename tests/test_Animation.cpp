@@ -91,4 +91,23 @@ TEST(OnEndCallbackIsCalled) {
     CHECK_EQUAL(true, finished);
 }
 
+TEST(StopReset) {
+    int val = 50;
+    Animation<void> anim(3s,
+        [&val](double t){ val = std::round(t * 3); },
+        [&val](){ val += 10; });
+
+    CHECK_EQUAL(0, val);
+    CHECK_EQUAL(true, anim.running());
+
+    val = 50;
+    anim.stop();
+    CHECK_EQUAL(50, val);
+    CHECK_EQUAL(false, anim.running());
+
+    anim.reset();
+    CHECK_EQUAL(0, val);
+    CHECK_EQUAL(true, anim.running());
+}
+
 } // Suite
