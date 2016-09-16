@@ -7,7 +7,6 @@
 #include "system/EventCollector.h"
 #include "system/GraphicsContext.h"
 #include "system/InputEvent.h"
-#include "system/Log.h"
 
 #include <assert.h>
 
@@ -25,6 +24,10 @@ Well::Well()
     , autorepeat_timer(Duration::zero())
     , keypress_rate_now(keypress_normal_update_rate)
     , keypress_countdown(Duration::zero())
+    , lineclear_alpha(std::chrono::milliseconds(500), [](double t){
+            return static_cast<uint8_t>((1.0 - t) * 0xFF);
+        },
+        [this](){ this->removeEmptyRows(); })
 {
     keystates[InputType::LEFT] = false;
     keystates[InputType::RIGHT] = false;
@@ -36,6 +39,8 @@ Well::Well()
     keystates[InputType::C] = false;
 
     previous_keystates = keystates;
+
+    lineclear_alpha.stop();
 }
 
 void Well::updateKeystate(const std::vector<InputEvent>& events)
@@ -119,6 +124,14 @@ void Well::resetAutorepeat()
     keypress_rate_now = keypress_normal_update_rate;
 }
 
+void Well::resetInput()
+{
+    resetAutorepeat();
+    keypress_countdown = keypress_rate_now;
+    for (auto& key : keystates)
+        key.second = false;
+}
+
 void Well::updateGravity()
 {
     gravity_timer += GameState::frame_duration;
@@ -136,6 +149,13 @@ void Well::update(const std::vector<InputEvent>& events, AppContext&)
     if (gameover)
         return;
 
+    if (pending_cleared_rows.size()) {
+        assert(lineclear_alpha.running());
+        lineclear_alpha.update(GameState::frame_duration);
+        assert(!active_piece);
+        return;
+    }
+
     updateKeystate(events);
 
     keypress_countdown -= GameState::frame_duration;
@@ -147,8 +167,7 @@ void Well::update(const std::vector<InputEvent>& events, AppContext&)
 
 bool Well::requiresNewPiece() const
 {
-    // TODO: update this function when there will be animations
-    return !active_piece && !gameover;
+    return !active_piece && !gameover && !lineclear_alpha.running();
 }
 
 void Well::addPiece(Piece::Type type)
@@ -294,6 +313,18 @@ void Well::draw(GraphicsContext& gcx, unsigned int x, unsigned int y)
                     });
                 }
             }
+        }
+    }
+
+    // Draw line clear animation
+    if (pending_cleared_rows.size()) {
+        for (auto row : pending_cleared_rows) {
+            gcx.drawFilledRect({
+                    static_cast<int>(x),
+                    static_cast<int>(y + row * Mino::texture_size_px),
+                    static_cast<int>(Mino::texture_size_px * matrix.at(0).size()),
+                    Mino::texture_size_px
+                }, {0xFF, 0xFF, 0xFF, lineclear_alpha.value()});
         }
     }
 }
@@ -453,4 +484,57 @@ void Well::lockAndReleasePiece() {
     }
 
     active_piece.release();
+    checkLineclear();
+}
+
+void Well::checkLineclear()
+{
+    assert(!active_piece);
+
+    for (unsigned row = 0; row < matrix.size(); row++) {
+        bool row_filled = true;
+        for (auto& cell : matrix[row]) {
+            if (!cell) {
+                row_filled = false;
+                break;
+            }
+        }
+
+        if (row_filled)
+            pending_cleared_rows.insert(row);
+    }
+
+    assert(pending_cleared_rows.size() <= 4); // you can clear only 4 rows at once
+    if (pending_cleared_rows.size()) {
+        for (auto row : pending_cleared_rows) {
+            for (auto& cell : matrix[row])
+                cell = nullptr;
+        }
+
+        lineclear_alpha.reset();
+        resetInput();
+    }
+}
+
+void Well::removeEmptyRows()
+{
+    // this function should be called if there are empty rows
+    assert(pending_cleared_rows.size());
+
+    for (int row = matrix.size(); row >= 0; row--) {
+        if (!pending_cleared_rows.count(row))
+            continue;
+
+        int next_filled_row = row;
+        while (pending_cleared_rows.count(next_filled_row))
+            next_filled_row--;
+
+        if (next_filled_row < 0)
+            break;
+
+        matrix[row].swap(matrix[next_filled_row]);
+        pending_cleared_rows.insert(next_filled_row);
+    }
+
+    pending_cleared_rows.clear();
 }

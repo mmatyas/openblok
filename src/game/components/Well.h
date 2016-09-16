@@ -3,12 +3,14 @@
 #include "Mino.h"
 #include "Piece.h"
 #include "PieceQueue.h"
+#include "game/Animation.h"
 #include "game/Matrix.h"
 #include "system/InputEvent.h"
 
 #include <chrono>
 #include <memory>
 #include <vector>
+#include <set>
 #include <string>
 #include <unordered_map>
 #include <stdint.h>
@@ -88,6 +90,7 @@ private:
     Duration keypress_rate_now; // current input rate, either normal_update_rate or turbo_update_rate
     Duration keypress_countdown; // when reaches zero, input is allowed, then its value becomes rate_now
     void resetAutorepeat(); // turn off autorepeat mode
+    void resetInput(); // reset input (keystate and autorepeat) to default
 
     // active piece collision and ghost
     void calculateGhostOffset();
@@ -101,6 +104,12 @@ private:
     void hardDrop();
     void rotateCWNow(); // clockwise
     void rotateCCWNow(); // counter-clockwise
+
+    // line clears
+    void checkLineclear();
+    void removeEmptyRows();
+    std::set<uint8_t> pending_cleared_rows;
+    Animation<uint8_t> lineclear_alpha;
 
 friend class SuiteWell::WellFixtureMoveHelper;
 friend class SuiteWell::WellFixtureRotateHelper;
