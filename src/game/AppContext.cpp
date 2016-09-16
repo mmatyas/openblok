@@ -12,6 +12,8 @@ bool AppContext::init()
 
         Log::info(log_tag) << "Initializing event system...\n";
         events = EventCollector::create();
+
+        srand(time(nullptr));
     }
     catch (const std::exception& err) {
         Log::error(log_tag) << err.what() << std::endl;
