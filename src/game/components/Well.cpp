@@ -38,97 +38,111 @@ Well::Well()
     previous_keystates = keystates;
 }
 
-void Well::update(const std::vector<InputEvent>& events, AppContext&)
+void Well::updateKeystate(const std::vector<InputEvent>& events)
 {
-    if (gameover)
-        return;
-
     previous_keystates = keystates;
     for (const auto& event : events) {
         if (keystates.count(event.type()))
             keystates[event.type()] = event.down();
     }
 
-    // true only if down key is still down
-    bool movedDown = (keystates.at(InputType::DOWN) && previous_keystates.at(InputType::DOWN));
+    // keep it true only if down key is still down
+    skip_gravity = (keystates.at(InputType::DOWN) && previous_keystates.at(InputType::DOWN));
 
     // if one of the previously hold buttons was released,
     // reset the autorepeat timer
     for (const auto& item : keystates) {
         if (previous_keystates.at(item.first) && !item.second) {
-            reset_autorepeat();
+            resetAutorepeat();
             break;
         }
     }
+}
 
-    keypress_countdown -= GameState::frame_duration;
-    if (keypress_countdown <= Duration::zero()) {
-        bool keypress_happened = false;
-        bool update_autorepeat_timer = false;
+void Well::handleKeys()
+{
+    bool keypress_happened = false;
+    bool update_autorepeat_timer = false;
 
-        if (keystates.at(InputType::LEFT) != keystates.at(InputType::RIGHT)) {
-            if (keystates.at(InputType::LEFT))
-                moveLeftNow();
-            else
-                moveRightNow();
+    if (keystates.at(InputType::LEFT) != keystates.at(InputType::RIGHT)) {
+        if (keystates.at(InputType::LEFT))
+            moveLeftNow();
+        else
+            moveRightNow();
 
-            keypress_happened = true;
-            update_autorepeat_timer = true;
-        }
-
-        if (keystates.at(InputType::DOWN)) {
-            moveDownNow();
-            movedDown = true;
-            keypress_happened = true;
-            update_autorepeat_timer = true;
-        }
-
-        if (keystates.at(InputType::UP)) {
-            hardDrop();
-            movedDown = true;
-            keypress_happened = true;
-        }
-
-        if (keystates.at(InputType::A) != keystates.at(InputType::B)) {
-            if (keystates.at(InputType::A))
-                rotateCCWNow();
-            else
-                rotateCWNow();
-
-            keypress_happened = true;
-            reset_autorepeat();
-        }
-
-        if (keypress_happened) {
-            keypress_countdown = keypress_rate_now;
-
-            // activate turbo mode after some time
-            if (update_autorepeat_timer) {
-                autorepeat_timer += keypress_rate_now + GameState::frame_duration;
-                if (autorepeat_timer > autorepeat_delay)
-                    keypress_rate_now = keypress_turbo_update_rate;
-            }
-            // or reset
-            else {
-                reset_autorepeat();
-            }
-        }
+        keypress_happened = true;
+        update_autorepeat_timer = true;
     }
 
+    if (keystates.at(InputType::DOWN)) {
+        moveDownNow();
+        skip_gravity = true;
+        keypress_happened = true;
+        update_autorepeat_timer = true;
+    }
+
+    if (keystates.at(InputType::UP)) {
+        hardDrop();
+        skip_gravity = true;
+        keypress_happened = true;
+    }
+
+    if (keystates.at(InputType::A) != keystates.at(InputType::B)) {
+        if (keystates.at(InputType::A))
+            rotateCCWNow();
+        else
+            rotateCWNow();
+
+        keypress_happened = true;
+        resetAutorepeat();
+    }
+
+    if (keypress_happened) {
+        keypress_countdown = keypress_rate_now;
+
+        // activate turbo mode after some time
+        if (update_autorepeat_timer) {
+            autorepeat_timer += keypress_rate_now + GameState::frame_duration;
+            if (autorepeat_timer > autorepeat_delay)
+                keypress_rate_now = keypress_turbo_update_rate;
+        }
+        // or reset
+        else {
+            resetAutorepeat();
+        }
+    }
+}
+
+void Well::resetAutorepeat()
+{
+    autorepeat_timer = Duration::zero();
+    keypress_rate_now = keypress_normal_update_rate;
+}
+
+void Well::updateGravity()
+{
     gravity_timer += GameState::frame_duration;
     if (gravity_timer >= gravity_update_rate) {
         gravity_timer -= gravity_update_rate;
 
         // do not apply downward movement twice
-        if (!movedDown)
+        if (!skip_gravity)
             applyGravity();
     }
 }
 
-void Well::reset_autorepeat()
+void Well::update(const std::vector<InputEvent>& events, AppContext&)
 {
-    autorepeat_timer = Duration::zero();
-    keypress_rate_now = keypress_normal_update_rate;
+    if (gameover)
+        return;
+
+    updateKeystate(events);
+
+    keypress_countdown -= GameState::frame_duration;
+    if (keypress_countdown <= Duration::zero())
+        handleKeys();
+
+    updateGravity();
 }
 
 bool Well::requiresNewPiece() const
