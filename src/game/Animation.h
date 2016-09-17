@@ -9,6 +9,8 @@ class AnimationBase {
 public:
     using Duration = std::chrono::steady_clock::duration;
 
+    virtual ~AnimationBase() {};
+
     /// Returns true if the animation did not finish yet.
     virtual bool running() const { return is_running; }
 
