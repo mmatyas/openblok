@@ -4,6 +4,7 @@
 #include "PieceFactory.h"
 #include "game/GameState.h"
 #include "game/Resources.h"
+#include "game/WellEvent.h"
 #include "system/EventCollector.h"
 #include "system/GraphicsContext.h"
 #include "system/InputEvent.h"
@@ -27,7 +28,10 @@ Well::Well()
     , lineclear_alpha(std::chrono::milliseconds(500), [](double t){
             return static_cast<uint8_t>((1.0 - t) * 0xFF);
         },
-        [this](){ this->removeEmptyRows(); })
+        [this](){
+            this->removeEmptyRows();
+            this->notify(WellEvent::NEXT_REQUESTED);
+        })
 {
     keystates[InputType::LEFT] = false;
     keystates[InputType::RIGHT] = false;
@@ -152,7 +156,6 @@ void Well::update(const std::vector<InputEvent>& events, AppContext&)
     if (pending_cleared_rows.size()) {
         assert(lineclear_alpha.running());
         lineclear_alpha.update(GameState::frame_duration);
-        assert(!active_piece);
         return;
     }
 
@@ -165,15 +168,9 @@ void Well::update(const std::vector<InputEvent>& events, AppContext&)
     updateGravity();
 }
 
-bool Well::requiresNewPiece() const
-{
-    return !active_piece && !gameover && !lineclear_alpha.running();
-}
-
 void Well::addPiece(Piece::Type type)
 {
     // the player can only control one piece at a time
-    assert(requiresNewPiece());
     assert(!active_piece);
 
     active_piece = PieceFactory::make_uptr(type);
@@ -484,6 +481,7 @@ void Well::lockAndReleasePiece() {
     }
 
     active_piece.release();
+    notify(WellEvent::PIECE_LOCKED);
     checkLineclear();
 }
 
@@ -514,12 +512,23 @@ void Well::checkLineclear()
         lineclear_alpha.reset();
         resetInput();
     }
+    else
+        notify(WellEvent::NEXT_REQUESTED);
 }
 
 void Well::removeEmptyRows()
 {
     // this function should be called if there are empty rows
     assert(pending_cleared_rows.size());
+    assert(pending_cleared_rows.size() <= 4);
+
+    switch (pending_cleared_rows.size()) {
+        case 1: notify(WellEvent::CLEARED_ONE_LINE); break;
+        case 2: notify(WellEvent::CLEARED_TWO_LINES); break;
+        case 3: notify(WellEvent::CLEARED_THREE_LINES); break;
+        case 4: notify(WellEvent::CLEARED_FOUR_LINES); break;
+        default: assert(false);
+    }
 
     for (int row = matrix.size(); row >= 0; row--) {
         if (!pending_cleared_rows.count(row))
@@ -537,4 +546,10 @@ void Well::removeEmptyRows()
     }
 
     pending_cleared_rows.clear();
+}
+
+void Well::notify(WellEvent event)
+{
+    for (const auto& obs : observers[static_cast<uint8_t>(event)])
+        obs();
 }

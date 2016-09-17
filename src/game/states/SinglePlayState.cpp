@@ -1,12 +1,18 @@
 #include "SinglePlayState.h"
 
 #include "game/Resources.h"
+#include "game/WellEvent.h"
 
 
 SinglePlayState::SinglePlayState(AppContext&)
     : paused(false)
     , next_pieces(4)
 {
+    board.registerObserver(WellEvent::NEXT_REQUESTED, [this](){
+        this->board.addPiece(this->next_pieces.next());
+    });
+
+    board.addPiece(next_pieces.next());
 }
 
 void SinglePlayState::update(const std::vector<InputEvent>& inputs, AppContext& ctx)
@@ -20,10 +26,6 @@ void SinglePlayState::update(const std::vector<InputEvent>& inputs, AppContext& 
 
     if (paused)
         return;
-
-
-    if (board.requiresNewPiece())
-        board.addPiece(next_pieces.next());
 
     board.update(inputs, ctx);
 }

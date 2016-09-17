@@ -17,6 +17,7 @@
 
 
 class AppContext;
+enum class WellEvent: uint8_t;
 
 class GraphicsContext;
 namespace SuiteWell {
@@ -44,6 +45,12 @@ public:
     /// This function is only for reading the piece information.
     /// For actual input handling, call GameBoard's functions.
     const std::unique_ptr<Piece>& activePiece() const { return active_piece; }
+
+    /// Register an external event observer.
+    template <typename WellObserver>
+    void registerObserver(WellEvent event, WellObserver&& obs) {
+        observers[static_cast<uint8_t>(event)].push_back(std::forward<WellObserver>(obs));
+    }
 
     /// Get the well's string representation.
     /// Can be useful for testing and debugging.
@@ -110,6 +117,10 @@ private:
     void removeEmptyRows();
     std::set<uint8_t> pending_cleared_rows;
     Animation<uint8_t> lineclear_alpha;
+
+    // listeners
+    std::unordered_map<uint8_t, std::vector<std::function<void()>>> observers;
+    void notify(WellEvent);
 
 friend class SuiteWell::WellFixtureMoveHelper;
 friend class SuiteWell::WellFixtureRotateHelper;
