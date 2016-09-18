@@ -300,10 +300,10 @@ void Well::draw(GraphicsContext& gcx, unsigned int x, unsigned int y)
     // Draw board Minos
     for (size_t row = 0; row < 22; row++) {
         for (size_t col = 0; col < 10; col++) {
-            if (matrix[row][col])
-                matrix[row][col]->draw(gcx,
-                                       x + col * Mino::texture_size_px,
-                                       y + row * Mino::texture_size_px);
+            if (matrix.at(row).at(col))
+                matrix.at(row).at(col)->draw(gcx,
+                                             x + col * Mino::texture_size_px,
+                                             y + row * Mino::texture_size_px);
         }
     }
 
