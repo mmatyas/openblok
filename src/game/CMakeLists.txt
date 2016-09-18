@@ -1,6 +1,7 @@
 set(MOD_GAME_SRC
 	AppContext.cpp
 	GameState.cpp
+	components/Holder.cpp
 	components/Mino.cpp
 	components/MinoFactory.cpp
 	components/Piece.cpp
@@ -18,6 +19,7 @@ set(MOD_GAME_H
 	GameState.h
 	Matrix.h
 	Resources.h
+	components/Holder.h
 	components/Mino.h
 	components/MinoFactory.h
 	components/Piece.h

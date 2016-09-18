@@ -106,6 +106,12 @@ void Well::handleKeys()
         resetAutorepeat();
     }
 
+    if (keystates.at(InputType::C)) {
+        notify(WellEvent::HOLD_REQUESTED);
+        skip_gravity = true;
+        keypress_happened = true;
+    }
+
     if (keypress_happened) {
         keypress_countdown = keypress_rate_now;
 
@@ -159,6 +165,10 @@ void Well::update(const std::vector<InputEvent>& events, AppContext&)
         return;
     }
 
+    // TODO: implement entry delay
+    if (!active_piece)
+        notify(WellEvent::NEXT_REQUESTED);
+
     updateKeystate(events);
 
     keypress_countdown -= GameState::frame_duration;
@@ -182,6 +192,11 @@ void Well::addPiece(Piece::Type type)
         lockAndReleasePiece();
         gameover = true;
     }
+}
+
+void Well::deletePiece()
+{
+    active_piece = nullptr;
 }
 
 void Well::fromAscii(const std::string& text)
@@ -512,8 +527,6 @@ void Well::checkLineclear()
         lineclear_alpha.reset();
         resetInput();
     }
-    else
-        notify(WellEvent::NEXT_REQUESTED);
 }
 
 void Well::removeEmptyRows()

@@ -10,9 +10,20 @@ SinglePlayState::SinglePlayState(AppContext&)
 {
     board.registerObserver(WellEvent::NEXT_REQUESTED, [this](){
         this->board.addPiece(this->next_pieces.next());
+        this->piece_holder.onNextTurn();
     });
 
-    board.addPiece(next_pieces.next());
+    board.registerObserver(WellEvent::HOLD_REQUESTED, [this](){
+        this->piece_holder.onSwapRequested();
+        if (this->piece_holder.swapAllowed()) {
+            auto type = this->board.activePiece()->type();
+            this->board.deletePiece();
+            if (this->piece_holder.isEmpty())
+                this->piece_holder.swapWithEmpty(type);
+            else
+                this->board.addPiece(this->piece_holder.swapWith(type));
+        }
+    });
 }
 
 void SinglePlayState::update(const std::vector<InputEvent>& inputs, AppContext& ctx)
@@ -28,6 +39,7 @@ void SinglePlayState::update(const std::vector<InputEvent>& inputs, AppContext& 
         return;
 
     board.update(inputs, ctx);
+    piece_holder.update();
 }
 
 void SinglePlayState::draw(GraphicsContext& gcx)
@@ -36,5 +48,6 @@ void SinglePlayState::draw(GraphicsContext& gcx)
         gcx.drawTexture(TexID::GAMEPLAYBG, x, 0);
 
     next_pieces.draw(gcx, gcx.screenWidth() / 2 + Mino::texture_size_px + 5 * Mino::texture_size_px, 8);
+    piece_holder.draw(gcx, gcx.screenWidth() / 2 - 11 * Mino::texture_size_px, 8);
     board.draw(gcx, gcx.screenWidth() / 2 - 5 * Mino::texture_size_px, 8);
 }

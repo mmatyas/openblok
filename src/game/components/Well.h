@@ -36,10 +36,10 @@ public:
     /// Moves the active piece one row down, if it does not collide.
     void applyGravity();
 
-    /// Returns true when the well can accept a new Piece via addPiece().
-    bool requiresNewPiece() const;
     /// Add a new, player-controllable piece to the well.
     void addPiece(Piece::Type);
+    /// Delete the currently controlled Piece. A new one will be requested eventually.
+    void deletePiece();
     /// Returns the current, active piece, controllable by the player.
     /// Can return nullptr, eg. during animations.
     /// This function is only for reading the piece information.

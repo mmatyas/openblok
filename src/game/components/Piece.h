@@ -26,7 +26,7 @@ public:
 
     static char typeAsAscii(Type);
     static Type typeFromAscii(char);
-
+    Type type() const { return piece_type; }
 
     /// Create a Piece of type, with the four rotations as bitflags
     Piece(Type, const std::array<std::bitset<16>, 4>&);
@@ -44,7 +44,7 @@ public:
     void draw(GraphicsContext&, int x, int y);
 
 private:
-    const Type type;
+    const Type piece_type;
     uint8_t current_rotation;
     std::array<PieceGrid, 4> grids;
 };

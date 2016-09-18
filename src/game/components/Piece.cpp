@@ -42,7 +42,7 @@ Piece::Type Piece::typeFromAscii(char type) {
 }
 
 Piece::Piece(Type type, const std::array<std::bitset<16>, 4>& gridbits)
-    : type(type)
+    : piece_type(type)
     , current_rotation(0)
 {
     // fill 4 frames of 4x4 grids
