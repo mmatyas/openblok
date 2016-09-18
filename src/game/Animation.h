@@ -14,9 +14,20 @@ public:
     /// Returns true if the animation did not finish yet.
     virtual bool running() const { return is_running; }
 
-    /// Stops the animation.
+    /// Stops the animation, but it can be continued from this point later.
+    virtual void pause() {
+        is_running = false;
+    }
+
+    /// Continues the animation from where it was left off.
+    virtual void unpause() {
+        is_running = true;
+    }
+
+    /// Stops the animation and resets its timer to zero.
     virtual void stop() {
         is_running = false;
+        timer = Duration::zero();
     }
 
 protected:
