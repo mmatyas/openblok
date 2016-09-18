@@ -19,7 +19,7 @@ public:
     Piece::Type next();
 
     /// Draw the N previewable pieces at (x,y)
-    void draw(GraphicsContext&, unsigned x, unsigned y);
+    void draw(GraphicsContext&, int x, int y);
 
 private:
     std::deque<Piece::Type> piece_queue;

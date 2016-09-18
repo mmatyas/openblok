@@ -41,13 +41,20 @@ void PieceQueue::generate_pieces()
         piece_queue.push_back(p);
 }
 
-void PieceQueue::draw(GraphicsContext& gcx, unsigned x, unsigned y)
+void PieceQueue::draw(GraphicsContext& gcx, int x, int y)
 {
     static const unsigned piece_distance_y = Mino::texture_size_px * 4 + 10 /* padding */;
 
+    gcx.drawFilledRect({
+        x, y,
+        5 * Mino::texture_size_px, 4 * Mino::texture_size_px},
+        0x0A0AFF_rgb);
+
     for (unsigned i = 0; i < displayed_piece_count; i++) {
         piece_storage.at(static_cast<size_t>(piece_queue.at(i)))
-            ->draw(gcx, x, y + Mino::texture_size_px + i * piece_distance_y);
+            ->draw(gcx,
+                   x + Mino::texture_size_px / 2,
+                   y + Mino::texture_size_px + i * piece_distance_y);
     }
 }
 
