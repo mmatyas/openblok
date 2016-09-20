@@ -1,17 +1,17 @@
 #include "UnitTest++/UnitTest++.h"
 
-#include "game/Animation.h"
+#include "game/Transition.h"
 
 #include <cmath>
 
 
-SUITE(Animation) {
+SUITE(Transition) {
     using namespace std::chrono_literals;
 
 TEST(CreateVoid) {
     bool val = false;
 
-    Animation<void> anim(1s, [&val](double){ val = true; });
+    Transition<void> anim(1s, [&val](double){ val = true; });
     CHECK_EQUAL(true, anim.running());
     CHECK_EQUAL(true, val);
 
@@ -30,7 +30,7 @@ TEST(CreateVoid) {
 TEST(CreateT) {
     bool val = false;
 
-    Animation<int> anim(1s, [&val](double){ val = true; return 0; });
+    Transition<int> anim(1s, [&val](double){ val = true; return 0; });
     CHECK_EQUAL(true, anim.running());
     CHECK_EQUAL(true, val);
 
@@ -49,7 +49,7 @@ TEST(CreateT) {
 TEST(AnimatorRunsMultipleTimes) {
     int val = 0;
 
-    Animation<void> anim_bind(3s, [&val](double t){ val = std::round(t * 3); });
+    Transition<void> anim_bind(3s, [&val](double t){ val = std::round(t * 3); });
     CHECK_EQUAL(0, val);
     anim_bind.update(1s);
     CHECK_EQUAL(1, val);
@@ -58,7 +58,7 @@ TEST(AnimatorRunsMultipleTimes) {
     anim_bind.update(1s);
     CHECK_EQUAL(3, val);
 
-    Animation<int> anim_inner(3s, [](double t){ return std::round(t * 3); });
+    Transition<int> anim_inner(3s, [](double t){ return std::round(t * 3); });
     CHECK_EQUAL(0, anim_inner.value());
     anim_inner.update(1s);
     CHECK_EQUAL(1, anim_inner.value());
@@ -72,7 +72,7 @@ TEST(OnEndCallbackIsCalled) {
     int val = 0;
     bool finished = false;
 
-    Animation<void> anim_bind(3s, [&val](double t){ val = std::round(t * 3); }, [&finished](){ finished = true; });
+    Transition<void> anim_bind(3s, [&val](double t){ val = std::round(t * 3); }, [&finished](){ finished = true; });
     CHECK_EQUAL(0, val);
     CHECK_EQUAL(false, finished);
     anim_bind.update(1s);
@@ -93,7 +93,7 @@ TEST(OnEndCallbackIsCalled) {
 
 TEST(StopReset) {
     int val = 50;
-    Animation<void> anim(3s,
+    Transition<void> anim(3s,
         [&val](double t){ val = std::round(t * 3); },
         [&val](){ val += 10; });
 
@@ -113,7 +113,7 @@ TEST(StopReset) {
 TEST(ReplaceFn) {
     int val = 0;
 
-    Animation<void> anim(3s, [&val](double){ val = 10; });
+    Transition<void> anim(3s, [&val](double){ val = 10; });
 
     anim.replaceFn([&val](double){ val = 30; });
     CHECK_EQUAL(30, val);

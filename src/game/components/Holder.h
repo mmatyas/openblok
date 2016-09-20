@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Piece.h"
-#include "game/Animation.h"
+#include "game/Transition.h"
 
 
 class GraphicsContext;
@@ -40,5 +40,5 @@ private:
     Piece::Type current_piece;
     std::array<std::unique_ptr<Piece>, 7> piece_storage;
 
-    Animation<uint8_t> swapblocked_alpha;
+    Transition<uint8_t> swapblocked_alpha;
 };

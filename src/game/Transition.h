@@ -5,11 +5,11 @@
 #include <assert.h>
 
 
-class AnimationBase {
+class TransitionBase {
 public:
     using Duration = std::chrono::steady_clock::duration;
 
-    virtual ~AnimationBase() {};
+    virtual ~TransitionBase() {};
 
     /// Returns true if the animation did not finish yet.
     virtual bool running() const { return is_running; }
@@ -31,7 +31,7 @@ public:
     }
 
 protected:
-    AnimationBase(Duration duration, std::function<void()> on_end)
+    TransitionBase(Duration duration, std::function<void()> on_end)
         : duration(duration)
         , timer(Duration::zero())
         , end_callback(on_end)
@@ -51,12 +51,12 @@ protected:
     bool is_running;
 };
 
-/// An Animation is responsible for repeatedly calling a specified function
+/// A Transition is responsible for repeatedly calling a specified function
 /// for a duration of time, with the percent of already passed time as parameter.
 template<typename T>
-class Animation : public AnimationBase {
+class Transition : public TransitionBase {
 public:
-    /// Crates a new animation witha specified duration, animation function,
+    /// Crates a new transition with a specified duration, animation function,
     /// and an optional callback which would be invoked on completion.
     ///
     /// The animation function receives the elapsed time as a value in the range 0.0-1.0.
@@ -67,8 +67,8 @@ public:
     /// After the elapsed time reaches the duration (by repeatedly calling update()), on_update will
     /// be called with the value 1.0, then on_end_cb will be called,
     /// after that the animation stops and never calls any of the functions again.
-    Animation(Duration duration, std::function<T(double)> on_update, std::function<void()> on_end = [](){})
-        : AnimationBase(duration, on_end)
+    Transition(Duration duration, std::function<T(double)> on_update, std::function<void()> on_end = [](){})
+        : TransitionBase(duration, on_end)
         , animator(on_update)
         , last_value(animator(0.0))
     {}
@@ -97,7 +97,7 @@ public:
 
     /// Restart the animation.
     void reset() {
-        AnimationBase::reset();
+        TransitionBase::reset();
         last_value = animator(0.0);
     }
 
@@ -110,12 +110,12 @@ private:
 };
 
 template<>
-class Animation<void> : public AnimationBase {
+class Transition<void> : public TransitionBase {
     using Duration = std::chrono::steady_clock::duration;
 
 public:
-    Animation(Duration duration, std::function<void(double)> on_update, std::function<void()> on_end = [](){})
-        : AnimationBase(duration, on_end)
+     Transition(Duration duration, std::function<void(double)> on_update, std::function<void()> on_end = [](){})
+        : TransitionBase(duration, on_end)
         , animator(on_update)
     {
         on_update(0.0);
@@ -141,7 +141,7 @@ public:
     }
 
     void reset() {
-        AnimationBase::reset();
+        TransitionBase::reset();
         animator(0.0);
     }
 

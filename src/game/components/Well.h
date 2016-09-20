@@ -3,8 +3,8 @@
 #include "Mino.h"
 #include "Piece.h"
 #include "PieceQueue.h"
-#include "game/Animation.h"
 #include "game/Matrix.h"
+#include "game/Transition.h"
 #include "system/InputEvent.h"
 
 #include <chrono>
@@ -116,7 +116,7 @@ private:
     void checkLineclear();
     void removeEmptyRows();
     std::set<uint8_t> pending_cleared_rows;
-    Animation<uint8_t> lineclear_alpha;
+    Transition<uint8_t> lineclear_alpha;
 
     // listeners
     std::unordered_map<uint8_t, std::vector<std::function<void()>>> observers;

@@ -1,7 +1,7 @@
 set(TEST_SRC
-	test_Animation.cpp
 	# test_GraphicsContext.cpp
 	test_Piece.cpp
+	test_Transition.cpp
 	test_Well.cpp
 
 	# TestUtils.cpp
