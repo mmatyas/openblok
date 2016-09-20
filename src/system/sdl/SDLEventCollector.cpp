@@ -21,7 +21,9 @@ std::vector<InputEvent> SDLEventCollector::collect()
         case SDL_KEYDOWN:
             switch (sdl_event.key.keysym.scancode) {
             case SDL_SCANCODE_ESCAPE:
-                output.emplace_back(InputEvent(InputType::PAUSE, sdl_event.type == SDL_KEYDOWN));
+            case SDL_SCANCODE_F1:
+            case SDL_SCANCODE_P:
+                output.emplace_back(InputEvent(InputType::GAME_PAUSE, sdl_event.type == SDL_KEYDOWN));
                 break;
             case SDL_SCANCODE_UP:
                 output.emplace_back(InputEvent(InputType::UP, sdl_event.type == SDL_KEYDOWN));
@@ -42,7 +44,12 @@ std::vector<InputEvent> SDLEventCollector::collect()
                 output.emplace_back(InputEvent(InputType::B, sdl_event.type == SDL_KEYDOWN));
                 break;
             case SDL_SCANCODE_C:
-                output.emplace_back(InputEvent(InputType::C, sdl_event.type == SDL_KEYDOWN));
+            case SDL_SCANCODE_LSHIFT:
+            case SDL_SCANCODE_RSHIFT:
+                output.emplace_back(InputEvent(InputType::GAME_HOLD, sdl_event.type == SDL_KEYDOWN));
+                break;
+            case SDL_SCANCODE_SPACE:
+                output.emplace_back(InputEvent(InputType::GAME_PAUSE, sdl_event.type == SDL_KEYDOWN));
                 break;
             case SDL_SCANCODE_F4:
                 if (SDL_GetModState() & KMOD_ALT)

@@ -40,7 +40,8 @@ Well::Well()
 
     keystates[InputType::A] = false;
     keystates[InputType::B] = false;
-    keystates[InputType::C] = false;
+    keystates[InputType::X] = false;
+    keystates[InputType::Y] = false;
 
     previous_keystates = keystates;
 
@@ -90,7 +91,7 @@ void Well::handleKeys()
         update_autorepeat_timer = true;
     }
 
-    if (keystates.at(InputType::UP)) {
+    if (keystates.at(InputType::GAME_HARDDROP)) {
         hardDrop();
         skip_gravity = true;
         keypress_happened = true;
@@ -106,7 +107,7 @@ void Well::handleKeys()
         resetAutorepeat();
     }
 
-    if (keystates.at(InputType::C)) {
+    if (keystates.at(InputType::GAME_HOLD)) {
         notify(WellEvent::HOLD_REQUESTED);
         skip_gravity = true;
         keypress_happened = true;

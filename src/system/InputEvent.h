@@ -5,14 +5,15 @@
 
 
 enum class InputType: uint8_t {
-    PAUSE,
     UP,
     DOWN,
     LEFT,
     RIGHT,
     A,
     B,
-    C,
+    GAME_PAUSE,
+    GAME_HOLD,
+    GAME_HARDDROP,
 };
 
 struct InputTypeHash {
