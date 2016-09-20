@@ -17,14 +17,18 @@ Well::Well()
     , active_piece_x(0)
     , active_piece_y(0)
     , ghost_piece_y(0)
-    , gravity_update_rate(std::chrono::seconds(1))
+    , gravity_delay(std::chrono::seconds(1))
     , gravity_timer(Duration::zero())
-    , autorepeat_delay(std::chrono::milliseconds(300))
-    , keypress_normal_update_rate(std::chrono::milliseconds(150))
-    , keypress_turbo_update_rate(std::chrono::milliseconds(40))
-    , autorepeat_timer(Duration::zero())
-    , keypress_rate_now(keypress_normal_update_rate)
-    , keypress_countdown(Duration::zero())
+    , horizontal_delay_normal(std::chrono::milliseconds(150))
+    , horizontal_delay_turbo(std::chrono::milliseconds(40))
+    , horizontal_delay_current(horizontal_delay_normal)
+    , horizontal_timer(Duration::zero())
+    , das_delay(std::chrono::milliseconds(300))
+    , das_timer(das_delay)
+    , softdrop_delay(std::chrono::milliseconds(50))
+    , softdrop_timer(Duration::zero())
+    , rotation_delay(horizontal_delay_normal)
+    , rotation_timer(Duration::zero())
     , lineclear_alpha(std::chrono::milliseconds(500), [](double t){
             return static_cast<uint8_t>((1.0 - t) * 0xFF);
         },
@@ -40,8 +44,6 @@ Well::Well()
 
     keystates[InputType::A] = false;
     keystates[InputType::B] = false;
-    keystates[InputType::X] = false;
-    keystates[InputType::Y] = false;
 
     previous_keystates = keystates;
 
@@ -51,94 +53,96 @@ Well::Well()
 void Well::updateKeystate(const std::vector<InputEvent>& events)
 {
     previous_keystates = keystates;
-    for (const auto& event : events) {
-        if (keystates.count(event.type()))
-            keystates[event.type()] = event.down();
-    }
 
+    for (const auto& event : events)
+        keystates[event.type()] = event.down();
+}
+
+void Well::handleKeys(const std::vector<InputEvent>& events)
+{
     // keep it true only if down key is still down
     skip_gravity = (keystates.at(InputType::DOWN) && previous_keystates.at(InputType::DOWN));
 
-    // if one of the previously hold buttons was released,
-    // reset the autorepeat timer
-    for (const auto& item : keystates) {
-        if (previous_keystates.at(item.first) && !item.second) {
-            resetAutorepeat();
-            break;
+    // for some events onpress/onrelease handling is better suited
+    for (const auto& event : events) {
+        // press
+        if (event.down()) {
+            switch (event.type()) {
+            case InputType::GAME_HARDDROP:
+                hardDrop();
+                skip_gravity = true;
+                break;
+
+            case InputType::GAME_HOLD:
+                notify(WellEvent::HOLD_REQUESTED);
+                skip_gravity = true;
+                break;
+
+            default:
+                break;
+            }
+        }
+        // release
+        else {
+            switch (event.type()) {
+            case InputType::LEFT:
+            case InputType::RIGHT:
+                resetDAS();
+                break;
+            default:
+                break;
+            }
         }
     }
-}
 
-void Well::handleKeys()
-{
-    bool keypress_happened = false;
-    bool update_autorepeat_timer = false;
 
-    if (keystates.at(InputType::LEFT) != keystates.at(InputType::RIGHT)) {
-        if (keystates.at(InputType::LEFT))
-            moveLeftNow();
-        else
-            moveRightNow();
+    horizontal_timer -= GameState::frame_duration;
+    if (horizontal_timer <= Duration::zero()) {
+        if (keystates.at(InputType::LEFT) != keystates.at(InputType::RIGHT)) {
+            if (keystates.at(InputType::LEFT))
+                moveLeftNow();
+            else
+                moveRightNow();
 
-        keypress_happened = true;
-        update_autorepeat_timer = true;
+
+            // update DAS
+            if (das_timer > Duration::zero()) {
+                das_timer -= horizontal_delay_normal;
+                if (das_timer <= Duration::zero())
+                    horizontal_delay_current = horizontal_delay_turbo;
+            }
+
+            horizontal_timer = horizontal_delay_current;
+        }
     }
 
-    if (keystates.at(InputType::DOWN)) {
-        moveDownNow();
-        skip_gravity = true;
-        keypress_happened = true;
-        update_autorepeat_timer = true;
-    }
-
-    if (keystates.at(InputType::GAME_HARDDROP)) {
-        hardDrop();
-        skip_gravity = true;
-        keypress_happened = true;
-    }
-
-    if (keystates.at(InputType::A) != keystates.at(InputType::B)) {
+    rotation_timer -= GameState::frame_duration;
+    if (keystates.at(InputType::A) != keystates.at(InputType::B) && rotation_timer <= Duration::zero()) {
         if (keystates.at(InputType::A))
             rotateCCWNow();
         else
             rotateCWNow();
 
-        keypress_happened = true;
-        resetAutorepeat();
+        rotation_timer = rotation_delay;
     }
 
-    if (keystates.at(InputType::GAME_HOLD)) {
-        notify(WellEvent::HOLD_REQUESTED);
+    softdrop_timer -= GameState::frame_duration;
+    if (keystates.at(InputType::DOWN) && softdrop_timer <= Duration::zero()) {
+        moveDownNow();
         skip_gravity = true;
-        keypress_happened = true;
-    }
-
-    if (keypress_happened) {
-        keypress_countdown = keypress_rate_now;
-
-        // activate turbo mode after some time
-        if (update_autorepeat_timer) {
-            autorepeat_timer += keypress_rate_now + GameState::frame_duration;
-            if (autorepeat_timer > autorepeat_delay)
-                keypress_rate_now = keypress_turbo_update_rate;
-        }
-        // or reset
-        else {
-            resetAutorepeat();
-        }
+        softdrop_timer = softdrop_delay;
     }
 }
 
-void Well::resetAutorepeat()
+void Well::resetDAS()
 {
-    autorepeat_timer = Duration::zero();
-    keypress_rate_now = keypress_normal_update_rate;
+    das_timer = das_delay;
+    horizontal_delay_current = horizontal_delay_normal;
 }
 
 void Well::resetInput()
 {
-    resetAutorepeat();
-    keypress_countdown = keypress_rate_now;
+    resetDAS();
     for (auto& key : keystates)
         key.second = false;
 }
@@ -146,8 +150,8 @@ void Well::resetInput()
 void Well::updateGravity()
 {
     gravity_timer += GameState::frame_duration;
-    if (gravity_timer >= gravity_update_rate) {
-        gravity_timer -= gravity_update_rate;
+    if (gravity_timer >= gravity_delay) {
+        gravity_timer -= gravity_delay;
 
         // do not apply downward movement twice
         if (!skip_gravity)
@@ -171,10 +175,7 @@ void Well::update(const std::vector<InputEvent>& events, AppContext&)
         notify(WellEvent::NEXT_REQUESTED);
 
     updateKeystate(events);
-
-    keypress_countdown -= GameState::frame_duration;
-    if (keypress_countdown <= Duration::zero())
-        handleKeys();
+    handleKeys(events);
 
     updateGravity();
 }

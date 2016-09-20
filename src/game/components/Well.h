@@ -78,7 +78,7 @@ private:
 
     // gravity
     bool skip_gravity;
-    const Duration gravity_update_rate;
+    const Duration gravity_delay;
     Duration gravity_timer;
     void updateGravity();
 
@@ -86,17 +86,23 @@ private:
     std::unordered_map<InputType, bool, InputTypeHash> keystates;
     decltype(keystates) previous_keystates;
     void updateKeystate(const std::vector<InputEvent>&);
-    void handleKeys();
+    void handleKeys(const std::vector<InputEvent>&);
 
-    // autorepeat (aka DAS)
-    const Duration autorepeat_delay; // the time it takes to activate turbo mode
-    const Duration keypress_normal_update_rate;
-    const Duration keypress_turbo_update_rate;
-    Duration autorepeat_timer; // counter, if reaches autorepeat_switch_time, turbo mode activates
-    Duration keypress_rate_now; // current input rate, either normal_update_rate or turbo_update_rate
-    Duration keypress_countdown; // when reaches zero, input is allowed, then its value becomes rate_now
-    void resetAutorepeat(); // turn off autorepeat mode
+    // autorepeat horizontal (aka DAS)
+    const Duration horizontal_delay_normal; // normal key repeat rate
+    const Duration horizontal_delay_turbo; // turbo key repeat rate
+    Duration horizontal_delay_current; // current input rate, either normal or turbo
+    Duration horizontal_timer; // timer for horizontal autorepeat
+    const Duration das_delay; // the time it takes to activate turbo mode
+    Duration das_timer; // timer for turbo mode activation
+    void resetDAS(); // turn off autorepeat mode
     void resetInput(); // reset input (keystate and autorepeat) to default
+
+    // autorepeat other keys
+    const Duration softdrop_delay;
+    Duration softdrop_timer;
+    const Duration rotation_delay;
+    Duration rotation_timer;
 
     // active piece collision and ghost
     void calculateGhostOffset();
