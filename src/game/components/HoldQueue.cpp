@@ -1,4 +1,4 @@
-#include "Holder.h"
+#include "HoldQueue.h"
 
 #include "PieceFactory.h"
 #include "game/GameState.h"
@@ -7,7 +7,7 @@
 #include <assert.h>
 
 
-Holder::Holder()
+HoldQueue::HoldQueue()
     : swap_allowed(true)
     , empty(true)
     , current_piece(Piece::allTypes.at(0))
@@ -25,18 +25,18 @@ Holder::Holder()
     }
 }
 
-void Holder::onSwapRequested()
+void HoldQueue::onSwapRequested()
 {
     if (!swap_allowed)
         swapblocked_alpha.unpause();
 }
 
-void Holder::onNextTurn()
+void HoldQueue::onNextTurn()
 {
     swap_allowed = true;
 }
 
-Piece::Type Holder::swapWith(Piece::Type other)
+Piece::Type HoldQueue::swapWith(Piece::Type other)
 {
     // TODO: use optional
     assert(!empty);
@@ -51,7 +51,7 @@ Piece::Type Holder::swapWith(Piece::Type other)
     return prev;
 }
 
-void Holder::swapWithEmpty(Piece::Type other)
+void HoldQueue::swapWithEmpty(Piece::Type other)
 {
     // TODO: use optional
     assert(empty);
@@ -63,12 +63,12 @@ void Holder::swapWithEmpty(Piece::Type other)
     empty = false;
 }
 
-void Holder::update()
+void HoldQueue::update()
 {
     swapblocked_alpha.update(GameState::frame_duration);
 }
 
-void Holder::draw(GraphicsContext& gcx, int x, int y)
+void HoldQueue::draw(GraphicsContext& gcx, int x, int y)
 {
     gcx.drawFilledRect({x, y, 5 * Mino::texture_size_px, 4 * Mino::texture_size_px}, 0x0A0AFF_rgb);
 

@@ -8,9 +8,9 @@ class GraphicsContext;
 
 
 /// A piece holder, allows swapping the active piece once in every turn.
-class Holder {
+class HoldQueue {
 public:
-    Holder();
+    HoldQueue();
 
     /// Notify the holder that someone would like to swap.
     void onSwapRequested();

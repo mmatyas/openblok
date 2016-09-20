@@ -1,7 +1,7 @@
 #pragma once
 
 #include "game/GameState.h"
-#include "game/components/Holder.h"
+#include "game/components/HoldQueue.h"
 #include "game/components/NextQueue.h"
 #include "game/components/Well.h"
 
@@ -14,7 +14,7 @@ public:
 
 private:
     bool paused;
-    Holder piece_holder;
+    HoldQueue piece_holder;
     NextQueue next_pieces;
     Well board;
 };
