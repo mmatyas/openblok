@@ -13,7 +13,8 @@ Holder::Holder()
     , current_piece(Piece::allTypes.at(0))
     , swapblocked_alpha(std::chrono::milliseconds(500), [](double t){
             return static_cast<uint8_t>((1.0 - t) * 0xFF);
-        })
+        },
+        [this](){ this->swapblocked_alpha.stop(); })
 {
     swapblocked_alpha.stop();
 
@@ -27,7 +28,7 @@ Holder::Holder()
 void Holder::onSwapRequested()
 {
     if (!swap_allowed)
-        swapblocked_alpha.reset();
+        swapblocked_alpha.unpause();
 }
 
 void Holder::onNextTurn()
