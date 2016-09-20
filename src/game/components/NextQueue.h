@@ -10,10 +10,10 @@ class GraphicsContext;
 
 /// Produces the next piece randomly, and allows to preview
 /// the next N pieces.
-class PieceQueue {
+class NextQueue {
 public:
     /// Create a piece queue and allow previewing the next N pieces.
-    PieceQueue(unsigned displayed_piece_count);
+    NextQueue(unsigned displayed_piece_count);
 
     /// Pop the top of the queue.
     Piece::Type next();

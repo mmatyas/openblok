@@ -2,7 +2,6 @@
 
 #include "Mino.h"
 #include "Piece.h"
-#include "PieceQueue.h"
 #include "game/Matrix.h"
 #include "game/Transition.h"
 #include "system/InputEvent.h"

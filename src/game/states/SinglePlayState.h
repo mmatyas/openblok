@@ -2,7 +2,7 @@
 
 #include "game/GameState.h"
 #include "game/components/Holder.h"
-#include "game/components/PieceQueue.h"
+#include "game/components/NextQueue.h"
 #include "game/components/Well.h"
 
 
@@ -15,6 +15,6 @@ public:
 private:
     bool paused;
     Holder piece_holder;
-    PieceQueue next_pieces;
+    NextQueue next_pieces;
     Well board;
 };

@@ -1,4 +1,4 @@
-#include "PieceQueue.h"
+#include "NextQueue.h"
 
 #include "PieceFactory.h"
 #include "system/GraphicsContext.h"
@@ -10,7 +10,7 @@
 
 std::array<Piece::Type, Piece::allTypes.size()> possible_pieces = Piece::allTypes;
 
-PieceQueue::PieceQueue(unsigned displayed_piece_count)
+NextQueue::NextQueue (unsigned displayed_piece_count)
     : displayed_piece_count(displayed_piece_count)
 {
     generate_pieces();
@@ -22,7 +22,7 @@ PieceQueue::PieceQueue(unsigned displayed_piece_count)
     }
 }
 
-Piece::Type PieceQueue::next()
+Piece::Type NextQueue::next()
 {
     Piece::Type piece = piece_queue.front();
     piece_queue.pop_front();
@@ -33,7 +33,7 @@ Piece::Type PieceQueue::next()
     return piece;
 }
 
-void PieceQueue::generate_pieces()
+void NextQueue::generate_pieces()
 {
     std::random_shuffle(possible_pieces.begin(), possible_pieces.end());
 
@@ -41,7 +41,7 @@ void PieceQueue::generate_pieces()
         piece_queue.push_back(p);
 }
 
-void PieceQueue::draw(GraphicsContext& gcx, int x, int y)
+void NextQueue::draw(GraphicsContext& gcx, int x, int y)
 {
     static const unsigned piece_distance_y = Mino::texture_size_px * 4 + 10 /* padding */;
 
@@ -57,5 +57,3 @@ void PieceQueue::draw(GraphicsContext& gcx, int x, int y)
                    y + Mino::texture_size_px + i * piece_distance_y);
     }
 }
-
-

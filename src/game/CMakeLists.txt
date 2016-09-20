@@ -4,9 +4,9 @@ set(MOD_GAME_SRC
 	components/Holder.cpp
 	components/Mino.cpp
 	components/MinoFactory.cpp
+	components/NextQueue.cpp
 	components/Piece.cpp
 	components/PieceFactory.cpp
-	components/PieceQueue.cpp
 	components/Well.cpp
 	states/InitState.cpp
 	states/MainMenuState.cpp
@@ -22,9 +22,9 @@ set(MOD_GAME_H
 	components/Holder.h
 	components/Mino.h
 	components/MinoFactory.h
+	components/NextQueue.h
 	components/Piece.h
 	components/PieceFactory.h
-	components/PieceQueue.h
 	components/Well.h
 	states/InitState.h
 	states/MainMenuState.h
