@@ -49,7 +49,7 @@ std::vector<InputEvent> SDLEventCollector::collect()
                 output.emplace_back(InputEvent(InputType::GAME_HOLD, sdl_event.type == SDL_KEYDOWN));
                 break;
             case SDL_SCANCODE_SPACE:
-                output.emplace_back(InputEvent(InputType::GAME_PAUSE, sdl_event.type == SDL_KEYDOWN));
+                output.emplace_back(InputEvent(InputType::GAME_HARDDROP, sdl_event.type == SDL_KEYDOWN));
                 break;
             case SDL_SCANCODE_F4:
                 if (SDL_GetModState() & KMOD_ALT)

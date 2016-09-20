@@ -29,7 +29,7 @@ SinglePlayState::SinglePlayState(AppContext&)
 void SinglePlayState::update(const std::vector<InputEvent>& inputs, AppContext& ctx)
 {
     for (const auto& input : inputs) {
-        if (input.type() == InputType::PAUSE && input.down()) {
+        if (input.type() == InputType::GAME_PAUSE && input.down()) {
             paused = !paused;
             return;
         }
