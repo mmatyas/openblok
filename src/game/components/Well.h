@@ -22,6 +22,7 @@ class GraphicsContext;
 namespace SuiteWell {
     class WellFixtureMoveHelper;
     class WellFixtureRotateHelper;
+    class WellFixtureGravityHelper;
 }
 
 class Well {
@@ -81,6 +82,7 @@ private:
     const Duration gravity_delay;
     Duration gravity_timer;
     void updateGravity();
+    bool isOnGround();
 
     // input handling
     std::unordered_map<InputType, bool, InputTypeHash> keystates;
@@ -102,6 +104,9 @@ private:
     Duration softdrop_timer;
     const Duration rotation_delay;
     Duration rotation_timer;
+
+    // lock delay
+    Transition<void> lock_promise;
 
     // active piece collision and ghost
     void calculateGhostOffset();
@@ -129,4 +134,5 @@ private:
 
 friend class SuiteWell::WellFixtureMoveHelper;
 friend class SuiteWell::WellFixtureRotateHelper;
+friend class SuiteWell::WellFixtureGravityHelper;
 };

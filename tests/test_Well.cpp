@@ -72,7 +72,7 @@ TEST_FIXTURE(WellFixture, Gravity) {
     CHECK_EQUAL(expected_ascii, well.asAscii());
 
     // it will lock there
-    well.applyGravity();
+    well.lock_promise.update(well.lock_promise.length());
     expected_ascii = "";
     for (unsigned i = 0; i < 20; i++)
         expected_ascii += emptyline_ascii;
@@ -84,6 +84,7 @@ TEST_FIXTURE(WellFixture, Gravity) {
 
     // a new piece will appear at the top
     well.addPiece(Piece::Type::Z);
+    well.lock_promise.restart();
     CHECK(well.activePiece() != nullptr);
 
     expected_ascii =  "...zz.....\n";
@@ -100,6 +101,7 @@ TEST_FIXTURE(WellFixture, Gravity) {
     // and land on top of the previous
     for (unsigned i = 0; i < 19; i++)
         well.applyGravity();
+    well.lock_promise.update(well.lock_promise.length());
 
     expected_ascii = "";
     for (unsigned i = 0; i < 18; i++)

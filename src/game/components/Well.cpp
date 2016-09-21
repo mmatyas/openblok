@@ -28,6 +28,9 @@ Well::Well()
     , softdrop_timer(Duration::zero())
     , rotation_delay(horizontal_delay_normal)
     , rotation_timer(Duration::zero())
+    , lock_promise(GameState::frame_duration * 30, [](double){}, [this](){
+            this->lockAndReleasePiece();
+        })
     , lineclear_alpha(GameState::frame_duration * 40, [](double t){
             return static_cast<uint8_t>((1.0 - t) * 0xFF);
         },
@@ -175,6 +178,12 @@ void Well::update(const std::vector<InputEvent>& events, AppContext&)
     handleKeys(events);
 
     updateGravity();
+
+    if (isOnGround())
+        lock_promise.unpause();
+    else
+        lock_promise.stop();
+    lock_promise.update(GameState::frame_duration);
 }
 
 void Well::addPiece(Piece::Type type)
@@ -407,19 +416,21 @@ void Well::moveRightNow()
     }
 }
 
+bool Well::isOnGround()
+{
+    assert(active_piece);
+    assert(active_piece_y + 1u < matrix.size());
+
+    return hasCollisionAt(active_piece_x, active_piece_y + 1);
+}
+
 void Well::moveDownNow()
 {
     if (!active_piece || active_piece_y + 1u >= matrix.size())
         return;
 
-    auto pos_before = active_piece_y;
-    if (!hasCollisionAt(active_piece_x, active_piece_y + 1))
+    if (!isOnGround())
         active_piece_y++;
-
-    // if the position of the piece didn't change,
-    // lock the piece and move the minos into the well
-    if (pos_before == active_piece_y)
-        lockAndReleasePiece();
 }
 
 void Well::hardDrop()
