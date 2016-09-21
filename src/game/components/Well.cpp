@@ -430,29 +430,38 @@ void Well::hardDrop()
     moveDownNow();
 }
 
+bool Well::placeByWallKick()
+{
+    assert(active_piece);
+
+    // try 1 tile right
+    if (!hasCollisionAt(active_piece_x + 1, active_piece_y)) {
+        active_piece_x++;
+        return true;
+    }
+    // try 1 tile left
+    if (!hasCollisionAt(active_piece_x - 1, active_piece_y)) {
+        active_piece_x--;
+        return true;
+    }
+
+    return false;
+}
+
 void Well::rotateCWNow()
 {
     if (!active_piece)
         return;
 
-    bool success = false;
     active_piece->rotateCW();
-    if (!hasCollisionAt(active_piece_x, active_piece_y)) {
-        success = true;
-    }
-    else if (!hasCollisionAt(active_piece_x - 1, active_piece_y)) {
-        active_piece_x--;
-        success = true;
-    }
-    else if (!hasCollisionAt(active_piece_x + 1, active_piece_y)) {
-        active_piece_x++;
-        success = true;
+    if (hasCollisionAt(active_piece_x, active_piece_y)) {
+        if (!placeByWallKick()) {
+            active_piece->rotateCCW();
+            return;
+        }
     }
 
-    if (success)
-        calculateGhostOffset();
-    else
-        active_piece->rotateCCW();
+    calculateGhostOffset();
 }
 
 void Well::rotateCCWNow()
@@ -460,24 +469,15 @@ void Well::rotateCCWNow()
     if (!active_piece)
         return;
 
-    bool success = false;
     active_piece->rotateCCW();
-    if (!hasCollisionAt(active_piece_x, active_piece_y)) {
-        success = true;
-    }
-    else if (!hasCollisionAt(active_piece_x + 1, active_piece_y)) {
-        active_piece_x++;
-        success = true;
-    }
-    else if (!hasCollisionAt(active_piece_x - 1, active_piece_y)) {
-        active_piece_x--;
-        success = true;
+    if (hasCollisionAt(active_piece_x, active_piece_y)) {
+        if (!placeByWallKick()) {
+            active_piece->rotateCW();
+            return;
+        }
     }
 
-    if (success)
-        calculateGhostOffset();
-    else
-        active_piece->rotateCW();
+    calculateGhostOffset();
 }
 
 void Well::lockAndReleasePiece() {

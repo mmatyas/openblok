@@ -115,6 +115,7 @@ private:
     void hardDrop();
     void rotateCWNow(); // clockwise
     void rotateCCWNow(); // counter-clockwise
+    bool placeByWallKick();
 
     // line clears
     void checkLineclear();
