@@ -179,6 +179,9 @@ void Well::update(const std::vector<InputEvent>& events, AppContext&)
     updateKeystate(events);
     handleKeys(events);
 
+    if (!active_piece)
+        return;
+
     updateGravity();
 
     if (isOnGround())
