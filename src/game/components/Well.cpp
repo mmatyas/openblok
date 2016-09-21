@@ -453,27 +453,36 @@ bool Well::placeByWallKick()
 {
     assert(active_piece);
 
-    // try 1 tile right
-    if (!hasCollisionAt(active_piece_x + 1, active_piece_y)) {
-        active_piece_x++;
-        return true;
-    }
-    // try 1 tile left
-    if (!hasCollisionAt(active_piece_x - 1, active_piece_y)) {
-        active_piece_x--;
-        return true;
-    }
-    // if I piece, also try 2 tiles left/right
-    if (active_piece->type() == Piece::Type::I) {
-        if (active_piece_x + 2 < static_cast<int>(matrix.at(0).size())
-            && !hasCollisionAt(active_piece_x + 2, active_piece_y)) {
-            active_piece_x += 2;
+    // try at the same row first, then floor kick
+    // I pieces can kick higher
+    // TODO: check max width/height instead of piece type
+    for (unsigned floor = 0; floor < (active_piece->type() == Piece::Type::I ? 3 : 2); floor++) {
+        // try 1 tile right
+        if (!hasCollisionAt(active_piece_x + 1, active_piece_y - floor)) {
+            active_piece_x++;
+            active_piece_y -= floor;
             return true;
         }
-        if (active_piece_x - 2 >= 0
-            && !hasCollisionAt(active_piece_x - 2, active_piece_y)) {
-            active_piece_x -= 2;
+        // try 1 tile left
+        if (!hasCollisionAt(active_piece_x - 1, active_piece_y - floor)) {
+            active_piece_x--;
+            active_piece_y -= floor;
             return true;
+        }
+        // if I piece, also try 2 tiles left/right
+        if (active_piece->type() == Piece::Type::I) {
+            if (active_piece_x + 2 < static_cast<int>(matrix.at(0).size())
+                && !hasCollisionAt(active_piece_x + 2, active_piece_y - floor)) {
+                active_piece_x += 2;
+                active_piece_y -= floor;
+                return true;
+            }
+            if (active_piece_x - 2 >= 0
+                && !hasCollisionAt(active_piece_x - 2, active_piece_y - floor)) {
+                active_piece_x -= 2;
+                active_piece_y -= floor;
+                return true;
+            }
         }
     }
 
