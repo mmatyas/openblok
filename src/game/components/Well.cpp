@@ -444,6 +444,19 @@ bool Well::placeByWallKick()
         active_piece_x--;
         return true;
     }
+    // if I piece, also try 2 tiles left/right
+    if (active_piece->type() == Piece::Type::I) {
+        if (active_piece_x + 2 < static_cast<int>(matrix.at(0).size())
+            && !hasCollisionAt(active_piece_x + 2, active_piece_y)) {
+            active_piece_x += 2;
+            return true;
+        }
+        if (active_piece_x - 2 >= 0
+            && !hasCollisionAt(active_piece_x - 2, active_piece_y)) {
+            active_piece_x -= 2;
+            return true;
+        }
+    }
 
     return false;
 }
