@@ -106,6 +106,7 @@ private:
     Duration rotation_timer;
 
     // lock delay
+    bool lock_infinity;
     Transition<void> lock_promise;
 
     // active piece collision and ghost

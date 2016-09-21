@@ -28,6 +28,7 @@ Well::Well()
     , softdrop_timer(Duration::zero())
     , rotation_delay(horizontal_delay_normal)
     , rotation_timer(Duration::zero())
+    , lock_infinity(true)
     , lock_promise(GameState::frame_duration * 30, [](double){}, [this](){
             this->lockAndReleasePiece();
         })
@@ -36,6 +37,7 @@ Well::Well()
         },
         [this](){
             this->removeEmptyRows();
+            this->lock_promise.stop();
             this->notify(WellEvent::NEXT_REQUESTED);
         })
 {
@@ -402,6 +404,9 @@ void Well::moveLeftNow()
     if (!hasCollisionAt(active_piece_x - 1, active_piece_y)) {
         active_piece_x--;
         calculateGhostOffset();
+
+        if (lock_infinity)
+            lock_promise.stop();
     }
 }
 
@@ -413,6 +418,9 @@ void Well::moveRightNow()
     if (!hasCollisionAt(active_piece_x + 1, active_piece_y)) {
         active_piece_x++;
         calculateGhostOffset();
+
+        if (lock_infinity)
+            lock_promise.stop();
     }
 }
 
@@ -486,6 +494,9 @@ void Well::rotateCWNow()
     }
 
     calculateGhostOffset();
+
+    if (lock_infinity)
+        lock_promise.stop();
 }
 
 void Well::rotateCCWNow()
@@ -502,6 +513,9 @@ void Well::rotateCCWNow()
     }
 
     calculateGhostOffset();
+
+    if (lock_infinity)
+        lock_promise.stop();
 }
 
 void Well::lockAndReleasePiece() {
