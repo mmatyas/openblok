@@ -93,7 +93,6 @@ private:
     const Duration horizontal_delay_turbo; // turbo key repeat rate
     Duration horizontal_delay_current; // current input rate, either normal or turbo
     Duration horizontal_timer; // timer for horizontal autorepeat
-    const Duration das_delay; // the time it takes to activate turbo mode
     Duration das_timer; // timer for turbo mode activation
     void resetDAS(); // turn off autorepeat mode
     void resetInput(); // reset input (keystate and autorepeat) to default

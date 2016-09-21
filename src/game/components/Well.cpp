@@ -17,19 +17,18 @@ Well::Well()
     , active_piece_x(0)
     , active_piece_y(0)
     , ghost_piece_y(0)
-    , gravity_delay(std::chrono::seconds(1))
+    , gravity_delay(GameState::frame_duration * 64)
     , gravity_timer(Duration::zero())
-    , horizontal_delay_normal(std::chrono::milliseconds(150))
-    , horizontal_delay_turbo(std::chrono::milliseconds(40))
+    , horizontal_delay_normal(GameState::frame_duration * 14)
+    , horizontal_delay_turbo(GameState::frame_duration * 4)
     , horizontal_delay_current(horizontal_delay_normal)
     , horizontal_timer(Duration::zero())
-    , das_delay(std::chrono::milliseconds(300))
-    , das_timer(das_delay)
-    , softdrop_delay(std::chrono::milliseconds(50))
+    , das_timer(horizontal_delay_normal)
+    , softdrop_delay(horizontal_delay_turbo)
     , softdrop_timer(Duration::zero())
     , rotation_delay(horizontal_delay_normal)
     , rotation_timer(Duration::zero())
-    , lineclear_alpha(std::chrono::milliseconds(500), [](double t){
+    , lineclear_alpha(GameState::frame_duration * 40, [](double t){
             return static_cast<uint8_t>((1.0 - t) * 0xFF);
         },
         [this](){
@@ -106,11 +105,9 @@ void Well::handleKeys(const std::vector<InputEvent>& events)
 
 
             // update DAS
-            if (das_timer > Duration::zero()) {
-                das_timer -= horizontal_delay_normal;
-                if (das_timer <= Duration::zero())
-                    horizontal_delay_current = horizontal_delay_turbo;
-            }
+            das_timer -= horizontal_delay_normal;
+            if (das_timer < Duration::zero())
+                horizontal_delay_current = horizontal_delay_turbo;
 
             horizontal_timer = horizontal_delay_current;
         }
@@ -136,7 +133,7 @@ void Well::handleKeys(const std::vector<InputEvent>& events)
 
 void Well::resetDAS()
 {
-    das_timer = das_delay;
+    das_timer = horizontal_delay_normal;
     horizontal_delay_current = horizontal_delay_normal;
 }
 
