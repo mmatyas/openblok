@@ -105,7 +105,7 @@ TEST(StopReset) {
     CHECK_EQUAL(50, val);
     CHECK_EQUAL(false, anim.running());
 
-    anim.reset();
+    anim.restart();
     CHECK_EQUAL(0, val);
     CHECK_EQUAL(true, anim.running());
 }

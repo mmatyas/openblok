@@ -536,7 +536,7 @@ void Well::checkLineclear()
                 cell = nullptr;
         }
 
-        lineclear_alpha.reset();
+        lineclear_alpha.restart();
         resetInput();
     }
 }
