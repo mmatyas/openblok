@@ -13,6 +13,8 @@
 /// when a user wants to quit the program (eg. close button, Alt-F4).
 class EventCollector {
 public:
+    virtual ~EventCollector() {};
+
     /// In every frame, the EventCollector should receive the available
     /// native events, and based on that, return a list of usable game events.
     /// If the user wants to quit the game by a native event, then after this call

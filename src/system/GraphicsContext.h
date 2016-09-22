@@ -22,6 +22,8 @@ struct Rectangle {
 /// For testing purposes, it should also provide a way to save screenshots of the game window.
 class GraphicsContext {
 public:
+    virtual ~GraphicsContext() {};
+
     /// Called at the end of every frame, `render()` should update
     /// the displayed image of the game window.
     virtual void render() = 0;
