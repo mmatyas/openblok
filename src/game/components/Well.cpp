@@ -100,6 +100,16 @@ void Well::handleKeys(const std::vector<InputEvent>& events)
     }
 
 
+    rotation_timer -= GameState::frame_duration;
+    if (keystates.at(InputType::A) != keystates.at(InputType::B) && rotation_timer <= Duration::zero()) {
+        if (keystates.at(InputType::A))
+            rotateCCWNow();
+        else
+            rotateCWNow();
+
+        rotation_timer = rotation_delay;
+    }
+
     horizontal_timer -= GameState::frame_duration;
     if (horizontal_timer <= Duration::zero()) {
         if (keystates.at(InputType::LEFT) != keystates.at(InputType::RIGHT)) {
@@ -116,16 +126,6 @@ void Well::handleKeys(const std::vector<InputEvent>& events)
 
             horizontal_timer = horizontal_delay_current;
         }
-    }
-
-    rotation_timer -= GameState::frame_duration;
-    if (keystates.at(InputType::A) != keystates.at(InputType::B) && rotation_timer <= Duration::zero()) {
-        if (keystates.at(InputType::A))
-            rotateCCWNow();
-        else
-            rotateCWNow();
-
-        rotation_timer = rotation_delay;
     }
 
     softdrop_timer -= GameState::frame_duration;
