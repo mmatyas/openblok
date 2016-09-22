@@ -13,6 +13,9 @@ bool AppContext::init()
         Log::info(log_tag) << "Initializing event system...\n";
         events = EventCollector::create();
 
+        Log::info(log_tag) << "Initializing font management...\n";
+        fonts = FontManager::create();
+
         srand(time(nullptr));
     }
     catch (const std::exception& err) {

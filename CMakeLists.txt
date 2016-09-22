@@ -16,6 +16,9 @@ set(SDL2PP_WITH_IMAGE ON)
 set(SDL2PP_WITH_TTF ON)
 add_subdirectory(external/libSDL2pp)
 
+# Dependencies: FontConfig
+find_package(Fontconfig REQUIRED)
+
 # Dependencies: C++11 std::future support
 find_package(Threads REQUIRED)
 

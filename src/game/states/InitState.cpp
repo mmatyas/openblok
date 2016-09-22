@@ -13,7 +13,7 @@
 
 InitState::InitState(AppContext& app)
 {
-    app.gcx->loadFont(FontID::REGULAR, "data/regular.otf", 30);
+    app.gcx->loadFont(FontID::REGULAR, app.fonts->find("Bebas Neue"), 30);
     app.gcx->cacheText(TexID::LOADING, tr("LOADING..."),
                        FontID::REGULAR, 0xFFFFFF_rgb);
 
