@@ -17,11 +17,13 @@ public:
     uint16_t screenHeight() const final;
 
     FontID loadFont(const std::string& path, unsigned pt) final;
+    void unloadFont(FontID) final;
     TextureID renderText(const std::string& text,
                          FontID font, const RGBColor&) final;
 
     TextureID loadTexture(const std::string& path) final;
     TextureID loadTexture(const std::string& path, const RGBColor& tint) final;
+    void unloadTexture(TextureID) final;
     void drawTexture(TextureID, unsigned x, unsigned y) final;
     void drawTexture(TextureID, const Rectangle& rect) final;
     void drawFilledRect(const Rectangle& rect, const RGBColor& color) final;

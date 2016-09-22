@@ -1,11 +1,13 @@
 #include "SinglePlayState.h"
 
-#include "game/CommonResources.h"
+#include "game/AppContext.h"
 #include "game/WellEvent.h"
+#include "game/components/GameplayResources.h"
 
 
-SinglePlayState::SinglePlayState(AppContext&)
+SinglePlayState::SinglePlayState(AppContext& app)
     : paused(false)
+    , tex_background(app.gcx->loadTexture("data/gamebg_pattern.png"))
     , next_pieces(4)
 {
     board.registerObserver(WellEvent::NEXT_REQUESTED, [this](){
@@ -44,8 +46,8 @@ void SinglePlayState::update(const std::vector<InputEvent>& inputs, AppContext& 
 
 void SinglePlayState::draw(GraphicsContext& gcx)
 {
-    for (unsigned x = 0; x < gcx.screenWidth(); x += gcx.textureWidth(CommonTextures::GAMEPLAYBG))
-        gcx.drawTexture(CommonTextures::GAMEPLAYBG, x, 0);
+    for (unsigned x = 0; x < gcx.screenWidth(); x += gcx.textureWidth(tex_background))
+        gcx.drawTexture(tex_background, x, 0);
 
     next_pieces.draw(gcx, gcx.screenWidth() / 2 + Mino::texture_size_px + 5 * Mino::texture_size_px, 8);
     piece_holder.draw(gcx, gcx.screenWidth() / 2 - 11 * Mino::texture_size_px, 8);

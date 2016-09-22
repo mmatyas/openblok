@@ -14,6 +14,8 @@ public:
 
 private:
     bool paused;
+    TextureID tex_background;
+
     HoldQueue piece_holder;
     NextQueue next_pieces;
     Well board;

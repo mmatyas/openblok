@@ -35,6 +35,8 @@ public:
     /// Load a font file (in OTF or TTF format) in the given size.
     /// Returns a unique ID that the client can use to refer to this font.
     virtual FontID loadFont(const std::string& path, unsigned pt) = 0;
+    /// Force unloading a font.
+    virtual void unloadFont(FontID) = 0;
     /// Render text to a texture, using a previously loaded font,
     /// using the provided RGBA color.
     /// Returns a unique ID that the client can use to refer to the rendered texture.
@@ -47,6 +49,9 @@ public:
     /// Load an image file as texture with additional tinting.
     /// Returns a unique ID that the client can use to refer to this texture.
     virtual TextureID loadTexture(const std::string& path, const RGBColor& tint) = 0;
+    /// Force unloading a texture.
+    virtual void unloadTexture(TextureID) = 0;
+
     /// Draw a previously created texture at coords (x,y)
     virtual void drawTexture(TextureID, unsigned x, unsigned y) = 0;
     /// Draw a previously created texture,

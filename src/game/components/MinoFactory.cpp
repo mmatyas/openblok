@@ -1,20 +1,22 @@
 #include "MinoFactory.h"
 
-#include "game/CommonResources.h"
+#include "game/components/GameplayResources.h"
 
 #include <assert.h>
 
 
 Mino MinoFactory::make(Piece::Type type)
 {
+    using Textures = GameplayResources::Textures;
+
     switch(type) {
-    case Piece::Type::I : return Mino(CommonTextures::MINO_I, 'I');
-    case Piece::Type::J : return Mino(CommonTextures::MINO_J, 'J');
-    case Piece::Type::L : return Mino(CommonTextures::MINO_L, 'L');
-    case Piece::Type::O : return Mino(CommonTextures::MINO_O, 'O');
-    case Piece::Type::S : return Mino(CommonTextures::MINO_S, 'S');
-    case Piece::Type::T : return Mino(CommonTextures::MINO_T, 'T');
-    case Piece::Type::Z : return Mino(CommonTextures::MINO_Z, 'Z');
+    case Piece::Type::I : return Mino(Textures::MINO_I, 'I');
+    case Piece::Type::J : return Mino(Textures::MINO_J, 'J');
+    case Piece::Type::L : return Mino(Textures::MINO_L, 'L');
+    case Piece::Type::O : return Mino(Textures::MINO_O, 'O');
+    case Piece::Type::S : return Mino(Textures::MINO_S, 'S');
+    case Piece::Type::T : return Mino(Textures::MINO_T, 'T');
+    case Piece::Type::Z : return Mino(Textures::MINO_Z, 'Z');
     default:
         assert(false);
     }
@@ -22,14 +24,16 @@ Mino MinoFactory::make(Piece::Type type)
 
 std::unique_ptr<Mino> MinoFactory::make_uptr(Piece::Type type)
 {
+    using Textures = GameplayResources::Textures;
+
     switch(type) {
-    case Piece::Type::I : return std::make_unique<Mino>(CommonTextures::MINO_I, 'I');
-    case Piece::Type::J : return std::make_unique<Mino>(CommonTextures::MINO_J, 'J');
-    case Piece::Type::L : return std::make_unique<Mino>(CommonTextures::MINO_L, 'L');
-    case Piece::Type::O : return std::make_unique<Mino>(CommonTextures::MINO_O, 'O');
-    case Piece::Type::S : return std::make_unique<Mino>(CommonTextures::MINO_S, 'S');
-    case Piece::Type::T : return std::make_unique<Mino>(CommonTextures::MINO_T, 'T');
-    case Piece::Type::Z : return std::make_unique<Mino>(CommonTextures::MINO_Z, 'Z');
+    case Piece::Type::I : return std::make_unique<Mino>(Textures::MINO_I, 'I');
+    case Piece::Type::J : return std::make_unique<Mino>(Textures::MINO_J, 'J');
+    case Piece::Type::L : return std::make_unique<Mino>(Textures::MINO_L, 'L');
+    case Piece::Type::O : return std::make_unique<Mino>(Textures::MINO_O, 'O');
+    case Piece::Type::S : return std::make_unique<Mino>(Textures::MINO_S, 'S');
+    case Piece::Type::T : return std::make_unique<Mino>(Textures::MINO_T, 'T');
+    case Piece::Type::Z : return std::make_unique<Mino>(Textures::MINO_Z, 'Z');
     default:
         assert(false);
     }

@@ -1,8 +1,8 @@
 #include "MainMenuState.h"
 
-#include "game/AppContext.h"
-#include "game/CommonResources.h"
 #include "SinglePlayState.h"
+#include "game/AppContext.h"
+#include "game/components/GameplayResources.h"
 
 
 MainMenuState::MainMenuState(AppContext&)
@@ -11,6 +11,7 @@ MainMenuState::MainMenuState(AppContext&)
 
 void MainMenuState::update(const std::vector<InputEvent>&, AppContext& app)
 {
+    GameplayResources::Textures::loadAll(*app.gcx);
     app.states.emplace(std::make_unique<SinglePlayState>(app));
 }
 

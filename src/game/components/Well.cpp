@@ -1,9 +1,9 @@
 #include "Well.h"
 
+#include "GameplayResources.h"
 #include "MinoFactory.h"
 #include "PieceFactory.h"
 #include "game/GameState.h"
-#include "game/CommonResources.h"
 #include "game/WellEvent.h"
 #include "system/EventCollector.h"
 #include "system/GraphicsContext.h"
@@ -298,10 +298,12 @@ std::string Well::asAscii()
 
 void Well::draw(GraphicsContext& gcx, unsigned int x, unsigned int y)
 {
+    using Textures = GameplayResources::Textures;
+
     // Draw background
     for (size_t row = 0; row < 22; row++) {
         for (size_t col = 0; col < 10; col++) {
-            gcx.drawTexture(CommonTextures::MATRIXBG, {
+            gcx.drawTexture(Textures::MATRIXBG, {
                 static_cast<int>(x + col * Mino::texture_size_px),
                 static_cast<int>(y + row * Mino::texture_size_px),
                 Mino::texture_size_px,
@@ -330,7 +332,7 @@ void Well::draw(GraphicsContext& gcx, unsigned int x, unsigned int y)
         for (unsigned row = 0; row < 4; row++) {
             for (unsigned col = 0; col < 4; col++) {
                 if (active_piece->currentGrid().at(row).at(col)) {
-                    gcx.drawTexture(CommonTextures::MINO_GHOST, {
+                    gcx.drawTexture(Textures::MINO_GHOST, {
                         static_cast<int>(x + (active_piece_x + col) * Mino::texture_size_px),
                         static_cast<int>(y + (ghost_piece_y + row) * Mino::texture_size_px),
                         Mino::texture_size_px,

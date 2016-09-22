@@ -1,6 +1,7 @@
 #pragma once
 
 #include "game/GameState.h"
+#include "system/ResourceTypes.h"
 
 #include <future>
 
@@ -13,4 +14,5 @@ public:
 
 private:
     std::future<void> worker;
+    TextureID tex_loading;
 };

@@ -140,6 +140,16 @@ TextureID SDLGraphicsContext::loadTexture(const std::string& path, const RGBColo
     return texid;
 }
 
+void SDLGraphicsContext::unloadTexture(TextureID slot)
+{
+    textures.erase(slot);
+}
+
+void SDLGraphicsContext::unloadFont(FontID slot)
+{
+    fonts.erase(slot);
+}
+
 void SDLGraphicsContext::drawTexture(TextureID slot, unsigned x, unsigned y)
 {
     if (!textures.count(slot))

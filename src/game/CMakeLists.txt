@@ -2,6 +2,7 @@ set(MOD_GAME_SRC
 	AppContext.cpp
 	CommonResources.cpp
 	GameState.cpp
+	components/GameplayResources.cpp
 	components/HoldQueue.cpp
 	components/Mino.cpp
 	components/MinoFactory.cpp
@@ -20,6 +21,7 @@ set(MOD_GAME_H
 	GameState.h
 	Matrix.h
 	Transition.h
+	components/GameplayResources.h
 	components/HoldQueue.h
 	components/Mino.h
 	components/MinoFactory.h
