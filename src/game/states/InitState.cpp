@@ -1,7 +1,7 @@
 #include "InitState.h"
 
 #include "game/AppContext.h"
-#include "game/Resources.h"
+#include "game/CommonResources.h"
 #include "game/components/MinoFactory.h"
 #include "game/states/MainMenuState.h"
 #include "system/Localize.h"
@@ -13,22 +13,22 @@
 
 InitState::InitState(AppContext& app)
 {
-    app.gcx->loadFont(FontID::REGULAR, app.fonts->find("Bebas Neue"), 30);
-    app.gcx->cacheText(TexID::LOADING, tr("LOADING..."),
-                       FontID::REGULAR, 0xFFFFFF_rgb);
+    CommonFonts::HEADER = app.gcx->loadFont(app.fonts->find("Bebas Neue"), 30);
+    CommonTextures::LOADING = app.gcx->renderText(tr("LOADING..."),
+                                                  CommonFonts::HEADER, 0xFFFFFF_rgb);
 
 
-    app.gcx->loadTexture(TexID::MINO_I, "data/mino.png", MinoFactory::color(Piece::Type::I));
-    app.gcx->loadTexture(TexID::MINO_J, "data/mino.png", MinoFactory::color(Piece::Type::J));
-    app.gcx->loadTexture(TexID::MINO_L, "data/mino.png", MinoFactory::color(Piece::Type::L));
-    app.gcx->loadTexture(TexID::MINO_O, "data/mino.png", MinoFactory::color(Piece::Type::O));
-    app.gcx->loadTexture(TexID::MINO_S, "data/mino.png", MinoFactory::color(Piece::Type::S));
-    app.gcx->loadTexture(TexID::MINO_T, "data/mino.png", MinoFactory::color(Piece::Type::T));
-    app.gcx->loadTexture(TexID::MINO_Z, "data/mino.png", MinoFactory::color(Piece::Type::Z));
-    app.gcx->loadTexture(TexID::MINO_GHOST, "data/ghost.png");
+    CommonTextures::MINO_I = app.gcx->loadTexture("data/mino.png", MinoFactory::color(Piece::Type::I));
+    CommonTextures::MINO_J = app.gcx->loadTexture("data/mino.png", MinoFactory::color(Piece::Type::J));
+    CommonTextures::MINO_L = app.gcx->loadTexture("data/mino.png", MinoFactory::color(Piece::Type::L));
+    CommonTextures::MINO_O = app.gcx->loadTexture("data/mino.png", MinoFactory::color(Piece::Type::O));
+    CommonTextures::MINO_S = app.gcx->loadTexture("data/mino.png", MinoFactory::color(Piece::Type::S));
+    CommonTextures::MINO_T = app.gcx->loadTexture("data/mino.png", MinoFactory::color(Piece::Type::T));
+    CommonTextures::MINO_Z = app.gcx->loadTexture("data/mino.png", MinoFactory::color(Piece::Type::Z));
+    CommonTextures::MINO_GHOST = app.gcx->loadTexture("data/ghost.png");
 
-    app.gcx->loadTexture(TexID::MATRIXBG, "data/matrix_pattern.png");
-    app.gcx->loadTexture(TexID::GAMEPLAYBG, "data/gamebg_pattern.png");
+    CommonTextures::MATRIXBG = app.gcx->loadTexture("data/matrix_pattern.png");
+    CommonTextures::GAMEPLAYBG = app.gcx->loadTexture("data/gamebg_pattern.png");
 
 
     worker = std::async(std::launch::async, [&app](){
@@ -56,5 +56,5 @@ void InitState::update(const std::vector<InputEvent>&, AppContext& app)
 
 void InitState::draw(GraphicsContext& gcx)
 {
-    gcx.drawTexture(TexID::LOADING, 10, 10);
+    gcx.drawTexture(CommonTextures::LOADING, 10, 10);
 }

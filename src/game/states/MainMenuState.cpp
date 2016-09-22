@@ -1,7 +1,7 @@
 #include "MainMenuState.h"
 
 #include "game/AppContext.h"
-#include "game/Resources.h"
+#include "game/CommonResources.h"
 #include "SinglePlayState.h"
 
 

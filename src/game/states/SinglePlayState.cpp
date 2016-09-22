@@ -1,6 +1,6 @@
 #include "SinglePlayState.h"
 
-#include "game/Resources.h"
+#include "game/CommonResources.h"
 #include "game/WellEvent.h"
 
 
@@ -44,8 +44,8 @@ void SinglePlayState::update(const std::vector<InputEvent>& inputs, AppContext& 
 
 void SinglePlayState::draw(GraphicsContext& gcx)
 {
-    for (unsigned x = 0; x < gcx.screenWidth(); x += gcx.textureWidth(TexID::GAMEPLAYBG))
-        gcx.drawTexture(TexID::GAMEPLAYBG, x, 0);
+    for (unsigned x = 0; x < gcx.screenWidth(); x += gcx.textureWidth(CommonTextures::GAMEPLAYBG))
+        gcx.drawTexture(CommonTextures::GAMEPLAYBG, x, 0);
 
     next_pieces.draw(gcx, gcx.screenWidth() / 2 + Mino::texture_size_px + 5 * Mino::texture_size_px, 8);
     piece_holder.draw(gcx, gcx.screenWidth() / 2 - 11 * Mino::texture_size_px, 8);
