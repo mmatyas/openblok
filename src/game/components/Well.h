@@ -106,8 +106,10 @@ private:
     Duration rotation_timer;
 
     // lock delay
+    bool harddrop_locks_instantly;
     bool lock_infinity;
     Transition<void> lock_promise;
+    void updateLockDelay();
 
     // active piece collision and ghost
     void calculateGhostOffset();

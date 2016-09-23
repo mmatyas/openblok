@@ -28,6 +28,7 @@ Well::Well()
     , softdrop_timer(Duration::zero())
     , rotation_delay(horizontal_delay_normal)
     , rotation_timer(Duration::zero())
+    , harddrop_locks_instantly(true)
     , lock_infinity(true)
     , lock_promise(GameState::frame_duration * 30, [](double){}, [this](){
             this->lockAndReleasePiece();
@@ -161,6 +162,15 @@ void Well::updateGravity()
     }
 }
 
+void Well::updateLockDelay()
+{
+    if (isOnGround())
+        lock_promise.unpause();
+    else
+        lock_promise.stop();
+    lock_promise.update(GameState::frame_duration);
+}
+
 void Well::update(const std::vector<InputEvent>& events, AppContext&)
 {
     if (gameover)
@@ -183,12 +193,7 @@ void Well::update(const std::vector<InputEvent>& events, AppContext&)
         return;
 
     updateGravity();
-
-    if (isOnGround())
-        lock_promise.unpause();
-    else
-        lock_promise.stop();
-    lock_promise.update(GameState::frame_duration);
+    updateLockDelay();
 }
 
 void Well::addPiece(Piece::Type type)
@@ -452,6 +457,8 @@ void Well::hardDrop()
 
     active_piece_y = ghost_piece_y;
     moveDownNow();
+    if (harddrop_locks_instantly)
+        lockAndReleasePiece();
 }
 
 bool Well::placeByWallKick()
