@@ -14,6 +14,7 @@ SinglePlayState::SinglePlayState(AppContext& app)
 {
     using Fonts = CommonResources::Fonts;
 
+
     tex_score = app.gcx->renderText(tr("SCORE"),
                                     Fonts::HEADER, 0xFFFFFF_rgb);
     tex_hold = app.gcx->renderText(tr("HOLD"),
@@ -21,9 +22,9 @@ SinglePlayState::SinglePlayState(AppContext& app)
     tex_next = app.gcx->renderText(tr("NEXT"),
                                    Fonts::HEADER, 0xFFFFFF_rgb);
 
+
     board.registerObserver(WellEvent::NEXT_REQUESTED, [this](){
-        this->board.addPiece(this->next_pieces.next());
-        this->piece_holder.onNextTurn();
+        this->addNextPiece();
     });
 
     board.registerObserver(WellEvent::HOLD_REQUESTED, [this](){
@@ -31,12 +32,22 @@ SinglePlayState::SinglePlayState(AppContext& app)
         if (this->piece_holder.swapAllowed()) {
             auto type = this->board.activePiece()->type();
             this->board.deletePiece();
-            if (this->piece_holder.isEmpty())
+            if (this->piece_holder.isEmpty()) {
                 this->piece_holder.swapWithEmpty(type);
+                this->addNextPiece();
+            }
             else
                 this->board.addPiece(this->piece_holder.swapWith(type));
         }
     });
+
+    addNextPiece();
+}
+
+void SinglePlayState::addNextPiece()
+{
+    board.addPiece(next_pieces.next());
+    piece_holder.onNextTurn();
 }
 
 void SinglePlayState::update(const std::vector<InputEvent>& inputs, AppContext& ctx)

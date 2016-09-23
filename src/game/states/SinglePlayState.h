@@ -22,4 +22,6 @@ private:
     HoldQueue piece_holder;
     NextQueue next_pieces;
     Well board;
+
+    void addNextPiece();
 };

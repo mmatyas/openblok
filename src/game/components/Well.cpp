@@ -31,7 +31,7 @@ Well::Well()
     , harddrop_locks_instantly(true)
     , lock_infinity(true)
     , lock_promise(GameState::frame_duration * 30, [](double){}, [this](){
-            this->lockAndReleasePiece();
+            this->lockThenRequestNext();
         })
     , lineclear_alpha(GameState::frame_duration * 40, [](double t){
             return static_cast<uint8_t>((1.0 - t) * 0xFF);
@@ -181,10 +181,6 @@ void Well::update(const std::vector<InputEvent>& events, AppContext&)
         lineclear_alpha.update(GameState::frame_duration);
         return;
     }
-
-    // TODO: implement entry delay
-    if (!active_piece)
-        notify(WellEvent::NEXT_REQUESTED);
 
     updateKeystate(events);
     handleKeys(events);
@@ -449,6 +445,8 @@ void Well::moveDownNow()
 
     if (!isOnGround())
         active_piece_y++;
+    else if (!harddrop_locks_instantly && lock_promise.running())
+        lock_promise.unpause();
 }
 
 void Well::hardDrop()
@@ -458,7 +456,7 @@ void Well::hardDrop()
     active_piece_y = ghost_piece_y;
     moveDownNow();
     if (harddrop_locks_instantly)
-        lockAndReleasePiece();
+        lockThenRequestNext();
 }
 
 bool Well::placeByWallKick()
@@ -539,6 +537,13 @@ void Well::rotateCCWNow()
         lock_promise.stop();
 }
 
+void Well::lockThenRequestNext()
+{
+    lockAndReleasePiece();
+    if (!gameover && !lineclear_alpha.running())
+        notify(WellEvent::NEXT_REQUESTED);
+}
+
 void Well::lockAndReleasePiece() {
     for (unsigned row = 0; row < 4; row++) {
         for (unsigned cell = 0; cell < 4; cell++) {
@@ -554,6 +559,7 @@ void Well::lockAndReleasePiece() {
     }
 
     active_piece.release();
+    lock_promise.stop();
     notify(WellEvent::PIECE_LOCKED);
     checkLineclear();
 }

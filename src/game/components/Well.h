@@ -115,6 +115,7 @@ private:
     void calculateGhostOffset();
     bool hasCollisionAt(int offset_x, unsigned offset_y);
     void lockAndReleasePiece();
+    void lockThenRequestNext();
 
     // active piece movement
     void moveLeftNow();
