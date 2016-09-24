@@ -18,12 +18,14 @@
 class AppContext;
 enum class WellEvent: uint8_t;
 
+#ifndef NDEBUG
 class GraphicsContext;
 namespace SuiteWell {
     class WellFixtureMoveHelper;
     class WellFixtureRotateHelper;
     class WellFixtureGravityHelper;
 }
+#endif
 
 class Well {
 public:
@@ -32,9 +34,6 @@ public:
 
     /// Update the well
     void update(const std::vector<InputEvent>&, AppContext&);
-
-    /// Moves the active piece one row down, if it does not collide.
-    void applyGravity();
 
     /// Add a new, player-controllable piece to the well.
     void addPiece(Piece::Type);
@@ -46,20 +45,22 @@ public:
     /// For actual input handling, call GameBoard's functions.
     const std::unique_ptr<Piece>& activePiece() const { return active_piece; }
 
+    /// Draw the well
+    void draw(GraphicsContext&, unsigned x, unsigned y);
+
     /// Register an external event observer.
     template <typename WellObserver>
     void registerObserver(WellEvent event, WellObserver&& obs) {
         observers[static_cast<uint8_t>(event)].push_back(std::forward<WellObserver>(obs));
     }
 
+#ifndef NDEBUG
     /// Get the well's string representation.
     /// Can be useful for testing and debugging.
     std::string asAscii();
     /// Set the contents of the well from an Ascii string.
     void fromAscii(const std::string&);
-
-    /// Draw the well
-    void draw(GraphicsContext&, unsigned x, unsigned y);
+#endif
 
 private:
     using Duration = std::chrono::steady_clock::duration;
@@ -70,6 +71,9 @@ private:
     // the grid matrix
     // TODO: set dimensions from config
     Matrix<std::unique_ptr<Mino>, 22, 10> matrix;
+
+    /// Moves the active piece one row down, if it does not collide.
+    void applyGravity();
 
     // the active piece
     int8_t active_piece_x;
@@ -89,6 +93,7 @@ private:
     decltype(keystates) previous_keystates;
     void updateKeystate(const std::vector<InputEvent>&);
     void handleKeys(const std::vector<InputEvent>&);
+    void resetInput(); // reset input (keystate and autorepeat) to default
 
     // autorepeat horizontal (aka DAS)
     const Duration horizontal_delay_normal; // normal key repeat rate
@@ -97,7 +102,6 @@ private:
     Duration horizontal_timer; // timer for horizontal autorepeat
     Duration das_timer; // timer for turbo mode activation
     void resetDAS(); // turn off autorepeat mode
-    void resetInput(); // reset input (keystate and autorepeat) to default
 
     // autorepeat other keys
     const Duration softdrop_delay;
@@ -136,7 +140,9 @@ private:
     std::unordered_map<uint8_t, std::vector<std::function<void()>>> observers;
     void notify(WellEvent);
 
+#ifndef NDEBUG
 friend class SuiteWell::WellFixtureMoveHelper;
 friend class SuiteWell::WellFixtureRotateHelper;
 friend class SuiteWell::WellFixtureGravityHelper;
+#endif
 };

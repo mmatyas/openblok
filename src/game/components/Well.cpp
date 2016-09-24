@@ -55,6 +55,27 @@ Well::Well()
     lineclear_alpha.stop();
 }
 
+void Well::update(const std::vector<InputEvent>& events, AppContext&)
+{
+    if (gameover)
+        return;
+
+    if (pending_cleared_rows.size()) {
+        assert(lineclear_alpha.running());
+        lineclear_alpha.update(GameState::frame_duration);
+        return;
+    }
+
+    updateKeystate(events);
+    handleKeys(events);
+
+    if (!active_piece)
+        return;
+
+    updateGravity();
+    updateLockDelay();
+}
+
 void Well::updateKeystate(const std::vector<InputEvent>& events)
 {
     previous_keystates = keystates;
@@ -171,27 +192,6 @@ void Well::updateLockDelay()
     lock_promise.update(GameState::frame_duration);
 }
 
-void Well::update(const std::vector<InputEvent>& events, AppContext&)
-{
-    if (gameover)
-        return;
-
-    if (pending_cleared_rows.size()) {
-        assert(lineclear_alpha.running());
-        lineclear_alpha.update(GameState::frame_duration);
-        return;
-    }
-
-    updateKeystate(events);
-    handleKeys(events);
-
-    if (!active_piece)
-        return;
-
-    updateGravity();
-    updateLockDelay();
-}
-
 void Well::addPiece(Piece::Type type)
 {
     // the player can only control one piece at a time
@@ -211,150 +211,6 @@ void Well::addPiece(Piece::Type type)
 void Well::deletePiece()
 {
     active_piece = nullptr;
-}
-
-void Well::fromAscii(const std::string& text)
-{
-    assert(text.length() == matrix.size() * (matrix[0].size() + 1));
-
-    unsigned str_i = 0;
-    for (unsigned row = 0; row < matrix.size(); row++) {
-        for (unsigned cell = 0; cell < matrix[0].size(); cell++) {
-            if (text.at(str_i) == '.')
-                matrix[row][cell].release();
-            else
-                matrix[row][cell] = MinoFactory::make_uptr(Piece::typeFromAscii(text.at(str_i)));
-
-            str_i++;
-        }
-        // newline skip
-        str_i++;
-    }
-}
-
-std::string Well::asAscii()
-{
-    // the piece must be inside the grid, at least partially
-    assert(0 <= active_piece_x + 3);
-    assert(active_piece_x < static_cast<int>(matrix[0].size()));
-    assert(active_piece_y < matrix.size());
-
-    std::string board_layer;
-    std::string piece_layer;
-
-    // print board
-    for (size_t row = 0; row < matrix.size(); row++) {
-        for (size_t cell = 0; cell < matrix[0].size(); cell++) {
-            if (matrix[row][cell])
-                board_layer += matrix[row][cell]->asAscii();
-            else
-                board_layer += '.';
-        }
-        board_layer += '\n';
-    }
-
-    // print piece layer
-    for (unsigned row = 0; row < matrix.size(); row++) {
-        for (unsigned cell = 0; cell < matrix[0].size(); cell++) {
-            char appended_char = '.';
-
-            if (active_piece) {
-                // if there may be some piece minos (real or ghost) in this column
-                if (active_piece_x <= static_cast<int>(cell)
-                    && static_cast<int>(cell) <= active_piece_x + 3) {
-                    // check ghost first - it should be under the real piece
-                    if (ghost_piece_y <= row && row <= ghost_piece_y + 3u) {
-                        const auto& mino = active_piece->currentGrid().at(row - ghost_piece_y)
-                                                                      .at(cell - active_piece_x);
-                        if (mino)
-                            appended_char = 'g';
-                    }
-                    // check piece - overwrite the ascii char even if it has a value
-                    if (active_piece_y <= row && row <= active_piece_y + 3u) {
-                        const auto& mino = active_piece->currentGrid().at(row - active_piece_y)
-                                                                      .at(cell - active_piece_x);
-                        if (mino)
-                            appended_char = std::tolower(mino->asAscii());
-                    }
-                }
-            }
-
-            piece_layer += appended_char;
-        }
-        piece_layer += '\n';
-    }
-
-    assert(board_layer.length() == piece_layer.length());
-    std::string output;
-    for (size_t i = 0; i < board_layer.length(); i++) {
-        if (piece_layer.at(i) != '.') {
-            output += piece_layer.at(i);
-            continue;
-        }
-
-        output += board_layer.at(i);
-    }
-    return output;
-}
-
-void Well::draw(GraphicsContext& gcx, unsigned int x, unsigned int y)
-{
-    using Textures = GameplayResources::Textures;
-
-    // Draw background
-    for (size_t row = 0; row < 22; row++) {
-        for (size_t col = 0; col < 10; col++) {
-            gcx.drawTexture(Textures::MATRIXBG, {
-                static_cast<int>(x + col * Mino::texture_size_px),
-                static_cast<int>(y + row * Mino::texture_size_px),
-                Mino::texture_size_px,
-                Mino::texture_size_px
-            });
-        }
-    }
-
-    // Draw board Minos
-    for (size_t row = 0; row < 22; row++) {
-        for (size_t col = 0; col < 10; col++) {
-            if (matrix.at(row).at(col))
-                matrix.at(row).at(col)->draw(gcx,
-                                             x + col * Mino::texture_size_px,
-                                             y + row * Mino::texture_size_px);
-        }
-    }
-
-    // Draw current piece
-    if (active_piece) {
-        active_piece->draw(gcx,
-                           x + active_piece_x * Mino::texture_size_px,
-                           y + active_piece_y * Mino::texture_size_px);
-
-        // draw ghost
-        for (unsigned row = 0; row < 4; row++) {
-            for (unsigned col = 0; col < 4; col++) {
-                if (active_piece->currentGrid().at(row).at(col)) {
-                    gcx.drawTexture(Textures::MINO_GHOST, {
-                        static_cast<int>(x + (active_piece_x + col) * Mino::texture_size_px),
-                        static_cast<int>(y + (ghost_piece_y + row) * Mino::texture_size_px),
-                        Mino::texture_size_px,
-                        Mino::texture_size_px
-                    });
-                }
-            }
-        }
-    }
-
-    // Draw line clear animation
-    if (pending_cleared_rows.size()) {
-        for (auto row : pending_cleared_rows) {
-            gcx.drawFilledRect({
-                    static_cast<int>(x),
-                    static_cast<int>(y + row * Mino::texture_size_px),
-                    static_cast<int>(Mino::texture_size_px * matrix.at(0).size()),
-                    Mino::texture_size_px
-                }, {0xFF, 0xFF, 0xFF, lineclear_alpha.value()});
-        }
-    }
 }
 
 bool Well::hasCollisionAt(int offset_x, unsigned offset_y)
@@ -629,4 +485,148 @@ void Well::notify(WellEvent event)
 {
     for (const auto& obs : observers[static_cast<uint8_t>(event)])
         obs();
+}
+
+void Well::fromAscii(const std::string& text)
+{
+    assert(text.length() == matrix.size() * (matrix[0].size() + 1));
+
+    unsigned str_i = 0;
+    for (unsigned row = 0; row < matrix.size(); row++) {
+        for (unsigned cell = 0; cell < matrix[0].size(); cell++) {
+            if (text.at(str_i) == '.')
+                matrix[row][cell].release();
+            else
+                matrix[row][cell] = MinoFactory::make_uptr(Piece::typeFromAscii(text.at(str_i)));
+
+            str_i++;
+        }
+        // newline skip
+        str_i++;
+    }
+}
+
+std::string Well::asAscii()
+{
+    // the piece must be inside the grid, at least partially
+    assert(0 <= active_piece_x + 3);
+    assert(active_piece_x < static_cast<int>(matrix[0].size()));
+    assert(active_piece_y < matrix.size());
+
+    std::string board_layer;
+    std::string piece_layer;
+
+    // print board
+    for (size_t row = 0; row < matrix.size(); row++) {
+        for (size_t cell = 0; cell < matrix[0].size(); cell++) {
+            if (matrix[row][cell])
+                board_layer += matrix[row][cell]->asAscii();
+            else
+                board_layer += '.';
+        }
+        board_layer += '\n';
+    }
+
+    // print piece layer
+    for (unsigned row = 0; row < matrix.size(); row++) {
+        for (unsigned cell = 0; cell < matrix[0].size(); cell++) {
+            char appended_char = '.';
+
+            if (active_piece) {
+                // if there may be some piece minos (real or ghost) in this column
+                if (active_piece_x <= static_cast<int>(cell)
+                    && static_cast<int>(cell) <= active_piece_x + 3) {
+                    // check ghost first - it should be under the real piece
+                    if (ghost_piece_y <= row && row <= ghost_piece_y + 3u) {
+                        const auto& mino = active_piece->currentGrid().at(row - ghost_piece_y)
+                                                                      .at(cell - active_piece_x);
+                        if (mino)
+                            appended_char = 'g';
+                    }
+                    // check piece - overwrite the ascii char even if it has a value
+                    if (active_piece_y <= row && row <= active_piece_y + 3u) {
+                        const auto& mino = active_piece->currentGrid().at(row - active_piece_y)
+                                                                      .at(cell - active_piece_x);
+                        if (mino)
+                            appended_char = std::tolower(mino->asAscii());
+                    }
+                }
+            }
+
+            piece_layer += appended_char;
+        }
+        piece_layer += '\n';
+    }
+
+    assert(board_layer.length() == piece_layer.length());
+    std::string output;
+    for (size_t i = 0; i < board_layer.length(); i++) {
+        if (piece_layer.at(i) != '.') {
+            output += piece_layer.at(i);
+            continue;
+        }
+
+        output += board_layer.at(i);
+    }
+    return output;
+}
+
+void Well::draw(GraphicsContext& gcx, unsigned int x, unsigned int y)
+{
+    using Textures = GameplayResources::Textures;
+
+    // Draw background
+    for (size_t row = 0; row < 22; row++) {
+        for (size_t col = 0; col < 10; col++) {
+            gcx.drawTexture(Textures::MATRIXBG, {
+                static_cast<int>(x + col * Mino::texture_size_px),
+                static_cast<int>(y + row * Mino::texture_size_px),
+                Mino::texture_size_px,
+                Mino::texture_size_px
+            });
+        }
+    }
+
+    // Draw board Minos
+    for (size_t row = 0; row < 22; row++) {
+        for (size_t col = 0; col < 10; col++) {
+            if (matrix.at(row).at(col))
+                matrix.at(row).at(col)->draw(gcx,
+                                             x + col * Mino::texture_size_px,
+                                             y + row * Mino::texture_size_px);
+        }
+    }
+
+    // Draw current piece
+    if (active_piece) {
+        active_piece->draw(gcx,
+                           x + active_piece_x * Mino::texture_size_px,
+                           y + active_piece_y * Mino::texture_size_px);
+
+        // draw ghost
+        for (unsigned row = 0; row < 4; row++) {
+            for (unsigned col = 0; col < 4; col++) {
+                if (active_piece->currentGrid().at(row).at(col)) {
+                    gcx.drawTexture(Textures::MINO_GHOST, {
+                        static_cast<int>(x + (active_piece_x + col) * Mino::texture_size_px),
+                        static_cast<int>(y + (ghost_piece_y + row) * Mino::texture_size_px),
+                        Mino::texture_size_px,
+                        Mino::texture_size_px
+                    });
+                }
+            }
+        }
+    }
+
+    // Draw line clear animation
+    if (pending_cleared_rows.size()) {
+        for (auto row : pending_cleared_rows) {
+            gcx.drawFilledRect({
+                    static_cast<int>(x),
+                    static_cast<int>(y + row * Mino::texture_size_px),
+                    static_cast<int>(Mino::texture_size_px * matrix.at(0).size()),
+                    Mino::texture_size_px
+                }, {0xFF, 0xFF, 0xFF, lineclear_alpha.value()});
+        }
+    }
 }
