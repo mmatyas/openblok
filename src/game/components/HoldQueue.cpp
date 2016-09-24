@@ -80,8 +80,10 @@ void HoldQueue::draw(GraphicsContext& gcx, int x, int y)
     }
 
     if (!empty) {
-        piece_storage.at(static_cast<size_t>(current_piece))->draw(gcx,
-                                                                   x + Mino::texture_size_px / 2,
-                                                                   y + Mino::texture_size_px);
+        const auto& piece = piece_storage.at(static_cast<size_t>(current_piece));
+        const float padding_x = (4 - Piece::displayWidth(piece->type())) / 2.0f;
+        piece->draw(gcx,
+                    x + Mino::texture_size_px * (0.5f + padding_x),
+                    y + Mino::texture_size_px);
     }
 }
