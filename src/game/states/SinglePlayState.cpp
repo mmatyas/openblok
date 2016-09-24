@@ -15,8 +15,6 @@ SinglePlayState::SinglePlayState(AppContext& app)
     using Fonts = CommonResources::Fonts;
 
 
-    tex_score = app.gcx->renderText(tr("SCORE"),
-                                    Fonts::HEADER, 0xFFFFFF_rgb);
     tex_hold = app.gcx->renderText(tr("HOLD"),
                                    Fonts::HEADER, 0xFFFFFF_rgb);
     tex_next = app.gcx->renderText(tr("NEXT"),
@@ -71,24 +69,22 @@ void SinglePlayState::draw(GraphicsContext& gcx)
     static const int board_x = gcx.screenWidth() / 2 - 5 * Mino::texture_size_px;
     static const int board_y = 8;
     static const int board_w = 10 * Mino::texture_size_px;
+    static const int board_h = 20 * Mino::texture_size_px;
     static const int sidebar_w = 6 * Mino::texture_size_px;
     static const int sidebar_left_x = board_x - sidebar_w;
     static const int sidebar_right_x = board_x + board_w;
 
     static const Rectangle rect_sidebar_left = {
-        board_x - sidebar_w - 15, 0, 15 + sidebar_w, gcx.screenHeight()};
+        board_x - sidebar_w - 15, board_y, 15 + sidebar_w, board_h + 5};
     static const Rectangle rect_sidebar_right = {
-        board_x + board_w, 0, 15 + sidebar_w, gcx.screenHeight()};
+        board_x + board_w, board_y, 15 + sidebar_w, board_h + 5};
 
     static const Rectangle rect_boardborder_left = {
-        board_x - 5, board_y + 2 * Mino::texture_size_px,
-        5, 20 * Mino::texture_size_px};
+        board_x - 5, board_y, 5, 20 * Mino::texture_size_px};
     static const Rectangle rect_boardborder_right = {
-        board_x + board_w, board_y + 2 * Mino::texture_size_px,
-        5, 20 * Mino::texture_size_px};
+        board_x + board_w, board_y, 5, 20 * Mino::texture_size_px};
     static const Rectangle rect_boardborder_bottom = {
-        board_x - 5, board_y + 22 * Mino::texture_size_px,
-        10 + board_w, 5};
+        board_x - 5, board_y + 20 * Mino::texture_size_px, 10 + board_w, 5};
 
     static const auto sidebar_color = 0x1010AAA0_rgba;
     static const auto boardborder_color = 0x808080_rgb;
@@ -107,10 +103,6 @@ void SinglePlayState::draw(GraphicsContext& gcx)
     gcx.drawFilledRect(rect_boardborder_right, boardborder_color);
     gcx.drawFilledRect(rect_boardborder_bottom, boardborder_color);
     board.draw(gcx, board_x, board_y);
-
-    // draw score
-    gcx.drawFilledRect({board_x, board_y, board_w, 2 * Mino::texture_size_px}, 0x1010AAC0_rgba);
-    gcx.drawTexture(tex_score, board_x + 5, board_y + 16);
 
     // draw sidebars
     gcx.drawTexture(tex_hold, sidebar_left_x, board_y + 16);

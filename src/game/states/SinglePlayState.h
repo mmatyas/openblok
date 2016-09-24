@@ -15,7 +15,6 @@ public:
 private:
     bool paused;
     TextureID tex_background;
-    TextureID tex_score;
     TextureID tex_hold;
     TextureID tex_next;
 
