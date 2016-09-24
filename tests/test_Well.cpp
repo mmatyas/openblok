@@ -4,9 +4,16 @@
 #include "game/components/Well.h"
 
 
+struct AppContext {};
+
 SUITE(Well) {
 
+// TODO: get these values from config
+constexpr unsigned gravity_delay_frames = 64;
+constexpr unsigned lock_delay_frames = 30;
+
 struct WellFixture {
+    AppContext app;
     Well well;
     std::string emptyline_ascii;
 
@@ -60,8 +67,8 @@ TEST_FIXTURE(WellFixture, Gravity) {
     CHECK(well.activePiece() != nullptr);
 
     // the piece will reach the bottom
-    for (unsigned i = 0; i < 20; i++)
-        well.applyGravity();
+    for (unsigned i = 0; i < 20 * gravity_delay_frames; i++)
+        well.update({}, app);
 
     std::string expected_ascii;
     for (unsigned i = 0; i < 20; i++)
@@ -72,7 +79,9 @@ TEST_FIXTURE(WellFixture, Gravity) {
     CHECK_EQUAL(expected_ascii, well.asAscii());
 
     // it will lock there
-    well.lock_promise.update(well.lock_promise.length());
+    for (unsigned i = 0; i < lock_delay_frames; i++)
+        well.update({}, app);
+
     expected_ascii = "";
     for (unsigned i = 0; i < 20; i++)
         expected_ascii += emptyline_ascii;
@@ -84,7 +93,7 @@ TEST_FIXTURE(WellFixture, Gravity) {
 
     // a new piece will appear at the top
     well.addPiece(Piece::Type::Z);
-    well.lock_promise.restart();
+    well.update({}, app);
     CHECK(well.activePiece() != nullptr);
 
     expected_ascii =  "...zz.....\n";
@@ -99,9 +108,8 @@ TEST_FIXTURE(WellFixture, Gravity) {
     CHECK_EQUAL(expected_ascii, well.asAscii());
 
     // and land on top of the previous
-    for (unsigned i = 0; i < 19; i++)
-        well.applyGravity();
-    well.lock_promise.update(well.lock_promise.length());
+    for (unsigned i = 0; i < 19 * gravity_delay_frames; i++)
+        well.update({}, app);
 
     expected_ascii = "";
     for (unsigned i = 0; i < 18; i++)
@@ -116,12 +124,9 @@ TEST_FIXTURE(WellFixture, Gravity) {
 }
 
 
-TEST_FIXTURE(WellFixture, Move) {
-    CHECK(well.activePiece() == nullptr);
+TEST_FIXTURE(WellFixture, MoveLeft) {
     well.addPiece(Piece::Type::I);
-    CHECK(well.activePiece() != nullptr);
-
-    well.moveLeftNow();
+    well.update({InputEvent(InputType::LEFT, true)}, app);
 
     std::string expected_ascii = emptyline_ascii;
     expected_ascii += "..iiii....\n";
@@ -130,22 +135,24 @@ TEST_FIXTURE(WellFixture, Move) {
     expected_ascii += "..gggg....\n";
 
     CHECK_EQUAL(expected_ascii, well.asAscii());
+}
+TEST_FIXTURE(WellFixture, MoveRight) {
+    well.addPiece(Piece::Type::I);
+    well.update({InputEvent(InputType::RIGHT, true)}, app);
 
-
-    well.moveRightNow();
-
-    expected_ascii = emptyline_ascii;
-    expected_ascii += "...iiii...\n";
+    std::string expected_ascii = emptyline_ascii;
+    expected_ascii += "....iiii..\n";
     for (unsigned i = 0; i < 19; i++)
         expected_ascii += emptyline_ascii;
-    expected_ascii += "...gggg...\n";
+    expected_ascii += "....gggg..\n";
 
     CHECK_EQUAL(expected_ascii, well.asAscii());
+}
+TEST_FIXTURE(WellFixture, MoveDown) {
+    well.addPiece(Piece::Type::I);
+    well.update({InputEvent(InputType::DOWN, true)}, app);
 
-
-    well.moveDownNow();
-
-    expected_ascii = emptyline_ascii;
+    std::string expected_ascii = emptyline_ascii;
     expected_ascii += emptyline_ascii;
     expected_ascii += "...iiii...\n";
     for (unsigned i = 0; i < 18; i++)
@@ -160,7 +167,7 @@ TEST_FIXTURE(WellFixture, Rotate) {
     well.addPiece(Piece::Type::S);
     CHECK(well.activePiece() != nullptr);
 
-    well.rotateCCWNow();
+    well.update({InputEvent(InputType::A, true)}, app);
 
     std::string expected_ascii = "...s......\n";
     expected_ascii += "...ss.....\n";

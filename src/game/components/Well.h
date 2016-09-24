@@ -18,14 +18,6 @@
 class AppContext;
 enum class WellEvent: uint8_t;
 
-#ifndef NDEBUG
-class GraphicsContext;
-namespace SuiteWell {
-    class WellFixtureMoveHelper;
-    class WellFixtureRotateHelper;
-    class WellFixtureGravityHelper;
-}
-#endif
 
 class Well {
 public:
@@ -139,10 +131,4 @@ private:
     // listeners
     std::unordered_map<uint8_t, std::vector<std::function<void()>>> observers;
     void notify(WellEvent);
-
-#ifndef NDEBUG
-friend class SuiteWell::WellFixtureMoveHelper;
-friend class SuiteWell::WellFixtureRotateHelper;
-friend class SuiteWell::WellFixtureGravityHelper;
-#endif
 };
