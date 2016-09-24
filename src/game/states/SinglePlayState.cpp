@@ -105,8 +105,8 @@ void SinglePlayState::draw(GraphicsContext& gcx)
     board.draw(gcx, board_x, board_y);
 
     // draw sidebars
-    gcx.drawTexture(tex_hold, sidebar_left_x, board_y + 16);
+    gcx.drawTexture(tex_hold, sidebar_left_x, board_y + 5);
     piece_holder.draw(gcx, sidebar_left_x, board_y + 2 * Mino::texture_size_px);
-    gcx.drawTexture(tex_next, sidebar_right_x + sidebar_w - gcx.textureWidth(tex_next), board_y + 16);
+    gcx.drawTexture(tex_next, sidebar_right_x + sidebar_w - gcx.textureWidth(tex_next), board_y + 5);
     next_pieces.draw(gcx, sidebar_right_x + Mino::texture_size_px, board_y + 2 * Mino::texture_size_px);
 }
