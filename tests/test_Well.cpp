@@ -52,9 +52,11 @@ TEST_FIXTURE(WellFixture, AddPiece) {
     CHECK(well.activePiece() != nullptr);
 
     std::string expected_ascii;
+    expected_ascii += emptyline_ascii;
+    expected_ascii += emptyline_ascii;
     expected_ascii += "....ss....\n";
     expected_ascii += "...ss.....\n";
-    for (unsigned i = 0; i < 18; i++)
+    for (unsigned i = 0; i < 16; i++)
         expected_ascii += emptyline_ascii;
     expected_ascii += "....gg....\n";
     expected_ascii += "...gg.....\n";
@@ -68,11 +70,13 @@ TEST_FIXTURE(WellFixture, Gravity) {
     CHECK(well.activePiece() != nullptr);
 
     // the piece will reach the bottom
-    for (unsigned i = 0; i < 20 * gravity_delay_frames; i++)
+    for (unsigned i = 0; i < 18 * gravity_delay_frames; i++)
         well.update({}, app);
 
     std::string expected_ascii;
-    for (unsigned i = 0; i < 20; i++)
+    expected_ascii += emptyline_ascii;
+    expected_ascii += emptyline_ascii;
+    for (unsigned i = 0; i < 18; i++)
         expected_ascii += emptyline_ascii;
     expected_ascii += "....ss....\n";
     expected_ascii += "...ss.....\n";
@@ -97,9 +101,11 @@ TEST_FIXTURE(WellFixture, Gravity) {
     well.update({}, app);
     CHECK(well.activePiece() != nullptr);
 
-    expected_ascii =  "...zz.....\n";
+    expected_ascii = emptyline_ascii;
+    expected_ascii += emptyline_ascii;
+    expected_ascii +=  "...zz.....\n";
     expected_ascii += "....zz....\n";
-    for (unsigned i = 0; i < 16; i++)
+    for (unsigned i = 0; i < 14; i++)
         expected_ascii += emptyline_ascii;
     expected_ascii += "...gg.....\n";
     expected_ascii += "....gg....\n";
@@ -109,7 +115,7 @@ TEST_FIXTURE(WellFixture, Gravity) {
     CHECK_EQUAL(expected_ascii, well.asAscii());
 
     // and land on top of the previous
-    for (unsigned i = 0; i < 19 * gravity_delay_frames; i++)
+    for (unsigned i = 0; i < 17 * gravity_delay_frames; i++)
         well.update({}, app);
 
     expected_ascii = "";
@@ -130,8 +136,10 @@ TEST_FIXTURE(WellFixture, MoveLeft) {
     well.update({InputEvent(InputType::LEFT, true)}, app);
 
     std::string expected_ascii = emptyline_ascii;
+    expected_ascii += emptyline_ascii;
+    expected_ascii += emptyline_ascii;
     expected_ascii += "..iiii....\n";
-    for (unsigned i = 0; i < 19; i++)
+    for (unsigned i = 0; i < 17; i++)
         expected_ascii += emptyline_ascii;
     expected_ascii += "..gggg....\n";
 
@@ -142,8 +150,10 @@ TEST_FIXTURE(WellFixture, MoveRight) {
     well.update({InputEvent(InputType::RIGHT, true)}, app);
 
     std::string expected_ascii = emptyline_ascii;
+    expected_ascii += emptyline_ascii;
+    expected_ascii += emptyline_ascii;
     expected_ascii += "....iiii..\n";
-    for (unsigned i = 0; i < 19; i++)
+    for (unsigned i = 0; i < 17; i++)
         expected_ascii += emptyline_ascii;
     expected_ascii += "....gggg..\n";
 
@@ -155,8 +165,10 @@ TEST_FIXTURE(WellFixture, MoveDown) {
 
     std::string expected_ascii = emptyline_ascii;
     expected_ascii += emptyline_ascii;
+    expected_ascii += emptyline_ascii;
+    expected_ascii += emptyline_ascii;
     expected_ascii += "...iiii...\n";
-    for (unsigned i = 0; i < 18; i++)
+    for (unsigned i = 0; i < 16; i++)
         expected_ascii += emptyline_ascii;
     expected_ascii += "...gggg...\n";
 
@@ -170,10 +182,12 @@ TEST_FIXTURE(WellFixture, Rotate) {
 
     well.update({InputEvent(InputType::A, true)}, app);
 
-    std::string expected_ascii = "...s......\n";
+    std::string expected_ascii = emptyline_ascii;
+    expected_ascii += emptyline_ascii;
+    expected_ascii += "...s......\n";
     expected_ascii += "...ss.....\n";
     expected_ascii += "....s.....\n";
-    for (unsigned i = 0; i < 16; i++)
+    for (unsigned i = 0; i < 14; i++)
         expected_ascii += emptyline_ascii;
     expected_ascii += "...g......\n";
     expected_ascii += "...gg.....\n";

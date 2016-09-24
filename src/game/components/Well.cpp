@@ -197,13 +197,18 @@ void Well::addPiece(Piece::Type type)
 
     active_piece = PieceFactory::make_uptr(type);
     active_piece_x = 3;
-    active_piece_y = 0;
-    calculateGhostOffset();
 
-    if (hasCollisionAt(active_piece_x, active_piece_y)) {
-        lockAndReleasePiece();
-        gameover = true;
+    // try to place the piece in row 20, then move up if it fails
+    for (active_piece_y = 3; active_piece_y > 0; /* note: unsigned */ ) {
+        if (!hasCollisionAt(active_piece_x, --active_piece_y)) {
+            calculateGhostOffset();
+            return;
+        }
     }
+
+    // couldn't place the piece, game over
+    lockAndReleasePiece();
+    gameover = true;
 }
 
 void Well::deletePiece()
@@ -576,7 +581,7 @@ void Well::draw(GraphicsContext& gcx, unsigned int x, unsigned int y)
     using Textures = GameplayResources::Textures;
 
     // Draw background
-    for (size_t row = 0; row < 22; row++) {
+    for (size_t row = 0; row < 20; row++) {
         for (size_t col = 0; col < 10; col++) {
             gcx.drawTexture(Textures::MATRIXBG, {
                 static_cast<int>(x + col * Mino::texture_size_px),
@@ -588,10 +593,10 @@ void Well::draw(GraphicsContext& gcx, unsigned int x, unsigned int y)
     }
 
     // Draw board Minos
-    for (size_t row = 0; row < 22; row++) {
+    for (size_t row = 0; row < 20; row++) {
         for (size_t col = 0; col < 10; col++) {
-            if (matrix.at(row).at(col))
-                matrix.at(row).at(col)->draw(gcx,
+            if (matrix.at(row + 2).at(col))
+                matrix.at(row + 2).at(col)->draw(gcx,
                                              x + col * Mino::texture_size_px,
                                              y + row * Mino::texture_size_px);
         }
@@ -599,17 +604,28 @@ void Well::draw(GraphicsContext& gcx, unsigned int x, unsigned int y)
 
     // Draw current piece
     if (active_piece) {
-        active_piece->draw(gcx,
-                           x + active_piece_x * Mino::texture_size_px,
-                           y + active_piece_y * Mino::texture_size_px);
+        // draw piece
+        for (unsigned row = 0; row < 4; row++) {
+            if (active_piece_y + row < 2) // hide rows 21-22
+                continue;
+            for (unsigned col = 0; col < 4; col++) {
+                if (active_piece->currentGrid().at(row).at(col)) {
+                    active_piece->currentGrid().at(row).at(col)
+                    ->draw(gcx, x + (active_piece_x + col) * Mino::texture_size_px,
+                                y + (active_piece_y + row - 2) * Mino::texture_size_px);
+                }
+            }
+        }
 
         // draw ghost
         for (unsigned row = 0; row < 4; row++) {
+            if (ghost_piece_y + row < 2) // hide rows 21-22
+                continue;
             for (unsigned col = 0; col < 4; col++) {
                 if (active_piece->currentGrid().at(row).at(col)) {
                     gcx.drawTexture(Textures::MINO_GHOST, {
                         static_cast<int>(x + (active_piece_x + col) * Mino::texture_size_px),
-                        static_cast<int>(y + (ghost_piece_y + row) * Mino::texture_size_px),
+                        static_cast<int>(y + (ghost_piece_y + row - 2) * Mino::texture_size_px),
                         Mino::texture_size_px,
                         Mino::texture_size_px
                     });
@@ -621,9 +637,11 @@ void Well::draw(GraphicsContext& gcx, unsigned int x, unsigned int y)
     // Draw line clear animation
     if (pending_cleared_rows.size()) {
         for (auto row : pending_cleared_rows) {
+            if (row < 2)
+                continue;
             gcx.drawFilledRect({
                     static_cast<int>(x),
-                    static_cast<int>(y + row * Mino::texture_size_px),
+                    static_cast<int>(y + (row - 2) * Mino::texture_size_px),
                     static_cast<int>(Mino::texture_size_px * matrix.at(0).size()),
                     Mino::texture_size_px
                 }, {0xFF, 0xFF, 0xFF, lineclear_alpha.value()});
