@@ -4,7 +4,7 @@
 #include "game/components/Well.h"
 
 
-struct AppContext {};
+class AppContext {};
 
 SUITE(Well) {
 
