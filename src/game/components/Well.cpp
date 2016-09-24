@@ -44,12 +44,9 @@ Well::Well()
 {
     keystates[InputType::LEFT] = false;
     keystates[InputType::RIGHT] = false;
-    keystates[InputType::UP] = false;
     keystates[InputType::DOWN] = false;
-
     keystates[InputType::A] = false;
     keystates[InputType::B] = false;
-
     previous_keystates = keystates;
 
     lineclear_alpha.stop();
@@ -94,6 +91,7 @@ void Well::handleKeys(const std::vector<InputEvent>& events)
         // press
         if (event.down()) {
             switch (event.type()) {
+            case InputType::UP:
             case InputType::GAME_HARDDROP:
                 hardDrop();
                 skip_gravity = true;
