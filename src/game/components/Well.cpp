@@ -492,6 +492,8 @@ void Well::notify(WellEvent event)
         obs();
 }
 
+#ifndef NDEBUG
+
 void Well::fromAscii(const std::string& text)
 {
     assert(text.length() == matrix.size() * (matrix[0].size() + 1));
@@ -575,6 +577,8 @@ std::string Well::asAscii()
     }
     return output;
 }
+
+#endif
 
 void Well::draw(GraphicsContext& gcx, unsigned int x, unsigned int y)
 {
