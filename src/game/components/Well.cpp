@@ -299,8 +299,10 @@ void Well::moveDownNow()
 
     if (!isOnGround())
         active_piece_y++;
-    else if (!harddrop_locks_instantly && lock_promise.running())
-        lock_promise.unpause();
+    else if (!harddrop_locks_instantly && lock_promise.running()) {
+        // sonic drop on-demand lock
+        lockThenRequestNext();
+    }
 }
 
 void Well::hardDrop()

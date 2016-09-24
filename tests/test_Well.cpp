@@ -11,6 +11,7 @@ SUITE(Well) {
 // TODO: get these values from config
 constexpr unsigned gravity_delay_frames = 64;
 constexpr unsigned lock_delay_frames = 30;
+constexpr unsigned horizontal_delay_frames = 14;
 
 struct WellFixture {
     AppContext app;
@@ -180,5 +181,53 @@ TEST_FIXTURE(WellFixture, Rotate) {
 
     CHECK_EQUAL(expected_ascii, well.asAscii());
 }
+
+// TODO: Make Well configurable
+/*
+TEST_FIXTURE(WellFixture, Zangi) {
+    std::string base_ascii;
+    for (unsigned i = 0; i < 18; i++)
+        base_ascii += emptyline_ascii;
+    base_ascii += "TTTTTTTT..\n";
+    base_ascii += "TTTTTTTT..\n";
+    base_ascii += "TTTTTTT...\n";
+    base_ascii += "TTTTTTTTT.\n";
+
+    std::string expected_ascii;
+    for (unsigned i = 0; i < 18; i++)
+        expected_ascii += emptyline_ascii;
+    expected_ascii += "TTTTTTTTJ.\n";
+    expected_ascii += "TTTTTTTTJ.\n";
+    expected_ascii += "TTTTTTTJJ.\n";
+    expected_ascii += "TTTTTTTTT.\n";
+
+    well.fromAscii(base_ascii);
+
+    well.addPiece(Piece::Type::J);
+    // rotate CCW
+    well.update({InputEvent(InputType::A, true)}, app);
+    well.update({InputEvent(InputType::A, false)}, app);
+    // move right
+    for (unsigned i = 0; i < horizontal_delay_frames * 4; i++)
+        well.update({InputEvent(InputType::RIGHT, true)}, app);
+    well.update({InputEvent(InputType::RIGHT, false)}, app);
+    // sonic drop
+    well.update({InputEvent(InputType::UP, true)}, app);
+    well.update({InputEvent(InputType::UP, false)}, app);
+    CHECK(well.activePiece() != nullptr); // piece must survive landing on sonic drop
+    // move left
+    well.update({InputEvent(InputType::LEFT, true)}, app);
+    CHECK(well.activePiece() != nullptr);
+    well.update({InputEvent(InputType::LEFT, false)}, app);
+    CHECK(well.activePiece() != nullptr);
+    // lock
+    well.update({InputEvent(InputType::DOWN, true)}, app);
+    CHECK(well.activePiece() == nullptr);
+    well.update({InputEvent(InputType::DOWN, false)}, app);
+    CHECK(well.activePiece() == nullptr);
+
+    CHECK_EQUAL(expected_ascii, well.asAscii());
+}
+*/
 
 } // Suite
