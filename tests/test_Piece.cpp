@@ -12,7 +12,7 @@ struct PieceFixture {
     Piece p;
 
     PieceFixture()
-        : p(Piece::Type::I, {std::bitset<16>("0000000000000000"),
+        : p(Piece::Type::I, {std::bitset<16>("1111111111111111"),
                              std::bitset<16>("0000000000010000"),
                              std::bitset<16>("0000000100000000"),
                              std::bitset<16>("0001000000000000")})
@@ -25,7 +25,7 @@ TEST_FIXTURE(PieceFixture, CtorFirstFrame)
 
     for (const auto& row : grid) {
         for (const auto& col : row) {
-            REQUIRE CHECK(col.get() == nullptr);
+            REQUIRE CHECK(col.get() != nullptr);
         }
     }
 }
@@ -69,7 +69,7 @@ TEST_FIXTURE(PieceFixture, RotateBack)
 
         for (const auto& row : grid) {
             for (const auto& col : row) {
-                REQUIRE CHECK(col.get() == nullptr);
+                REQUIRE CHECK(col.get() != nullptr);
             }
         }
     }
@@ -81,7 +81,7 @@ TEST_FIXTURE(PieceFixture, RotateBack)
 
         for (const auto& row : grid) {
             for (const auto& col : row) {
-                REQUIRE CHECK(col.get() == nullptr);
+                REQUIRE CHECK(col.get() != nullptr);
             }
         }
     }
@@ -98,7 +98,7 @@ TEST_FIXTURE(PieceFixture, RotateAround)
 
         for (const auto& row : grid) {
             for (const auto& col : row) {
-                REQUIRE CHECK(col.get() == nullptr);
+                REQUIRE CHECK(col.get() != nullptr);
             }
         }
     }
@@ -112,7 +112,7 @@ TEST_FIXTURE(PieceFixture, RotateAround)
 
         for (const auto& row : grid) {
             for (const auto& col : row) {
-                REQUIRE CHECK(col.get() == nullptr);
+                REQUIRE CHECK(col.get() != nullptr);
             }
         }
     }
