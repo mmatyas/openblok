@@ -26,6 +26,7 @@ public:
 
     static char typeAsAscii(Type);
     static Type typeFromAscii(char);
+    static uint8_t displayWidth(Type);
     Type type() const { return piece_type; }
 
     /// Create a Piece of type, with the four rotations as bitflags
@@ -37,7 +38,7 @@ public:
     void rotateCCW();
     /// Read the rotation grid of the piece
     const PieceGrid& currentGrid() const;
-    /// Returns the rotation grid, allowing modifications.
+    /// Returns the rotation grid, allowing modifications
     PieceGrid& currentGridMut();
 
     /// Draw the Piece

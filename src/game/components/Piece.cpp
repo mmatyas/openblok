@@ -41,12 +41,25 @@ Piece::Type Piece::typeFromAscii(char type) {
     assert(false);
 }
 
+uint8_t Piece::displayWidth(Piece::Type type) {
+    switch(type) {
+    case Piece::Type::I : return 4;
+    case Piece::Type::J : return 3;
+    case Piece::Type::L : return 3;
+    case Piece::Type::O : return 4;
+    case Piece::Type::S : return 3;
+    case Piece::Type::T : return 3;
+    case Piece::Type::Z : return 3;
+    }
+    assert(false);
+}
+
 Piece::Piece(Type type, const std::array<std::bitset<16>, 4>& gridbits)
     : piece_type(type)
     , current_rotation(0)
 {
     // fill 4 frames of 4x4 grids
-    for (unsigned frame = 0; frame < 4; frame++) {
+    for (size_t frame = 0; frame < 4; frame++) {
         for (size_t i = 0; i < 16; i++) {
             if (gridbits[frame].test(15 - i)) {
                 grids[frame][i / 4][i % 4] = MinoFactory::make_uptr(type);
