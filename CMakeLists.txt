@@ -10,6 +10,12 @@ option(BUILD_TESTS "Build the unit tests" ON)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra") # TODO: multiplatform
+if(BUILD_TESTS AND CMAKE_COMPILER_IS_GNUCXX)
+	include(CodeCoverage)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -fprofile-arcs -ftest-coverage")
+	setup_target_for_coverage(openblok_coverage openblok_test coverage)
+endif()
+
 
 # Dependencies: SDL2
 set(SDL2PP_WITH_IMAGE ON)
