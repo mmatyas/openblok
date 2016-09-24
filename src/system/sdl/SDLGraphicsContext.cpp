@@ -31,6 +31,8 @@ SDLGraphicsContext::SDLGraphicsContext()
     , renderer(window, -1, SDL_RENDERER_ACCELERATED)
     , ttf()
     , on_render_callback([](){})
+    , current_fontid(0)
+    , current_texid(0)
 {
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
     renderer.SetLogicalSize(960, 720);
