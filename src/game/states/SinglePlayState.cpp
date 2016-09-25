@@ -15,10 +15,9 @@ SinglePlayState::SinglePlayState(AppContext& app)
     using Fonts = CommonResources::Fonts;
 
 
-    tex_hold = app.gcx->renderText(tr("HOLD"),
-                                   Fonts::HEADER, 0xEEEEEE_rgb);
-    tex_next = app.gcx->renderText(tr("NEXT"),
-                                   Fonts::HEADER, 0xEEEEEE_rgb);
+    tex_hold = app.gcx->renderText(tr("HOLD"), Fonts::HEADER, 0xEEEEEE_rgb);
+    tex_next = app.gcx->renderText(tr("NEXT"), Fonts::HEADER, 0xEEEEEE_rgb);
+    tex_goal = app.gcx->renderText(tr("GOAL"), Fonts::HEADER, 0xEEEEEE_rgb);
 
 
     board.registerObserver(WellEvent::Type::NEXT_REQUESTED, [this](const WellEvent&){
@@ -66,21 +65,23 @@ void SinglePlayState::update(const std::vector<InputEvent>& inputs, AppContext& 
 
 void SinglePlayState::draw(GraphicsContext& gcx)
 {
+    static const int boardborder_width = 5;
     static const int board_w = 10 * Mino::texture_size_px;
-    static const int board_h = 20 * Mino::texture_size_px;
+    static const int board_h = 20 * Mino::texture_size_px + boardborder_width;
     static const int board_x = gcx.screenWidth() / 2 - 5 * Mino::texture_size_px;
     static const int board_y = (gcx.screenHeight() - board_h - 5) / 2.0;
-    static const int boardborder_width = 5;
     static const int sidebar_w = 5 * Mino::texture_size_px;
     static const int sidebar_padding = 10;
+    static const int sidebar_padding_thin = 5;
     static const int sidebar_full_w = sidebar_w + boardborder_width + sidebar_padding * 2;
     static const int sidebar_left_x = board_x - sidebar_full_w;
     static const int sidebar_right_x = board_x + board_w;
+    static const int text_height = gcx.textureHeight(tex_hold);
 
     static const Rectangle rect_sidebar_left = {
-        sidebar_left_x, board_y, sidebar_full_w, board_h + boardborder_width};
+        sidebar_left_x, board_y, sidebar_full_w, board_h};
     static const Rectangle rect_sidebar_right = {
-        sidebar_right_x, board_y, sidebar_full_w, board_h + boardborder_width};
+        sidebar_right_x, board_y, sidebar_full_w, board_h};
 
     static const Rectangle rect_boardborder_left = {
         board_x - boardborder_width, board_y,
@@ -92,8 +93,14 @@ void SinglePlayState::draw(GraphicsContext& gcx)
         board_x - boardborder_width,
         board_y + 20 * Mino::texture_size_px, 10 + board_w, 5};
 
+    static const Rectangle rect_goal = {
+        sidebar_left_x + sidebar_padding,
+        board_y + board_h - sidebar_padding - (text_height + sidebar_padding * 2),
+        sidebar_w, text_height + sidebar_padding * 2};
+
     static const auto sidebar_color = 0x1010AAA0_rgba;
     static const auto boardborder_color = 0x808080_rgb;
+    static const auto sidebar_highlight_color = 0x0A0AFF_rgb;
 
 
     // draw screen background
@@ -110,11 +117,20 @@ void SinglePlayState::draw(GraphicsContext& gcx)
     gcx.drawFilledRect(rect_boardborder_bottom, boardborder_color);
     board.draw(gcx, board_x, board_y);
 
-    // draw sidebars
+    // draw left sidebar
     gcx.drawTexture(tex_hold, sidebar_left_x + sidebar_padding, board_y + 10);
-    piece_holder.draw(gcx, sidebar_left_x + sidebar_padding, board_y + 75);
+    piece_holder.draw(gcx, sidebar_left_x + sidebar_padding,
+                      board_y + sidebar_padding + text_height + sidebar_padding_thin);
+    gcx.drawFilledRect(rect_goal, sidebar_highlight_color);
+    gcx.drawTexture(tex_goal,
+                    sidebar_left_x + sidebar_padding,
+                    board_y + board_h - boardborder_width - sidebar_padding
+                    - rect_goal.h - text_height);
+
+    // draw right sidebar
     gcx.drawTexture(tex_next,
                     sidebar_right_x + sidebar_full_w - gcx.textureWidth(tex_next) - sidebar_padding,
-                    board_y + 10);
-    next_pieces.draw(gcx, sidebar_right_x + boardborder_width + sidebar_padding, board_y + 75);
+                    board_y + sidebar_padding);
+    next_pieces.draw(gcx, sidebar_right_x + boardborder_width + sidebar_padding,
+                     board_y + sidebar_padding + text_height + sidebar_padding_thin);
 }

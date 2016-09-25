@@ -17,6 +17,7 @@ private:
     TextureID tex_background;
     TextureID tex_hold;
     TextureID tex_next;
+    TextureID tex_goal;
 
     HoldQueue piece_holder;
     NextQueue next_pieces;

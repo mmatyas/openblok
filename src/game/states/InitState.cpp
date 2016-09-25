@@ -13,7 +13,7 @@
 InitState::InitState(AppContext& app)
 {
     using Fonts = CommonResources::Fonts;
-    Fonts::HEADER = app.gcx->loadFont(app.fonts->find("Dosis"), 40);
+    Fonts::HEADER = app.gcx->loadFont(app.fonts->find("Dosis"), 30);
     tex_loading = app.gcx->renderText(tr("LOADING..."),
                                       Fonts::HEADER, 0xFFFFFF_rgb);
 
