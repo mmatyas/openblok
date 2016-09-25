@@ -43,18 +43,22 @@ void NextQueue::generate_pieces()
 
 void NextQueue::draw(GraphicsContext& gcx, int x, int y)
 {
-    static const unsigned piece_distance_y = Mino::texture_size_px * 4 + 10 /* padding */;
 
     gcx.drawFilledRect({
         x, y,
         5 * Mino::texture_size_px, 4 * Mino::texture_size_px},
         0x0A0AFF_rgb);
 
+    int offset_y = y + Mino::texture_size_px;
     for (unsigned i = 0; i < displayed_piece_count; i++) {
         const auto& piece = piece_storage.at(static_cast<size_t>(piece_queue.at(i)));
         const float padding_x = (4 - Piece::displayWidth(piece->type())) / 2.0f;
         piece->draw(gcx,
                     x + Mino::texture_size_px * (0.5f + padding_x),
-                    y + Mino::texture_size_px + i * piece_distance_y);
+                    offset_y);
+
+        offset_y += Mino::texture_size_px * 3;
+        if (i == 0)
+            offset_y += Mino::texture_size_px;
     }
 }
