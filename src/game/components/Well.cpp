@@ -419,7 +419,7 @@ void Well::lockAndReleasePiece() {
         }
     }
 
-    active_piece.release();
+    active_piece.reset();
     lock_promise.stop();
     notify(WellEvent::PIECE_LOCKED);
     checkLineclear();
