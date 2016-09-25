@@ -4,6 +4,7 @@
 #include "Piece.h"
 #include "game/Matrix.h"
 #include "game/Transition.h"
+#include "game/WellEvent.h"
 #include "system/InputEvent.h"
 
 #include <chrono>
@@ -16,7 +17,6 @@
 
 
 class AppContext;
-enum class WellEvent: uint8_t;
 
 
 class Well {
@@ -42,8 +42,8 @@ public:
 
     /// Register an external event observer.
     template <typename WellObserver>
-    void registerObserver(WellEvent event, WellObserver&& obs) {
-        observers[static_cast<uint8_t>(event)].push_back(std::forward<WellObserver>(obs));
+    void registerObserver(WellEvent::Type evtype, WellObserver&& obs) {
+        observers[static_cast<uint8_t>(evtype)].push_back(std::forward<WellObserver>(obs));
     }
 
 #ifndef NDEBUG
@@ -129,6 +129,6 @@ private:
     Transition<uint8_t> lineclear_alpha;
 
     // listeners
-    std::unordered_map<uint8_t, std::vector<std::function<void()>>> observers;
-    void notify(WellEvent);
+    std::unordered_map<uint8_t, std::vector<std::function<void(const WellEvent&)>>> observers;
+    void notify(const WellEvent&);
 };

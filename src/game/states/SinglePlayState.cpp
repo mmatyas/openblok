@@ -21,11 +21,11 @@ SinglePlayState::SinglePlayState(AppContext& app)
                                    Fonts::HEADER, 0xEEEEEE_rgb);
 
 
-    board.registerObserver(WellEvent::NEXT_REQUESTED, [this](){
+    board.registerObserver(WellEvent::Type::NEXT_REQUESTED, [this](const WellEvent&){
         this->addNextPiece();
     });
 
-    board.registerObserver(WellEvent::HOLD_REQUESTED, [this](){
+    board.registerObserver(WellEvent::Type::HOLD_REQUESTED, [this](const WellEvent&){
         this->piece_holder.onSwapRequested();
         if (this->piece_holder.swapAllowed()) {
             auto type = this->board.activePiece()->type();

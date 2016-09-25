@@ -39,7 +39,7 @@ Well::Well()
         [this](){
             this->removeEmptyRows();
             this->lock_promise.stop();
-            this->notify(WellEvent::NEXT_REQUESTED);
+            this->notify(WellEvent(WellEvent::Type::NEXT_REQUESTED));
         })
 {
     keystates[InputType::LEFT] = false;
@@ -98,7 +98,7 @@ void Well::handleKeys(const std::vector<InputEvent>& events)
                 break;
 
             case InputType::GAME_HOLD:
-                notify(WellEvent::HOLD_REQUESTED);
+                notify(WellEvent(WellEvent::Type::HOLD_REQUESTED));
                 skip_gravity = true;
                 break;
 
@@ -402,7 +402,7 @@ void Well::lockThenRequestNext()
 {
     lockAndReleasePiece();
     if (!gameover && !lineclear_alpha.running())
-        notify(WellEvent::NEXT_REQUESTED);
+        notify(WellEvent(WellEvent::Type::NEXT_REQUESTED));
 }
 
 void Well::lockAndReleasePiece() {
@@ -421,7 +421,7 @@ void Well::lockAndReleasePiece() {
 
     active_piece.reset();
     lock_promise.stop();
-    notify(WellEvent::PIECE_LOCKED);
+    notify(WellEvent(WellEvent::Type::PIECE_LOCKED));
     checkLineclear();
 }
 
@@ -460,13 +460,9 @@ void Well::removeEmptyRows()
     assert(pending_cleared_rows.size());
     assert(pending_cleared_rows.size() <= 4);
 
-    switch (pending_cleared_rows.size()) {
-        case 1: notify(WellEvent::CLEARED_ONE_LINE); break;
-        case 2: notify(WellEvent::CLEARED_TWO_LINES); break;
-        case 3: notify(WellEvent::CLEARED_THREE_LINES); break;
-        case 4: notify(WellEvent::CLEARED_FOUR_LINES); break;
-        default: assert(false);
-    }
+    WellEvent clear_event(WellEvent::Type::LINE_CLEAR);
+    clear_event.count = pending_cleared_rows.size();
+    notify(clear_event);
 
     for (int row = matrix.size(); row >= 0; row--) {
         if (!pending_cleared_rows.count(row))
@@ -486,10 +482,10 @@ void Well::removeEmptyRows()
     pending_cleared_rows.clear();
 }
 
-void Well::notify(WellEvent event)
+void Well::notify(const WellEvent& event)
 {
-    for (const auto& obs : observers[static_cast<uint8_t>(event)])
-        obs();
+    for (const auto& obs : observers[static_cast<uint8_t>(event.type)])
+        obs(event);
 }
 
 #ifndef NDEBUG
