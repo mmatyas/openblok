@@ -8,15 +8,36 @@
 #include "system/InputEvent.h"
 
 #include <chrono>
+#include <list>
 #include <memory>
-#include <vector>
 #include <set>
 #include <string>
 #include <unordered_map>
+#include <vector>
 #include <stdint.h>
 
 
 class AppContext;
+
+
+namespace WellUtil {
+class CellLockAnim {
+    using Duration = std::chrono::steady_clock::duration;
+
+public:
+    CellLockAnim(unsigned row, unsigned col);
+    void update(Duration t);
+    bool isActive() const { return anim_y_top.running(); }
+    void draw(GraphicsContext& gcx, int offset_x, int offset_y) const;
+
+private:
+    const unsigned cell_x;
+    const unsigned cell_y_top;
+    const unsigned cell_y_bottom;
+
+    Transition<int> anim_y_top;
+};
+} // namespace WellUtil
 
 
 class Well {
@@ -131,4 +152,7 @@ private:
     // listeners
     std::unordered_map<uint8_t, std::vector<std::function<void(const WellEvent&)>>> observers;
     void notify(const WellEvent&);
+
+    // animations
+    std::list<WellUtil::CellLockAnim> onlock_anims;
 };

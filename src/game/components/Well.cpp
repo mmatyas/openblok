@@ -12,6 +12,37 @@
 #include <assert.h>
 
 
+namespace WellUtil {
+
+CellLockAnim::CellLockAnim(unsigned row, unsigned col)
+    : cell_x(col * Mino::texture_size_px)
+    , cell_y_top(row * Mino::texture_size_px)
+    , cell_y_bottom(cell_y_top + Mino::texture_size_px)
+    , anim_y_top(GameState::frame_duration * 20, [this](double t){
+        return this->cell_y_bottom - t * Mino::texture_size_px * 2;
+    })
+{}
+
+void CellLockAnim::update(Duration t) {
+    anim_y_top.update(t);
+}
+
+void CellLockAnim::draw(GraphicsContext& gcx, int offset_x, int offset_y) const {
+    static const int effect_height_max = Mino::texture_size_px / 2;
+    int y_top = std::max<int>(anim_y_top.value(), cell_y_top);
+    int y_bottom = std::min<int>(anim_y_top.value() + effect_height_max, cell_y_bottom);
+    if (y_bottom <= y_top)
+        return;
+
+    gcx.drawFilledRect({
+        static_cast<int>(offset_x + cell_x), offset_y + y_top,
+        Mino::texture_size_px, y_bottom - y_top},
+        0xFFFFFF30_rgba);
+}
+
+} // namespace WellUtil
+
+
 Well::Well()
     : gameover(false)
     , active_piece_x(0)
@@ -54,6 +85,10 @@ Well::Well()
 
 void Well::update(const std::vector<InputEvent>& events, AppContext&)
 {
+    for (auto& anim : onlock_anims)
+        anim.update(GameState::frame_duration);
+    onlock_anims.remove_if([](WellUtil::CellLockAnim& anim){ return !anim.isActive(); });
+
     if (gameover)
         return;
 
@@ -405,16 +440,22 @@ void Well::lockThenRequestNext()
         notify(WellEvent(WellEvent::Type::NEXT_REQUESTED));
 }
 
-void Well::lockAndReleasePiece() {
+void Well::lockAndReleasePiece()
+{
     for (unsigned row = 0; row < 4; row++) {
         for (unsigned cell = 0; cell < 4; cell++) {
-            if (active_piece_y + row < matrix.size()
-                && active_piece_x + cell < matrix.at(0).size()
-                && active_piece->currentGrid().at(row).at(cell))
-            {
+            if (active_piece_y + row >= matrix.size() ||
+                active_piece_x + cell >= matrix.at(0).size() ||
+                active_piece_x + static_cast<int>(cell) < 0)
+                continue;
+
+            if (active_piece->currentGrid().at(row).at(cell)) {
                 matrix[active_piece_y + row][active_piece_x + cell].swap(
                     active_piece->currentGridMut()[row][cell]
                 );
+
+                if (active_piece_y + row >= 2)
+                    onlock_anims.emplace_back(active_piece_y + row - 2, active_piece_x + cell);
             }
         }
     }
@@ -576,7 +617,7 @@ std::string Well::asAscii()
 
 #endif
 
-void Well::draw(GraphicsContext& gcx, unsigned int x, unsigned int y)
+void Well::draw(GraphicsContext& gcx, unsigned x, unsigned y)
 {
     using Textures = GameplayResources::Textures;
 
@@ -647,4 +688,8 @@ void Well::draw(GraphicsContext& gcx, unsigned int x, unsigned int y)
                 }, {0xFF, 0xFF, 0xFF, lineclear_alpha.value()});
         }
     }
+
+    // Draw piece lock animation
+    for (auto& anim : onlock_anims)
+        anim.draw(gcx, x, y);
 }
