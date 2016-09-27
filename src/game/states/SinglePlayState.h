@@ -15,6 +15,8 @@ public:
     void draw(GraphicsContext&) final;
 
 private:
+    using Duration = std::chrono::steady_clock::duration;
+
     bool paused;
     FontID font_boxtitle;
     FontID font_boxcontent;
@@ -33,7 +35,7 @@ private:
 
     const unsigned lineclears_per_level;
     int lineclears_left;
-    std::stack<uint8_t> gravity_levels;
+    std::stack<Duration> gravity_levels;
     unsigned current_level;
 
     void addNextPiece();

@@ -14,21 +14,21 @@ SinglePlayState::SinglePlayState(AppContext& app)
     , lineclears_per_level(4)
     , lineclears_left(lineclears_per_level)
     , gravity_levels({
-            2,
-            4,
-            6,
-            9,
-            12,
-            15,
-            19,
-            23,
-            27,
-            32,
-            37,
-            42,
-            48,
-            54,
-            60
+            1 * GameState::frame_duration,
+            3 * GameState::frame_duration,
+            6 * GameState::frame_duration,
+            9 * GameState::frame_duration,
+            12 * GameState::frame_duration,
+            15 * GameState::frame_duration,
+            19 * GameState::frame_duration,
+            23 * GameState::frame_duration,
+            27 * GameState::frame_duration,
+            32 * GameState::frame_duration,
+            37 * GameState::frame_duration,
+            42 * GameState::frame_duration,
+            48 * GameState::frame_duration,
+            54 * GameState::frame_duration,
+            60 * GameState::frame_duration,
         })
     , current_level(1)
 {

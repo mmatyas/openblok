@@ -41,6 +41,8 @@ private:
 
 
 class Well {
+    using Duration = std::chrono::steady_clock::duration;
+
 public:
     /// Create a new well
     Well();
@@ -59,7 +61,7 @@ public:
     const std::unique_ptr<Piece>& activePiece() const { return active_piece; }
 
     /// Set the gravity update rate, in frames
-    void setGravity(unsigned);
+    void setGravity(Duration);
 
     /// Draw the well
     void draw(GraphicsContext&, unsigned x, unsigned y);
@@ -79,8 +81,6 @@ public:
 #endif
 
 private:
-    using Duration = std::chrono::steady_clock::duration;
-
     // true when gameover detected
     bool gameover;
 

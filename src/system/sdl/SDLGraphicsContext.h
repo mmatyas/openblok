@@ -6,6 +6,7 @@
 #include <string>
 #include <unordered_map>
 
+
 /// A graphics context implementation, based on SDL2
 class SDLGraphicsContext: public GraphicsContext {
 public:

@@ -207,7 +207,7 @@ void Well::resetInput()
 void Well::updateGravity()
 {
     gravity_timer += GameState::frame_duration;
-    if (gravity_timer >= gravity_delay) {
+    while (gravity_timer >= gravity_delay) {
         gravity_timer -= gravity_delay;
 
         // do not apply downward movement twice
@@ -251,9 +251,9 @@ void Well::deletePiece()
     active_piece = nullptr;
 }
 
-void Well::setGravity(unsigned frames)
+void Well::setGravity(Duration duration)
 {
-    gravity_delay = frames * GameState::frame_duration;
+    gravity_delay = std::max<Duration>(duration, std::chrono::milliseconds(1));
 }
 
 bool Well::hasCollisionAt(int offset_x, unsigned offset_y)
