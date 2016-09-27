@@ -58,6 +58,9 @@ public:
     /// For actual input handling, call GameBoard's functions.
     const std::unique_ptr<Piece>& activePiece() const { return active_piece; }
 
+    /// Set the gravity update rate, in frames
+    void setGravity(unsigned);
+
     /// Draw the well
     void draw(GraphicsContext&, unsigned x, unsigned y);
 
@@ -96,7 +99,7 @@ private:
 
     // gravity
     bool skip_gravity;
-    const Duration gravity_delay;
+    Duration gravity_delay;
     Duration gravity_timer;
     void updateGravity();
     bool isOnGround();

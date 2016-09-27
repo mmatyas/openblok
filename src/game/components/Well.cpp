@@ -251,6 +251,11 @@ void Well::deletePiece()
     active_piece = nullptr;
 }
 
+void Well::setGravity(unsigned frames)
+{
+    gravity_delay = frames * GameState::frame_duration;
+}
+
 bool Well::hasCollisionAt(int offset_x, unsigned offset_y)
 {
     // At least one line of the piece grid must be on the board.
