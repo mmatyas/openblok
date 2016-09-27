@@ -133,61 +133,54 @@ void SinglePlayState::draw(GraphicsContext& gcx)
     static const int sidebar_right_x = board_x + board_w;
     static const int text_height = 30;
 
-    static const Rectangle rect_sidebar_left = {
-        sidebar_left_x, board_y, sidebar_full_w, board_h};
-    static const Rectangle rect_sidebar_right = {
-        sidebar_right_x, board_y, sidebar_full_w, board_h};
-
     static const Rectangle rect_boardborder_left = {
         board_x - boardborder_width, board_y,
         boardborder_width, 20 * Mino::texture_size_px};
     static const Rectangle rect_boardborder_right = {
         board_x + board_w, board_y,
         boardborder_width, 20 * Mino::texture_size_px};
+    static const Rectangle rect_boardborder_top = {
+        board_x - boardborder_width, board_y - boardborder_width,
+        2 * boardborder_width + board_w, boardborder_width};
     static const Rectangle rect_boardborder_bottom = {
-        board_x - boardborder_width,
-        board_y + 20 * Mino::texture_size_px, 10 + board_w, 5};
+        board_x - boardborder_width, board_y + 20 * Mino::texture_size_px,
+        2 * boardborder_width + board_w, boardborder_width};
 
     static const Rectangle rect_goal = {
         sidebar_left_x + sidebar_padding,
-        board_y + board_h - sidebar_padding - (text_height + sidebar_padding * 2),
+        board_y + board_h - text_height - sidebar_padding * 2,
         sidebar_w, text_height + sidebar_padding * 2};
     static const Rectangle rect_level = {
         rect_goal.x, rect_goal.y - text_height - sidebar_padding_thin * 3 - rect_goal.h,
         rect_goal.w, rect_goal.h};
 
-    static const auto sidebar_color = 0x1010AAA0_rgba;
-    static const auto boardborder_color = 0x808080_rgb;
-    static const auto sidebar_highlight_color = 0x0A0AFF_rgb;
+    static const auto boardborder_color = 0x1A3A8A_rgb;
+    static const auto sidebarbox_color = 0x0A0AFF80_rgba;
 
 
     // draw screen background
-    for (unsigned x = 0; x < gcx.screenWidth(); x += gcx.textureWidth(tex_background))
-        gcx.drawTexture(tex_background, x, 0);
-
-    // draw sidebar background
-    gcx.drawFilledRect(rect_sidebar_left, sidebar_color);
-    gcx.drawFilledRect(rect_sidebar_right, sidebar_color);
+    gcx.drawTexture(tex_background, {0, 0, gcx.screenWidth(), gcx.screenHeight()});
 
     // draw the well
+    board.draw(gcx, board_x, board_y);
     gcx.drawFilledRect(rect_boardborder_left, boardborder_color);
     gcx.drawFilledRect(rect_boardborder_right, boardborder_color);
+    gcx.drawFilledRect(rect_boardborder_top, boardborder_color);
     gcx.drawFilledRect(rect_boardborder_bottom, boardborder_color);
-    board.draw(gcx, board_x, board_y);
 
     // draw left sidebar
-    gcx.drawTexture(tex_hold, sidebar_left_x + sidebar_padding, board_y + 10);
+    gcx.drawTexture(tex_hold, sidebar_left_x + sidebar_padding, rect_boardborder_top.y);
     piece_holder.draw(gcx, sidebar_left_x + sidebar_padding,
-                      board_y + sidebar_padding + text_height + sidebar_padding);
+                      rect_boardborder_top.y + text_height + sidebar_padding);
     gcx.drawTexture(tex_goal, rect_goal.x,
-                    rect_goal.y - sidebar_padding_thin * 2 - text_height);
-    gcx.drawFilledRect(rect_goal, sidebar_highlight_color);
+                    rect_goal.y - sidebar_padding - text_height);
+    gcx.drawFilledRect(rect_goal, sidebarbox_color);
     gcx.drawTexture(tex_goal_counter,
                     rect_goal.x + (rect_goal.w - gcx.textureWidth(tex_goal_counter)) / 2,
                     rect_goal.y + sidebar_padding_thin);
     gcx.drawTexture(tex_level, rect_level.x,
                     rect_level.y - sidebar_padding_thin * 2 - text_height);
-    gcx.drawFilledRect(rect_level, sidebar_highlight_color);
+    gcx.drawFilledRect(rect_level, sidebarbox_color);
     gcx.drawTexture(tex_level_counter,
                     rect_level.x + (rect_level.w - gcx.textureWidth(tex_level_counter)) / 2,
                     rect_level.y + sidebar_padding_thin);
@@ -195,7 +188,7 @@ void SinglePlayState::draw(GraphicsContext& gcx)
     // draw right sidebar
     gcx.drawTexture(tex_next,
                     sidebar_right_x + sidebar_full_w - gcx.textureWidth(tex_next) - sidebar_padding,
-                    board_y + sidebar_padding);
+                    rect_boardborder_top.y);
     next_pieces.draw(gcx, sidebar_right_x + boardborder_width + sidebar_padding,
-                     board_y + sidebar_padding + text_height + sidebar_padding);
+                     rect_boardborder_top.y + text_height + sidebar_padding);
 }

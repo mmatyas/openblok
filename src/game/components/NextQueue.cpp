@@ -43,11 +43,10 @@ void NextQueue::generate_pieces()
 
 void NextQueue::draw(GraphicsContext& gcx, int x, int y)
 {
-
     gcx.drawFilledRect({
         x, y,
         5 * Mino::texture_size_px, 4 * Mino::texture_size_px},
-        0x0A0AFF_rgb);
+        0x0A0AFF80_rgba);
 
     int offset_y = y + Mino::texture_size_px;
     for (unsigned i = 0; i < displayed_piece_count; i++) {

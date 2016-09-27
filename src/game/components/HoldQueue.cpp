@@ -70,7 +70,7 @@ void HoldQueue::update()
 
 void HoldQueue::draw(GraphicsContext& gcx, int x, int y)
 {
-    gcx.drawFilledRect({x, y, 5 * Mino::texture_size_px, 4 * Mino::texture_size_px}, 0x0A0AFF_rgb);
+    gcx.drawFilledRect({x, y, 5 * Mino::texture_size_px, 4 * Mino::texture_size_px}, 0x0A0AFF80_rgba);
 
     if (swapblocked_alpha.running()) {
         gcx.drawFilledRect({
