@@ -42,6 +42,11 @@ public:
     /// Returns a unique ID that the client can use to refer to the rendered texture.
     virtual TextureID renderText(const std::string& text,
                                  FontID font, const RGBColor& color) = 0;
+    /// Render text to a texture, using a previously loaded font,
+    /// using the provided RGBA color,
+    /// to a texture slot, replacing its contents.
+    virtual void renderText(TextureID target_slot, const std::string& text,
+                            FontID font, const RGBColor&) = 0;
 
     /// Load an image file as texture.
     /// Returns a unique ID that the client can use to refer to this texture.

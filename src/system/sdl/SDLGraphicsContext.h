@@ -20,6 +20,8 @@ public:
     void unloadFont(FontID) final;
     TextureID renderText(const std::string& text,
                          FontID font, const RGBColor&) final;
+    void renderText(TextureID target_slot, const std::string& text,
+                    FontID font, const RGBColor&) final;
 
     TextureID loadTexture(const std::string& path) final;
     TextureID loadTexture(const std::string& path, const RGBColor& tint) final;

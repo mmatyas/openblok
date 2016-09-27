@@ -80,6 +80,13 @@ FontID SDLGraphicsContext::loadFont(const std::string& path, unsigned pt)
 
 TextureID SDLGraphicsContext::renderText(const std::string& text, FontID font_id, const RGBColor& color)
 {
+    renderText(current_texid, text, font_id, color);
+    return current_texid++;
+}
+
+void SDLGraphicsContext::renderText(TextureID target_slot, const std::string& text,
+                                    FontID font_id, const RGBColor& color)
+{
     if (!fonts.count(font_id))
         throw std::runtime_error("No font loaded in slot " + std::to_string(font_id));
 
@@ -88,11 +95,11 @@ TextureID SDLGraphicsContext::renderText(const std::string& text, FontID font_id
 
     // shortcut for single lines
     if (lines.size() <= 1) {
-        textures[current_texid] = std::make_unique<SDL2pp::Texture>(
+        textures[target_slot] = std::make_unique<SDL2pp::Texture>(
             renderer,
             font->RenderUTF8_Blended(text, {color.r, color.g, color.b, 255})
         );
-        return current_texid++;
+        return;
     }
 
     // find out texture dimensions
@@ -124,8 +131,7 @@ TextureID SDLGraphicsContext::renderText(const std::string& text, FontID font_id
         surf.Blit(NullOpt, basesurf, Rect(0, l * line_height, surf.GetWidth(), surf.GetHeight()));
     }
 
-    textures[current_texid] = std::make_unique<SDL2pp::Texture>(renderer, basesurf);
-    return current_texid++;
+    textures[target_slot] = std::make_unique<SDL2pp::Texture>(renderer, basesurf);
 }
 
 TextureID SDLGraphicsContext::loadTexture(const std::string& path)
