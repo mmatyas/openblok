@@ -47,6 +47,7 @@ Well::Well()
 
 void Well::update(const std::vector<InputEvent>& events, AppContext&)
 {
+    updateKeystate(events);
     updateAnimations();
 
     if (gameover)
@@ -62,7 +63,6 @@ void Well::update(const std::vector<InputEvent>& events, AppContext&)
         return;
     }
 
-    updateKeystate(events);
     handleKeys(events);
 
     if (!active_piece)
@@ -174,13 +174,6 @@ void Well::resetDAS()
 {
     das_timer = horizontal_delay_normal;
     horizontal_delay_current = horizontal_delay_normal;
-}
-
-void Well::resetInput()
-{
-    resetDAS();
-    for (auto& key : keystates)
-        key.second = false;
 }
 
 void Well::updateGravity()
@@ -483,8 +476,6 @@ void Well::checkLineclear()
             if (row >= 2)
                 blocking_anims.emplace_back(std::make_unique<LineClearAnim>(row));
         }
-
-        resetInput();
     }
 }
 

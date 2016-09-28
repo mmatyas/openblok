@@ -87,7 +87,6 @@ private:
     decltype(keystates) previous_keystates;
     void updateKeystate(const std::vector<InputEvent>&);
     void handleKeys(const std::vector<InputEvent>&);
-    void resetInput(); // reset input (keystate and autorepeat) to default
 
     // autorepeat horizontal (aka DAS)
     const Duration horizontal_delay_normal; // normal key repeat rate
