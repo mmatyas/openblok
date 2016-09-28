@@ -45,7 +45,7 @@ public:
     void setGravity(Duration);
 
     /// Draw the well
-    void draw(GraphicsContext&, unsigned x, unsigned y);
+    void draw(GraphicsContext&, unsigned x, unsigned y) const;
 
     /// Register an external event observer.
     template <typename WellObserver>
@@ -56,7 +56,7 @@ public:
 #ifndef NDEBUG
     /// Get the well's string representation.
     /// Can be useful for testing and debugging.
-    std::string asAscii();
+    std::string asAscii() const;
     /// Set the contents of the well from an Ascii string.
     void fromAscii(const std::string&);
 #endif
@@ -118,9 +118,9 @@ private:
     void updateLockDelay();
 
     // active piece collision and ghost
-    bool isOnGround();
+    bool isOnGround() const;
     void calculateGhostOffset();
-    bool hasCollisionAt(int offset_x, unsigned offset_y);
+    bool hasCollisionAt(int offset_x, unsigned offset_y) const;
     void lockAndReleasePiece();
     void lockThenRequestNext();
 

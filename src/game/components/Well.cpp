@@ -230,7 +230,7 @@ void Well::setGravity(Duration duration)
     softdrop_delay = gravity_delay / 20;
 }
 
-bool Well::hasCollisionAt(int offset_x, unsigned offset_y)
+bool Well::hasCollisionAt(int offset_x, unsigned offset_y) const
 {
     // At least one line of the piece grid must be on the board.
     // Horizontally, a piece can go between -3 and width+3,
@@ -305,7 +305,7 @@ void Well::moveRightNow()
     }
 }
 
-bool Well::isOnGround()
+bool Well::isOnGround() const
 {
     assert(active_piece);
     assert(active_piece_y + 1u < matrix.size());
@@ -534,7 +534,7 @@ void Well::fromAscii(const std::string& text)
     }
 }
 
-std::string Well::asAscii()
+std::string Well::asAscii() const
 {
     // the piece must be inside the grid, at least partially
     assert(0 <= active_piece_x + 3);
@@ -601,7 +601,7 @@ std::string Well::asAscii()
 
 #endif
 
-void Well::draw(GraphicsContext& gcx, unsigned x, unsigned y)
+void Well::draw(GraphicsContext& gcx, unsigned x, unsigned y) const
 {
     using Textures = GameplayResources::Textures;
 
