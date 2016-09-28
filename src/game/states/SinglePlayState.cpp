@@ -13,7 +13,7 @@ SinglePlayState::SinglePlayState(AppContext& app)
     , tex_background(app.gcx->loadTexture("data/gamebg_pattern.png"))
     , texts_need_update(false)
     , next_pieces(4)
-    , lineclears_per_level(4)
+    , lineclears_per_level(10)
     , lineclears_left(lineclears_per_level)
     , current_level(1)
 {
