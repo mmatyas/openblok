@@ -21,9 +21,12 @@ class AppContext;
 
 
 namespace WellUtil {
-class CellLockAnim {
-    using Duration = std::chrono::steady_clock::duration;
+using Duration = std::chrono::steady_clock::duration;
 
+constexpr Duration GRAVITY_20G = std::chrono::duration_cast<Duration>(
+    std::chrono::duration<int, std::ratio<1, 60>>(1)) / 20;
+
+class CellLockAnim {
 public:
     CellLockAnim(unsigned row, unsigned col);
     void update(Duration t);

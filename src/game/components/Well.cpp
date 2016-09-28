@@ -253,7 +253,8 @@ void Well::deletePiece()
 
 void Well::setGravity(Duration duration)
 {
-    gravity_delay = std::max<Duration>(duration, std::chrono::milliseconds(1));
+    // do not go below 20G
+    gravity_delay = std::max<Duration>(duration, WellUtil::GRAVITY_20G);
 }
 
 bool Well::hasCollisionAt(int offset_x, unsigned offset_y)
