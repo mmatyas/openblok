@@ -129,7 +129,6 @@ private:
     void checkLineclear();
     void removeEmptyRows();
     std::set<uint8_t> pending_cleared_rows;
-    Transition<uint8_t> lineclear_alpha;
 
     // listeners
     std::unordered_map<uint8_t, std::vector<std::function<void(const WellEvent&)>>> observers;
@@ -137,4 +136,5 @@ private:
 
     // animations
     std::list<std::unique_ptr<WellAnimation>> animations;
+    std::list<std::unique_ptr<WellAnimation>> blocking_anims;
 };

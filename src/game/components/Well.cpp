@@ -4,6 +4,7 @@
 #include "MinoFactory.h"
 #include "PieceFactory.h"
 #include "animations/CellLockAnim.h"
+#include "animations/LineClearAnim.h"
 #include "game/GameState.h"
 #include "game/Timing.h"
 #include "game/WellEvent.h"
@@ -35,14 +36,6 @@ Well::Well()
     , lock_countdown(frame_duration_60Hz * 30, [](double){}, [this](){
             this->lockThenRequestNext();
         })
-    , lineclear_alpha(frame_duration_60Hz * 40, [](double t){
-            return static_cast<uint8_t>((1.0 - t) * 0xFF);
-        },
-        [this](){
-            this->removeEmptyRows();
-            this->lock_countdown.stop();
-            this->notify(WellEvent(WellEvent::Type::NEXT_REQUESTED));
-        })
 {
     keystates[InputType::LEFT] = false;
     keystates[InputType::RIGHT] = false;
@@ -50,8 +43,6 @@ Well::Well()
     keystates[InputType::A] = false;
     keystates[InputType::B] = false;
     previous_keystates = keystates;
-
-    lineclear_alpha.stop();
 }
 
 void Well::update(const std::vector<InputEvent>& events, AppContext&)
@@ -61,13 +52,22 @@ void Well::update(const std::vector<InputEvent>& events, AppContext&)
     animations.remove_if([](std::unique_ptr<WellAnimation>& animptr){
         return !animptr->isActive();
     });
+    for (auto& anim : blocking_anims)
+        anim->update(GameState::frame_duration);
+    blocking_anims.remove_if([](std::unique_ptr<WellAnimation>& animptr){
+        return !animptr->isActive();
+    });
 
     if (gameover)
         return;
 
     if (pending_cleared_rows.size()) {
-        assert(lineclear_alpha.running());
-        lineclear_alpha.update(GameState::frame_duration);
+        // when the animation has ended, but the rows weren't removed yet
+        if (blocking_anims.empty()) {
+            this->removeEmptyRows();
+            this->lock_countdown.stop();
+            this->notify(WellEvent(WellEvent::Type::NEXT_REQUESTED));
+        }
         return;
     }
 
@@ -418,7 +418,7 @@ void Well::rotateCCWNow()
 void Well::lockThenRequestNext()
 {
     lockAndReleasePiece();
-    if (!gameover && !lineclear_alpha.running())
+    if (!gameover && blocking_anims.empty())
         notify(WellEvent(WellEvent::Type::NEXT_REQUESTED));
 }
 
@@ -437,8 +437,9 @@ void Well::lockAndReleasePiece()
                 );
 
                 if (active_piece_y + row >= 2) {
-                    animations.push_back(
-                        std::make_unique<CellLockAnim>(active_piece_y + row - 2, active_piece_x + cell));
+                    animations.emplace_back(
+                        std::make_unique<CellLockAnim>(active_piece_y + row - 2,
+                                                       active_piece_x + cell));
                 }
             }
         }
@@ -472,9 +473,11 @@ void Well::checkLineclear()
         for (auto row : pending_cleared_rows) {
             for (auto& cell : matrix[row])
                 cell = nullptr;
+
+            if (row >= 2)
+                blocking_anims.emplace_back(std::make_unique<LineClearAnim>(row));
         }
 
-        lineclear_alpha.restart();
         resetInput();
     }
 }
@@ -662,21 +665,9 @@ void Well::draw(GraphicsContext& gcx, unsigned x, unsigned y)
         }
     }
 
-    // Draw line clear animation
-    if (pending_cleared_rows.size()) {
-        for (auto row : pending_cleared_rows) {
-            if (row < 2)
-                continue;
-            gcx.drawFilledRect({
-                    static_cast<int>(x),
-                    static_cast<int>(y + (row - 2) * Mino::texture_size_px),
-                    static_cast<int>(Mino::texture_size_px * matrix.at(0).size()),
-                    Mino::texture_size_px
-                }, {0xFF, 0xFF, 0xFF, lineclear_alpha.value()});
-        }
-    }
-
-    // Draw piece lock animation
+    // Draw animations
     for (auto& anim : animations)
+        anim->draw(gcx, x, y);
+    for (auto& anim : blocking_anims)
         anim->draw(gcx, x, y);
 }

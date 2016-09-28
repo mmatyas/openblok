@@ -11,6 +11,7 @@ set(MOD_GAME_SRC
 	components/PieceFactory.cpp
 	components/Well.cpp
 	components/animations/CellLockAnim.cpp
+	components/animations/LineClearAnim.cpp
 	states/InitState.cpp
 	states/MainMenuState.cpp
 	states/SinglePlayState.cpp
@@ -33,6 +34,7 @@ set(MOD_GAME_H
 	components/Well.h
 	components/animations/WellAnimation.h
 	components/animations/CellLockAnim.h
+	components/animations/LineClearAnim.h
 	states/InitState.h
 	states/MainMenuState.h
 	states/SinglePlayState.h

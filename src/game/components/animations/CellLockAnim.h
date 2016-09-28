@@ -9,8 +9,9 @@ public:
     CellLockAnim(unsigned row, unsigned col);
 
     void update(Duration t) final;
-    bool isActive() const final { return anim_y_top.running(); }
     void draw(GraphicsContext& gcx, int x, int y) const final;
+
+    bool isActive() const final { return anim_y_top.running(); }
 
 private:
     const unsigned cell_x;
