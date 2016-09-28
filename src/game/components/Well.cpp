@@ -61,7 +61,7 @@ Well::Well()
     , rotation_timer(Duration::zero())
     , harddrop_locks_instantly(true)
     , lock_infinity(true)
-    , lock_promise(GameState::frame_duration * 30, [](double){}, [this](){
+    , lock_countdown(GameState::frame_duration * 30, [](double){}, [this](){
             this->lockThenRequestNext();
         })
     , lineclear_alpha(GameState::frame_duration * 40, [](double t){
@@ -69,7 +69,7 @@ Well::Well()
         },
         [this](){
             this->removeEmptyRows();
-            this->lock_promise.stop();
+            this->lock_countdown.stop();
             this->notify(WellEvent(WellEvent::Type::NEXT_REQUESTED));
         })
 {
@@ -219,10 +219,10 @@ void Well::updateGravity()
 void Well::updateLockDelay()
 {
     if (isOnGround())
-        lock_promise.unpause();
+        lock_countdown.unpause();
     else
-        lock_promise.stop();
-    lock_promise.update(GameState::frame_duration);
+        lock_countdown.stop();
+    lock_countdown.update(GameState::frame_duration);
 }
 
 void Well::addPiece(Piece::Type type)
@@ -271,7 +271,9 @@ bool Well::hasCollisionAt(int offset_x, unsigned offset_y)
     for (unsigned row = offset_y; row <= offset_y + 3; row++) {
         for (int cell = offset_x; cell <= offset_x + 3; cell++) {
             bool board_has_mino_here = true;
-            if (row < matrix.size() && cell >= 0 && cell < static_cast<int>(matrix[0].size()))
+            if (row < matrix.size() &&
+                cell >= 0 &&
+                cell < static_cast<int>(matrix[0].size()))
                 board_has_mino_here = matrix.at(row).at(cell).operator bool();
 
             bool piece_has_mino_here = active_piece->currentGrid()
@@ -313,7 +315,7 @@ void Well::moveLeftNow()
         calculateGhostOffset();
 
         if (lock_infinity)
-            lock_promise.stop();
+            lock_countdown.stop();
     }
 }
 
@@ -327,7 +329,7 @@ void Well::moveRightNow()
         calculateGhostOffset();
 
         if (lock_infinity)
-            lock_promise.stop();
+            lock_countdown.stop();
     }
 }
 
@@ -346,7 +348,7 @@ void Well::moveDownNow()
 
     if (!isOnGround())
         active_piece_y++;
-    else if (!harddrop_locks_instantly && lock_promise.running()) {
+    else if (!harddrop_locks_instantly && lock_countdown.running()) {
         // sonic drop on-demand lock
         lockThenRequestNext();
     }
@@ -418,7 +420,7 @@ void Well::rotateCWNow()
     calculateGhostOffset();
 
     if (lock_infinity)
-        lock_promise.stop();
+        lock_countdown.stop();
 }
 
 void Well::rotateCCWNow()
@@ -437,7 +439,7 @@ void Well::rotateCCWNow()
     calculateGhostOffset();
 
     if (lock_infinity)
-        lock_promise.stop();
+        lock_countdown.stop();
 }
 
 void Well::lockThenRequestNext()
@@ -468,7 +470,7 @@ void Well::lockAndReleasePiece()
     }
 
     active_piece.reset();
-    lock_promise.stop();
+    lock_countdown.stop();
     notify(WellEvent(WellEvent::Type::PIECE_LOCKED));
     checkLineclear();
 }
@@ -643,10 +645,12 @@ void Well::draw(GraphicsContext& gcx, unsigned x, unsigned y)
     // Draw board Minos
     for (size_t row = 0; row < 20; row++) {
         for (size_t col = 0; col < 10; col++) {
-            if (matrix.at(row + 2).at(col))
-                matrix.at(row + 2).at(col)->draw(gcx,
-                                             x + col * Mino::texture_size_px,
-                                             y + row * Mino::texture_size_px);
+            const auto& cell = matrix.at(row + 2).at(col);
+            if (cell) {
+                cell->draw(gcx,
+                           x + col * Mino::texture_size_px,
+                           y + row * Mino::texture_size_px);
+            }
         }
     }
 
@@ -657,10 +661,11 @@ void Well::draw(GraphicsContext& gcx, unsigned x, unsigned y)
             if (active_piece_y + row < 2) // hide rows 21-22
                 continue;
             for (unsigned col = 0; col < 4; col++) {
-                if (active_piece->currentGrid().at(row).at(col)) {
-                    active_piece->currentGrid().at(row).at(col)
-                    ->draw(gcx, x + (active_piece_x + col) * Mino::texture_size_px,
-                                y + (active_piece_y + row - 2) * Mino::texture_size_px);
+                const auto& cell = active_piece->currentGrid().at(row).at(col);
+                if (cell) {
+                    cell->draw(gcx,
+                               x + (active_piece_x + col) * Mino::texture_size_px,
+                               y + (active_piece_y + row - 2) * Mino::texture_size_px);
                 }
             }
         }

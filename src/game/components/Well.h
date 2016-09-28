@@ -91,9 +91,6 @@ private:
     // TODO: set dimensions from config
     Matrix<std::unique_ptr<Mino>, 22, 10> matrix;
 
-    /// Moves the active piece one row down, if it does not collide.
-    void applyGravity();
-
     // the active piece
     int8_t active_piece_x;
     uint8_t active_piece_y;
@@ -104,6 +101,7 @@ private:
     bool skip_gravity;
     Duration gravity_delay;
     Duration gravity_timer;
+    void applyGravity(); ///< Moves the active piece one row down, if it does not collide.
     void updateGravity();
     bool isOnGround();
 
@@ -131,7 +129,7 @@ private:
     // lock delay
     bool harddrop_locks_instantly;
     bool lock_infinity;
-    Transition<void> lock_promise;
+    Transition<void> lock_countdown;
     void updateLockDelay();
 
     // active piece collision and ghost
