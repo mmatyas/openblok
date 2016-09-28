@@ -5,6 +5,8 @@
 #include "game/components/GameplayResources.h"
 #include "system/Localize.h"
 
+#include <cmath>
+
 
 SinglePlayState::SinglePlayState(AppContext& app)
     : paused(false)
@@ -13,23 +15,6 @@ SinglePlayState::SinglePlayState(AppContext& app)
     , next_pieces(4)
     , lineclears_per_level(4)
     , lineclears_left(lineclears_per_level)
-    , gravity_levels({
-            1 * GameState::frame_duration,
-            3 * GameState::frame_duration,
-            6 * GameState::frame_duration,
-            9 * GameState::frame_duration,
-            12 * GameState::frame_duration,
-            15 * GameState::frame_duration,
-            19 * GameState::frame_duration,
-            23 * GameState::frame_duration,
-            27 * GameState::frame_duration,
-            32 * GameState::frame_duration,
-            37 * GameState::frame_duration,
-            42 * GameState::frame_duration,
-            48 * GameState::frame_duration,
-            54 * GameState::frame_duration,
-            60 * GameState::frame_duration,
-        })
     , current_level(1)
 {
     board.registerObserver(WellEvent::Type::NEXT_REQUESTED, [this](const WellEvent&){
@@ -71,6 +56,12 @@ SinglePlayState::SinglePlayState(AppContext& app)
         }
 
     });
+
+    // TODO: consider alternative algorithm
+    for (float i = 14; i >= 0; i--) {
+        float multiplier = std::pow(0.8 - (i * 0.007), i);
+        gravity_levels.push(std::chrono::duration_cast<Duration>(multiplier * std::chrono::seconds(1)));
+    }
 
     addNextPiece();
     board.setGravity(gravity_levels.top());
