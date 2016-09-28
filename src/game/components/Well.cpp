@@ -55,7 +55,7 @@ Well::Well()
     , horizontal_delay_current(horizontal_delay_normal)
     , horizontal_timer(Duration::zero())
     , das_timer(horizontal_delay_normal)
-    , softdrop_delay(horizontal_delay_turbo)
+    , softdrop_delay(gravity_delay / 20)
     , softdrop_timer(Duration::zero())
     , rotation_delay(GameState::frame_duration * 12)
     , rotation_timer(Duration::zero())
@@ -255,6 +255,7 @@ void Well::setGravity(Duration duration)
 {
     // do not go below 20G
     gravity_delay = std::max<Duration>(duration, WellUtil::GRAVITY_20G);
+    softdrop_delay = gravity_delay / 20;
 }
 
 bool Well::hasCollisionAt(int offset_x, unsigned offset_y)

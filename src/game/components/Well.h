@@ -123,7 +123,7 @@ private:
     void resetDAS(); // turn off autorepeat mode
 
     // autorepeat other keys
-    const Duration softdrop_delay;
+    Duration softdrop_delay;
     Duration softdrop_timer;
     const Duration rotation_delay;
     Duration rotation_timer;
