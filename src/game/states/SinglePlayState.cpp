@@ -32,18 +32,6 @@ SinglePlayState::SinglePlayState(AppContext& app)
         })
     , current_level(1)
 {
-    font_boxtitle = app.gcx->loadFont(app.fonts->find("Dosis", "light"), 28);
-    font_boxcontent = app.gcx->loadFont(app.fonts->find("Dosis", "bold"), 30);
-
-
-    tex_hold = app.gcx->renderText(tr("HOLD"), font_boxtitle, 0xEEEEEE_rgb);
-    tex_next = app.gcx->renderText(tr("NEXT"), font_boxtitle, 0xEEEEEE_rgb);
-    tex_goal = app.gcx->renderText(tr("GOAL"), font_boxtitle, 0xEEEEEE_rgb);
-    tex_level = app.gcx->renderText(tr("LEVEL"), font_boxtitle, 0xEEEEEE_rgb);
-    tex_goal_counter = app.gcx->renderText(std::to_string(lineclears_left), font_boxcontent, 0xEEEEEE_rgb);
-    tex_level_counter = app.gcx->renderText(std::to_string(current_level), font_boxcontent, 0xEEEEEE_rgb);
-
-
     board.registerObserver(WellEvent::Type::NEXT_REQUESTED, [this](const WellEvent&){
         this->addNextPiece();
     });
@@ -86,6 +74,20 @@ SinglePlayState::SinglePlayState(AppContext& app)
 
     addNextPiece();
     board.setGravity(gravity_levels.top());
+
+
+    // UI
+
+    font_boxtitle = app.gcx->loadFont(app.fonts->find("Dosis", "light"), 28);
+    font_boxcontent = app.gcx->loadFont(app.fonts->find("Dosis", "bold"), 30);
+
+
+    tex_hold = app.gcx->renderText(tr("HOLD"), font_boxtitle, 0xEEEEEE_rgb);
+    tex_next = app.gcx->renderText(tr("NEXT"), font_boxtitle, 0xEEEEEE_rgb);
+    tex_goal = app.gcx->renderText(tr("GOAL"), font_boxtitle, 0xEEEEEE_rgb);
+    tex_level = app.gcx->renderText(tr("LEVEL"), font_boxtitle, 0xEEEEEE_rgb);
+    tex_goal_counter = app.gcx->renderText(std::to_string(lineclears_left), font_boxcontent, 0xEEEEEE_rgb);
+    tex_level_counter = app.gcx->renderText(std::to_string(current_level), font_boxcontent, 0xEEEEEE_rgb);
 }
 
 void SinglePlayState::addNextPiece()
