@@ -3,7 +3,9 @@
 #include "GameplayResources.h"
 #include "MinoFactory.h"
 #include "PieceFactory.h"
+#include "animations/CellLockAnim.h"
 #include "game/GameState.h"
+#include "game/Timing.h"
 #include "game/WellEvent.h"
 #include "system/EventCollector.h"
 #include "system/GraphicsContext.h"
@@ -12,59 +14,28 @@
 #include <assert.h>
 
 
-namespace WellUtil {
-
-CellLockAnim::CellLockAnim(unsigned row, unsigned col)
-    : cell_x(col * Mino::texture_size_px)
-    , cell_y_top(row * Mino::texture_size_px)
-    , cell_y_bottom(cell_y_top + Mino::texture_size_px)
-    , anim_y_top(GameState::frame_duration * 20, [this](double t){
-        return this->cell_y_bottom - t * Mino::texture_size_px * 2;
-    })
-{}
-
-void CellLockAnim::update(Duration t) {
-    anim_y_top.update(t);
-}
-
-void CellLockAnim::draw(GraphicsContext& gcx, int offset_x, int offset_y) const {
-    static const int effect_height_max = Mino::texture_size_px / 2;
-    int y_top = std::max<int>(anim_y_top.value(), cell_y_top);
-    int y_bottom = std::min<int>(anim_y_top.value() + effect_height_max, cell_y_bottom);
-    if (y_bottom <= y_top)
-        return;
-
-    gcx.drawFilledRect({
-        static_cast<int>(offset_x + cell_x), offset_y + y_top,
-        Mino::texture_size_px, y_bottom - y_top},
-        0xFFFFFF30_rgba);
-}
-
-} // namespace WellUtil
-
-
 Well::Well()
     : gameover(false)
     , active_piece_x(0)
     , active_piece_y(0)
     , ghost_piece_y(0)
-    , gravity_delay(GameState::frame_duration * 64)
+    , gravity_delay(frame_duration_60Hz * 64)
     , gravity_timer(Duration::zero())
-    , horizontal_delay_normal(GameState::frame_duration * 14)
-    , horizontal_delay_turbo(GameState::frame_duration * 4)
+    , horizontal_delay_normal(frame_duration_60Hz * 14)
+    , horizontal_delay_turbo(frame_duration_60Hz * 4)
     , horizontal_delay_current(horizontal_delay_normal)
     , horizontal_timer(Duration::zero())
     , das_timer(horizontal_delay_normal)
     , softdrop_delay(gravity_delay / 20)
     , softdrop_timer(Duration::zero())
-    , rotation_delay(GameState::frame_duration * 12)
+    , rotation_delay(frame_duration_60Hz * 12)
     , rotation_timer(Duration::zero())
     , harddrop_locks_instantly(true)
     , lock_infinity(true)
-    , lock_countdown(GameState::frame_duration * 30, [](double){}, [this](){
+    , lock_countdown(frame_duration_60Hz * 30, [](double){}, [this](){
             this->lockThenRequestNext();
         })
-    , lineclear_alpha(GameState::frame_duration * 40, [](double t){
+    , lineclear_alpha(frame_duration_60Hz * 40, [](double t){
             return static_cast<uint8_t>((1.0 - t) * 0xFF);
         },
         [this](){
@@ -85,9 +56,11 @@ Well::Well()
 
 void Well::update(const std::vector<InputEvent>& events, AppContext&)
 {
-    for (auto& anim : onlock_anims)
-        anim.update(GameState::frame_duration);
-    onlock_anims.remove_if([](WellUtil::CellLockAnim& anim){ return !anim.isActive(); });
+    for (auto& anim : animations)
+        anim->update(GameState::frame_duration);
+    animations.remove_if([](std::unique_ptr<WellAnimation>& animptr){
+        return !animptr->isActive();
+    });
 
     if (gameover)
         return;
@@ -254,7 +227,7 @@ void Well::deletePiece()
 void Well::setGravity(Duration duration)
 {
     // do not go below 20G
-    gravity_delay = std::max<Duration>(duration, WellUtil::GRAVITY_20G);
+    gravity_delay = std::max<Duration>(duration, GRAVITY_20G);
     softdrop_delay = gravity_delay / 20;
 }
 
@@ -463,8 +436,10 @@ void Well::lockAndReleasePiece()
                     active_piece->currentGridMut()[row][cell]
                 );
 
-                if (active_piece_y + row >= 2)
-                    onlock_anims.emplace_back(active_piece_y + row - 2, active_piece_x + cell);
+                if (active_piece_y + row >= 2) {
+                    animations.push_back(
+                        std::make_unique<CellLockAnim>(active_piece_y + row - 2, active_piece_x + cell));
+                }
             }
         }
     }
@@ -702,6 +677,6 @@ void Well::draw(GraphicsContext& gcx, unsigned x, unsigned y)
     }
 
     // Draw piece lock animation
-    for (auto& anim : onlock_anims)
-        anim.draw(gcx, x, y);
+    for (auto& anim : animations)
+        anim->draw(gcx, x, y);
 }

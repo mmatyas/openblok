@@ -10,6 +10,7 @@ set(MOD_GAME_SRC
 	components/Piece.cpp
 	components/PieceFactory.cpp
 	components/Well.cpp
+	components/animations/CellLockAnim.cpp
 	states/InitState.cpp
 	states/MainMenuState.cpp
 	states/SinglePlayState.cpp
@@ -20,6 +21,7 @@ set(MOD_GAME_H
 	CommonResources.h
 	GameState.h
 	Matrix.h
+	Timing.h
 	Transition.h
 	components/GameplayResources.h
 	components/HoldQueue.h
@@ -29,6 +31,8 @@ set(MOD_GAME_H
 	components/Piece.h
 	components/PieceFactory.h
 	components/Well.h
+	components/animations/WellAnimation.h
+	components/animations/CellLockAnim.h
 	states/InitState.h
 	states/MainMenuState.h
 	states/SinglePlayState.h

@@ -2,12 +2,12 @@
 
 #include "Mino.h"
 #include "Piece.h"
+#include "animations/WellAnimation.h"
 #include "game/Matrix.h"
 #include "game/Transition.h"
 #include "game/WellEvent.h"
 #include "system/InputEvent.h"
 
-#include <chrono>
 #include <list>
 #include <memory>
 #include <set>
@@ -20,32 +20,10 @@
 class AppContext;
 
 
-namespace WellUtil {
-using Duration = std::chrono::steady_clock::duration;
-
-constexpr Duration GRAVITY_20G = std::chrono::duration_cast<Duration>(
-    std::chrono::duration<int, std::ratio<1, 60>>(1)) / 20;
-
-class CellLockAnim {
-public:
-    CellLockAnim(unsigned row, unsigned col);
-    void update(Duration t);
-    bool isActive() const { return anim_y_top.running(); }
-    void draw(GraphicsContext& gcx, int offset_x, int offset_y) const;
-
-private:
-    const unsigned cell_x;
-    const unsigned cell_y_top;
-    const unsigned cell_y_bottom;
-
-    Transition<int> anim_y_top;
-};
-} // namespace WellUtil
+constexpr Duration GRAVITY_20G = frame_duration_60Hz / 20;
 
 
 class Well {
-    using Duration = std::chrono::steady_clock::duration;
-
 public:
     /// Create a new well
     Well();
@@ -101,9 +79,8 @@ private:
     bool skip_gravity;
     Duration gravity_delay;
     Duration gravity_timer;
-    void applyGravity(); ///< Moves the active piece one row down, if it does not collide.
-    void updateGravity();
-    bool isOnGround();
+    void applyGravity(); // moves the active piece one row down, if it does not collide
+    void updateGravity(); // updates the gravity timer, and calls applyGravity() if needed
 
     // input handling
     std::unordered_map<InputType, bool, InputTypeHash> keystates;
@@ -126,18 +103,6 @@ private:
     const Duration rotation_delay;
     Duration rotation_timer;
 
-    // lock delay
-    bool harddrop_locks_instantly;
-    bool lock_infinity;
-    Transition<void> lock_countdown;
-    void updateLockDelay();
-
-    // active piece collision and ghost
-    void calculateGhostOffset();
-    bool hasCollisionAt(int offset_x, unsigned offset_y);
-    void lockAndReleasePiece();
-    void lockThenRequestNext();
-
     // active piece movement
     void moveLeftNow();
     void moveRightNow();
@@ -146,6 +111,19 @@ private:
     void rotateCWNow(); // clockwise
     void rotateCCWNow(); // counter-clockwise
     bool placeByWallKick();
+
+    // lock delay
+    bool harddrop_locks_instantly;
+    bool lock_infinity;
+    Transition<void> lock_countdown;
+    void updateLockDelay();
+
+    // active piece collision and ghost
+    bool isOnGround();
+    void calculateGhostOffset();
+    bool hasCollisionAt(int offset_x, unsigned offset_y);
+    void lockAndReleasePiece();
+    void lockThenRequestNext();
 
     // line clears
     void checkLineclear();
@@ -158,5 +136,5 @@ private:
     void notify(const WellEvent&);
 
     // animations
-    std::list<WellUtil::CellLockAnim> onlock_anims;
+    std::list<std::unique_ptr<WellAnimation>> animations;
 };
