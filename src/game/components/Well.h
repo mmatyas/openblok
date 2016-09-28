@@ -135,6 +135,7 @@ private:
     void notify(const WellEvent&);
 
     // animations
+    void updateAnimations();
     std::list<std::unique_ptr<WellAnimation>> animations;
     std::list<std::unique_ptr<WellAnimation>> blocking_anims;
 };

@@ -47,16 +47,7 @@ Well::Well()
 
 void Well::update(const std::vector<InputEvent>& events, AppContext&)
 {
-    for (auto& anim : animations)
-        anim->update(GameState::frame_duration);
-    animations.remove_if([](std::unique_ptr<WellAnimation>& animptr){
-        return !animptr->isActive();
-    });
-    for (auto& anim : blocking_anims)
-        anim->update(GameState::frame_duration);
-    blocking_anims.remove_if([](std::unique_ptr<WellAnimation>& animptr){
-        return !animptr->isActive();
-    });
+    updateAnimations();
 
     if (gameover)
         return;
@@ -79,6 +70,21 @@ void Well::update(const std::vector<InputEvent>& events, AppContext&)
 
     updateGravity();
     updateLockDelay();
+}
+
+void Well::updateAnimations()
+{
+    for (auto& anim : animations)
+        anim->update(GameState::frame_duration);
+    animations.remove_if([](std::unique_ptr<WellAnimation>& animptr){
+        return !animptr->isActive();
+    });
+
+    for (auto& anim : blocking_anims)
+        anim->update(GameState::frame_duration);
+    blocking_anims.remove_if([](std::unique_ptr<WellAnimation>& animptr){
+        return !animptr->isActive();
+    });
 }
 
 void Well::updateKeystate(const std::vector<InputEvent>& events)
