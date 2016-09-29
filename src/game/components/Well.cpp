@@ -631,20 +631,6 @@ void Well::draw(GraphicsContext& gcx, unsigned x, unsigned y) const
 
     // Draw current piece
     if (active_piece) {
-        // draw piece
-        for (unsigned row = 0; row < 4; row++) {
-            if (active_piece_y + row < 2) // hide rows 21-22
-                continue;
-            for (unsigned col = 0; col < 4; col++) {
-                const auto& cell = active_piece->currentGrid().at(row).at(col);
-                if (cell) {
-                    cell->draw(gcx,
-                               x + (active_piece_x + col) * Mino::texture_size_px,
-                               y + (active_piece_y + row - 2) * Mino::texture_size_px);
-                }
-            }
-        }
-
         // draw ghost
         for (unsigned row = 0; row < 4; row++) {
             if (ghost_piece_y + row < 2) // hide rows 21-22
@@ -657,6 +643,20 @@ void Well::draw(GraphicsContext& gcx, unsigned x, unsigned y) const
                         Mino::texture_size_px,
                         Mino::texture_size_px
                     });
+                }
+            }
+        }
+
+        // draw piece
+        for (unsigned row = 0; row < 4; row++) {
+            if (active_piece_y + row < 2) // hide rows 21-22
+                continue;
+            for (unsigned col = 0; col < 4; col++) {
+                const auto& cell = active_piece->currentGrid().at(row).at(col);
+                if (cell) {
+                    cell->draw(gcx,
+                               x + (active_piece_x + col) * Mino::texture_size_px,
+                               y + (active_piece_y + row - 2) * Mino::texture_size_px);
                 }
             }
         }
