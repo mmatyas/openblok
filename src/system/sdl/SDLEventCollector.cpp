@@ -17,6 +17,18 @@ std::vector<InputEvent> SDLEventCollector::collect()
         case SDL_QUIT:
             m_quit_requested = true;
             break;
+        case SDL_WINDOWEVENT:
+            switch (sdl_event.window.event) {
+            case SDL_WINDOWEVENT_CLOSE:
+                m_quit_requested = true;
+                break;
+            case SDL_WINDOWEVENT_FOCUS_LOST:
+                output.emplace_back(InputEvent(InputType::GAME_PAUSE, true));
+                break;
+            default:
+                break;
+            }
+            break;
         case SDL_KEYUP:
         case SDL_KEYDOWN:
             switch (sdl_event.key.keysym.scancode) {
