@@ -10,7 +10,7 @@
 
 SinglePlayState::SinglePlayState(AppContext& app)
     : paused(false)
-    , tex_background(app.gcx->loadTexture("data/gamebg_pattern.png"))
+    , tex_background(app.gcx().loadTexture("data/gamebg_pattern.png"))
     , texts_need_update(false)
     , next_pieces(4)
     , lineclears_per_level(10)
@@ -69,16 +69,16 @@ SinglePlayState::SinglePlayState(AppContext& app)
 
     // UI
 
-    font_boxtitle = app.gcx->loadFont(app.fonts->find("Dosis", "light"), 28);
-    font_boxcontent = app.gcx->loadFont(app.fonts->find("Dosis", "bold"), 30);
+    font_boxtitle = app.gcx().loadFont(app.fontman().find("Dosis", "light"), 28);
+    font_boxcontent = app.gcx().loadFont(app.fontman().find("Dosis", "bold"), 30);
 
 
-    tex_hold = app.gcx->renderText(tr("HOLD"), font_boxtitle, 0xEEEEEE_rgb);
-    tex_next = app.gcx->renderText(tr("NEXT"), font_boxtitle, 0xEEEEEE_rgb);
-    tex_goal = app.gcx->renderText(tr("GOAL"), font_boxtitle, 0xEEEEEE_rgb);
-    tex_level = app.gcx->renderText(tr("LEVEL"), font_boxtitle, 0xEEEEEE_rgb);
-    tex_goal_counter = app.gcx->renderText(std::to_string(lineclears_left), font_boxcontent, 0xEEEEEE_rgb);
-    tex_level_counter = app.gcx->renderText(std::to_string(current_level), font_boxcontent, 0xEEEEEE_rgb);
+    tex_hold = app.gcx().renderText(tr("HOLD"), font_boxtitle, 0xEEEEEE_rgb);
+    tex_next = app.gcx().renderText(tr("NEXT"), font_boxtitle, 0xEEEEEE_rgb);
+    tex_goal = app.gcx().renderText(tr("GOAL"), font_boxtitle, 0xEEEEEE_rgb);
+    tex_level = app.gcx().renderText(tr("LEVEL"), font_boxtitle, 0xEEEEEE_rgb);
+    tex_goal_counter = app.gcx().renderText(std::to_string(lineclears_left), font_boxcontent, 0xEEEEEE_rgb);
+    tex_level_counter = app.gcx().renderText(std::to_string(current_level), font_boxcontent, 0xEEEEEE_rgb);
 }
 
 void SinglePlayState::addNextPiece()
@@ -103,10 +103,10 @@ void SinglePlayState::update(const std::vector<InputEvent>& inputs, AppContext& 
     piece_holder.update();
 
     if (texts_need_update) {
-        app.gcx->renderText(tex_goal_counter, std::to_string(lineclears_left),
-                            font_boxcontent, 0xEEEEEE_rgb);
-        app.gcx->renderText(tex_level_counter, std::to_string(current_level),
-                            font_boxcontent, 0xEEEEEE_rgb);
+        app.gcx().renderText(tex_goal_counter, std::to_string(lineclears_left),
+                             font_boxcontent, 0xEEEEEE_rgb);
+        app.gcx().renderText(tex_level_counter, std::to_string(current_level),
+                             font_boxcontent, 0xEEEEEE_rgb);
         texts_need_update = false;
     }
 }

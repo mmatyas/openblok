@@ -1,14 +1,13 @@
 set(MOD_SYSTEM_SRC
 	Color.cpp
-	EventCollector.cpp
 	FontManager.cpp
-	GraphicsContext.cpp
 	InputEvent.cpp
 	Log.cpp
+	Window.cpp
 
 	# SDL2
-	sdl/SDLEventCollector.cpp
 	sdl/SDLGraphicsContext.cpp
+	sdl/SDLWindow.cpp
 
 	# FontConfig
 	fontconfig/FontConfig.cpp
@@ -16,16 +15,16 @@ set(MOD_SYSTEM_SRC
 
 set(MOD_SYSTEM_H
 	Color.h
-	EventCollector.h
 	FontManager.h
 	GraphicsContext.h
 	InputEvent.h
 	Localize.h
 	Log.h
+	Window.h
 
 	# SDL2
-	sdl/SDLEventCollector.h
 	sdl/SDLGraphicsContext.h
+	sdl/SDLWindow.h
 
 	# FontConfig
 	fontconfig/FontConfig.h

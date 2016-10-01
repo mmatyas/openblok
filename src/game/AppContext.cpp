@@ -8,13 +8,10 @@ bool AppContext::init()
     const std::string log_tag = "init";
     try {
         Log::info(log_tag) << "Initializing video...\n";
-        gcx = GraphicsContext::create();
-
-        Log::info(log_tag) << "Initializing event system...\n";
-        events = EventCollector::create();
+        m_window = Window::create();
 
         Log::info(log_tag) << "Initializing font management...\n";
-        fonts = FontManager::create();
+        m_fontman = FontManager::create();
 
         srand(time(nullptr));
     }

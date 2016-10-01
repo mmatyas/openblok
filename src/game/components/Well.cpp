@@ -8,7 +8,6 @@
 #include "game/GameState.h"
 #include "game/Timing.h"
 #include "game/WellEvent.h"
-#include "system/EventCollector.h"
 #include "system/GraphicsContext.h"
 #include "system/InputEvent.h"
 

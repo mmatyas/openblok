@@ -22,13 +22,8 @@ std::vector<std::string> splitByNL(const std::string& str) {
     return output;
 }
 
-SDLGraphicsContext::SDLGraphicsContext()
-    : sdl(SDL_INIT_VIDEO)
-    , window("OpenBlok",
-        SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-        800, 600,
-        SDL_WINDOW_RESIZABLE)
-    , renderer(window, -1, SDL_RENDERER_ACCELERATED)
+SDLGraphicsContext::SDLGraphicsContext(SDL2pp::Window& window)
+    : renderer(window, -1, SDL_RENDERER_ACCELERATED)
     , ttf()
     , on_render_callback([](){})
     , current_fontid(0)
@@ -40,6 +35,11 @@ SDLGraphicsContext::SDLGraphicsContext()
     renderer.Clear();
     renderer.Present();
 
+    // save the window's preferred pixel format for optimal drawing later
+    pixelformat = SDL_GetWindowPixelFormat(window.Get());
+    if (pixelformat == SDL_PIXELFORMAT_UNKNOWN)
+        throw std::runtime_error(SDL_GetError());
+
     Log::info(LOG_TAG) << screenWidth() << "x" << screenHeight() << " window created\n";
 }
 
@@ -49,11 +49,6 @@ void SDLGraphicsContext::render()
     on_render_callback();
 
     renderer.Clear();
-}
-
-void SDLGraphicsContext::toggleFullscreen()
-{
-    window.SetFullscreen(window.GetFlags() ^ SDL_WINDOW_FULLSCREEN_DESKTOP);
 }
 
 uint16_t SDLGraphicsContext::screenWidth() const
@@ -110,12 +105,6 @@ void SDLGraphicsContext::renderText(TextureID target_slot, const std::string& te
         if (line_width > width)
             width = line_width;
     }
-
-    // to create an optimal base surface,
-    // we are querying the current window's preferred pixel format
-    auto pixelformat = SDL_GetWindowPixelFormat(window.Get());
-    if (pixelformat == SDL_PIXELFORMAT_UNKNOWN)
-        throw std::runtime_error(SDL_GetError());
 
     // extract the surface parameters from the SDL pixel format enum
     int bpp;
@@ -208,16 +197,16 @@ unsigned SDLGraphicsContext::textureHeight(TextureID slot) const
     return textures.at(slot)->GetHeight();
 }
 
-void SDLGraphicsContext::requestScreenshot(const std::string& path)
+void SDLGraphicsContext::requestScreenshot(const SDL2pp::Window& window, const std::string& path)
 {
     // TODO: if there'll be other callbacks, then this should be a FIFO list
-    on_render_callback = [this, &path](){
-        saveScreenshotBMP(path);
+    on_render_callback = [this, &window, &path](){
+        saveScreenshotBMP(window, path);
         on_render_callback = [](){};
     };
 }
 
-void SDLGraphicsContext::saveScreenshotBMP(const std::string& path)
+void SDLGraphicsContext::saveScreenshotBMP(const SDL2pp::Window& window, const std::string& path)
 {
     auto window_surface_raw = SDL_GetWindowSurface(window.Get());
     if (!window_surface_raw)

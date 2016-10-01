@@ -27,8 +27,6 @@ public:
     /// the displayed image of the game window.
     virtual void render() = 0;
 
-    /// Toggle fullscreen mode, if supported.
-    virtual void toggleFullscreen() = 0;
     virtual uint16_t screenWidth() const = 0;
     virtual uint16_t screenHeight() const = 0;
 
@@ -69,9 +67,6 @@ public:
 
     virtual unsigned textureWidth(TextureID) const = 0;
     virtual unsigned textureHeight(TextureID) const = 0;
-
-    /// Save a screenshot to the provided path at the end of the current render cycle
-    virtual void requestScreenshot(const std::string& path) = 0;
 
 private:
     static std::unique_ptr<GraphicsContext> create();

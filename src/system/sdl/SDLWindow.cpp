@@ -1,13 +1,30 @@
-#include "SDLEventCollector.h"
+#include "SDLWindow.h"
 
-#include "SDL2/SDL.h"
+#include "SDLGraphicsContext.h"
 
 
-SDLEventCollector::SDLEventCollector()
-    : m_quit_requested(false)
-{}
+SDLWindow::SDLWindow()
+    : sdl(SDL_INIT_VIDEO)
+    , window("OpenBlok",
+        SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+        960, 720,
+        SDL_WINDOW_RESIZABLE)
+    , gcx(window)
+    , m_quit_requested(false)
+{
+}
 
-std::vector<InputEvent> SDLEventCollector::collect()
+void SDLWindow::toggleFullscreen()
+{
+    window.SetFullscreen(window.GetFlags() ^ SDL_WINDOW_FULLSCREEN_DESKTOP);
+}
+
+void SDLWindow::requestScreenshot(const std::string& path)
+{
+    gcx.requestScreenshot(window, path);
+}
+
+std::vector<InputEvent> SDLWindow::collectEvents()
 {
     std::vector<InputEvent> output;
 

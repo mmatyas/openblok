@@ -10,10 +10,9 @@
 /// A graphics context implementation, based on SDL2
 class SDLGraphicsContext: public GraphicsContext {
 public:
-    SDLGraphicsContext();
+    SDLGraphicsContext(SDL2pp::Window&);
 
     void render() final;
-    void toggleFullscreen() final;
     uint16_t screenWidth() const final;
     uint16_t screenHeight() const final;
 
@@ -35,13 +34,13 @@ public:
     unsigned textureWidth(TextureID) const final;
     unsigned textureHeight(TextureID) const final;
 
-    void requestScreenshot(const std::string& path) final;
+    // SDL only
+    void requestScreenshot(const SDL2pp::Window&, const std::string& path);
 
 private:
-    SDL2pp::SDL sdl;
-    SDL2pp::Window window;
     SDL2pp::Renderer renderer;
     SDL2pp::SDLTTF ttf;
+    uint32_t pixelformat;
 
     std::function<void()> on_render_callback;
 
@@ -50,5 +49,5 @@ private:
     std::unordered_map<FontID, std::unique_ptr<SDL2pp::Font>> fonts;
     std::unordered_map<TextureID, std::unique_ptr<SDL2pp::Texture>> textures;
 
-    void saveScreenshotBMP(const std::string& path);
+    void saveScreenshotBMP(const SDL2pp::Window&, const std::string& path);
 };
