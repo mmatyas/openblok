@@ -6,8 +6,6 @@
 #include <exception>
 #include <sstream>
 
-using namespace SDL2pp;
-
 
 const std::string LOG_TAG("video");
 
@@ -86,8 +84,8 @@ void SDLGraphicsContext::renderText(TextureID target_slot, const std::string& te
     if (!fonts.count(font_id))
         throw std::runtime_error("No font loaded in slot " + std::to_string(font_id));
 
-    auto& font = fonts.at(font_id);
-    auto lines = splitByNL(text);
+    const auto& font = fonts.at(font_id);
+    const auto lines = splitByNL(text);
 
     // shortcut for single lines
     if (lines.size() <= 1) {
@@ -99,7 +97,7 @@ void SDLGraphicsContext::renderText(TextureID target_slot, const std::string& te
     }
 
     // find out texture dimensions
-    int line_height = font->GetLineSkip();
+    const int line_height = font->GetLineSkip();
     int width = 2; // to avoid zero size textures
     for (const std::string& line : lines) {
         auto line_width = font->GetSizeUTF8(line).GetX();
@@ -114,11 +112,14 @@ void SDLGraphicsContext::renderText(TextureID target_slot, const std::string& te
         throw std::runtime_error(SDL_GetError());
 
     // create the surface and blit the lines on it
+    const SDL_Color rgba_color({color.r, color.g, color.b, 255});
     SDL2pp::Surface basesurf(0, width,  line_height * lines.size(),
                              bpp, rmask, gmask, bmask, amask);
     for (unsigned l = 0; l < lines.size(); l++) {
-        auto surf = font->RenderUTF8_Blended(lines.at(l), {color.r, color.g, color.b, 255});
-        surf.Blit(NullOpt, basesurf, Rect(0, l * line_height, surf.GetWidth(), surf.GetHeight()));
+        auto surf = font->RenderUTF8_Blended(lines.at(l), rgba_color);
+        surf.Blit(SDL2pp::NullOpt,
+                  basesurf,
+                  SDL2pp::Rect(0, l * line_height, surf.GetWidth(), surf.GetHeight()));
     }
 
     textures[target_slot] = std::make_unique<SDL2pp::Texture>(renderer, basesurf);
@@ -153,7 +154,7 @@ void SDLGraphicsContext::drawTexture(TextureID slot, unsigned x, unsigned y)
     if (!textures.count(slot))
         throw std::runtime_error("No texture loaded in slot " + std::to_string(slot));
 
-    renderer.Copy(*textures.at(slot), NullOpt, Point(x, y));
+    renderer.Copy(*textures.at(slot), SDL2pp::NullOpt, SDL2pp::Point(x, y));
 }
 
 void SDLGraphicsContext::drawTexture(TextureID slot, const Rectangle& rect)
@@ -161,7 +162,7 @@ void SDLGraphicsContext::drawTexture(TextureID slot, const Rectangle& rect)
     if (!textures.count(slot))
         throw std::runtime_error("No texture loaded in slot " + std::to_string(slot));
 
-    renderer.Copy(*textures.at(slot), NullOpt, Rect(rect.x, rect.y, rect.w, rect.h));
+    renderer.Copy(*textures.at(slot), SDL2pp::NullOpt, SDL2pp::Rect(rect.x, rect.y, rect.w, rect.h));
 }
 
 void SDLGraphicsContext::drawFilledRect(const Rectangle& rect, const RGBColor& color)
@@ -237,7 +238,7 @@ void SDLGraphicsContext::saveScreenshotBMP(const SDL2pp::Window& window, const s
     if (!window_surface_raw)
         throw std::runtime_error(SDL_GetError());
 
-    SDL2pp::Surface info_surface(window_surface_raw);
+    const SDL2pp::Surface info_surface(window_surface_raw);
     const auto info_format = info_surface.Get()->format;
 
     std::unique_ptr<uint8_t[]> pixels = std::make_unique<uint8_t[]>(
