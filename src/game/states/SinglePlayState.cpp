@@ -116,34 +116,34 @@ void SinglePlayState::draw(GraphicsContext& gcx)
     static const int boardborder_width = 5;
     static const int board_w = 10 * Mino::texture_size_px;
     static const int board_h = 20 * Mino::texture_size_px + boardborder_width;
-    static const int board_x = gcx.screenWidth() / 2 - 5 * Mino::texture_size_px;
-    static const int board_y = (gcx.screenHeight() - board_h - 5) / 2.0;
+    const int board_x = gcx.screenWidth() / 2 - 5 * Mino::texture_size_px;
+    const int board_y = (gcx.screenHeight() - board_h - 5) / 2.0;
     static const int sidebar_w = 5 * Mino::texture_size_px;
     static const int sidebar_padding = 10;
     static const int sidebar_padding_thin = 5;
     static const int sidebar_full_w = sidebar_w + boardborder_width + sidebar_padding * 2;
-    static const int sidebar_left_x = board_x - sidebar_full_w;
-    static const int sidebar_right_x = board_x + board_w;
+    const int sidebar_left_x = board_x - sidebar_full_w;
+    const int sidebar_right_x = board_x + board_w;
     static const int text_height = 30;
 
-    static const Rectangle rect_boardborder_left = {
+    const Rectangle rect_boardborder_left = {
         board_x - boardborder_width, board_y,
         boardborder_width, 20 * Mino::texture_size_px};
-    static const Rectangle rect_boardborder_right = {
+    const Rectangle rect_boardborder_right = {
         board_x + board_w, board_y,
         boardborder_width, 20 * Mino::texture_size_px};
-    static const Rectangle rect_boardborder_top = {
+    const Rectangle rect_boardborder_top = {
         board_x - boardborder_width, board_y - boardborder_width,
         2 * boardborder_width + board_w, boardborder_width};
-    static const Rectangle rect_boardborder_bottom = {
+    const Rectangle rect_boardborder_bottom = {
         board_x - boardborder_width, board_y + 20 * Mino::texture_size_px,
         2 * boardborder_width + board_w, boardborder_width};
 
-    static const Rectangle rect_goal = {
+    const Rectangle rect_goal = {
         sidebar_left_x + sidebar_padding,
         board_y + board_h - text_height - sidebar_padding * 2,
         sidebar_w, text_height + sidebar_padding * 2};
-    static const Rectangle rect_level = {
+    const Rectangle rect_level = {
         rect_goal.x, rect_goal.y - text_height - sidebar_padding_thin * 3 - rect_goal.h,
         rect_goal.w, rect_goal.h};
 

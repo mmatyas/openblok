@@ -30,7 +30,8 @@ SDLGraphicsContext::SDLGraphicsContext(SDL2pp::Window& window)
     , current_texid(0)
 {
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
-    renderer.SetLogicalSize(960, 720);
+    onResize(window.GetWidth(), window.GetHeight());
+
     renderer.SetDrawColor(0, 0, 0, 255);
     renderer.Clear();
     renderer.Present();
@@ -204,6 +205,30 @@ void SDLGraphicsContext::requestScreenshot(const SDL2pp::Window& window, const s
         saveScreenshotBMP(window, path);
         on_render_callback = [](){};
     };
+}
+
+void SDLGraphicsContext::onResize(int width, int height)
+{
+    static constexpr float min_logical_w = 960;
+    static constexpr float min_logical_h = 720;
+    static constexpr float min_aspect_ratio = min_logical_w / min_logical_h;
+
+    const float width_ratio = width / min_logical_w;
+    const float height_ratio = height / min_logical_h;
+    const float window_aspect_ratio = (float) width / height;
+
+    int logical_width = min_logical_w;
+    int logical_height = min_logical_h;
+    if (window_aspect_ratio > min_aspect_ratio) {
+        // wider than 4:3
+        logical_width *= width / (min_logical_w * height_ratio);
+    }
+    else {
+        // taller than 4:3
+        logical_height *= height / (min_logical_h * width_ratio);
+    }
+
+    renderer.SetLogicalSize(logical_width, logical_height);
 }
 
 void SDLGraphicsContext::saveScreenshotBMP(const SDL2pp::Window& window, const std::string& path)

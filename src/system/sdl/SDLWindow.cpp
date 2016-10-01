@@ -42,6 +42,9 @@ std::vector<InputEvent> SDLWindow::collectEvents()
             case SDL_WINDOWEVENT_FOCUS_LOST:
                 output.emplace_back(InputEvent(InputType::GAME_PAUSE, true));
                 break;
+            case SDL_WINDOWEVENT_RESIZED:
+                gcx.onResize(sdl_event.window.data1, sdl_event.window.data2);
+                break;
             default:
                 break;
             }

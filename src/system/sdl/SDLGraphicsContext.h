@@ -36,6 +36,7 @@ public:
 
     // SDL only
     void requestScreenshot(const SDL2pp::Window&, const std::string& path);
+    void onResize(int width, int height);
 
 private:
     SDL2pp::Renderer renderer;
