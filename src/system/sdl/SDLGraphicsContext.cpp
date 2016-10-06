@@ -27,6 +27,10 @@ SDLGraphicsContext::SDLGraphicsContext(SDL2pp::Window& window)
     , current_fontid(0)
     , current_texid(0)
 {
+    SDL_RendererInfo rinfo;
+    renderer.GetInfo(rinfo);
+    Log::info(LOG_TAG) << "Selected '" << rinfo.name << "' renderer\n";
+
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
     onResize(window.GetWidth(), window.GetHeight());
 
