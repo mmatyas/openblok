@@ -18,7 +18,7 @@ typedef Matrix<std::unique_ptr<Mino>, 4, 4> PieceGrid;
 class Piece {
 public:
     /// The Piece types in the game
-    enum class Type {
+    enum class Type : uint8_t {
         I, J, L, O, S, T, Z
     };
 

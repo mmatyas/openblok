@@ -12,4 +12,5 @@ public:
     static Mino make(Piece::Type);
     static std::unique_ptr<Mino> make_uptr(Piece::Type);
     static RGBColor color(Piece::Type);
+    static TextureID ghostTexture(Piece::Type);
 };

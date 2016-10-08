@@ -53,3 +53,20 @@ RGBColor MinoFactory::color(Piece::Type type)
         assert(false);
     }
 }
+
+TextureID MinoFactory::ghostTexture(Piece::Type type)
+{
+    using Textures = GameplayResources::Textures;
+
+    switch(type) {
+    case Piece::Type::I : return Textures::MINO_GHOST_I;
+    case Piece::Type::J : return Textures::MINO_GHOST_J;
+    case Piece::Type::L : return Textures::MINO_GHOST_L;
+    case Piece::Type::O : return Textures::MINO_GHOST_O;
+    case Piece::Type::S : return Textures::MINO_GHOST_S;
+    case Piece::Type::T : return Textures::MINO_GHOST_T;
+    case Piece::Type::Z : return Textures::MINO_GHOST_Z;
+    default:
+        assert(false);
+    }
+}

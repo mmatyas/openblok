@@ -15,7 +15,13 @@ struct Textures {
     static TextureID MINO_S;
     static TextureID MINO_T;
     static TextureID MINO_Z;
-    static TextureID MINO_GHOST;
+    static TextureID MINO_GHOST_I;
+    static TextureID MINO_GHOST_J;
+    static TextureID MINO_GHOST_L;
+    static TextureID MINO_GHOST_O;
+    static TextureID MINO_GHOST_S;
+    static TextureID MINO_GHOST_T;
+    static TextureID MINO_GHOST_Z;
     static TextureID MATRIXBG;
 
     static void loadAll(GraphicsContext&);

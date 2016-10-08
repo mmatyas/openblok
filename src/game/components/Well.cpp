@@ -616,8 +616,6 @@ void Well::drawBackground(GraphicsContext& gcx, unsigned x, unsigned y) const
 
 void Well::drawContent(GraphicsContext& gcx, unsigned x, unsigned y) const
 {
-    using Textures = GameplayResources::Textures;
-
     // Draw board Minos
     for (size_t row = 0; row < 20; row++) {
         for (size_t col = 0; col < 10; col++) {
@@ -638,7 +636,7 @@ void Well::drawContent(GraphicsContext& gcx, unsigned x, unsigned y) const
                 continue;
             for (unsigned col = 0; col < 4; col++) {
                 if (active_piece->currentGrid().at(row).at(col)) {
-                    gcx.drawTexture(Textures::MINO_GHOST, {
+                    gcx.drawTexture(MinoFactory::ghostTexture(active_piece->type()), {
                         static_cast<int>(x + (active_piece_x + col) * Mino::texture_size_px),
                         static_cast<int>(y + (ghost_piece_y + row - 2) * Mino::texture_size_px),
                         Mino::texture_size_px,
