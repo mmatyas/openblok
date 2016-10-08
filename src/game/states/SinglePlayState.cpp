@@ -71,6 +71,7 @@ SinglePlayState::SinglePlayState(AppContext& app)
 
     font_boxtitle = app.gcx().loadFont(app.fontman().find("Dosis", "light"), 28);
     font_boxcontent = app.gcx().loadFont(app.fontman().find("Dosis", "bold"), 30);
+    font_big = app.gcx().loadFont(app.fontman().find("Dosis", "bold"), 50);
 
 
     tex_hold = app.gcx().renderText(tr("HOLD"), font_boxtitle, 0xEEEEEE_rgb);
@@ -79,6 +80,7 @@ SinglePlayState::SinglePlayState(AppContext& app)
     tex_level = app.gcx().renderText(tr("LEVEL"), font_boxtitle, 0xEEEEEE_rgb);
     tex_goal_counter = app.gcx().renderText(std::to_string(lineclears_left), font_boxcontent, 0xEEEEEE_rgb);
     tex_level_counter = app.gcx().renderText(std::to_string(current_level), font_boxcontent, 0xEEEEEE_rgb);
+    tex_pause = app.gcx().renderText(tr("PAUSE"), font_big, 0xEEEEEE_rgb);
 }
 
 void SinglePlayState::addNextPiece()
@@ -155,7 +157,16 @@ void SinglePlayState::draw(GraphicsContext& gcx)
     gcx.drawTexture(tex_background, {0, 0, gcx.screenWidth(), gcx.screenHeight()});
 
     // draw the well
-    board.draw(gcx, board_x, board_y);
+    board.drawBackground(gcx, board_x, board_y);
+    if (paused) {
+        gcx.drawTexture(tex_pause,
+                        board_x + (board_w - gcx.textureWidth(tex_pause)) / 2,
+                        board_y + (board_h - gcx.textureHeight(tex_pause)) / 2);
+    }
+    else {
+        board.drawContent(gcx, board_x, board_y);
+    }
+
     gcx.drawFilledRect(rect_boardborder_left, boardborder_color);
     gcx.drawFilledRect(rect_boardborder_right, boardborder_color);
     gcx.drawFilledRect(rect_boardborder_top, boardborder_color);

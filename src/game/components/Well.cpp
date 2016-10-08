@@ -600,14 +600,11 @@ std::string Well::asAscii() const
 
 #endif
 
-void Well::draw(GraphicsContext& gcx, unsigned x, unsigned y) const
+void Well::drawBackground(GraphicsContext& gcx, unsigned x, unsigned y) const
 {
-    using Textures = GameplayResources::Textures;
-
-    // Draw background
     for (size_t row = 0; row < 20; row++) {
         for (size_t col = 0; col < 10; col++) {
-            gcx.drawTexture(Textures::MATRIXBG, {
+            gcx.drawTexture(GameplayResources::Textures::MATRIXBG, {
                 static_cast<int>(x + col * Mino::texture_size_px),
                 static_cast<int>(y + row * Mino::texture_size_px),
                 Mino::texture_size_px,
@@ -615,6 +612,11 @@ void Well::draw(GraphicsContext& gcx, unsigned x, unsigned y) const
             });
         }
     }
+}
+
+void Well::drawContent(GraphicsContext& gcx, unsigned x, unsigned y) const
+{
+    using Textures = GameplayResources::Textures;
 
     // Draw board Minos
     for (size_t row = 0; row < 20; row++) {

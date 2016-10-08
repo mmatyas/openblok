@@ -20,6 +20,7 @@ private:
     bool paused;
     FontID font_boxtitle;
     FontID font_boxcontent;
+    FontID font_big;
     TextureID tex_background;
     TextureID tex_hold;
     TextureID tex_next;
@@ -27,6 +28,7 @@ private:
     TextureID tex_goal_counter;
     TextureID tex_level;
     TextureID tex_level_counter;
+    TextureID tex_pause;
     bool texts_need_update;
 
     HoldQueue piece_holder;

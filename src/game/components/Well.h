@@ -44,8 +44,10 @@ public:
     /// Set the gravity update rate, in frames
     void setGravity(Duration);
 
-    /// Draw the well
-    void draw(GraphicsContext&, unsigned x, unsigned y) const;
+    /// Draw the Minos in the Well
+    void drawContent(GraphicsContext&, unsigned x, unsigned y) const;
+    /// Draw the background of the Well
+    void drawBackground(GraphicsContext&, unsigned x, unsigned y) const;
 
     /// Register an external event observer.
     template <typename WellObserver>
