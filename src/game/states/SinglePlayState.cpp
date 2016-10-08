@@ -11,7 +11,7 @@
 SinglePlayState::SinglePlayState(AppContext& app)
     : paused(false)
     , gameover(false)
-    , tex_background(app.gcx().loadTexture("data/gamebg_pattern.png"))
+    , tex_background(app.gcx().loadTexture("data/gamebg.png"))
     , texts_need_update(false)
     , next_pieces(4)
     , lineclears_per_level(10)
