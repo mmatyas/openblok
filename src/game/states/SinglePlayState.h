@@ -5,7 +5,9 @@
 #include "game/components/NextQueue.h"
 #include "game/components/Well.h"
 
+#include <chrono>
 #include <stack>
+#include <string>
 
 
 class SinglePlayState: public GameState {
@@ -43,6 +45,8 @@ private:
     std::stack<Duration> gravity_levels;
     unsigned current_level;
     unsigned current_score;
+    Duration gametime;
+    std::string gametime_text;
 
     void addNextPiece();
 
@@ -101,4 +105,5 @@ private:
     void drawWell(GraphicsContext&);
     void drawLeftSidebar(GraphicsContext&);
     void drawRightSidebar(GraphicsContext&);
+    void updateGametime(AppContext&);
 };

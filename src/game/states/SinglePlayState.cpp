@@ -17,6 +17,8 @@ SinglePlayState::SinglePlayState(AppContext& app)
     , lineclears_left(lineclears_per_level)
     , current_level(1)
     , current_score(0)
+    , gametime(Duration::zero())
+    , gametime_text("00:00")
 {
     board.registerObserver(WellEvent::Type::NEXT_REQUESTED, [this](const WellEvent&){
         this->addNextPiece();
@@ -83,7 +85,7 @@ SinglePlayState::SinglePlayState(AppContext& app)
     tex_level_counter = app.gcx().renderText(std::to_string(current_level), font_boxcontent, 0xEEEEEE_rgb);
     tex_score = app.gcx().renderText(tr("SCORE"), font_boxtitle, 0xEEEEEE_rgb);
     tex_score_counter = app.gcx().renderText(std::to_string(current_score), font_boxcontent, 0xEEEEEE_rgb);
-    tex_time_counter = app.gcx().renderText("00:00", font_boxcontent, 0xEEEEEE_rgb);
+    tex_time_counter = app.gcx().renderText(gametime_text, font_boxcontent, 0xEEEEEE_rgb);
     tex_pause = app.gcx().renderText(tr("PAUSE"), font_big, 0xEEEEEE_rgb);
 
 
@@ -191,6 +193,30 @@ void SinglePlayState::update(const std::vector<InputEvent>& inputs, AppContext& 
         app.gcx().renderText(tex_level_counter, std::to_string(current_level),
                              font_boxcontent, 0xEEEEEE_rgb);
         texts_need_update = false;
+    }
+
+    updateGametime(app);
+}
+
+void SinglePlayState::updateGametime(AppContext& app)
+{
+    gametime += GameState::frame_duration;
+
+    unsigned minutes = std::chrono::duration_cast<std::chrono::minutes>(gametime).count();
+    unsigned seconds = std::chrono::duration_cast<std::chrono::seconds>(gametime).count() % 60;
+    std::string newstr;
+    if (minutes < 10)
+        newstr += "0";
+    newstr += std::to_string(minutes);
+    newstr += ":";
+    if (seconds < 10)
+        newstr += "0";
+    newstr += std::to_string(seconds);
+
+    // render text
+    if (newstr != gametime_text) {
+        gametime_text = newstr;
+        app.gcx().renderText(tex_time_counter, gametime_text, font_boxcontent, 0xEEEEEE_rgb);
     }
 }
 
