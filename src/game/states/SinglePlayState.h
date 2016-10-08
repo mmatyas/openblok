@@ -20,6 +20,7 @@ private:
     using Duration = std::chrono::steady_clock::duration;
 
     bool paused;
+    bool gameover;
     FontID font_boxtitle;
     FontID font_boxcontent;
     FontID font_big;

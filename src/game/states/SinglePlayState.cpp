@@ -10,6 +10,7 @@
 
 SinglePlayState::SinglePlayState(AppContext& app)
     : paused(false)
+    , gameover(false)
     , tex_background(app.gcx().loadTexture("data/gamebg_pattern.png"))
     , texts_need_update(false)
     , next_pieces(4)
@@ -57,8 +58,12 @@ SinglePlayState::SinglePlayState(AppContext& app)
             this->lineclears_left += lineclears_per_level;
             this->current_level++;
         }
-
     });
+
+    board.registerObserver(WellEvent::Type::GAME_OVER, [this](const WellEvent&){
+        gameover = true;
+    });
+
 
     // TODO: consider alternative algorithm
     for (float i = 14; i >= 0; i--) {
@@ -194,6 +199,9 @@ void SinglePlayState::update(const std::vector<InputEvent>& inputs, AppContext& 
                              font_boxcontent, 0xEEEEEE_rgb);
         texts_need_update = false;
     }
+
+    if (gameover)
+        return;
 
     updateGametime(app);
 }

@@ -215,6 +215,7 @@ void Well::addPiece(Piece::Type type)
     // couldn't place the piece, game over
     lockAndReleasePiece();
     gameover = true;
+    notify(WellEvent(WellEvent::Type::GAME_OVER));
 }
 
 void Well::deletePiece()

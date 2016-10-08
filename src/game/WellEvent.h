@@ -9,6 +9,7 @@ struct WellEvent {
         NEXT_REQUESTED,
         HOLD_REQUESTED,
         LINE_CLEAR,
+        GAME_OVER,
     };
 
     Type type;
