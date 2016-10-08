@@ -41,4 +41,55 @@ private:
     unsigned current_level;
 
     void addNextPiece();
+
+    // TODO: create a ui element tree
+    struct Layout {
+        struct Padding {
+            int top;
+            int right;
+            int bottom;
+            int left;
+        };
+        struct Border {
+            const int width = 5;
+            Rectangle left;
+            Rectangle right;
+            Rectangle top;
+            Rectangle bottom;
+        };
+
+        struct _well {
+            Rectangle inner;
+            Rectangle outer;
+
+            Border border;
+        } well;
+
+        struct _sidebars {
+            const int text_height = 30;
+            const int text_padding = 10;
+            const int item_padding = 10;
+            const RGBAColor box_color = 0x0A0AFF80_rgba;
+
+            struct {
+                Rectangle inner;
+                Rectangle outer;
+                Padding padding;
+
+                struct {
+                    Rectangle level_counter;
+                    Rectangle goal_counter;
+                } items;
+            } left;
+
+            struct {
+                Rectangle inner;
+                Rectangle outer;
+                Padding padding;
+            } right;
+        } sidebars;
+    } ui;
+    void drawWell(GraphicsContext&);
+    void drawLeftSidebar(GraphicsContext&);
+    void drawRightSidebar(GraphicsContext&);
 };

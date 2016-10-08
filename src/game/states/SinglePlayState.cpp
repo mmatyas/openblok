@@ -81,6 +81,26 @@ SinglePlayState::SinglePlayState(AppContext& app)
     tex_goal_counter = app.gcx().renderText(std::to_string(lineclears_left), font_boxcontent, 0xEEEEEE_rgb);
     tex_level_counter = app.gcx().renderText(std::to_string(current_level), font_boxcontent, 0xEEEEEE_rgb);
     tex_pause = app.gcx().renderText(tr("PAUSE"), font_big, 0xEEEEEE_rgb);
+
+
+    ui.well.inner.w = 10 * Mino::texture_size_px;
+    ui.well.inner.h = 20 * Mino::texture_size_px;
+    ui.well.outer.w = ui.well.inner.w + ui.well.border.width * 2;
+    ui.well.outer.h = ui.well.inner.h + ui.well.border.width * 2;
+    ui.sidebars.left.inner.w = 5 * Mino::texture_size_px;
+    ui.sidebars.left.inner.h = ui.well.outer.h;
+    ui.sidebars.left.padding = {0, 10, 0, 0};
+    ui.sidebars.left.outer.w = ui.sidebars.left.inner.w
+                             + ui.sidebars.left.padding.left + ui.sidebars.left.padding.right;
+    ui.sidebars.left.outer.h = ui.sidebars.left.inner.h
+                             + ui.sidebars.left.padding.top + ui.sidebars.left.padding.bottom;
+    ui.sidebars.right.inner.w = 5 * Mino::texture_size_px;
+    ui.sidebars.right.inner.h = ui.well.outer.h;
+    ui.sidebars.right.padding = {0, 0, 0, 10};
+    ui.sidebars.right.outer.w = ui.sidebars.right.inner.w
+                              + ui.sidebars.right.padding.left + ui.sidebars.left.padding.right;
+    ui.sidebars.right.outer.h = ui.sidebars.right.inner.h
+                              + ui.sidebars.right.padding.top + ui.sidebars.left.padding.bottom;
 }
 
 void SinglePlayState::addNextPiece()
@@ -98,6 +118,49 @@ void SinglePlayState::update(const std::vector<InputEvent>& inputs, AppContext& 
         }
     }
 
+
+    // UI
+    // TODO: only on screen resize event
+    ui.well.inner.x = app.gcx().screenWidth() / 2 - 5 * Mino::texture_size_px;
+    ui.well.inner.y = (app.gcx().screenHeight() - ui.well.inner.h) / 2 + ui.well.border.width;
+    ui.well.outer.x = ui.well.inner.x - ui.well.border.width;
+    ui.well.outer.y = ui.well.inner.y - ui.well.border.width;
+    ui.well.border.left = {
+        ui.well.outer.x, ui.well.inner.y,
+        ui.well.border.width, ui.well.inner.h};
+    ui.well.border.right = {
+        ui.well.inner.x + ui.well.inner.w, ui.well.inner.y,
+        ui.well.border.width, ui.well.inner.h};
+    ui.well.border.top = {
+        ui.well.outer.x, ui.well.outer.y,
+        ui.well.outer.w, ui.well.border.width};
+    ui.well.border.bottom = {
+        ui.well.outer.x, ui.well.inner.y + ui.well.inner.h,
+        ui.well.outer.w, ui.well.border.width};
+
+    ui.sidebars.left.outer.x = ui.well.outer.x - ui.sidebars.left.outer.w;
+    ui.sidebars.left.inner.x = ui.sidebars.left.outer.x + ui.sidebars.left.padding.left;
+    ui.sidebars.left.outer.y = ui.well.outer.y;
+    ui.sidebars.left.inner.y = ui.sidebars.left.outer.y + ui.sidebars.left.padding.top;
+    ui.sidebars.left.items.goal_counter = {
+        ui.sidebars.left.inner.x,
+        ui.sidebars.left.inner.y + ui.sidebars.left.inner.h
+        - ui.sidebars.text_height - ui.sidebars.text_padding * 2,
+        ui.sidebars.left.inner.w, ui.sidebars.text_height + ui.sidebars.text_padding * 2};
+    ui.sidebars.left.items.level_counter = {
+        ui.sidebars.left.inner.x,
+        ui.sidebars.left.items.goal_counter.y
+        - ui.sidebars.text_padding - ui.sidebars.text_height - ui.sidebars.text_padding
+        - ui.sidebars.item_padding
+        - ui.sidebars.left.items.goal_counter.h,
+        ui.sidebars.left.inner.w, ui.sidebars.text_height + ui.sidebars.text_padding * 2};
+
+    ui.sidebars.right.outer.x = ui.well.outer.x + ui.well.outer.w;
+    ui.sidebars.right.inner.x = ui.sidebars.right.outer.x + ui.sidebars.right.padding.left;
+    ui.sidebars.right.outer.y = ui.well.outer.y;
+    ui.sidebars.right.inner.y = ui.sidebars.right.outer.y + ui.sidebars.right.padding.top;
+
+
     if (paused)
         return;
 
@@ -113,86 +176,68 @@ void SinglePlayState::update(const std::vector<InputEvent>& inputs, AppContext& 
     }
 }
 
-void SinglePlayState::draw(GraphicsContext& gcx)
+void SinglePlayState::drawWell(GraphicsContext& gcx)
 {
-    static const int boardborder_width = 5;
-    static const int board_w = 10 * Mino::texture_size_px;
-    static const int board_h = 20 * Mino::texture_size_px + boardborder_width;
-    const int board_x = gcx.screenWidth() / 2 - 5 * Mino::texture_size_px;
-    const int board_y = (gcx.screenHeight() - board_h - 5) / 2.0;
-    static const int sidebar_w = 5 * Mino::texture_size_px;
-    static const int sidebar_padding = 10;
-    static const int sidebar_padding_thin = 5;
-    static const int sidebar_full_w = sidebar_w + boardborder_width + sidebar_padding * 2;
-    const int sidebar_left_x = board_x - sidebar_full_w;
-    const int sidebar_right_x = board_x + board_w;
-    static const int text_height = 30;
-
-    const Rectangle rect_boardborder_left = {
-        board_x - boardborder_width, board_y,
-        boardborder_width, 20 * Mino::texture_size_px};
-    const Rectangle rect_boardborder_right = {
-        board_x + board_w, board_y,
-        boardborder_width, 20 * Mino::texture_size_px};
-    const Rectangle rect_boardborder_top = {
-        board_x - boardborder_width, board_y - boardborder_width,
-        2 * boardborder_width + board_w, boardborder_width};
-    const Rectangle rect_boardborder_bottom = {
-        board_x - boardborder_width, board_y + 20 * Mino::texture_size_px,
-        2 * boardborder_width + board_w, boardborder_width};
-
-    const Rectangle rect_goal = {
-        sidebar_left_x + sidebar_padding,
-        board_y + board_h - text_height - sidebar_padding * 2,
-        sidebar_w, text_height + sidebar_padding * 2};
-    const Rectangle rect_level = {
-        rect_goal.x, rect_goal.y - text_height - sidebar_padding_thin * 3 - rect_goal.h,
-        rect_goal.w, rect_goal.h};
-
-    static const auto boardborder_color = 0x1A3A8A_rgb;
-    static const auto sidebarbox_color = 0x0A0AFF80_rgba;
-
-
-    // draw screen background
-    gcx.drawTexture(tex_background, {0, 0, gcx.screenWidth(), gcx.screenHeight()});
-
-    // draw the well
-    board.drawBackground(gcx, board_x, board_y);
+    board.drawBackground(gcx, ui.well.inner.x, ui.well.inner.y);
     if (paused) {
         gcx.drawTexture(tex_pause,
-                        board_x + (board_w - gcx.textureWidth(tex_pause)) / 2,
-                        board_y + (board_h - gcx.textureHeight(tex_pause)) / 2);
+                        ui.well.inner.x + (ui.well.inner.w - gcx.textureWidth(tex_pause)) / 2,
+                        ui.well.inner.y + (ui.well.inner.h - gcx.textureHeight(tex_pause)) / 2);
     }
     else {
-        board.drawContent(gcx, board_x, board_y);
+        board.drawContent(gcx, ui.well.inner.x, ui.well.inner.y);
     }
 
-    gcx.drawFilledRect(rect_boardborder_left, boardborder_color);
-    gcx.drawFilledRect(rect_boardborder_right, boardborder_color);
-    gcx.drawFilledRect(rect_boardborder_top, boardborder_color);
-    gcx.drawFilledRect(rect_boardborder_bottom, boardborder_color);
+    static const auto boardborder_color = 0x1A3A8A_rgb;
+    gcx.drawFilledRect(ui.well.border.left, boardborder_color);
+    gcx.drawFilledRect(ui.well.border.right, boardborder_color);
+    gcx.drawFilledRect(ui.well.border.top, boardborder_color);
+    gcx.drawFilledRect(ui.well.border.bottom, boardborder_color);
+}
 
-    // draw left sidebar
-    gcx.drawTexture(tex_hold, sidebar_left_x + sidebar_padding, rect_boardborder_top.y);
-    piece_holder.draw(gcx, sidebar_left_x + sidebar_padding,
-                      rect_boardborder_top.y + text_height + sidebar_padding);
-    gcx.drawTexture(tex_goal, rect_goal.x,
-                    rect_goal.y - sidebar_padding - text_height);
-    gcx.drawFilledRect(rect_goal, sidebarbox_color);
+void SinglePlayState::drawLeftSidebar(GraphicsContext& gcx)
+{
+    // hold queue
+    gcx.drawTexture(tex_hold, ui.sidebars.left.inner.x, ui.sidebars.left.inner.y);
+    piece_holder.draw(gcx, ui.sidebars.left.inner.x,
+                      ui.sidebars.left.inner.y + ui.sidebars.text_height + ui.sidebars.text_padding);
+
+    // goal
+    gcx.drawFilledRect(ui.sidebars.left.items.goal_counter, ui.sidebars.box_color);
     gcx.drawTexture(tex_goal_counter,
-                    rect_goal.x + (rect_goal.w - gcx.textureWidth(tex_goal_counter)) / 2,
-                    rect_goal.y + sidebar_padding_thin);
-    gcx.drawTexture(tex_level, rect_level.x,
-                    rect_level.y - sidebar_padding_thin * 2 - text_height);
-    gcx.drawFilledRect(rect_level, sidebarbox_color);
-    gcx.drawTexture(tex_level_counter,
-                    rect_level.x + (rect_level.w - gcx.textureWidth(tex_level_counter)) / 2,
-                    rect_level.y + sidebar_padding_thin);
+                    ui.sidebars.left.items.goal_counter.x
+                    + (ui.sidebars.left.items.goal_counter.w - gcx.textureWidth(tex_goal_counter)) / 2,
+                    ui.sidebars.left.items.goal_counter.y + 5);
+    gcx.drawTexture(tex_goal, ui.sidebars.left.items.goal_counter.x,
+                    ui.sidebars.left.items.goal_counter.y
+                    - ui.sidebars.text_padding - ui.sidebars.text_height);
 
-    // draw right sidebar
+    // level
+    gcx.drawFilledRect(ui.sidebars.left.items.level_counter, ui.sidebars.box_color);
+    gcx.drawTexture(tex_level_counter,
+                    ui.sidebars.left.items.level_counter.x
+                    + (ui.sidebars.left.items.level_counter.w - gcx.textureWidth(tex_level_counter)) / 2,
+                    ui.sidebars.left.items.level_counter.y + 5);
+    gcx.drawTexture(tex_level, ui.sidebars.left.items.level_counter.x,
+                    ui.sidebars.left.items.level_counter.y
+                    - ui.sidebars.text_padding - ui.sidebars.text_height);
+}
+
+void SinglePlayState::drawRightSidebar(GraphicsContext& gcx)
+{
+    // next queue
     gcx.drawTexture(tex_next,
-                    sidebar_right_x + sidebar_full_w - gcx.textureWidth(tex_next) - sidebar_padding,
-                    rect_boardborder_top.y);
-    next_pieces.draw(gcx, sidebar_right_x + boardborder_width + sidebar_padding,
-                     rect_boardborder_top.y + text_height + sidebar_padding);
+                    ui.sidebars.right.inner.x + ui.sidebars.right.inner.w - gcx.textureWidth(tex_next),
+                    ui.sidebars.right.inner.y);
+    next_pieces.draw(gcx, ui.sidebars.right.inner.x,
+                     ui.sidebars.right.inner.y + ui.sidebars.text_height + ui.sidebars.text_padding);
+}
+
+void SinglePlayState::draw(GraphicsContext& gcx)
+{
+    gcx.drawTexture(tex_background, {0, 0, gcx.screenWidth(), gcx.screenHeight()});
+
+    drawWell(gcx);
+    drawLeftSidebar(gcx);
+    drawRightSidebar(gcx);
 }
