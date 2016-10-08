@@ -16,6 +16,7 @@ SinglePlayState::SinglePlayState(AppContext& app)
     , lineclears_per_level(10)
     , lineclears_left(lineclears_per_level)
     , current_level(1)
+    , current_score(0)
 {
     board.registerObserver(WellEvent::Type::NEXT_REQUESTED, [this](const WellEvent&){
         this->addNextPiece();
@@ -80,6 +81,9 @@ SinglePlayState::SinglePlayState(AppContext& app)
     tex_level = app.gcx().renderText(tr("LEVEL"), font_boxtitle, 0xEEEEEE_rgb);
     tex_goal_counter = app.gcx().renderText(std::to_string(lineclears_left), font_boxcontent, 0xEEEEEE_rgb);
     tex_level_counter = app.gcx().renderText(std::to_string(current_level), font_boxcontent, 0xEEEEEE_rgb);
+    tex_score = app.gcx().renderText(tr("SCORE"), font_boxtitle, 0xEEEEEE_rgb);
+    tex_score_counter = app.gcx().renderText(std::to_string(current_score), font_boxcontent, 0xEEEEEE_rgb);
+    tex_time_counter = app.gcx().renderText("00:00", font_boxcontent, 0xEEEEEE_rgb);
     tex_pause = app.gcx().renderText(tr("PAUSE"), font_big, 0xEEEEEE_rgb);
 
 
@@ -87,6 +91,7 @@ SinglePlayState::SinglePlayState(AppContext& app)
     ui.well.inner.h = 20 * Mino::texture_size_px;
     ui.well.outer.w = ui.well.inner.w + ui.well.border.width * 2;
     ui.well.outer.h = ui.well.inner.h + ui.well.border.width * 2;
+
     ui.sidebars.left.inner.w = 5 * Mino::texture_size_px;
     ui.sidebars.left.inner.h = ui.well.outer.h;
     ui.sidebars.left.padding = {0, 10, 0, 0};
@@ -94,6 +99,7 @@ SinglePlayState::SinglePlayState(AppContext& app)
                              + ui.sidebars.left.padding.left + ui.sidebars.left.padding.right;
     ui.sidebars.left.outer.h = ui.sidebars.left.inner.h
                              + ui.sidebars.left.padding.top + ui.sidebars.left.padding.bottom;
+
     ui.sidebars.right.inner.w = 5 * Mino::texture_size_px;
     ui.sidebars.right.inner.h = ui.well.outer.h;
     ui.sidebars.right.padding = {0, 0, 0, 10};
@@ -159,6 +165,18 @@ void SinglePlayState::update(const std::vector<InputEvent>& inputs, AppContext& 
     ui.sidebars.right.inner.x = ui.sidebars.right.outer.x + ui.sidebars.right.padding.left;
     ui.sidebars.right.outer.y = ui.well.outer.y;
     ui.sidebars.right.inner.y = ui.sidebars.right.outer.y + ui.sidebars.right.padding.top;
+    ui.sidebars.right.items.score_counter = {
+        ui.sidebars.right.inner.x,
+        ui.sidebars.right.inner.y + ui.sidebars.right.inner.h
+        - ui.sidebars.text_height - ui.sidebars.text_padding * 2,
+        ui.sidebars.right.inner.w, ui.sidebars.text_height + ui.sidebars.text_padding * 2};
+    ui.sidebars.right.items.time_counter = {
+        ui.sidebars.right.inner.x,
+        ui.sidebars.right.items.score_counter.y
+        - ui.sidebars.text_padding - ui.sidebars.text_height - ui.sidebars.text_padding
+        - ui.sidebars.item_padding
+        - ui.sidebars.right.items.score_counter.h,
+        ui.sidebars.right.inner.w, ui.sidebars.text_height + ui.sidebars.text_padding * 2};
 
 
     if (paused)
@@ -231,6 +249,25 @@ void SinglePlayState::drawRightSidebar(GraphicsContext& gcx)
                     ui.sidebars.right.inner.y);
     next_pieces.draw(gcx, ui.sidebars.right.inner.x,
                      ui.sidebars.right.inner.y + ui.sidebars.text_height + ui.sidebars.text_padding);
+
+    // score
+    gcx.drawFilledRect(ui.sidebars.right.items.score_counter, ui.sidebars.box_color);
+    gcx.drawTexture(tex_score_counter,
+                    ui.sidebars.right.items.score_counter.x
+                    + (ui.sidebars.right.items.score_counter.w - gcx.textureWidth(tex_score_counter)) / 2,
+                    ui.sidebars.right.items.score_counter.y + 5);
+    gcx.drawTexture(tex_score,
+                    ui.sidebars.right.items.score_counter.x
+                    + ui.sidebars.right.inner.w - gcx.textureWidth(tex_score),
+                    ui.sidebars.right.items.score_counter.y
+                    - ui.sidebars.text_padding - ui.sidebars.text_height);
+
+    // time
+    gcx.drawFilledRect(ui.sidebars.right.items.time_counter, ui.sidebars.box_color);
+    gcx.drawTexture(tex_time_counter,
+                    ui.sidebars.right.items.time_counter.x
+                    + (ui.sidebars.right.items.time_counter.w - gcx.textureWidth(tex_time_counter)) / 2,
+                    ui.sidebars.right.items.time_counter.y + 5);
 }
 
 void SinglePlayState::draw(GraphicsContext& gcx)

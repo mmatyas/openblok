@@ -28,6 +28,9 @@ private:
     TextureID tex_goal_counter;
     TextureID tex_level;
     TextureID tex_level_counter;
+    TextureID tex_score;
+    TextureID tex_score_counter;
+    TextureID tex_time_counter;
     TextureID tex_pause;
     bool texts_need_update;
 
@@ -39,6 +42,7 @@ private:
     int lineclears_left;
     std::stack<Duration> gravity_levels;
     unsigned current_level;
+    unsigned current_score;
 
     void addNextPiece();
 
@@ -86,6 +90,11 @@ private:
                 Rectangle inner;
                 Rectangle outer;
                 Padding padding;
+
+                struct {
+                    Rectangle time_counter;
+                    Rectangle score_counter;
+                } items;
             } right;
         } sidebars;
     } ui;
