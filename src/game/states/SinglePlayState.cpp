@@ -66,7 +66,7 @@ SinglePlayState::SinglePlayState(AppContext& app)
 
 
     // TODO: consider alternative algorithm
-    for (float i = 14; i >= 0; i--) {
+    for (int i = 14; i >= 0; i--) {
         float multiplier = std::pow(0.8 - (i * 0.007), i);
         gravity_levels.push(std::chrono::duration_cast<Duration>(multiplier * std::chrono::seconds(1)));
     }

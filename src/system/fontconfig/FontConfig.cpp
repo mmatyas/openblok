@@ -65,15 +65,15 @@ std::vector<std::string> FontConfig::findAll(const std::string& family, const st
         throwMatchError();
 
     std::vector<std::string> output;
-    for (int i = 0; i < query.get()->nfont; i++) {
+    for (int i = 0; i < query->nfont; i++) {
         FcChar8* filename;
-        if (FcPatternGetString(query.get()->fonts[i], FC_FILE, 0, &filename) != FcResultMatch)
+        if (FcPatternGetString(query->fonts[i], FC_FILE, 0, &filename) != FcResultMatch)
             break;
 
         output.emplace_back((char*)filename);
     }
 
-    if (!output.size())
+    if (output.empty())
         throwMatchError();
 
     return output;

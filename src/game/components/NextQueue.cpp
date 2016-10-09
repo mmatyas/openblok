@@ -3,8 +3,8 @@
 #include "PieceFactory.h"
 #include "system/GraphicsContext.h"
 
-#include <array>
 #include <algorithm>
+#include <array>
 #include <assert.h>
 
 
