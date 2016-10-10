@@ -28,6 +28,7 @@ SinglePlayState::SinglePlayState(AppContext& app)
             {SOFTDROP, 1},
             {HARDDROP, 2}
         })
+    , previous_lineclear_type(LINE_CLEAR_SINGLE)
 {
     board.registerObserver(WellEvent::Type::NEXT_REQUESTED, [this](const WellEvent&){
         this->addNextPiece();
@@ -55,9 +56,15 @@ SinglePlayState::SinglePlayState(AppContext& app)
         this->texts_need_update = true;
         this->lineclears_left -= event.count;
 
+
         // increase score
         this->current_score += this->score_table.at(static_cast<ScoreTypes>(event.count))
                                * this->current_level;
+        if (event.count == 4 && this->previous_lineclear_type == LINE_CLEAR_PERFECT)
+            this->current_score += this->score_table.at(LINE_CLEAR_PERFECT) * 0.5f; // back-to-back bonus
+
+        this->previous_lineclear_type = static_cast<ScoreTypes>(event.count);
+
 
         // increase gravity level
         if (this->lineclears_left <= 0) {

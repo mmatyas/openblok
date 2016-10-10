@@ -61,6 +61,7 @@ private:
     Duration gametime;
     std::string gametime_text;
     std::unordered_map<ScoreTypes, unsigned, std::hash<size_t>> score_table;
+    ScoreTypes previous_lineclear_type;
 
     void addNextPiece();
 
