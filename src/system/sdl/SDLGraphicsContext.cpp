@@ -42,8 +42,6 @@ SDLGraphicsContext::SDLGraphicsContext(SDL2pp::Window& window)
     pixelformat = SDL_GetWindowPixelFormat(window.Get());
     if (pixelformat == SDL_PIXELFORMAT_UNKNOWN)
         throw std::runtime_error(SDL_GetError());
-
-    Log::info(LOG_TAG) << screenWidth() << "x" << screenHeight() << " window created\n";
 }
 
 void SDLGraphicsContext::render()
@@ -66,7 +64,7 @@ uint16_t SDLGraphicsContext::screenHeight() const
 
 FontID SDLGraphicsContext::loadFont(const std::string& path, unsigned pt)
 {
-    Log::info(LOG_TAG) << "Loading " << path << "\n";
+    // Log::debug(LOG_TAG) << "Loading " << path << "\n";
 
     // emplace() returns an std::pair<Iter, bool>
     auto result = fonts.emplace(current_fontid, std::make_unique<SDL2pp::Font>(path, pt));
@@ -131,7 +129,7 @@ void SDLGraphicsContext::renderText(TextureID target_slot, const std::string& te
 
 TextureID SDLGraphicsContext::loadTexture(const std::string& path)
 {
-    Log::info(LOG_TAG) << "Loading " << path << "\n";
+    // Log::debug(LOG_TAG) << "Loading " << path << "\n";
     textures[current_texid] = std::make_unique<SDL2pp::Texture>(renderer, path);
     return current_texid++;
 }
