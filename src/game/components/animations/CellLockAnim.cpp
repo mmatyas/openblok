@@ -9,7 +9,7 @@ CellLockAnim::CellLockAnim(unsigned row, unsigned col)
     , cell_x(col * Mino::texture_size_px)
     , cell_y_top(row * Mino::texture_size_px)
     , cell_y_bottom(cell_y_top + Mino::texture_size_px)
-    , anim_y_top(frame_duration_60Hz * 20, [this](double t){
+    , anim_y_top(Timing::frame_duration_60Hz * 20, [this](double t){
         return this->cell_y_bottom - t * Mino::texture_size_px * 2;
     })
 {}

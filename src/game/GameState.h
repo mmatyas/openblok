@@ -18,9 +18,4 @@ public:
 
     virtual void on_pause() {}
     virtual void on_resume() {}
-
-    // the fixed time step of the game logic
-    static constexpr std::chrono::steady_clock::duration frame_duration
-         = std::chrono::duration_cast<std::chrono::steady_clock::duration>(
-             std::chrono::duration<int, std::ratio<1, 60>>(1));
 };

@@ -210,7 +210,7 @@ void SinglePlayState::update(const std::vector<InputEvent>& inputs, AppContext& 
 
 void SinglePlayState::updateGametime(AppContext& app)
 {
-    gametime += GameState::frame_duration;
+    gametime += Timing::frame_duration;
 
     unsigned minutes = std::chrono::duration_cast<std::chrono::minutes>(gametime).count();
     unsigned seconds = std::chrono::duration_cast<std::chrono::seconds>(gametime).count() % 60;

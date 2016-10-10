@@ -2,7 +2,7 @@
 
 #include "Mino.h"
 #include "PieceFactory.h"
-#include "game/GameState.h"
+#include "game/Timing.h"
 #include "system/GraphicsContext.h"
 
 #include <assert.h>
@@ -66,7 +66,7 @@ void HoldQueue::swapWithEmpty(PieceType other)
 
 void HoldQueue::update()
 {
-    swapblocked_alpha.update(GameState::frame_duration);
+    swapblocked_alpha.update(Timing::frame_duration);
 }
 
 void HoldQueue::draw(GraphicsContext& gcx, int x, int y)

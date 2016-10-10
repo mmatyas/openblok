@@ -6,7 +6,6 @@
 #include "PieceFactory.h"
 #include "animations/CellLockAnim.h"
 #include "animations/LineClearAnim.h"
-#include "game/GameState.h"
 #include "game/Timing.h"
 #include "game/WellEvent.h"
 #include "system/GraphicsContext.h"
@@ -20,20 +19,20 @@ Well::Well()
     , active_piece_x(0)
     , active_piece_y(0)
     , ghost_piece_y(0)
-    , gravity_delay(frame_duration_60Hz * 64)
+    , gravity_delay(Timing::frame_duration_60Hz * 64)
     , gravity_timer(Duration::zero())
-    , horizontal_delay_normal(frame_duration_60Hz * 14)
-    , horizontal_delay_turbo(frame_duration_60Hz * 4)
+    , horizontal_delay_normal(Timing::frame_duration_60Hz * 14)
+    , horizontal_delay_turbo(Timing::frame_duration_60Hz * 4)
     , horizontal_delay_current(horizontal_delay_normal)
     , horizontal_timer(Duration::zero())
     , das_timer(horizontal_delay_normal)
     , softdrop_delay(gravity_delay / 20)
     , softdrop_timer(Duration::zero())
-    , rotation_delay(frame_duration_60Hz * 10)
+    , rotation_delay(Timing::frame_duration_60Hz * 10)
     , rotation_timer(Duration::zero())
     , harddrop_locks_instantly(true)
     , lock_infinity(true)
-    , lock_countdown(frame_duration_60Hz * 30, [](double){}, [this](){
+    , lock_countdown(Timing::frame_duration_60Hz * 30, [](double){}, [this](){
             this->lockThenRequestNext();
         })
 {
@@ -75,13 +74,13 @@ void Well::update(const std::vector<InputEvent>& events, AppContext&)
 void Well::updateAnimations()
 {
     for (auto& anim : animations)
-        anim->update(GameState::frame_duration);
+        anim->update(Timing::frame_duration);
     animations.remove_if([](std::unique_ptr<WellAnimation>& animptr){
         return !animptr->isActive();
     });
 
     for (auto& anim : blocking_anims)
-        anim->update(GameState::frame_duration);
+        anim->update(Timing::frame_duration);
     blocking_anims.remove_if([](std::unique_ptr<WellAnimation>& animptr){
         return !animptr->isActive();
     });
@@ -134,7 +133,7 @@ void Well::handleKeys(const std::vector<InputEvent>& events)
     }
 
 
-    rotation_timer -= GameState::frame_duration;
+    rotation_timer -= Timing::frame_duration;
     if (keystates.at(InputType::A) != keystates.at(InputType::B) && rotation_timer <= Duration::zero()) {
         if (keystates.at(InputType::A))
             rotateCCWNow();
@@ -144,7 +143,7 @@ void Well::handleKeys(const std::vector<InputEvent>& events)
         rotation_timer = rotation_delay;
     }
 
-    horizontal_timer -= GameState::frame_duration;
+    horizontal_timer -= Timing::frame_duration;
     if (horizontal_timer <= Duration::zero()) {
         if (keystates.at(InputType::LEFT) != keystates.at(InputType::RIGHT)) {
             if (keystates.at(InputType::LEFT))
@@ -162,7 +161,7 @@ void Well::handleKeys(const std::vector<InputEvent>& events)
         }
     }
 
-    softdrop_timer -= GameState::frame_duration;
+    softdrop_timer -= Timing::frame_duration;
     if (keystates.at(InputType::DOWN) && softdrop_timer <= Duration::zero()) {
         moveDownNow();
         skip_gravity = true;
@@ -178,7 +177,7 @@ void Well::resetDAS()
 
 void Well::updateGravity()
 {
-    gravity_timer += GameState::frame_duration;
+    gravity_timer += Timing::frame_duration;
     while (gravity_timer >= gravity_delay) {
         gravity_timer -= gravity_delay;
 
@@ -194,7 +193,7 @@ void Well::updateLockDelay()
         lock_countdown.unpause();
     else
         lock_countdown.stop();
-    lock_countdown.update(GameState::frame_duration);
+    lock_countdown.update(Timing::frame_duration);
 }
 
 void Well::addPiece(PieceType type)
@@ -604,7 +603,7 @@ std::string Well::asAscii() const
 
 void Well::drawBackground(GraphicsContext& gcx, unsigned x, unsigned y) const
 {
-    for (size_t row = 0; row < 20; row++) {
+    /*for (size_t row = 0; row < 20; row++) {
         for (size_t col = 0; col < 10; col++) {
             gcx.drawTexture(GameplayResources::Textures::MATRIXBG, {
                 static_cast<int>(x + col * Mino::texture_size_px),
@@ -613,7 +612,7 @@ void Well::drawBackground(GraphicsContext& gcx, unsigned x, unsigned y) const
                 Mino::texture_size_px
             });
         }
-    }
+    }*/
 }
 
 void Well::drawContent(GraphicsContext& gcx, unsigned x, unsigned y) const

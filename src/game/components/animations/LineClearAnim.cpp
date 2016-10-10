@@ -7,7 +7,7 @@
 LineClearAnim::LineClearAnim(unsigned row)
     : WellAnimation()
     , row(row)
-    , alpha(frame_duration_60Hz * 40, [](double t){
+    , alpha(Timing::frame_duration_60Hz * 40, [](double t){
             return static_cast<uint8_t>((1.0 - t) * 0xFF);
         })
 {}

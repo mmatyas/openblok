@@ -21,7 +21,7 @@ class Piece;
 enum class PieceType : uint8_t;
 
 
-constexpr Duration GRAVITY_20G = frame_duration_60Hz / 20;
+constexpr Duration GRAVITY_20G = Timing::frame_duration_60Hz / 20;
 
 
 class Well {
