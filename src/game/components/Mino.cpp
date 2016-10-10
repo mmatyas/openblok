@@ -1,5 +1,7 @@
 #include "Mino.h"
 
+#include "system/GraphicsContext.h"
+
 
 // TODO: load from config maybe
 const int8_t Mino::texture_size_px = 32;

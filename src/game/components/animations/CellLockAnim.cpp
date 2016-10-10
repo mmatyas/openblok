@@ -2,6 +2,7 @@
 
 #include "game/components/Mino.h"
 #include "game/Timing.h"
+#include "system/GraphicsContext.h"
 
 
 CellLockAnim::CellLockAnim(unsigned row, unsigned col)

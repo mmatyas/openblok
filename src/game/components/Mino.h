@@ -1,10 +1,11 @@
 #pragma once
 
-#include "system/GraphicsContext.h"
 #include "system/ResourceTypes.h"
 
 #include <stdint.h>
 
+
+class GraphicsContext;
 
 /// A Mino represents one block of a piece.
 class Mino {

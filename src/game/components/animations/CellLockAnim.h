@@ -4,6 +4,8 @@
 #include "game/Transition.h"
 
 
+class GraphicsContext;
+
 class CellLockAnim : public WellAnimation {
 public:
     CellLockAnim(unsigned row, unsigned col);
