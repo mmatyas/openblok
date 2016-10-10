@@ -1,6 +1,5 @@
 set(MOD_GAME_SRC
 	AppContext.cpp
-	CommonResources.cpp
 	components/HoldQueue.cpp
 	components/Mino.cpp
 	components/MinoStorage.cpp
@@ -17,7 +16,6 @@ set(MOD_GAME_SRC
 
 set(MOD_GAME_H
 	AppContext.h
-	CommonResources.h
 	GameState.h
 	Matrix.h
 	Timing.h

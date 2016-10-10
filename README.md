@@ -26,12 +26,12 @@ Features:
 Dependencies
 ------------
 
+- CMake 3.1+
 - C++14 supporting compiler (GCC 4.9 or better)
 - SDL2, SDL2_image, SDL2_ttf
-- fontconfig
-- gcov, lcov (only if you want to generate test coverage report)
+- gcov, lcov (only for generating test coverage report)
 
-Eg. on Debian: `sudo apt install libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libfontconfig1-dev`
+Eg. on Debian: `sudo apt install cmake libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev`
 
 
 Build

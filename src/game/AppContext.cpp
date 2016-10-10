@@ -10,9 +10,6 @@ bool AppContext::init()
         Log::info(log_tag) << "Initializing video...\n";
         m_window = Window::create();
 
-        Log::info(log_tag) << "Initializing font management...\n";
-        m_fontman = FontManager::create();
-
         srand(time(nullptr));
     }
     catch (const std::exception& err) {

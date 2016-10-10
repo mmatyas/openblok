@@ -77,9 +77,9 @@ SinglePlayState::SinglePlayState(AppContext& app)
 
     // UI
 
-    font_boxtitle = app.gcx().loadFont(app.fontman().find("Dosis", "light"), 28);
-    font_boxcontent = app.gcx().loadFont(app.fontman().find("Dosis", "bold"), 30);
-    font_big = app.gcx().loadFont(app.fontman().find("Dosis", "bold"), 50);
+    font_boxtitle = app.gcx().loadFont("data/fonts/regular-light.otf", 28);
+    font_boxcontent = app.gcx().loadFont("data/fonts/regular-bold.otf", 30);
+    font_big = app.gcx().loadFont("data/fonts/regular-bold.otf", 50);
 
 
     tex_hold = app.gcx().renderText(tr("HOLD"), font_boxtitle, 0xEEEEEE_rgb);
