@@ -10,6 +10,16 @@ std::unordered_map<PieceType, std::shared_ptr<Mino>, PieceTypeHash> MinoStorage:
 std::unordered_map<PieceType, std::shared_ptr<Mino>, PieceTypeHash> MinoStorage::ghosts;
 std::shared_ptr<Mino> MinoStorage::matrixcell;
 
+#ifndef NDEBUG
+void MinoStorage::loadDummyMinos()
+{
+    for (const auto& type : PieceTypeList) {
+        minos[type] = std::make_shared<Mino>(0, ascii(type));
+        ghosts[type] = std::make_shared<Mino>(0, 'g');
+    }
+    matrixcell.reset();
+}
+#endif
 
 void MinoStorage::loadTintedMinos(GraphicsContext& gcx, const std::string& path)
 {

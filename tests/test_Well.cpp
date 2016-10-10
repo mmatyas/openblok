@@ -1,5 +1,6 @@
 #include "UnitTest++/UnitTest++.h"
 
+#include "game/components/MinoStorage.h"
 #include "game/components/PieceType.h"
 #include "game/components/PieceFactory.h"
 #include "game/components/Well.h"
@@ -20,6 +21,8 @@ struct WellFixture {
     std::string emptyline_ascii;
 
     WellFixture() {
+        MinoStorage::loadDummyMinos();
+
         for (unsigned i = 0; i < 10; i++)
             emptyline_ascii += '.';
         emptyline_ascii += '\n';

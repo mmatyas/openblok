@@ -24,6 +24,10 @@ public:
     static RGBColor color(PieceType);
     static char ascii(PieceType);
 
+#ifndef NDEBUG
+    static void loadDummyMinos();
+#endif
+
 private:
     static std::unordered_map<PieceType, std::shared_ptr<Mino>, PieceTypeHash> minos;
     static std::unordered_map<PieceType, std::shared_ptr<Mino>, PieceTypeHash> ghosts;

@@ -1,27 +1,34 @@
 #include "UnitTest++/UnitTest++.h"
 
+#include "game/components/MinoStorage.h"
 #include "game/components/Piece.h"
+#include "game/components/PieceType.h"
 
+#include <bitset>
 #include <string>
-#include <iostream>
+#include <memory>
 
 
 SUITE(Piece) {
 
 struct PieceFixture {
-    Piece p;
+    std::unique_ptr<Piece> p;
+    const std::array<std::bitset<16>, 4> grid;
 
     PieceFixture()
-        : p(PieceType::I, {std::bitset<16>("1111111111111111"),
-                           std::bitset<16>("0000000000010000"),
-                           std::bitset<16>("0000000100000000"),
-                           std::bitset<16>("0001000000000000")})
-    {}
+        : grid({std::bitset<16>("1111111111111111"),
+                std::bitset<16>("0000000000010000"),
+                std::bitset<16>("0000000100000000"),
+                std::bitset<16>("0001000000000000")})
+    {
+        MinoStorage::loadDummyMinos();
+        p = std::make_unique<Piece>(PieceType::I, grid);
+    }
 };
 
 TEST_FIXTURE(PieceFixture, CtorFirstFrame)
 {
-    const auto& grid = p.currentGrid();
+    const auto& grid = p->currentGrid();
 
     for (const auto& row : grid) {
         for (const auto& col : row) {
@@ -32,8 +39,8 @@ TEST_FIXTURE(PieceFixture, CtorFirstFrame)
 
 TEST_FIXTURE(PieceFixture, RotateCW)
 {
-    p.rotateCW();
-    const auto& grid = p.currentGrid();
+    p->rotateCW();
+    const auto& grid = p->currentGrid();
 
     for (unsigned row = 0; row < 4; row++) {
         for (unsigned col = 0; col < 4; col++) {
@@ -47,8 +54,8 @@ TEST_FIXTURE(PieceFixture, RotateCW)
 
 TEST_FIXTURE(PieceFixture, RotateCCW)
 {
-    p.rotateCCW();
-    const auto& grid = p.currentGrid();
+    p->rotateCCW();
+    const auto& grid = p->currentGrid();
 
     for (unsigned row = 0; row < 4; row++) {
         for (unsigned col = 0; col < 4; col++) {
@@ -63,9 +70,9 @@ TEST_FIXTURE(PieceFixture, RotateCCW)
 TEST_FIXTURE(PieceFixture, RotateBack)
 {
     {
-        p.rotateCCW();
-        p.rotateCW();
-        const auto& grid = p.currentGrid();
+        p->rotateCCW();
+        p->rotateCW();
+        const auto& grid = p->currentGrid();
 
         for (const auto& row : grid) {
             for (const auto& col : row) {
@@ -75,9 +82,9 @@ TEST_FIXTURE(PieceFixture, RotateBack)
     }
 
     {
-        p.rotateCW();
-        p.rotateCCW();
-        const auto& grid = p.currentGrid();
+        p->rotateCW();
+        p->rotateCCW();
+        const auto& grid = p->currentGrid();
 
         for (const auto& row : grid) {
             for (const auto& col : row) {
@@ -90,11 +97,11 @@ TEST_FIXTURE(PieceFixture, RotateBack)
 TEST_FIXTURE(PieceFixture, RotateAround)
 {
     {
-        p.rotateCCW();
-        p.rotateCCW();
-        p.rotateCCW();
-        p.rotateCCW();
-        const auto& grid = p.currentGrid();
+        p->rotateCCW();
+        p->rotateCCW();
+        p->rotateCCW();
+        p->rotateCCW();
+        const auto& grid = p->currentGrid();
 
         for (const auto& row : grid) {
             for (const auto& col : row) {
@@ -104,11 +111,11 @@ TEST_FIXTURE(PieceFixture, RotateAround)
     }
 
     {
-        p.rotateCW();
-        p.rotateCW();
-        p.rotateCW();
-        p.rotateCW();
-        const auto& grid = p.currentGrid();
+        p->rotateCW();
+        p->rotateCW();
+        p->rotateCW();
+        p->rotateCW();
+        const auto& grid = p->currentGrid();
 
         for (const auto& row : grid) {
             for (const auto& col : row) {
