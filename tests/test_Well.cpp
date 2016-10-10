@@ -1,5 +1,6 @@
 #include "UnitTest++/UnitTest++.h"
 
+#include "game/components/PieceType.h"
 #include "game/components/PieceFactory.h"
 #include "game/components/Well.h"
 
@@ -48,7 +49,7 @@ TEST_FIXTURE(WellFixture, FromAscii) {
 
 TEST_FIXTURE(WellFixture, AddPiece) {
     CHECK(well.activePiece() == nullptr);
-    well.addPiece(Piece::Type::S);
+    well.addPiece(PieceType::S);
     CHECK(well.activePiece() != nullptr);
 
     std::string expected_ascii;
@@ -66,7 +67,7 @@ TEST_FIXTURE(WellFixture, AddPiece) {
 
 TEST_FIXTURE(WellFixture, Gravity) {
     CHECK(well.activePiece() == nullptr);
-    well.addPiece(Piece::Type::S);
+    well.addPiece(PieceType::S);
     CHECK(well.activePiece() != nullptr);
 
     // the piece will reach the bottom
@@ -97,7 +98,7 @@ TEST_FIXTURE(WellFixture, Gravity) {
     CHECK(well.activePiece() == nullptr);
 
     // a new piece will appear at the top
-    well.addPiece(Piece::Type::Z);
+    well.addPiece(PieceType::Z);
     well.update({}, app);
     CHECK(well.activePiece() != nullptr);
 
@@ -132,7 +133,7 @@ TEST_FIXTURE(WellFixture, Gravity) {
 
 
 TEST_FIXTURE(WellFixture, MoveLeft) {
-    well.addPiece(Piece::Type::I);
+    well.addPiece(PieceType::I);
     well.update({InputEvent(InputType::LEFT, true)}, app);
 
     std::string expected_ascii = emptyline_ascii;
@@ -146,7 +147,7 @@ TEST_FIXTURE(WellFixture, MoveLeft) {
     CHECK_EQUAL(expected_ascii, well.asAscii());
 }
 TEST_FIXTURE(WellFixture, MoveRight) {
-    well.addPiece(Piece::Type::I);
+    well.addPiece(PieceType::I);
     well.update({InputEvent(InputType::RIGHT, true)}, app);
 
     std::string expected_ascii = emptyline_ascii;
@@ -160,7 +161,7 @@ TEST_FIXTURE(WellFixture, MoveRight) {
     CHECK_EQUAL(expected_ascii, well.asAscii());
 }
 TEST_FIXTURE(WellFixture, MoveDown) {
-    well.addPiece(Piece::Type::I);
+    well.addPiece(PieceType::I);
     well.update({InputEvent(InputType::DOWN, true)}, app);
 
     std::string expected_ascii = emptyline_ascii;
@@ -177,7 +178,7 @@ TEST_FIXTURE(WellFixture, MoveDown) {
 
 TEST_FIXTURE(WellFixture, Rotate) {
     CHECK(well.activePiece() == nullptr);
-    well.addPiece(Piece::Type::S);
+    well.addPiece(PieceType::S);
     CHECK(well.activePiece() != nullptr);
 
     well.update({InputEvent(InputType::A, true)}, app);

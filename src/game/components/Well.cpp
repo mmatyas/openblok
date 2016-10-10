@@ -1,7 +1,8 @@
 #include "Well.h"
 
-#include "GameplayResources.h"
-#include "MinoFactory.h"
+#include "Mino.h"
+#include "MinoStorage.h"
+#include "Piece.h"
 #include "PieceFactory.h"
 #include "animations/CellLockAnim.h"
 #include "animations/LineClearAnim.h"
@@ -196,7 +197,7 @@ void Well::updateLockDelay()
     lock_countdown.update(GameState::frame_duration);
 }
 
-void Well::addPiece(Piece::Type type)
+void Well::addPiece(PieceType type)
 {
     // the player can only control one piece at a time
     assert(!active_piece);
@@ -343,7 +344,7 @@ bool Well::placeByWallKick()
     // try at the same row first, then floor kick
     // I pieces can kick higher
     // TODO: check max width/height instead of piece type
-    for (unsigned floor = 0; floor < (active_piece->type() == Piece::Type::I ? 3 : 2); floor++) {
+    for (unsigned floor = 0; floor < (active_piece->type() == PieceType::I ? 3 : 2); floor++) {
         // try 1 tile right
         if (!hasCollisionAt(active_piece_x + 1, active_piece_y - floor)) {
             active_piece_x++;
@@ -357,7 +358,7 @@ bool Well::placeByWallKick()
             return true;
         }
         // if I piece, also try 2 tiles left/right
-        if (active_piece->type() == Piece::Type::I) {
+        if (active_piece->type() == PieceType::I) {
             if (active_piece_x + 2 < static_cast<int>(matrix.at(0).size())
                 && !hasCollisionAt(active_piece_x + 2, active_piece_y - floor)) {
                 active_piece_x += 2;
@@ -523,9 +524,9 @@ void Well::fromAscii(const std::string& text)
     for (unsigned row = 0; row < matrix.size(); row++) {
         for (unsigned cell = 0; cell < matrix[0].size(); cell++) {
             if (text.at(str_i) == '.')
-                matrix[row][cell].release();
+                matrix[row][cell].reset();
             else
-                matrix[row][cell] = MinoFactory::make_uptr(Piece::typeFromAscii(text.at(str_i)));
+                matrix[row][cell] = MinoStorage::getMino(Piece::typeFromAscii(text.at(str_i)));
 
             str_i++;
         }
@@ -637,12 +638,10 @@ void Well::drawContent(GraphicsContext& gcx, unsigned x, unsigned y) const
                 continue;
             for (unsigned col = 0; col < 4; col++) {
                 if (active_piece->currentGrid().at(row).at(col)) {
-                    gcx.drawTexture(MinoFactory::ghostTexture(active_piece->type()), {
-                        static_cast<int>(x + (active_piece_x + col) * Mino::texture_size_px),
-                        static_cast<int>(y + (ghost_piece_y + row - 2) * Mino::texture_size_px),
-                        Mino::texture_size_px,
-                        Mino::texture_size_px
-                    });
+                    const auto& ghost = MinoStorage::getGhost(active_piece->type());
+                    ghost->draw(gcx,
+                                x + (active_piece_x + col) * Mino::texture_size_px,
+                                y + (ghost_piece_y + row - 2) * Mino::texture_size_px);
                 }
             }
         }

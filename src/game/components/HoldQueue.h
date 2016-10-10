@@ -1,10 +1,14 @@
 #pragma once
 
-#include "Piece.h"
+#include "PieceType.h"
 #include "game/Transition.h"
+
+#include <array>
+#include <memory>
 
 
 class GraphicsContext;
+class Piece;
 
 
 /// A piece holder, allows swapping the active piece once in every turn.
@@ -25,8 +29,8 @@ public:
     bool isEmpty() const { return empty; }
 
     /// Returns the currently held piece, and replaces it with the specified one.
-    Piece::Type swapWith(Piece::Type);
-    void swapWithEmpty(Piece::Type);
+    PieceType swapWith(PieceType);
+    void swapWithEmpty(PieceType);
 
     /// Update the animations
     void update();
@@ -37,7 +41,7 @@ public:
 private:
     bool swap_allowed;
     bool empty;
-    Piece::Type current_piece;
+    PieceType current_piece;
     std::array<std::unique_ptr<Piece>, 7> piece_storage;
 
     Transition<uint8_t> swapblocked_alpha;

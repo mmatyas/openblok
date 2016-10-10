@@ -1,60 +1,37 @@
 #include "Piece.h"
 
-#include "MinoFactory.h"
+#include "MinoStorage.h"
 
 #include <assert.h>
 
 
-const std::array<Piece::Type,7> Piece::allTypes {
-    Piece::Type::I,
-    Piece::Type::J,
-    Piece::Type::L,
-    Piece::Type::O,
-    Piece::Type::S,
-    Piece::Type::T,
-    Piece::Type::Z
-};
-
-char Piece::typeAsAscii(Piece::Type type) {
+PieceType Piece::typeFromAscii(char type) {
     switch(type) {
-    case Piece::Type::I : return 'I';
-    case Piece::Type::J : return 'J';
-    case Piece::Type::L : return 'L';
-    case Piece::Type::O : return 'O';
-    case Piece::Type::S : return 'S';
-    case Piece::Type::T : return 'T';
-    case Piece::Type::Z : return 'Z';
+    case 'I' : return PieceType::I;
+    case 'J' : return PieceType::J;
+    case 'L' : return PieceType::L;
+    case 'O' : return PieceType::O;
+    case 'S' : return PieceType::S;
+    case 'T' : return PieceType::T;
+    case 'Z' : return PieceType::Z;
     }
     assert(false);
 }
 
-Piece::Type Piece::typeFromAscii(char type) {
+uint8_t Piece::displayWidth(PieceType type) {
     switch(type) {
-    case 'I' : return Piece::Type::I;
-    case 'J' : return Piece::Type::J;
-    case 'L' : return Piece::Type::L;
-    case 'O' : return Piece::Type::O;
-    case 'S' : return Piece::Type::S;
-    case 'T' : return Piece::Type::T;
-    case 'Z' : return Piece::Type::Z;
+    case PieceType::I : return 4;
+    case PieceType::J : return 3;
+    case PieceType::L : return 3;
+    case PieceType::O : return 4;
+    case PieceType::S : return 3;
+    case PieceType::T : return 3;
+    case PieceType::Z : return 3;
     }
     assert(false);
 }
 
-uint8_t Piece::displayWidth(Piece::Type type) {
-    switch(type) {
-    case Piece::Type::I : return 4;
-    case Piece::Type::J : return 3;
-    case Piece::Type::L : return 3;
-    case Piece::Type::O : return 4;
-    case Piece::Type::S : return 3;
-    case Piece::Type::T : return 3;
-    case Piece::Type::Z : return 3;
-    }
-    assert(false);
-}
-
-Piece::Piece(Type type, const std::array<std::bitset<16>, 4>& gridbits)
+Piece::Piece(PieceType type, const std::array<std::bitset<16>, 4>& gridbits)
     : piece_type(type)
     , current_rotation(0)
 {
@@ -62,7 +39,7 @@ Piece::Piece(Type type, const std::array<std::bitset<16>, 4>& gridbits)
     for (size_t frame = 0; frame < 4; frame++) {
         for (size_t i = 0; i < 16; i++) {
             if (gridbits[frame].test(15 - i)) {
-                grids[frame][i / 4][i % 4] = MinoFactory::make_uptr(type);
+                grids[frame][i / 4][i % 4] = MinoStorage::getMino(type);
             }
         }
     }

@@ -2,7 +2,7 @@
 
 #include "game/AppContext.h"
 #include "game/WellEvent.h"
-#include "game/components/GameplayResources.h"
+#include "game/components/Piece.h"
 #include "system/Localize.h"
 
 #include <cmath>
@@ -115,6 +115,8 @@ SinglePlayState::SinglePlayState(AppContext& app)
     ui.sidebars.right.outer.h = ui.sidebars.right.inner.h
                               + ui.sidebars.right.padding.top + ui.sidebars.left.padding.bottom;
 }
+
+SinglePlayState::~SinglePlayState() = default;
 
 void SinglePlayState::addNextPiece()
 {

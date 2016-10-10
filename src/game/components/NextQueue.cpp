@@ -8,7 +8,7 @@
 #include <assert.h>
 
 
-std::array<Piece::Type, Piece::allTypes.size()> possible_pieces = Piece::allTypes;
+std::array<PieceType, PieceTypeList.size()> possible_pieces = PieceTypeList;
 
 NextQueue::NextQueue (unsigned displayed_piece_count)
     : displayed_piece_count(displayed_piece_count)
@@ -16,15 +16,15 @@ NextQueue::NextQueue (unsigned displayed_piece_count)
     generate_pieces();
 
     size_t i = 0;
-    for(const auto p : Piece::allTypes) {
-        piece_storage[i] = PieceFactory::make_uptr(p);
+    for(const auto ptype : PieceTypeList) {
+        piece_storage[i] = PieceFactory::make_uptr(ptype);
         i++;
     }
 }
 
-Piece::Type NextQueue::next()
+PieceType NextQueue::next()
 {
-    Piece::Type piece = piece_queue.front();
+    PieceType piece = piece_queue.front();
     piece_queue.pop_front();
     if (piece_queue.size() <= displayed_piece_count)
         generate_pieces();

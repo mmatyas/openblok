@@ -13,6 +13,8 @@
 class SinglePlayState: public GameState {
 public:
     SinglePlayState(AppContext&);
+    ~SinglePlayState();
+
     void update(const std::vector<InputEvent>&, AppContext&) final;
     void draw(GraphicsContext&) final;
 

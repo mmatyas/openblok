@@ -1,5 +1,6 @@
 #include "HoldQueue.h"
 
+#include "Mino.h"
 #include "PieceFactory.h"
 #include "game/GameState.h"
 #include "system/GraphicsContext.h"
@@ -10,7 +11,7 @@
 HoldQueue::HoldQueue()
     : swap_allowed(true)
     , empty(true)
-    , current_piece(Piece::allTypes.at(0))
+    , current_piece(PieceTypeList.at(0))
     , swapblocked_alpha(std::chrono::milliseconds(500), [](double t){
             return static_cast<uint8_t>((1.0 - t) * 0xFF);
         },
@@ -19,8 +20,8 @@ HoldQueue::HoldQueue()
     swapblocked_alpha.stop();
 
     size_t i = 0;
-    for(const auto p : Piece::allTypes) {
-        piece_storage[i] = PieceFactory::make_uptr(p);
+    for(const auto ptype : PieceTypeList) {
+        piece_storage[i] = PieceFactory::make_uptr(ptype);
         i++;
     }
 }
@@ -36,7 +37,7 @@ void HoldQueue::onNextTurn()
     swap_allowed = true;
 }
 
-Piece::Type HoldQueue::swapWith(Piece::Type other)
+PieceType HoldQueue::swapWith(PieceType other)
 {
     // TODO: use optional
     assert(!empty);
@@ -51,7 +52,7 @@ Piece::Type HoldQueue::swapWith(Piece::Type other)
     return prev;
 }
 
-void HoldQueue::swapWithEmpty(Piece::Type other)
+void HoldQueue::swapWithEmpty(PieceType other)
 {
     // TODO: use optional
     assert(empty);

@@ -5,7 +5,7 @@
 #include <assert.h>
 
 
-std::unique_ptr<Piece> PieceFactory::make_uptr(Piece::Type type)
+std::unique_ptr<Piece> PieceFactory::make_uptr(PieceType type)
 {
     // SRS rotation - TODO: plugin                                      // AAAABBBBCCCCDDDD
     static const std::array<std::bitset<16>, 4> grid_I = {std::bitset<16>("0000111100000000"),
@@ -38,13 +38,13 @@ std::unique_ptr<Piece> PieceFactory::make_uptr(Piece::Type type)
                                                           std::bitset<16>("0100110010000000")};
 
     switch(type) {
-    case Piece::Type::I : return std::make_unique<Piece>(type, grid_I);
-    case Piece::Type::J : return std::make_unique<Piece>(type, grid_J);
-    case Piece::Type::L : return std::make_unique<Piece>(type, grid_L);
-    case Piece::Type::O : return std::make_unique<Piece>(type, grid_O);
-    case Piece::Type::S : return std::make_unique<Piece>(type, grid_S);
-    case Piece::Type::T : return std::make_unique<Piece>(type, grid_T);
-    case Piece::Type::Z : return std::make_unique<Piece>(type, grid_Z);
+    case PieceType::I : return std::make_unique<Piece>(type, grid_I);
+    case PieceType::J : return std::make_unique<Piece>(type, grid_J);
+    case PieceType::L : return std::make_unique<Piece>(type, grid_L);
+    case PieceType::O : return std::make_unique<Piece>(type, grid_O);
+    case PieceType::S : return std::make_unique<Piece>(type, grid_S);
+    case PieceType::T : return std::make_unique<Piece>(type, grid_T);
+    case PieceType::Z : return std::make_unique<Piece>(type, grid_Z);
     default:
         assert(false);
     }

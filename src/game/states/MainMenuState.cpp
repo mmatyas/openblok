@@ -2,16 +2,17 @@
 
 #include "SinglePlayState.h"
 #include "game/AppContext.h"
-#include "game/components/GameplayResources.h"
+#include "game/components/MinoStorage.h"
 
 
-MainMenuState::MainMenuState(AppContext&)
+MainMenuState::MainMenuState(AppContext& app)
 {
+    MinoStorage::loadTintedMinos(app.gcx(), "data/mino.png");
+    MinoStorage::loadTintedGhosts(app.gcx(), "data/ghost.png");
 }
 
 void MainMenuState::update(const std::vector<InputEvent>&, AppContext& app)
 {
-    GameplayResources::Textures::loadAll(app.gcx());
     app.states().emplace(std::make_unique<SinglePlayState>(app));
 }
 

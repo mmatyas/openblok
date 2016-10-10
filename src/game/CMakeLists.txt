@@ -2,10 +2,9 @@ set(MOD_GAME_SRC
 	AppContext.cpp
 	CommonResources.cpp
 	GameState.cpp
-	components/GameplayResources.cpp
 	components/HoldQueue.cpp
 	components/Mino.cpp
-	components/MinoFactory.cpp
+	components/MinoStorage.cpp
 	components/NextQueue.cpp
 	components/Piece.cpp
 	components/PieceFactory.cpp
@@ -24,13 +23,13 @@ set(MOD_GAME_H
 	Matrix.h
 	Timing.h
 	Transition.h
-	components/GameplayResources.h
 	components/HoldQueue.h
 	components/Mino.h
-	components/MinoFactory.h
+	components/MinoStorage.h
 	components/NextQueue.h
 	components/Piece.h
 	components/PieceFactory.h
+	components/PieceType.h
 	components/Well.h
 	components/animations/WellAnimation.h
 	components/animations/CellLockAnim.h

@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Mino.h"
-#include "Piece.h"
 #include "animations/WellAnimation.h"
 #include "game/Matrix.h"
 #include "game/Transition.h"
@@ -18,6 +16,9 @@
 
 
 class AppContext;
+class Mino;
+class Piece;
+enum class PieceType : uint8_t;
 
 
 constexpr Duration GRAVITY_20G = frame_duration_60Hz / 20;
@@ -32,7 +33,7 @@ public:
     void update(const std::vector<InputEvent>&, AppContext&);
 
     /// Add a new, player-controllable piece to the well.
-    void addPiece(Piece::Type);
+    void addPiece(PieceType);
     /// Delete the currently controlled Piece. A new one will be requested eventually.
     void deletePiece();
     /// Returns the current, active piece, controllable by the player.
@@ -69,7 +70,7 @@ private:
 
     // the grid matrix
     // TODO: set dimensions from config
-    Matrix<std::unique_ptr<Mino>, 22, 10> matrix;
+    Matrix<std::shared_ptr<Mino>, 22, 10> matrix;
 
     // the active piece
     int8_t active_piece_x;
