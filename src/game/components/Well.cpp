@@ -166,6 +166,8 @@ void Well::handleKeys(const std::vector<InputEvent>& events)
         moveDownNow();
         skip_gravity = true;
         softdrop_timer = softdrop_delay;
+        if (active_piece && !lock_countdown.running())
+            notify(WellEvent(WellEvent::Type::SOFTDROPPED));
     }
 }
 
@@ -330,10 +332,15 @@ void Well::hardDrop()
 {
     assert(active_piece);
 
+    WellEvent harddrop_event(WellEvent::Type::HARDDROPPED);
+    harddrop_event.count = ghost_piece_y - active_piece_y;
+
     active_piece_y = ghost_piece_y;
     moveDownNow();
     if (harddrop_locks_instantly)
         lockThenRequestNext();
+
+    notify(harddrop_event);
 }
 
 bool Well::placeByWallKick()

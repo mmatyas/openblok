@@ -10,6 +10,16 @@
 #include <string>
 
 
+enum ScoreTypes {
+    LINE_CLEAR_SINGLE = 1,
+    LINE_CLEAR_DOUBLE = 2,
+    LINE_CLEAR_TRIPLE = 3,
+    LINE_CLEAR_PERFECT = 4,
+    SOFTDROP,
+    HARDDROP
+};
+
+
 class SinglePlayState: public GameState {
 public:
     SinglePlayState(AppContext&);
@@ -50,8 +60,10 @@ private:
     unsigned current_score;
     Duration gametime;
     std::string gametime_text;
+    std::unordered_map<ScoreTypes, unsigned, std::hash<size_t>> score_table;
 
     void addNextPiece();
+
 
     // TODO: create a ui element tree
     struct Layout {

@@ -9,12 +9,14 @@ struct WellEvent {
         NEXT_REQUESTED,
         HOLD_REQUESTED,
         LINE_CLEAR,
+        SOFTDROPPED,
+        HARDDROPPED,
         GAME_OVER,
     };
 
     Type type;
     union {
-        struct /* LINE_CLEAR */ {
+        struct /* LINE_CLEAR, HARDDROPPED */ {
             uint8_t count;
         };
     };

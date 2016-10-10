@@ -20,6 +20,14 @@ SinglePlayState::SinglePlayState(AppContext& app)
     , current_score(0)
     , gametime(Duration::zero())
     , gametime_text("00:00")
+    , score_table({
+            {LINE_CLEAR_SINGLE, 100},
+            {LINE_CLEAR_DOUBLE, 200},
+            {LINE_CLEAR_TRIPLE, 500},
+            {LINE_CLEAR_PERFECT, 800},
+            {SOFTDROP, 1},
+            {HARDDROP, 2}
+        })
 {
     board.registerObserver(WellEvent::Type::NEXT_REQUESTED, [this](const WellEvent&){
         this->addNextPiece();
@@ -47,6 +55,10 @@ SinglePlayState::SinglePlayState(AppContext& app)
         this->texts_need_update = true;
         this->lineclears_left -= event.count;
 
+        // increase score
+        this->current_score += this->score_table.at(static_cast<ScoreTypes>(event.count))
+                               * this->current_level;
+
         // increase gravity level
         if (this->lineclears_left <= 0) {
             if (this->gravity_levels.size() <= 1) {
@@ -58,6 +70,17 @@ SinglePlayState::SinglePlayState(AppContext& app)
             this->lineclears_left += lineclears_per_level;
             this->current_level++;
         }
+    });
+
+    board.registerObserver(WellEvent::Type::HARDDROPPED, [this](const WellEvent& event){
+        assert(event.count < 22);
+        this->texts_need_update = true;
+        this->current_score += event.count * this->score_table.at(HARDDROP);
+    });
+
+    board.registerObserver(WellEvent::Type::SOFTDROPPED, [this](const WellEvent&){
+        this->texts_need_update = true;
+        this->current_score += this->score_table.at(SOFTDROP);
     });
 
     board.registerObserver(WellEvent::Type::GAME_OVER, [this](const WellEvent&){
@@ -198,6 +221,8 @@ void SinglePlayState::update(const std::vector<InputEvent>& inputs, AppContext& 
         app.gcx().renderText(tex_goal_counter, std::to_string(lineclears_left),
                              font_boxcontent, 0xEEEEEE_rgb);
         app.gcx().renderText(tex_level_counter, std::to_string(current_level),
+                             font_boxcontent, 0xEEEEEE_rgb);
+        app.gcx().renderText(tex_score_counter, std::to_string(current_score),
                              font_boxcontent, 0xEEEEEE_rgb);
         texts_need_update = false;
     }
