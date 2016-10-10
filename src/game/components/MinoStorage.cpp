@@ -8,6 +8,7 @@
 
 std::unordered_map<PieceType, std::shared_ptr<Mino>, PieceTypeHash> MinoStorage::minos;
 std::unordered_map<PieceType, std::shared_ptr<Mino>, PieceTypeHash> MinoStorage::ghosts;
+std::shared_ptr<Mino> MinoStorage::matrixcell;
 
 
 void MinoStorage::loadTintedMinos(GraphicsContext& gcx, const std::string& path)
@@ -22,6 +23,11 @@ void MinoStorage::loadTintedGhosts(GraphicsContext& gcx, const std::string& path
         ghosts[type] = std::make_shared<Mino>(gcx.loadTexture(path, color(type)), 'g');
 }
 
+void MinoStorage::loadMatrixCell(GraphicsContext& gcx, const std::string& path)
+{
+    matrixcell = std::make_shared<Mino>(gcx.loadTexture(path), '.');
+}
+
 std::shared_ptr<Mino> MinoStorage::getMino(PieceType type)
 {
     assert(minos.count(type));
@@ -32,6 +38,12 @@ std::shared_ptr<Mino> MinoStorage::getGhost(PieceType type)
 {
     assert(ghosts.count(type));
     return ghosts.at(type);
+}
+
+std::shared_ptr<Mino> MinoStorage::getMatrixCell()
+{
+    assert(matrixcell);
+    return matrixcell;
 }
 
 RGBColor MinoStorage::color(PieceType type)

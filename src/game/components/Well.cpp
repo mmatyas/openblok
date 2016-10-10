@@ -603,16 +603,14 @@ std::string Well::asAscii() const
 
 void Well::drawBackground(GraphicsContext& gcx, unsigned x, unsigned y) const
 {
-    /*for (size_t row = 0; row < 20; row++) {
+    const auto& cell = MinoStorage::getMatrixCell();
+    for (size_t row = 0; row < 20; row++) {
         for (size_t col = 0; col < 10; col++) {
-            gcx.drawTexture(GameplayResources::Textures::MATRIXBG, {
-                static_cast<int>(x + col * Mino::texture_size_px),
-                static_cast<int>(y + row * Mino::texture_size_px),
-                Mino::texture_size_px,
-                Mino::texture_size_px
-            });
+            cell->draw(gcx,
+                       x + col * Mino::texture_size_px,
+                       y + row * Mino::texture_size_px);
         }
-    }*/
+    }
 }
 
 void Well::drawContent(GraphicsContext& gcx, unsigned x, unsigned y) const
@@ -637,10 +635,10 @@ void Well::drawContent(GraphicsContext& gcx, unsigned x, unsigned y) const
                 continue;
             for (unsigned col = 0; col < 4; col++) {
                 if (active_piece->currentGrid().at(row).at(col)) {
-                    const auto& ghost = MinoStorage::getGhost(active_piece->type());
-                    ghost->draw(gcx,
-                                x + (active_piece_x + col) * Mino::texture_size_px,
-                                y + (ghost_piece_y + row - 2) * Mino::texture_size_px);
+                    const auto& cell = MinoStorage::getGhost(active_piece->type());
+                    cell->draw(gcx,
+                               x + (active_piece_x + col) * Mino::texture_size_px,
+                               y + (ghost_piece_y + row - 2) * Mino::texture_size_px);
                 }
             }
         }
