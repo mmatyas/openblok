@@ -107,9 +107,9 @@ SinglePlayState::SinglePlayState(AppContext& app)
 
     // UI
 
-    font_boxtitle = app.gcx().loadFont("data/fonts/regular-light.otf", 28);
-    font_boxcontent = app.gcx().loadFont("data/fonts/regular-bold.otf", 30);
-    font_big = app.gcx().loadFont("data/fonts/regular-bold.otf", 50);
+    font_boxtitle = app.gcx().loadFont("data/fonts/OpenSans-CondLight.ttf", 28);
+    font_boxcontent = app.gcx().loadFont("data/fonts/OpenSans-CondBold.ttf", 30);
+    font_big = app.gcx().loadFont("data/fonts/OpenSans-CondBold.ttf", 60);
 
 
     tex_hold = app.gcx().renderText(tr("HOLD"), font_boxtitle, 0xEEEEEE_rgb);
@@ -293,7 +293,7 @@ void SinglePlayState::drawLeftSidebar(GraphicsContext& gcx)
     gcx.drawTexture(tex_goal_counter,
                     ui.sidebars.left.items.goal_counter.x
                     + (ui.sidebars.left.items.goal_counter.w - gcx.textureWidth(tex_goal_counter)) / 2,
-                    ui.sidebars.left.items.goal_counter.y + 5);
+                    ui.sidebars.left.items.goal_counter.y + 3);
     gcx.drawTexture(tex_goal, ui.sidebars.left.items.goal_counter.x,
                     ui.sidebars.left.items.goal_counter.y
                     - ui.sidebars.text_padding - ui.sidebars.text_height);
@@ -303,7 +303,7 @@ void SinglePlayState::drawLeftSidebar(GraphicsContext& gcx)
     gcx.drawTexture(tex_level_counter,
                     ui.sidebars.left.items.level_counter.x
                     + (ui.sidebars.left.items.level_counter.w - gcx.textureWidth(tex_level_counter)) / 2,
-                    ui.sidebars.left.items.level_counter.y + 5);
+                    ui.sidebars.left.items.level_counter.y + 3);
     gcx.drawTexture(tex_level, ui.sidebars.left.items.level_counter.x,
                     ui.sidebars.left.items.level_counter.y
                     - ui.sidebars.text_padding - ui.sidebars.text_height);
@@ -323,7 +323,7 @@ void SinglePlayState::drawRightSidebar(GraphicsContext& gcx)
     gcx.drawTexture(tex_score_counter,
                     ui.sidebars.right.items.score_counter.x
                     + (ui.sidebars.right.items.score_counter.w - gcx.textureWidth(tex_score_counter)) / 2,
-                    ui.sidebars.right.items.score_counter.y + 5);
+                    ui.sidebars.right.items.score_counter.y + 3);
     gcx.drawTexture(tex_score,
                     ui.sidebars.right.items.score_counter.x
                     + ui.sidebars.right.inner.w - gcx.textureWidth(tex_score),
@@ -335,7 +335,7 @@ void SinglePlayState::drawRightSidebar(GraphicsContext& gcx)
     gcx.drawTexture(tex_time_counter,
                     ui.sidebars.right.items.time_counter.x
                     + (ui.sidebars.right.items.time_counter.w - gcx.textureWidth(tex_time_counter)) / 2,
-                    ui.sidebars.right.items.time_counter.y + 5);
+                    ui.sidebars.right.items.time_counter.y + 3);
 }
 
 void SinglePlayState::draw(GraphicsContext& gcx)
