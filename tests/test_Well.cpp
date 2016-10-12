@@ -35,6 +35,7 @@ TEST_FIXTURE(WellFixture, EmptyOnCreate) {
         expected_ascii += emptyline_ascii;
 
     CHECK_EQUAL(expected_ascii, well.asAscii());
+    CHECK(well.activePiece() == nullptr);
 }
 
 TEST_FIXTURE(WellFixture, FromAscii) {
@@ -51,9 +52,8 @@ TEST_FIXTURE(WellFixture, FromAscii) {
 }
 
 TEST_FIXTURE(WellFixture, AddPiece) {
-    CHECK(well.activePiece() == nullptr);
     well.addPiece(PieceType::S);
-    CHECK(well.activePiece() != nullptr);
+    REQUIRE CHECK(well.activePiece() != nullptr);
 
     std::string expected_ascii;
     expected_ascii += emptyline_ascii;
@@ -69,9 +69,8 @@ TEST_FIXTURE(WellFixture, AddPiece) {
 }
 
 TEST_FIXTURE(WellFixture, Gravity) {
-    CHECK(well.activePiece() == nullptr);
     well.addPiece(PieceType::S);
-    CHECK(well.activePiece() != nullptr);
+    REQUIRE CHECK(well.activePiece() != nullptr);
 
     // the piece will reach the bottom
     for (unsigned i = 0; i < 18 * gravity_delay_frames; i++)
@@ -98,12 +97,12 @@ TEST_FIXTURE(WellFixture, Gravity) {
     expected_ascii += "...SS.....\n";
 
     CHECK_EQUAL(expected_ascii, well.asAscii());
-    CHECK(well.activePiece() == nullptr);
+    REQUIRE CHECK(well.activePiece() == nullptr);
 
     // a new piece will appear at the top
     well.addPiece(PieceType::Z);
     well.update({}, app);
-    CHECK(well.activePiece() != nullptr);
+    REQUIRE CHECK(well.activePiece() != nullptr);
 
     expected_ascii = emptyline_ascii;
     expected_ascii += emptyline_ascii;
