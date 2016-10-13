@@ -1,9 +1,9 @@
 #pragma once
 
 #include "game/GameState.h"
-#include "game/components/singleplayer/LeftSidebarBox.h"
-#include "game/components/singleplayer/RightSidebarBox.h"
-#include "game/components/singleplayer/WellBox.h"
+#include "game/layout/singleplayer/LeftSidebarBox.h"
+#include "game/layout/singleplayer/RightSidebarBox.h"
+#include "game/layout/singleplayer/WellBox.h"
 
 #include <stack>
 #include <string>
