@@ -12,7 +12,7 @@ SinglePlayState::SinglePlayState(AppContext& app)
     : paused(false)
     , gameover(false)
     , tex_background(app.gcx().loadTexture("data/gamebg.png"))
-    , texts_need_update(false)
+    , texts_need_update(true)
     , ui_well(app)
     , ui_leftside(app, ui_well.height())
     , ui_rightside(app, ui_well.height())
@@ -40,8 +40,6 @@ SinglePlayState::SinglePlayState(AppContext& app)
 
     addNextPiece();
     ui_well.well().setGravity(gravity_levels.top());
-
-    texts_need_update = false;
 }
 
 SinglePlayState::~SinglePlayState() = default;
