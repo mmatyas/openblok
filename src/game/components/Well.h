@@ -1,6 +1,5 @@
 #pragma once
 
-#include "animations/WellAnimation.h"
 #include "game/Matrix.h"
 #include "game/Transition.h"
 #include "game/WellEvent.h"
@@ -16,8 +15,10 @@
 
 
 class AppContext;
+class GraphicsContext;
 class Mino;
 class Piece;
+class WellAnimation;
 enum class PieceType : uint8_t;
 
 
@@ -28,6 +29,7 @@ class Well {
 public:
     /// Create a new well
     Well();
+    ~Well();
 
     /// Update the well
     void update(const std::vector<InputEvent>&, AppContext&);

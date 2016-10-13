@@ -9,7 +9,6 @@
 #include "game/Timing.h"
 #include "game/WellEvent.h"
 #include "system/GraphicsContext.h"
-#include "system/InputEvent.h"
 
 #include <assert.h>
 
@@ -43,6 +42,8 @@ Well::Well()
     keystates[InputType::B] = false;
     previous_keystates = keystates;
 }
+
+Well::~Well() = default;
 
 void Well::update(const std::vector<InputEvent>& events, AppContext&)
 {

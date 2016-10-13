@@ -1,14 +1,13 @@
 #pragma once
 
-#include <chrono>
+#include "game/Timing.h"
+
 #include <functional>
 #include <assert.h>
 
 
 class TransitionBase {
 public:
-    using Duration = std::chrono::steady_clock::duration;
-
     virtual ~TransitionBase() {};
 
     /// Returns true if the transition did not finish yet.
@@ -114,8 +113,6 @@ private:
 
 template<>
 class Transition<void> : public TransitionBase {
-    using Duration = std::chrono::steady_clock::duration;
-
 public:
      Transition(Duration duration, std::function<void(double)> on_update, std::function<void()> on_end = [](){})
         : TransitionBase(duration, on_end)

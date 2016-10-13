@@ -5,7 +5,6 @@
 #include "game/components/NextQueue.h"
 #include "game/components/Well.h"
 
-#include <chrono>
 #include <stack>
 #include <string>
 
@@ -29,8 +28,6 @@ public:
     void draw(GraphicsContext&) final;
 
 private:
-    using Duration = std::chrono::steady_clock::duration;
-
     bool paused;
     bool gameover;
     FontID font_boxtitle;
@@ -63,6 +60,7 @@ private:
     std::unordered_map<ScoreTypes, unsigned, std::hash<size_t>> score_table;
     ScoreTypes previous_lineclear_type;
 
+    void registerObservers();
     void addNextPiece();
 
 

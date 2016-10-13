@@ -30,6 +30,63 @@ SinglePlayState::SinglePlayState(AppContext& app)
         })
     , previous_lineclear_type(LINE_CLEAR_SINGLE)
 {
+    registerObservers();
+
+    // TODO: consider alternative algorithm
+    for (int i = 14; i >= 0; i--) {
+        float multiplier = std::pow(0.8 - (i * 0.007), i);
+        gravity_levels.push(std::chrono::duration_cast<Duration>(multiplier * std::chrono::seconds(1)));
+    }
+
+    addNextPiece();
+    board.setGravity(gravity_levels.top());
+
+
+    // UI
+
+    font_boxtitle = app.gcx().loadFont("data/fonts/OpenSans-CondLight.ttf", 28);
+    font_boxcontent = app.gcx().loadFont("data/fonts/OpenSans-CondBold.ttf", 30);
+    font_big = app.gcx().loadFont("data/fonts/OpenSans-CondBold.ttf", 60);
+
+
+    tex_hold = app.gcx().renderText(tr("HOLD"), font_boxtitle, 0xEEEEEE_rgb);
+    tex_next = app.gcx().renderText(tr("NEXT"), font_boxtitle, 0xEEEEEE_rgb);
+    tex_goal = app.gcx().renderText(tr("GOAL"), font_boxtitle, 0xEEEEEE_rgb);
+    tex_level = app.gcx().renderText(tr("LEVEL"), font_boxtitle, 0xEEEEEE_rgb);
+    tex_goal_counter = app.gcx().renderText(std::to_string(lineclears_left), font_boxcontent, 0xEEEEEE_rgb);
+    tex_level_counter = app.gcx().renderText(std::to_string(current_level), font_boxcontent, 0xEEEEEE_rgb);
+    tex_score = app.gcx().renderText(tr("SCORE"), font_boxtitle, 0xEEEEEE_rgb);
+    tex_score_counter = app.gcx().renderText(std::to_string(current_score), font_boxcontent, 0xEEEEEE_rgb);
+    tex_time_counter = app.gcx().renderText(gametime_text, font_boxcontent, 0xEEEEEE_rgb);
+    tex_pause = app.gcx().renderText(tr("PAUSE"), font_big, 0xEEEEEE_rgb);
+
+
+    ui.well.inner.w = 10 * Mino::texture_size_px;
+    ui.well.inner.h = 20 * Mino::texture_size_px;
+    ui.well.outer.w = ui.well.inner.w + ui.well.border.width * 2;
+    ui.well.outer.h = ui.well.inner.h + ui.well.border.width * 2;
+
+    ui.sidebars.left.inner.w = 5 * Mino::texture_size_px;
+    ui.sidebars.left.inner.h = ui.well.outer.h;
+    ui.sidebars.left.padding = {0, 10, 0, 0};
+    ui.sidebars.left.outer.w = ui.sidebars.left.inner.w
+                             + ui.sidebars.left.padding.left + ui.sidebars.left.padding.right;
+    ui.sidebars.left.outer.h = ui.sidebars.left.inner.h
+                             + ui.sidebars.left.padding.top + ui.sidebars.left.padding.bottom;
+
+    ui.sidebars.right.inner.w = 5 * Mino::texture_size_px;
+    ui.sidebars.right.inner.h = ui.well.outer.h;
+    ui.sidebars.right.padding = {0, 0, 0, 10};
+    ui.sidebars.right.outer.w = ui.sidebars.right.inner.w
+                              + ui.sidebars.right.padding.left + ui.sidebars.left.padding.right;
+    ui.sidebars.right.outer.h = ui.sidebars.right.inner.h
+                              + ui.sidebars.right.padding.top + ui.sidebars.left.padding.bottom;
+}
+
+SinglePlayState::~SinglePlayState() = default;
+
+void SinglePlayState::registerObservers()
+{
     board.registerObserver(WellEvent::Type::NEXT_REQUESTED, [this](const WellEvent&){
         this->addNextPiece();
     });
@@ -93,60 +150,7 @@ SinglePlayState::SinglePlayState(AppContext& app)
     board.registerObserver(WellEvent::Type::GAME_OVER, [this](const WellEvent&){
         gameover = true;
     });
-
-
-    // TODO: consider alternative algorithm
-    for (int i = 14; i >= 0; i--) {
-        float multiplier = std::pow(0.8 - (i * 0.007), i);
-        gravity_levels.push(std::chrono::duration_cast<Duration>(multiplier * std::chrono::seconds(1)));
-    }
-
-    addNextPiece();
-    board.setGravity(gravity_levels.top());
-
-
-    // UI
-
-    font_boxtitle = app.gcx().loadFont("data/fonts/OpenSans-CondLight.ttf", 28);
-    font_boxcontent = app.gcx().loadFont("data/fonts/OpenSans-CondBold.ttf", 30);
-    font_big = app.gcx().loadFont("data/fonts/OpenSans-CondBold.ttf", 60);
-
-
-    tex_hold = app.gcx().renderText(tr("HOLD"), font_boxtitle, 0xEEEEEE_rgb);
-    tex_next = app.gcx().renderText(tr("NEXT"), font_boxtitle, 0xEEEEEE_rgb);
-    tex_goal = app.gcx().renderText(tr("GOAL"), font_boxtitle, 0xEEEEEE_rgb);
-    tex_level = app.gcx().renderText(tr("LEVEL"), font_boxtitle, 0xEEEEEE_rgb);
-    tex_goal_counter = app.gcx().renderText(std::to_string(lineclears_left), font_boxcontent, 0xEEEEEE_rgb);
-    tex_level_counter = app.gcx().renderText(std::to_string(current_level), font_boxcontent, 0xEEEEEE_rgb);
-    tex_score = app.gcx().renderText(tr("SCORE"), font_boxtitle, 0xEEEEEE_rgb);
-    tex_score_counter = app.gcx().renderText(std::to_string(current_score), font_boxcontent, 0xEEEEEE_rgb);
-    tex_time_counter = app.gcx().renderText(gametime_text, font_boxcontent, 0xEEEEEE_rgb);
-    tex_pause = app.gcx().renderText(tr("PAUSE"), font_big, 0xEEEEEE_rgb);
-
-
-    ui.well.inner.w = 10 * Mino::texture_size_px;
-    ui.well.inner.h = 20 * Mino::texture_size_px;
-    ui.well.outer.w = ui.well.inner.w + ui.well.border.width * 2;
-    ui.well.outer.h = ui.well.inner.h + ui.well.border.width * 2;
-
-    ui.sidebars.left.inner.w = 5 * Mino::texture_size_px;
-    ui.sidebars.left.inner.h = ui.well.outer.h;
-    ui.sidebars.left.padding = {0, 10, 0, 0};
-    ui.sidebars.left.outer.w = ui.sidebars.left.inner.w
-                             + ui.sidebars.left.padding.left + ui.sidebars.left.padding.right;
-    ui.sidebars.left.outer.h = ui.sidebars.left.inner.h
-                             + ui.sidebars.left.padding.top + ui.sidebars.left.padding.bottom;
-
-    ui.sidebars.right.inner.w = 5 * Mino::texture_size_px;
-    ui.sidebars.right.inner.h = ui.well.outer.h;
-    ui.sidebars.right.padding = {0, 0, 0, 10};
-    ui.sidebars.right.outer.w = ui.sidebars.right.inner.w
-                              + ui.sidebars.right.padding.left + ui.sidebars.left.padding.right;
-    ui.sidebars.right.outer.h = ui.sidebars.right.inner.h
-                              + ui.sidebars.right.padding.top + ui.sidebars.left.padding.bottom;
 }
-
-SinglePlayState::~SinglePlayState() = default;
 
 void SinglePlayState::addNextPiece()
 {
