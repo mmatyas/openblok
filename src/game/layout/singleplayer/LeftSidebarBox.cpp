@@ -63,14 +63,14 @@ void LeftSidebarBox::draw(GraphicsContext& gcx) const
     gcx.drawFilledRect(rect_goal, box_color);
     gcx.drawTexture(tex_goal_counter,
                       rect_goal.x + (rect_goal.w - gcx.textureWidth(tex_goal_counter)) / 2,
-                      rect_goal.y + 3);
+                      rect_goal.y + 5);
     gcx.drawTexture(tex_goal, rect_goal.x, rect_goal.y - text_padding - text_height);
 
     // level
     gcx.drawFilledRect(rect_level, box_color);
     gcx.drawTexture(tex_level_counter,
                       rect_level.x + (rect_level.w - gcx.textureWidth(tex_level_counter)) / 2,
-                      rect_level.y + 3);
+                      rect_level.y + 5);
     gcx.drawTexture(tex_level, rect_level.x, rect_level.y - text_padding - text_height);
 }
 

@@ -77,7 +77,7 @@ void RightSidebarBox::draw(GraphicsContext& gcx) const
     gcx.drawFilledRect(rect_score, box_color);
     gcx.drawTexture(tex_score_counter,
                     rect_score.x + (rect_score.w - gcx.textureWidth(tex_score_counter)) / 2,
-                    rect_score.y + 3);
+                    rect_score.y + 5);
     gcx.drawTexture(tex_score,
                     rect_score.x + width() - gcx.textureWidth(tex_score),
                     rect_score.y - text_padding - text_height);
@@ -86,7 +86,7 @@ void RightSidebarBox::draw(GraphicsContext& gcx) const
     gcx.drawFilledRect(rect_time, box_color);
     gcx.drawTexture(tex_time_counter,
                     rect_time.x + (rect_time.w - gcx.textureWidth(tex_time_counter)) / 2,
-                    rect_time.y + 3);
+                    rect_time.y + 5);
 }
 
 } // namespace Layout
