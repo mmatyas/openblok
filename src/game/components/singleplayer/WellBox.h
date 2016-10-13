@@ -1,7 +1,7 @@
 #pragma once
 
+#include "Box.h"
 #include "game/components/Well.h"
-#include "system/GraphicsContext.h"
 
 #include <vector>
 
@@ -9,24 +9,17 @@
 class AppContext;
 
 namespace Layout {
-class WellBox {
+class WellBox : public Layout::Box {
 public:
     WellBox(AppContext&);
 
-    void setPosition(uint16_t x, uint16_t y);
+    void setPosition(uint16_t x, uint16_t y) override;
     void update(const std::vector<InputEvent>&, AppContext&);
     void draw(GraphicsContext&, bool paused) const;
 
     Well& well() { return m_well; }
 
-    uint16_t x() const { return bounding_box.x; }
-    uint16_t y() const { return bounding_box.y; }
-    uint16_t width() const { return bounding_box.w; }
-    uint16_t height() const { return bounding_box.h; }
-
 private:
-    ::Rectangle bounding_box;
-
     Well m_well;
 
     FontID font_big;

@@ -15,6 +15,7 @@ class Piece;
 class HoldQueue {
 public:
     HoldQueue();
+    ~HoldQueue();
 
     /// Notify the holder that someone would like to swap.
     void onSwapRequested();
@@ -36,7 +37,7 @@ public:
     void update();
 
     /// Draw the current holded piece at (x,y), if any.
-    void draw(GraphicsContext&, int x, int y);
+    void draw(GraphicsContext&, int x, int y) const;
 
 private:
     bool swap_allowed;

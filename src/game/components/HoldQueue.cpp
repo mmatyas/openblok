@@ -26,6 +26,8 @@ HoldQueue::HoldQueue()
     }
 }
 
+HoldQueue::~HoldQueue() = default;
+
 void HoldQueue::onSwapRequested()
 {
     if (!swap_allowed)
@@ -69,7 +71,7 @@ void HoldQueue::update()
     swapblocked_alpha.update(Timing::frame_duration);
 }
 
-void HoldQueue::draw(GraphicsContext& gcx, int x, int y)
+void HoldQueue::draw(GraphicsContext& gcx, int x, int y) const
 {
     gcx.drawFilledRect({x, y, 5 * Mino::texture_size_px, 4 * Mino::texture_size_px}, 0x0A0AFF80_rgba);
 

@@ -1,8 +1,8 @@
 #pragma once
 
 #include "game/GameState.h"
-#include "game/components/HoldQueue.h"
 #include "game/components/NextQueue.h"
+#include "game/components/singleplayer/LeftSidebarBox.h"
 #include "game/components/singleplayer/WellBox.h"
 
 #include <stack>
@@ -34,20 +34,15 @@ private:
     FontID font_boxcontent;
     FontID font_big;
     TextureID tex_background;
-    TextureID tex_hold;
     TextureID tex_next;
-    TextureID tex_goal;
-    TextureID tex_goal_counter;
-    TextureID tex_level;
-    TextureID tex_level_counter;
     TextureID tex_score;
     TextureID tex_score_counter;
     TextureID tex_time_counter;
     bool texts_need_update;
 
     Layout::WellBox ui_well;
+    Layout::LeftSidebarBox ui_leftside;
 
-    HoldQueue piece_holder;
     NextQueue next_pieces;
 
     const unsigned lineclears_per_level;
@@ -85,24 +80,12 @@ private:
                 Padding padding;
 
                 struct {
-                    Rectangle level_counter;
-                    Rectangle goal_counter;
-                } items;
-            } left;
-
-            struct {
-                Rectangle inner;
-                Rectangle outer;
-                Padding padding;
-
-                struct {
                     Rectangle time_counter;
                     Rectangle score_counter;
                 } items;
             } right;
         } sidebars;
     } ui;
-    void drawLeftSidebar(GraphicsContext&);
     void drawRightSidebar(GraphicsContext&);
     void updateGametime(AppContext&);
 };
