@@ -3,7 +3,7 @@
 #include "game/GameState.h"
 #include "game/components/HoldQueue.h"
 #include "game/components/NextQueue.h"
-#include "game/components/Well.h"
+#include "game/components/singleplayer/WellBox.h"
 
 #include <stack>
 #include <string>
@@ -43,12 +43,12 @@ private:
     TextureID tex_score;
     TextureID tex_score_counter;
     TextureID tex_time_counter;
-    TextureID tex_pause;
     bool texts_need_update;
+
+    Layout::WellBox ui_well;
 
     HoldQueue piece_holder;
     NextQueue next_pieces;
-    Well board;
 
     const unsigned lineclears_per_level;
     int lineclears_left;
@@ -72,20 +72,6 @@ private:
             int bottom;
             int left;
         };
-        struct Border {
-            const int width = 5;
-            Rectangle left;
-            Rectangle right;
-            Rectangle top;
-            Rectangle bottom;
-        };
-
-        struct _well {
-            Rectangle inner;
-            Rectangle outer;
-
-            Border border;
-        } well;
 
         struct _sidebars {
             const int text_height = 30;
@@ -116,7 +102,6 @@ private:
             } right;
         } sidebars;
     } ui;
-    void drawWell(GraphicsContext&);
     void drawLeftSidebar(GraphicsContext&);
     void drawRightSidebar(GraphicsContext&);
     void updateGametime(AppContext&);

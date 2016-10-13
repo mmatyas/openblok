@@ -13,6 +13,7 @@ SinglePlayState::SinglePlayState(AppContext& app)
     , gameover(false)
     , tex_background(app.gcx().loadTexture("data/gamebg.png"))
     , texts_need_update(false)
+    , ui_well(app)
     , next_pieces(4)
     , lineclears_per_level(10)
     , lineclears_left(lineclears_per_level)
@@ -39,7 +40,7 @@ SinglePlayState::SinglePlayState(AppContext& app)
     }
 
     addNextPiece();
-    board.setGravity(gravity_levels.top());
+    ui_well.well().setGravity(gravity_levels.top());
 
 
     // UI
@@ -58,16 +59,10 @@ SinglePlayState::SinglePlayState(AppContext& app)
     tex_score = app.gcx().renderText(tr("SCORE"), font_boxtitle, 0xEEEEEE_rgb);
     tex_score_counter = app.gcx().renderText(std::to_string(current_score), font_boxcontent, 0xEEEEEE_rgb);
     tex_time_counter = app.gcx().renderText(gametime_text, font_boxcontent, 0xEEEEEE_rgb);
-    tex_pause = app.gcx().renderText(tr("PAUSE"), font_big, 0xEEEEEE_rgb);
 
-
-    ui.well.inner.w = 10 * Mino::texture_size_px;
-    ui.well.inner.h = 20 * Mino::texture_size_px;
-    ui.well.outer.w = ui.well.inner.w + ui.well.border.width * 2;
-    ui.well.outer.h = ui.well.inner.h + ui.well.border.width * 2;
 
     ui.sidebars.left.inner.w = 5 * Mino::texture_size_px;
-    ui.sidebars.left.inner.h = ui.well.outer.h;
+    ui.sidebars.left.inner.h = ui_well.height();
     ui.sidebars.left.padding = {0, 10, 0, 0};
     ui.sidebars.left.outer.w = ui.sidebars.left.inner.w
                              + ui.sidebars.left.padding.left + ui.sidebars.left.padding.right;
@@ -75,7 +70,7 @@ SinglePlayState::SinglePlayState(AppContext& app)
                              + ui.sidebars.left.padding.top + ui.sidebars.left.padding.bottom;
 
     ui.sidebars.right.inner.w = 5 * Mino::texture_size_px;
-    ui.sidebars.right.inner.h = ui.well.outer.h;
+    ui.sidebars.right.inner.h = ui_well.height();
     ui.sidebars.right.padding = {0, 0, 0, 10};
     ui.sidebars.right.outer.w = ui.sidebars.right.inner.w
                               + ui.sidebars.right.padding.left + ui.sidebars.left.padding.right;
@@ -87,25 +82,27 @@ SinglePlayState::~SinglePlayState() = default;
 
 void SinglePlayState::registerObservers()
 {
-    board.registerObserver(WellEvent::Type::NEXT_REQUESTED, [this](const WellEvent&){
+    ui_well.well().registerObserver(WellEvent::Type::NEXT_REQUESTED, [this](const WellEvent&){
         this->addNextPiece();
     });
 
-    board.registerObserver(WellEvent::Type::HOLD_REQUESTED, [this](const WellEvent&){
+    ui_well.well().registerObserver(WellEvent::Type::HOLD_REQUESTED, [this](const WellEvent&){
+        auto& well = this->ui_well.well();
+
         this->piece_holder.onSwapRequested();
         if (this->piece_holder.swapAllowed()) {
-            auto type = this->board.activePiece()->type();
-            this->board.deletePiece();
+            auto type = well.activePiece()->type();
+            well.deletePiece();
             if (this->piece_holder.isEmpty()) {
                 this->piece_holder.swapWithEmpty(type);
                 this->addNextPiece();
             }
             else
-                this->board.addPiece(this->piece_holder.swapWith(type));
+                well.addPiece(this->piece_holder.swapWith(type));
         }
     });
 
-    board.registerObserver(WellEvent::Type::LINE_CLEAR, [this](const WellEvent& event){
+    ui_well.well().registerObserver(WellEvent::Type::LINE_CLEAR, [this](const WellEvent& event){
         assert(event.type == WellEvent::Type::LINE_CLEAR);
         assert(event.count > 0);
         assert(event.count <= 4);
@@ -130,31 +127,31 @@ void SinglePlayState::registerObservers()
                 return;
             }
             this->gravity_levels.pop();
-            this->board.setGravity(this->gravity_levels.top());
+            this->ui_well.well().setGravity(this->gravity_levels.top());
             this->lineclears_left += lineclears_per_level;
             this->current_level++;
         }
     });
 
-    board.registerObserver(WellEvent::Type::HARDDROPPED, [this](const WellEvent& event){
+    ui_well.well().registerObserver(WellEvent::Type::HARDDROPPED, [this](const WellEvent& event){
         assert(event.count < 22);
         this->texts_need_update = true;
         this->current_score += event.count * this->score_table.at(HARDDROP);
     });
 
-    board.registerObserver(WellEvent::Type::SOFTDROPPED, [this](const WellEvent&){
+    ui_well.well().registerObserver(WellEvent::Type::SOFTDROPPED, [this](const WellEvent&){
         this->texts_need_update = true;
         this->current_score += this->score_table.at(SOFTDROP);
     });
 
-    board.registerObserver(WellEvent::Type::GAME_OVER, [this](const WellEvent&){
+    ui_well.well().registerObserver(WellEvent::Type::GAME_OVER, [this](const WellEvent&){
         gameover = true;
     });
 }
 
 void SinglePlayState::addNextPiece()
 {
-    board.addPiece(next_pieces.next());
+    ui_well.well().addPiece(next_pieces.next());
     piece_holder.onNextTurn();
 }
 
@@ -170,26 +167,12 @@ void SinglePlayState::update(const std::vector<InputEvent>& inputs, AppContext& 
 
     // UI
     // TODO: only on screen resize event
-    ui.well.inner.x = app.gcx().screenWidth() / 2 - 5 * Mino::texture_size_px;
-    ui.well.inner.y = (app.gcx().screenHeight() - ui.well.inner.h) / 2 + ui.well.border.width;
-    ui.well.outer.x = ui.well.inner.x - ui.well.border.width;
-    ui.well.outer.y = ui.well.inner.y - ui.well.border.width;
-    ui.well.border.left = {
-        ui.well.outer.x, ui.well.inner.y,
-        ui.well.border.width, ui.well.inner.h};
-    ui.well.border.right = {
-        ui.well.inner.x + ui.well.inner.w, ui.well.inner.y,
-        ui.well.border.width, ui.well.inner.h};
-    ui.well.border.top = {
-        ui.well.outer.x, ui.well.outer.y,
-        ui.well.outer.w, ui.well.border.width};
-    ui.well.border.bottom = {
-        ui.well.outer.x, ui.well.inner.y + ui.well.inner.h,
-        ui.well.outer.w, ui.well.border.width};
+    ui_well.setPosition((app.gcx().screenWidth() - ui_well.width()) / 2,
+                        (app.gcx().screenHeight() - ui_well.height()) / 2);
 
-    ui.sidebars.left.outer.x = ui.well.outer.x - ui.sidebars.left.outer.w;
+    ui.sidebars.left.outer.x = ui_well.x() - ui.sidebars.left.outer.w;
     ui.sidebars.left.inner.x = ui.sidebars.left.outer.x + ui.sidebars.left.padding.left;
-    ui.sidebars.left.outer.y = ui.well.outer.y;
+    ui.sidebars.left.outer.y = ui_well.y();
     ui.sidebars.left.inner.y = ui.sidebars.left.outer.y + ui.sidebars.left.padding.top;
     ui.sidebars.left.items.goal_counter = {
         ui.sidebars.left.inner.x,
@@ -204,9 +187,9 @@ void SinglePlayState::update(const std::vector<InputEvent>& inputs, AppContext& 
         - ui.sidebars.left.items.goal_counter.h,
         ui.sidebars.left.inner.w, ui.sidebars.text_height + ui.sidebars.text_padding * 2};
 
-    ui.sidebars.right.outer.x = ui.well.outer.x + ui.well.outer.w;
+    ui.sidebars.right.outer.x = ui_well.x() + ui_well.width();
     ui.sidebars.right.inner.x = ui.sidebars.right.outer.x + ui.sidebars.right.padding.left;
-    ui.sidebars.right.outer.y = ui.well.outer.y;
+    ui.sidebars.right.outer.y = ui_well.y();
     ui.sidebars.right.inner.y = ui.sidebars.right.outer.y + ui.sidebars.right.padding.top;
     ui.sidebars.right.items.score_counter = {
         ui.sidebars.right.inner.x,
@@ -225,7 +208,7 @@ void SinglePlayState::update(const std::vector<InputEvent>& inputs, AppContext& 
     if (paused)
         return;
 
-    board.update(inputs, app);
+    ui_well.update(inputs, app);
     piece_holder.update();
 
     if (texts_need_update) {
@@ -264,25 +247,6 @@ void SinglePlayState::updateGametime(AppContext& app)
         gametime_text = newstr;
         app.gcx().renderText(tex_time_counter, gametime_text, font_boxcontent, 0xEEEEEE_rgb);
     }
-}
-
-void SinglePlayState::drawWell(GraphicsContext& gcx)
-{
-    board.drawBackground(gcx, ui.well.inner.x, ui.well.inner.y);
-    if (paused) {
-        gcx.drawTexture(tex_pause,
-                        ui.well.inner.x + (ui.well.inner.w - gcx.textureWidth(tex_pause)) / 2,
-                        ui.well.inner.y + (ui.well.inner.h - gcx.textureHeight(tex_pause)) / 2);
-    }
-    else {
-        board.drawContent(gcx, ui.well.inner.x, ui.well.inner.y);
-    }
-
-    static const auto boardborder_color = 0x1A3A8A_rgb;
-    gcx.drawFilledRect(ui.well.border.left, boardborder_color);
-    gcx.drawFilledRect(ui.well.border.right, boardborder_color);
-    gcx.drawFilledRect(ui.well.border.top, boardborder_color);
-    gcx.drawFilledRect(ui.well.border.bottom, boardborder_color);
 }
 
 void SinglePlayState::drawLeftSidebar(GraphicsContext& gcx)
@@ -346,7 +310,7 @@ void SinglePlayState::draw(GraphicsContext& gcx)
 {
     gcx.drawTexture(tex_background, {0, 0, gcx.screenWidth(), gcx.screenHeight()});
 
-    drawWell(gcx);
+    ui_well.draw(gcx, paused);
     drawLeftSidebar(gcx);
     drawRightSidebar(gcx);
 }
