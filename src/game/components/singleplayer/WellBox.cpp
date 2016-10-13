@@ -12,7 +12,7 @@ WellBox::WellBox(AppContext& app)
     bounding_box.w = 10 * Mino::texture_size_px + border_width * 2;
     bounding_box.h = 20 * Mino::texture_size_px + border_width * 2;
 
-    font_big = app.gcx().loadFont("data/fonts/OpenSans-CondBold.ttf", 60);
+    font_big = app.gcx().loadFont("data/fonts/PTC75F.ttf", 60);
     tex_pause = app.gcx().renderText(tr("PAUSE"), font_big, 0xEEEEEE_rgb);
 
     setPosition(0, 0);

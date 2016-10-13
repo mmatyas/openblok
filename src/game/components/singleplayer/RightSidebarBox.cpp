@@ -16,8 +16,8 @@ RightSidebarBox::RightSidebarBox(AppContext& app, uint16_t height)
     bounding_box.h = height;
 
     // TODO: cache
-    font_label = app.gcx().loadFont("data/fonts/OpenSans-CondLight.ttf", 28);
-    font_content = app.gcx().loadFont("data/fonts/OpenSans-CondBold.ttf", 30);
+    font_label = app.gcx().loadFont("data/fonts/PTN57F.ttf", 28);
+    font_content = app.gcx().loadFont("data/fonts/PTN77F.ttf", 30);
 
     tex_next = app.gcx().renderText(tr("NEXT"), font_label, 0xEEEEEE_rgb);
     tex_score = app.gcx().renderText(tr("SCORE"), font_label, 0xEEEEEE_rgb);

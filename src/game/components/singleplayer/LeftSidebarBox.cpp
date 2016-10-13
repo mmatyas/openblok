@@ -13,8 +13,8 @@ LeftSidebarBox::LeftSidebarBox(AppContext& app, uint16_t height)
     bounding_box.h = height;
 
     // TODO: cache
-    font_label = app.gcx().loadFont("data/fonts/OpenSans-CondLight.ttf", 28);
-    font_content = app.gcx().loadFont("data/fonts/OpenSans-CondBold.ttf", 30);
+    font_label = app.gcx().loadFont("data/fonts/PTN57F.ttf", 28);
+    font_content = app.gcx().loadFont("data/fonts/PTN77F.ttf", 30);
 
     tex_hold = app.gcx().renderText(tr("HOLD"), font_label, 0xEEEEEE_rgb);
     tex_goal = app.gcx().renderText(tr("GOAL"), font_label, 0xEEEEEE_rgb);
