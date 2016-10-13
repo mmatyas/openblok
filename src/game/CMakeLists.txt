@@ -10,6 +10,7 @@ set(MOD_GAME_SRC
 	components/animations/CellLockAnim.cpp
 	components/animations/LineClearAnim.cpp
 	components/singleplayer/LeftSidebarBox.cpp
+	components/singleplayer/RightSidebarBox.cpp
 	components/singleplayer/WellBox.cpp
 	states/InitState.cpp
 	states/MainMenuState.cpp
@@ -35,6 +36,7 @@ set(MOD_GAME_H
 	components/animations/LineClearAnim.h
 	components/singleplayer/Box.h
 	components/singleplayer/LeftSidebarBox.h
+	components/singleplayer/RightSidebarBox.h
 	components/singleplayer/WellBox.h
 	states/InitState.h
 	states/MainMenuState.h

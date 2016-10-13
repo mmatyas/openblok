@@ -15,12 +15,13 @@ class NextQueue {
 public:
     /// Create a piece queue and allow previewing the next N pieces.
     NextQueue(unsigned displayed_piece_count);
+    ~NextQueue();
 
     /// Pop the top of the queue.
     PieceType next();
 
     /// Draw the N previewable pieces at (x,y)
-    void draw(GraphicsContext&, int x, int y);
+    void draw(GraphicsContext&, int x, int y) const;
 
 private:
     std::deque<PieceType> piece_queue;

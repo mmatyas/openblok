@@ -22,6 +22,8 @@ NextQueue::NextQueue (unsigned displayed_piece_count)
     }
 }
 
+NextQueue::~NextQueue() = default;
+
 PieceType NextQueue::next()
 {
     PieceType piece = piece_queue.front();
@@ -41,7 +43,7 @@ void NextQueue::generate_pieces()
         piece_queue.push_back(p);
 }
 
-void NextQueue::draw(GraphicsContext& gcx, int x, int y)
+void NextQueue::draw(GraphicsContext& gcx, int x, int y) const
 {
     gcx.drawFilledRect({
         x, y,
