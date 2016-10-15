@@ -11,10 +11,13 @@ set(MOD_SYSTEM_SRC
 
 set(MOD_SYSTEM_H
 	Color.h
+	Font.h
 	GraphicsContext.h
 	InputEvent.h
 	Localize.h
 	Log.h
+	Rectangle.h
+	Texture.h
 	Window.h
 
 	# SDL2
