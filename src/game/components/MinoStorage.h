@@ -2,7 +2,6 @@
 
 #include "PieceType.h"
 #include "system/Color.h"
-#include "system/ResourceTypes.h"
 
 #include <memory>
 #include <unordered_map>
