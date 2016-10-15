@@ -1,31 +1,19 @@
 #include "SDLGraphicsContext.h"
+
+#include "SDLFont.h"
+#include "SDLTexture.h"
 #include "system/Log.h"
 
-#include "SDL2/SDL.h"
 #include "SDL2pp/SDL2pp.hh"
 #include <exception>
-#include <sstream>
 
 
 const std::string LOG_TAG("video");
-
-std::vector<std::string> splitByNL(const std::string& str) {
-    std::vector<std::string> output;
-    std::istringstream isst(str);
-    std::string line;
-
-    while (std::getline(isst, line))
-        output.push_back(line);
-
-    return output;
-}
 
 SDLGraphicsContext::SDLGraphicsContext(SDL2pp::Window& window)
     : renderer(window, -1, SDL_RENDERER_ACCELERATED)
     , ttf()
     , on_render_callback([](){})
-    , current_fontid(0)
-    , current_texid(0)
 {
     SDL_RendererInfo rinfo;
     renderer.GetInfo(rinfo);
@@ -42,6 +30,16 @@ SDLGraphicsContext::SDLGraphicsContext(SDL2pp::Window& window)
     pixelformat = SDL_GetWindowPixelFormat(window.Get());
     if (pixelformat == SDL_PIXELFORMAT_UNKNOWN)
         throw std::runtime_error(SDL_GetError());
+
+    SDLTexture::renderer = &renderer;
+    SDLFont::pixelformat = pixelformat;
+    SDLFont::renderer = &renderer;
+}
+
+SDLGraphicsContext::~SDLGraphicsContext()
+{
+    SDLTexture::renderer = nullptr;
+    SDLFont::renderer = nullptr;
 }
 
 void SDLGraphicsContext::render()
@@ -52,119 +50,31 @@ void SDLGraphicsContext::render()
     renderer.Clear();
 }
 
-uint16_t SDLGraphicsContext::screenWidth() const
+unsigned short SDLGraphicsContext::screenWidth() const
 {
     return renderer.GetLogicalWidth();
 }
 
-uint16_t SDLGraphicsContext::screenHeight() const
+unsigned short SDLGraphicsContext::screenHeight() const
 {
     return renderer.GetLogicalHeight();
 }
 
-FontID SDLGraphicsContext::loadFont(const std::string& path, unsigned pt)
+std::shared_ptr<Font> SDLGraphicsContext::loadFont(const std::string& path, unsigned pt)
 {
-    // Log::debug(LOG_TAG) << "Loading " << path << "\n";
-
-    // emplace() returns an std::pair<Iter, bool>
-    auto result = fonts.emplace(current_fontid, std::make_unique<SDL2pp::Font>(path, pt));
-    if (!result.second)
-        throw std::runtime_error("Font already exists in slot " + std::to_string(current_fontid));
-
-    return current_fontid++;
+    return std::make_shared<SDLFont>(SDL2pp::Font(path, pt));
 }
 
-TextureID SDLGraphicsContext::renderText(const std::string& text, FontID font_id, const RGBColor& color)
+std::unique_ptr<Texture> SDLGraphicsContext::loadTexture(const std::string& path)
 {
-    renderText(current_texid, text, font_id, color);
-    return current_texid++;
+    return std::make_unique<SDLTexture>(SDL2pp::Texture(renderer, path));
 }
 
-void SDLGraphicsContext::renderText(TextureID target_slot, const std::string& text,
-                                    FontID font_id, const RGBColor& color)
+std::unique_ptr<Texture> SDLGraphicsContext::loadTexture(const std::string& path, const RGBColor& tint)
 {
-    if (!fonts.count(font_id))
-        throw std::runtime_error("No font loaded in slot " + std::to_string(font_id));
-
-    const auto& font = fonts.at(font_id);
-    const auto lines = splitByNL(text);
-
-    // shortcut for single lines
-    if (lines.size() <= 1) {
-        textures[target_slot] = std::make_unique<SDL2pp::Texture>(
-            renderer,
-            font->RenderUTF8_Blended(text, {color.r, color.g, color.b, 255})
-        );
-        return;
-    }
-
-    // find out texture dimensions
-    const int line_height = font->GetLineSkip();
-    int width = 2; // to avoid zero size textures
-    for (const std::string& line : lines) {
-        auto line_width = font->GetSizeUTF8(line).GetX();
-        if (line_width > width)
-            width = line_width;
-    }
-
-    // extract the surface parameters from the SDL pixel format enum
-    int bpp;
-    Uint32 rmask, gmask, bmask, amask;
-    if (!SDL_PixelFormatEnumToMasks(pixelformat, &bpp, &rmask, &gmask, &bmask, &amask))
-        throw std::runtime_error(SDL_GetError());
-
-    // create the surface and blit the lines on it
-    const SDL_Color rgba_color({color.r, color.g, color.b, 255});
-    SDL2pp::Surface basesurf(0, width,  line_height * lines.size(),
-                             bpp, rmask, gmask, bmask, amask);
-    for (unsigned l = 0; l < lines.size(); l++) {
-        auto surf = font->RenderUTF8_Blended(lines.at(l), rgba_color);
-        surf.Blit(SDL2pp::NullOpt,
-                  basesurf,
-                  SDL2pp::Rect(0, l * line_height, surf.GetWidth(), surf.GetHeight()));
-    }
-
-    textures[target_slot] = std::make_unique<SDL2pp::Texture>(renderer, basesurf);
-}
-
-TextureID SDLGraphicsContext::loadTexture(const std::string& path)
-{
-    // Log::debug(LOG_TAG) << "Loading " << path << "\n";
-    textures[current_texid] = std::make_unique<SDL2pp::Texture>(renderer, path);
-    return current_texid++;
-}
-
-TextureID SDLGraphicsContext::loadTexture(const std::string& path, const RGBColor& tint)
-{
-    TextureID texid = loadTexture(path);
-    textures.at(texid)->SetColorMod(tint.r, tint.g, tint.b);
-    return texid;
-}
-
-void SDLGraphicsContext::unloadTexture(TextureID slot)
-{
-    textures.erase(slot);
-}
-
-void SDLGraphicsContext::unloadFont(FontID slot)
-{
-    fonts.erase(slot);
-}
-
-void SDLGraphicsContext::drawTexture(TextureID slot, unsigned x, unsigned y)
-{
-    if (!textures.count(slot))
-        throw std::runtime_error("No texture loaded in slot " + std::to_string(slot));
-
-    renderer.Copy(*textures.at(slot), SDL2pp::NullOpt, SDL2pp::Point(x, y));
-}
-
-void SDLGraphicsContext::drawTexture(TextureID slot, const Rectangle& rect)
-{
-    if (!textures.count(slot))
-        throw std::runtime_error("No texture loaded in slot " + std::to_string(slot));
-
-    renderer.Copy(*textures.at(slot), SDL2pp::NullOpt, SDL2pp::Rect(rect.x, rect.y, rect.w, rect.h));
+    SDL2pp::Texture tex(renderer, path);
+    tex.SetColorMod(tint.r, tint.g, tint.b);
+    return std::make_unique<SDLTexture>(std::move(tex));
 }
 
 void SDLGraphicsContext::drawFilledRect(const Rectangle& rect, const RGBColor& color)
@@ -189,16 +99,6 @@ void SDLGraphicsContext::drawFilledRect(const Rectangle& rect, const RGBAColor& 
 
     renderer.SetDrawBlendMode(blend);
     renderer.SetDrawColor(r, g, b, a);
-}
-
-unsigned SDLGraphicsContext::textureWidth(TextureID slot) const
-{
-    return textures.at(slot)->GetWidth();
-}
-
-unsigned SDLGraphicsContext::textureHeight(TextureID slot) const
-{
-    return textures.at(slot)->GetHeight();
 }
 
 void SDLGraphicsContext::requestScreenshot(const SDL2pp::Window& window, const std::string& path)
