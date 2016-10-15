@@ -1,0 +1,190 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index b718443..631629b 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -16,6 +16,20 @@ if(BUILD_TESTS AND CMAKE_COMPILER_IS_GNUCXX)
+ 	setup_target_for_coverage(openblok_coverage openblok_test coverage)
+ endif()
+ 
++# Emscripten
++if(EMSCRIPTEN)
++	set(CMAKE_EXECUTABLE_SUFFIX ".bc")
++	# set(EMOPTIONS "${EMOPTIONS} -O3")
++	# set(EMOPTIONS "${EMOPTIONS} -O0 -g4 -s ASSERTIONS=2 -s DEMANGLE_SUPPORT=1")
++	set(EMOPTIONS "${EMOPTIONS} -s USE_SDL=2")
++	set(EMOPTIONS "${EMOPTIONS} -s USE_SDL_IMAGE=2 -s SDL2_IMAGE_FORMATS='[\"png\"]'")
++	set(EMOPTIONS "${EMOPTIONS} -s USE_SDL_TTF=2")
++	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14") # bug?
++	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${EMOPTIONS}")
++	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${EMOPTIONS}")
++	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --preload-file ${CMAKE_SOURCE_DIR}/data@data")
++endif()
++
+ 
+ # Dependencies: SDL2
+ set(SDL2PP_WITH_IMAGE ON)
+diff --git a/external/libSDL2pp/CMakeLists.txt b/external/libSDL2pp/CMakeLists.txt
+index aaa6d90..d08669b 100644
+--- a/external/libSDL2pp/CMakeLists.txt
++++ b/external/libSDL2pp/CMakeLists.txt
+@@ -26,7 +26,7 @@ ELSE(CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
+ ENDIF(CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
+ 
+ # depends
+-FIND_PACKAGE(SDL2 REQUIRED)
++# FIND_PACKAGE(SDL2 REQUIRED)
+ SET(SDL2_ALL_INCLUDE_DIRS ${SDL2_INCLUDE_DIR})
+ SET(SDL2_ALL_LIBRARIES ${SDL2_LIBRARY})
+ SET(SDL2_ALL_PKGCONFIG_MODULES sdl2)
+@@ -40,7 +40,7 @@ IF(MINGW)
+ ENDIF(MINGW)
+ 
+ IF(SDL2PP_WITH_IMAGE)
+-	FIND_PACKAGE(SDL2_image REQUIRED)
++	# FIND_PACKAGE(SDL2_image REQUIRED)
+ 	SET(SDL2_ALL_INCLUDE_DIRS ${SDL2_ALL_INCLUDE_DIRS} ${SDL2_IMAGE_INCLUDE_DIR})
+ 	SET(SDL2_ALL_LIBRARIES ${SDL2_ALL_LIBRARIES} ${SDL2_IMAGE_LIBRARY})
+ 	SET(SDL2_ALL_PKGCONFIG_MODULES "${SDL2_ALL_PKGCONFIG_MODULES} SDL2_image")
+@@ -49,7 +49,7 @@ ELSE(SDL2PP_WITH_IMAGE)
+ ENDIF(SDL2PP_WITH_IMAGE)
+ 
+ IF(SDL2PP_WITH_TTF)
+-	FIND_PACKAGE(SDL2_ttf REQUIRED)
++	# FIND_PACKAGE(SDL2_ttf REQUIRED)
+ 	SET(SDL2_ALL_INCLUDE_DIRS ${SDL2_ALL_INCLUDE_DIRS} ${SDL2_TTF_INCLUDE_DIR})
+ 	SET(SDL2_ALL_LIBRARIES ${SDL2_ALL_LIBRARIES} ${SDL2_TTF_LIBRARY})
+ 	SET(SDL2_ALL_PKGCONFIG_MODULES "${SDL2_ALL_PKGCONFIG_MODULES} SDL2_ttf")
+@@ -58,7 +58,7 @@ ELSE(SDL2PP_WITH_TTF)
+ ENDIF(SDL2PP_WITH_TTF)
+ 
+ IF(SDL2PP_WITH_MIXER)
+-	FIND_PACKAGE(SDL2_mixer REQUIRED)
++	# FIND_PACKAGE(SDL2_mixer REQUIRED)
+ 	SET(SDL2_ALL_INCLUDE_DIRS ${SDL2_ALL_INCLUDE_DIRS} ${SDL2_MIXER_INCLUDE_DIR})
+ 	SET(SDL2_ALL_LIBRARIES ${SDL2_ALL_LIBRARIES} ${SDL2_MIXER_LIBRARY})
+ 	SET(SDL2_ALL_PKGCONFIG_MODULES "${SDL2_ALL_PKGCONFIG_MODULES} SDL2_mixer")
+@@ -94,7 +94,7 @@ ELSE(MSVC)
+ 	#APPEND_CXX_FLAG_IF_SUPPORTED(-Wno-padded SDL2PP_WARNINGS)
+ ENDIF(MSVC)
+ 
+-LIST(REMOVE_DUPLICATES SDL2_ALL_INCLUDE_DIRS)
++# LIST(REMOVE_DUPLICATES SDL2_ALL_INCLUDE_DIRS)
+ 
+ INCLUDE_DIRECTORIES(BEFORE ${PROJECT_SOURCE_DIR})
+ INCLUDE_DIRECTORIES(SYSTEM ${SDL2_ALL_INCLUDE_DIRS})
+diff --git a/external/libSDL2pp/SDL2pp/Font.cc b/external/libSDL2pp/SDL2pp/Font.cc
+index 5d2a181..705f9fa 100644
+--- a/external/libSDL2pp/SDL2pp/Font.cc
++++ b/external/libSDL2pp/SDL2pp/Font.cc
+@@ -21,7 +21,7 @@
+ 
+ #include <vector>
+ 
+-#include <SDL2/SDL_ttf.h>
++#include <SDL_ttf.h>
+ 
+ #include <SDL2pp/Font.hh>
+ #include <SDL2pp/RWops.hh>
+diff --git a/external/libSDL2pp/SDL2pp/Font.hh b/external/libSDL2pp/SDL2pp/Font.hh
+index 32abb8f..44587e1 100644
+--- a/external/libSDL2pp/SDL2pp/Font.hh
++++ b/external/libSDL2pp/SDL2pp/Font.hh
+@@ -24,7 +24,7 @@
+ 
+ #include <string>
+ 
+-#include <SDL2/SDL_ttf.h>
++#include <SDL_ttf.h>
+ 
+ #include <SDL2pp/Optional.hh>
+ #include <SDL2pp/Point.hh>
+diff --git a/external/libSDL2pp/SDL2pp/SDLTTF.cc b/external/libSDL2pp/SDL2pp/SDLTTF.cc
+index 0eb187d..dfc067b 100644
+--- a/external/libSDL2pp/SDL2pp/SDLTTF.cc
++++ b/external/libSDL2pp/SDL2pp/SDLTTF.cc
+@@ -19,7 +19,7 @@
+   3. This notice may not be removed or altered from any source distribution.
+ */
+ 
+-#include <SDL2/SDL_ttf.h>
++#include <SDL_ttf.h>
+ 
+ #include <SDL2pp/SDLTTF.hh>
+ #include <SDL2pp/Exception.hh>
+diff --git a/src/main.cpp b/src/main.cpp
+index 6fa7199..2aef31a 100644
+--- a/src/main.cpp
++++ b/src/main.cpp
+@@ -4,42 +4,35 @@
+ #include "game/states/InitState.h"
+ #include "system/Log.h"
+ 
+-#include <chrono>
++#include <emscripten.h>
+ #include <memory>
+-#include <thread>
+ #include <assert.h>
+ 
+ 
++AppContext app;
++void runNextFrame();
++
+ int main(int, const char**)
+ {
+     Log::info("main") << "OpenBlok v0.0.0 by Mátyás Mustoha\n";
+-    AppContext app;
+     if (!app.init())
+         return 1;
+ 
+ 
+     app.states().emplace(std::make_unique<InitState>(app));
+-
+-
+-    auto frame_starttime = std::chrono::steady_clock::now();
+-    auto frame_endtime = frame_starttime + Timing::frame_duration;
+-
+-    while (!app.window().quitRequested()) {
+-        auto events = app.window().collectEvents();
+-
+-        assert(app.states().size());
+-        app.states().top()->update(events, app);
+-        if (app.states().empty())
+-            break;
+-
+-        app.states().top()->draw(app.gcx());
+-        app.gcx().render();
+-
+-        // frame rate limiting
+-        std::this_thread::sleep_until(frame_endtime);
+-        frame_starttime = std::chrono::steady_clock::now();
+-        frame_endtime = frame_starttime + Timing::frame_duration;
+-    }
++    emscripten_set_main_loop(runNextFrame, 0, 1);
+ 
+     return 0;
+ }
++
++void runNextFrame()
++{
++    auto events = app.window().collectEvents();
++    assert(app.states().size());
++    app.states().top()->update(events, app);
++    if (app.states().empty())
++        return;
++
++    app.states().top()->draw(app.gcx());
++    app.gcx().render();
++}
+diff --git a/src/system/sdl/SDLGraphicsContext.cpp b/src/system/sdl/SDLGraphicsContext.cpp
+index 9667936..e75c1b0 100644
+--- a/src/system/sdl/SDLGraphicsContext.cpp
++++ b/src/system/sdl/SDLGraphicsContext.cpp
+@@ -47,7 +47,7 @@ void SDLGraphicsContext::render()
+     renderer.Present();
+     on_render_callback();
+ 
+-    renderer.Clear();
++    // renderer.Clear();
+ }
+ 
+ unsigned short SDLGraphicsContext::screenWidth() const
