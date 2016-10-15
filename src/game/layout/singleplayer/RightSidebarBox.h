@@ -5,6 +5,8 @@
 #include "game/components/NextQueue.h"
 #include "system/Color.h"
 
+#include <string>
+
 
 class AppContext;
 class Font;
