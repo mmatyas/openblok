@@ -30,7 +30,7 @@ public:
 private:
     bool paused;
     bool gameover;
-    TextureID tex_background;
+    std::unique_ptr<Texture> tex_background;
     bool texts_need_update;
 
     Layout::WellBox ui_well;

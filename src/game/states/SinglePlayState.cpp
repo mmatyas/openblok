@@ -145,21 +145,21 @@ void SinglePlayState::update(const std::vector<InputEvent>& inputs, AppContext& 
     ui_leftside.update();
 
     if (texts_need_update) {
-        ui_leftside.updateGoalCounter(app.gcx(), lineclears_left);
-        ui_leftside.updateLevelCounter(app.gcx(), current_level);
-        ui_rightside.updateScore(app.gcx(), current_score);
+        ui_leftside.updateGoalCounter(lineclears_left);
+        ui_leftside.updateLevelCounter(current_level);
+        ui_rightside.updateScore(current_score);
         texts_need_update = false;
     }
 
     if (gameover)
         return;
 
-    ui_rightside.updateGametime(app.gcx());
+    ui_rightside.updateGametime();
 }
 
 void SinglePlayState::draw(GraphicsContext& gcx)
 {
-    gcx.drawTexture(tex_background, {0, 0, gcx.screenWidth(), gcx.screenHeight()});
+    tex_background->drawScaled({0, 0, gcx.screenWidth(), gcx.screenHeight()});
 
     ui_well.draw(gcx, paused);
     ui_leftside.draw(gcx);

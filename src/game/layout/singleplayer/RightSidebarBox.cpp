@@ -2,12 +2,13 @@
 
 #include "game/AppContext.h"
 #include "game/components/Mino.h"
+#include "system/Font.h"
 #include "system/Localize.h"
 
 
 namespace Layout {
 
-RightSidebarBox::RightSidebarBox(AppContext& app, uint16_t height)
+RightSidebarBox::RightSidebarBox(AppContext& app, int height)
     : next_queue(4)
     , gametime(Duration::zero())
     , gametime_text("00:00")
@@ -19,13 +20,13 @@ RightSidebarBox::RightSidebarBox(AppContext& app, uint16_t height)
     font_label = app.gcx().loadFont("data/fonts/PTN57F.ttf", 28);
     font_content = app.gcx().loadFont("data/fonts/PTN77F.ttf", 30);
 
-    tex_next = app.gcx().renderText(tr("NEXT"), font_label, 0xEEEEEE_rgb);
-    tex_score = app.gcx().renderText(tr("SCORE"), font_label, 0xEEEEEE_rgb);
-    tex_score_counter = app.gcx().renderText("0", font_content, 0xEEEEEE_rgb);
-    tex_time_counter = app.gcx().renderText(gametime_text, font_content, 0xEEEEEE_rgb);
+    tex_next = font_label->renderText(tr("NEXT"), 0xEEEEEE_rgb);
+    tex_score = font_label->renderText(tr("SCORE"), 0xEEEEEE_rgb);
+    tex_score_counter = font_content->renderText("0", 0xEEEEEE_rgb);
+    tex_time_counter = font_content->renderText(gametime_text, 0xEEEEEE_rgb);
 }
 
-void RightSidebarBox::setPosition(uint16_t x, uint16_t y)
+void RightSidebarBox::setPosition(int x, int y)
 {
     bounding_box.x = x;
     bounding_box.y = y;
@@ -39,13 +40,12 @@ void RightSidebarBox::setPosition(uint16_t x, uint16_t y)
 void RightSidebarBox::update()
 {}
 
-void RightSidebarBox::updateScore(GraphicsContext& gcx, unsigned num)
+void RightSidebarBox::updateScore(unsigned num)
 {
-    gcx.renderText(tex_score_counter, std::to_string(num),
-                   font_content, 0xEEEEEE_rgb);
+    tex_score_counter = font_content->renderText(std::to_string(num), 0xEEEEEE_rgb);
 }
 
-void RightSidebarBox::updateGametime(GraphicsContext& gcx)
+void RightSidebarBox::updateGametime()
 {
     gametime += Timing::frame_duration;
 
@@ -63,30 +63,27 @@ void RightSidebarBox::updateGametime(GraphicsContext& gcx)
     // render text
     if (newstr != gametime_text) {
         gametime_text = newstr;
-        gcx.renderText(tex_time_counter, gametime_text, font_content, 0xEEEEEE_rgb);
+        tex_time_counter = font_content->renderText(gametime_text, 0xEEEEEE_rgb);
     }
 }
 
 void RightSidebarBox::draw(GraphicsContext& gcx) const
 {
     // next queue
-    gcx.drawTexture(tex_next, x() + width() - gcx.textureWidth(tex_next), y());
+    tex_next->drawAt(x() + width() - tex_next->width(), y());
     next_queue.draw(gcx, x(), y() + text_height + text_padding);
 
     // score
     gcx.drawFilledRect(rect_score, box_color);
-    gcx.drawTexture(tex_score_counter,
-                    rect_score.x + (rect_score.w - gcx.textureWidth(tex_score_counter)) / 2,
-                    rect_score.y + 5);
-    gcx.drawTexture(tex_score,
-                    rect_score.x + width() - gcx.textureWidth(tex_score),
-                    rect_score.y - text_padding - text_height);
+    tex_score_counter->drawAt(rect_score.x + (rect_score.w - tex_score_counter->width()) / 2,
+                              rect_score.y + 5);
+    tex_score->drawAt(rect_score.x + width() - tex_score->width(),
+                      rect_score.y - text_padding - text_height);
 
     // time
     gcx.drawFilledRect(rect_time, box_color);
-    gcx.drawTexture(tex_time_counter,
-                    rect_time.x + (rect_time.w - gcx.textureWidth(tex_time_counter)) / 2,
-                    rect_time.y + 5);
+    tex_time_counter->drawAt(rect_time.x + (rect_time.w - tex_time_counter->width()) / 2,
+                             rect_time.y + 5);
 }
 
 } // namespace Layout

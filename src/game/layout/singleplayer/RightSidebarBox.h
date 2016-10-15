@@ -3,20 +3,23 @@
 #include "Box.h"
 #include "game/Timing.h"
 #include "game/components/NextQueue.h"
+#include "system/Color.h"
 
 
 class AppContext;
+class Font;
+class Texture;
 
 namespace Layout {
 class RightSidebarBox : Layout::Box {
 public:
-    RightSidebarBox(AppContext&, uint16_t height);
+    RightSidebarBox(AppContext&, int height);
 
-    void setPosition(uint16_t x, uint16_t y) override;
+    void setPosition(int x, int y) override;
 
     void update();
-    void updateScore(GraphicsContext&, unsigned);
-    void updateGametime(GraphicsContext&);
+    void updateScore(unsigned);
+    void updateGametime();
 
     void draw(GraphicsContext&) const;
 
@@ -28,19 +31,19 @@ private:
     static constexpr int item_padding = 10;
     const RGBAColor box_color = 0x0A0AFF80_rgba;
 
-    FontID font_label;
-    FontID font_content;
+    std::shared_ptr<Font> font_label;
+    std::shared_ptr<Font> font_content;
 
-    TextureID tex_next;
+    std::unique_ptr<Texture> tex_next;
     NextQueue next_queue;
 
     ::Rectangle rect_score;
-    TextureID tex_score;
-    TextureID tex_score_counter;
+    std::unique_ptr<Texture> tex_score;
+    std::unique_ptr<Texture> tex_score_counter;
 
     Duration gametime;
     std::string gametime_text;
     ::Rectangle rect_time;
-    TextureID tex_time_counter;
+    std::unique_ptr<Texture> tex_time_counter;
 };
 } // namespace Layout

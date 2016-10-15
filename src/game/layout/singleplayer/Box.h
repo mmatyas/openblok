@@ -1,6 +1,6 @@
 #pragma once
 
-#include "system/GraphicsContext.h"
+#include "system/Rectangle.h"
 
 
 namespace Layout {
@@ -9,12 +9,12 @@ public:
     Box() : bounding_box() {}
     virtual ~Box() = default;
 
-    virtual void setPosition(uint16_t x, uint16_t y) = 0;
+    virtual void setPosition(int x, int y) = 0;
 
-    uint16_t x() const { return bounding_box.x; }
-    uint16_t y() const { return bounding_box.y; }
-    uint16_t width() const { return bounding_box.w; }
-    uint16_t height() const { return bounding_box.h; }
+    int x() const { return bounding_box.x; }
+    int y() const { return bounding_box.y; }
+    int width() const { return bounding_box.w; }
+    int height() const { return bounding_box.h; }
 
 protected:
     ::Rectangle bounding_box;

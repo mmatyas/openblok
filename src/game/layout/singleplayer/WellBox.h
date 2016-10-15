@@ -7,13 +7,15 @@
 
 
 class AppContext;
+class Font;
+class Texture;
 
 namespace Layout {
 class WellBox : public Layout::Box {
 public:
     WellBox(AppContext&);
 
-    void setPosition(uint16_t x, uint16_t y) override;
+    void setPosition(int x, int y) override;
     void update(const std::vector<InputEvent>&, AppContext&);
     void draw(GraphicsContext&, bool paused) const;
 
@@ -22,8 +24,8 @@ public:
 private:
     Well m_well;
 
-    FontID font_big;
-    TextureID tex_pause;
+    std::shared_ptr<Font> font_big;
+    std::unique_ptr<Texture> tex_pause;
 
     static constexpr uint8_t border_width = 5;
     ::Rectangle border_left;
