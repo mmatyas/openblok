@@ -14,8 +14,8 @@ std::shared_ptr<Mino> MinoStorage::matrixcell;
 void MinoStorage::loadDummyMinos()
 {
     for (const auto& type : PieceTypeList) {
-        minos[type] = std::make_shared<Mino>(0, ascii(type));
-        ghosts[type] = std::make_shared<Mino>(0, 'g');
+        minos[type] = std::make_shared<Mino>(nullptr, ascii(type));
+        ghosts[type] = std::make_shared<Mino>(nullptr, 'g');
     }
     matrixcell.reset();
 }

@@ -48,9 +48,9 @@ public:
     void setGravity(Duration);
 
     /// Draw the Minos in the Well
-    void drawContent(GraphicsContext&, unsigned x, unsigned y) const;
+    void drawContent(GraphicsContext&, int x, int y) const;
     /// Draw the background of the Well
-    void drawBackground(GraphicsContext&, unsigned x, unsigned y) const;
+    void drawBackground(int x, int y) const;
 
     /// Register an external event observer.
     template <typename WellObserver>

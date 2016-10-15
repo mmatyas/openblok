@@ -54,8 +54,7 @@ void NextQueue::draw(GraphicsContext& gcx, int x, int y) const
     for (unsigned i = 0; i < displayed_piece_count; i++) {
         const auto& piece = piece_storage.at(static_cast<size_t>(piece_queue.at(i)));
         const float padding_x = (4 - Piece::displayWidth(piece->type())) / 2.0f;
-        piece->draw(gcx,
-                    x + Mino::texture_size_px * (0.5f + padding_x),
+        piece->draw(x + Mino::texture_size_px * (0.5f + padding_x),
                     offset_y);
 
         offset_y += Mino::texture_size_px * 3;

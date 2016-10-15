@@ -8,7 +8,6 @@
 #include "animations/LineClearAnim.h"
 #include "game/Timing.h"
 #include "game/WellEvent.h"
-#include "system/GraphicsContext.h"
 
 #include <assert.h>
 
@@ -609,27 +608,25 @@ std::string Well::asAscii() const
 
 #endif
 
-void Well::drawBackground(GraphicsContext& gcx, unsigned x, unsigned y) const
+void Well::drawBackground(int x, int y) const
 {
     const auto& cell = MinoStorage::getMatrixCell();
     for (size_t row = 0; row < 20; row++) {
         for (size_t col = 0; col < 10; col++) {
-            cell->draw(gcx,
-                       x + col * Mino::texture_size_px,
+            cell->draw(x + col * Mino::texture_size_px,
                        y + row * Mino::texture_size_px);
         }
     }
 }
 
-void Well::drawContent(GraphicsContext& gcx, unsigned x, unsigned y) const
+void Well::drawContent(GraphicsContext& gcx, int x, int y) const
 {
     // Draw board Minos
     for (size_t row = 0; row < 20; row++) {
         for (size_t col = 0; col < 10; col++) {
             const auto& cell = matrix.at(row + 2).at(col);
             if (cell) {
-                cell->draw(gcx,
-                           x + col * Mino::texture_size_px,
+                cell->draw(x + col * Mino::texture_size_px,
                            y + row * Mino::texture_size_px);
             }
         }
@@ -644,8 +641,7 @@ void Well::drawContent(GraphicsContext& gcx, unsigned x, unsigned y) const
             for (unsigned col = 0; col < 4; col++) {
                 if (active_piece->currentGrid().at(row).at(col)) {
                     const auto& cell = MinoStorage::getGhost(active_piece->type());
-                    cell->draw(gcx,
-                               x + (active_piece_x + col) * Mino::texture_size_px,
+                    cell->draw(x + (active_piece_x + col) * Mino::texture_size_px,
                                y + (ghost_piece_y + row - 2) * Mino::texture_size_px);
                 }
             }
@@ -658,8 +654,7 @@ void Well::drawContent(GraphicsContext& gcx, unsigned x, unsigned y) const
             for (unsigned col = 0; col < 4; col++) {
                 const auto& cell = active_piece->currentGrid().at(row).at(col);
                 if (cell) {
-                    cell->draw(gcx,
-                               x + (active_piece_x + col) * Mino::texture_size_px,
+                    cell->draw(x + (active_piece_x + col) * Mino::texture_size_px,
                                y + (active_piece_y + row - 2) * Mino::texture_size_px);
                 }
             }

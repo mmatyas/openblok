@@ -68,14 +68,13 @@ PieceGrid& Piece::currentGridMut()
     return grids[current_rotation];
 }
 
-void Piece::draw(GraphicsContext& gcx, int x, int y)
+void Piece::draw(int x, int y)
 {
     const auto& frame = currentGrid();
     for (size_t row = 0; row < 4; row++) {
         for (size_t col = 0; col < 4; col++) {
             if (frame[row][col])
-                frame[row][col]->draw(gcx,
-                                      x + col * Mino::texture_size_px,
+                frame[row][col]->draw(x + col * Mino::texture_size_px,
                                       y + row * Mino::texture_size_px);
         }
     }

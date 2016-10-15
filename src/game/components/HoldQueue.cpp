@@ -77,16 +77,15 @@ void HoldQueue::draw(GraphicsContext& gcx, int x, int y) const
 
     if (swapblocked_alpha.running()) {
         gcx.drawFilledRect({
-            x, y + 4 * Mino::texture_size_px,
-            5 * Mino::texture_size_px, 10},
+            x, static_cast<short>(y + 4 * Mino::texture_size_px),
+            static_cast<short>(5 * Mino::texture_size_px), 10},
             {0xFF, 0x0, 0x0, swapblocked_alpha.value()});
     }
 
     if (!empty) {
         const auto& piece = piece_storage.at(static_cast<size_t>(current_piece));
         const float padding_x = (4 - Piece::displayWidth(piece->type())) / 2.0f;
-        piece->draw(gcx,
-                    x + Mino::texture_size_px * (0.5f + padding_x),
+        piece->draw(x + Mino::texture_size_px * (0.5f + padding_x),
                     y + Mino::texture_size_px);
     }
 }
