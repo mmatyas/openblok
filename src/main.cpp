@@ -12,7 +12,7 @@
 
 int main(int, const char**)
 {
-    Log::info("main") << "OpenBlok v0.0.0 by Mátyás Mustoha\n";
+    Log::info("main") << "OpenBlok v0.1.0 by Mátyás Mustoha\n";
     AppContext app;
     if (!app.init())
         return 1;
