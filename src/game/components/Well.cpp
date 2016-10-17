@@ -141,6 +141,7 @@ void Well::handleKeys(const std::vector<InputEvent>& events)
             rotateCWNow();
 
         rotation_timer = rotation_delay;
+        notify(WellEvent(WellEvent::Type::PIECE_ROTATED));
     }
 
     horizontal_timer -= Timing::frame_duration;
@@ -483,6 +484,10 @@ void Well::checkLineclear()
             if (row >= 2)
                 blocking_anims.emplace_back(std::make_unique<LineClearAnim>(row));
         }
+
+        WellEvent clear_anim_event(WellEvent::Type::LINE_CLEAR_ANIMATION_START);
+        clear_anim_event.count = pending_cleared_rows.size();
+        notify(clear_anim_event);
     }
 }
 

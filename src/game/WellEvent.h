@@ -6,8 +6,10 @@
 struct WellEvent {
     enum class Type: uint8_t {
         PIECE_LOCKED,
+        PIECE_ROTATED,
         NEXT_REQUESTED,
         HOLD_REQUESTED,
+        LINE_CLEAR_ANIMATION_START,
         LINE_CLEAR,
         SOFTDROPPED,
         HARDDROPPED,
