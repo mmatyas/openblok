@@ -6,6 +6,7 @@
 #include "system/AudioContext.h"
 #include "system/Localize.h"
 #include "system/Music.h"
+#include "system/SoundEffect.h"
 
 #include <cmath>
 
@@ -15,6 +16,11 @@ SinglePlayState::SinglePlayState(AppContext& app)
     , gameover(false)
     , tex_background(app.gcx().loadTexture("data/gamebg.png"))
     , music(app.audio().loadMusic("data/music/gameplay.ogg"))
+    , sfx_onhold(app.audio().loadSound("data/sfx/hold.ogg"))
+    , sfx_onlevelup(app.audio().loadSound("data/sfx/levelup.ogg"))
+    , sfx_onlineclear(app.audio().loadSound("data/sfx/lineclear.ogg"))
+    , sfx_onlock(app.audio().loadSound("data/sfx/lock.ogg"))
+    , sfx_onrotate(app.audio().loadSound("data/sfx/rotate.ogg"))
     , texts_need_update(true)
     , ui_well(app)
     , ui_leftside(app, ui_well.height())
@@ -51,6 +57,14 @@ SinglePlayState::~SinglePlayState() = default;
 
 void SinglePlayState::registerObservers()
 {
+    ui_well.well().registerObserver(WellEvent::Type::PIECE_LOCKED, [this](const WellEvent&){
+        this->sfx_onlock->playOnce();
+    });
+
+    ui_well.well().registerObserver(WellEvent::Type::PIECE_ROTATED, [this](const WellEvent&){
+        this->sfx_onrotate->playOnce();
+    });
+
     ui_well.well().registerObserver(WellEvent::Type::NEXT_REQUESTED, [this](const WellEvent&){
         this->addNextPiece();
     });
@@ -69,7 +83,16 @@ void SinglePlayState::registerObservers()
             }
             else
                 well.addPiece(hold_queue.swapWith(type));
+
+            this->sfx_onhold->playOnce();
         }
+    });
+
+    ui_well.well().registerObserver(WellEvent::Type::LINE_CLEAR_ANIMATION_START, [this](const WellEvent& event){
+        if (this->lineclears_left - event.count <= 0 && !this->gravity_levels.empty())
+            this->sfx_onlevelup->playOnce();
+        else
+            this->sfx_onlineclear->playOnce();
     });
 
     ui_well.well().registerObserver(WellEvent::Type::LINE_CLEAR, [this](const WellEvent& event){

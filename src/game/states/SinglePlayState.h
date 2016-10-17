@@ -11,6 +11,7 @@
 
 class Texture;
 class Music;
+class SoundEffect;
 
 enum ScoreTypes {
     LINE_CLEAR_SINGLE = 1,
@@ -35,6 +36,11 @@ private:
     bool gameover;
     std::unique_ptr<Texture> tex_background;
     std::shared_ptr<Music> music;
+    std::shared_ptr<SoundEffect> sfx_onhold;
+    std::shared_ptr<SoundEffect> sfx_onlevelup;
+    std::shared_ptr<SoundEffect> sfx_onlineclear;
+    std::shared_ptr<SoundEffect> sfx_onlock;
+    std::shared_ptr<SoundEffect> sfx_onrotate;
     bool texts_need_update;
 
     Layout::WellBox ui_well;
