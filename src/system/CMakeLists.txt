@@ -12,13 +12,16 @@ set(MOD_SYSTEM_SRC
 )
 
 set(MOD_SYSTEM_H
+	AudioContext.h
 	Color.h
 	Font.h
 	GraphicsContext.h
 	InputEvent.h
 	Localize.h
 	Log.h
+	Music.h
 	Rectangle.h
+	SoundEffect.h
 	Texture.h
 	Window.h
 
