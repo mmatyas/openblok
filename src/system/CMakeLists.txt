@@ -5,8 +5,11 @@ set(MOD_SYSTEM_SRC
 	Window.cpp
 
 	# SDL2
+	sdl/SDLAudioContext.cpp
 	sdl/SDLFont.cpp
 	sdl/SDLGraphicsContext.cpp
+	sdl/SDLMusic.cpp
+	sdl/SDLSoundEffect.cpp
 	sdl/SDLTexture.cpp
 	sdl/SDLWindow.cpp
 )
@@ -26,8 +29,11 @@ set(MOD_SYSTEM_H
 	Window.h
 
 	# SDL2
+	sdl/SDLAudioContext.h
 	sdl/SDLFont.h
 	sdl/SDLGraphicsContext.h
+	sdl/SDLMusic.h
+	sdl/SDLSoundEffect.h
 	sdl/SDLTexture.h
 	sdl/SDLWindow.h
 )

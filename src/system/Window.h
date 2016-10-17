@@ -7,6 +7,7 @@
 #include <vector>
 
 
+class AudioContext;
 class GraphicsContext;
 
 
@@ -27,6 +28,9 @@ public:
     /// Return the graphics context component of the window,
     /// which can be used for drawing on this window.
     virtual GraphicsContext& graphicsContext() = 0;
+    /// Returns the audio context component of the window,
+    /// which can be used for playing music and sound effects.
+    virtual AudioContext& audioContext() = 0;
 
     /// In every frame, the Window should collect the native events,
     /// and return them in a platform-independent format.
