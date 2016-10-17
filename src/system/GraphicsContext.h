@@ -38,9 +38,4 @@ public:
     virtual void drawFilledRect(const Rectangle& rectangle, const RGBColor& color) = 0;
     /// Draw a rectangle on the screen, defined by [x,y,w,h], filled with the optionally transparent color [r,g,b,a]
     virtual void drawFilledRect(const Rectangle& rectangle, const RGBAColor& color) = 0;
-
-private:
-    static std::unique_ptr<GraphicsContext> create();
-
-friend class AppContext;
 };
