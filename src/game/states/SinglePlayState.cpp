@@ -3,7 +3,9 @@
 #include "game/AppContext.h"
 #include "game/WellEvent.h"
 #include "game/components/Piece.h"
+#include "system/AudioContext.h"
 #include "system/Localize.h"
+#include "system/Music.h"
 
 #include <cmath>
 
@@ -12,6 +14,7 @@ SinglePlayState::SinglePlayState(AppContext& app)
     : paused(false)
     , gameover(false)
     , tex_background(app.gcx().loadTexture("data/gamebg.png"))
+    , music(app.audio().loadMusic("data/music/gameplay.ogg"))
     , texts_need_update(true)
     , ui_well(app)
     , ui_leftside(app, ui_well.height())
@@ -40,6 +43,8 @@ SinglePlayState::SinglePlayState(AppContext& app)
 
     addNextPiece();
     ui_well.well().setGravity(gravity_levels.top());
+
+    music->playLoop();
 }
 
 SinglePlayState::~SinglePlayState() = default;
@@ -125,6 +130,10 @@ void SinglePlayState::update(const std::vector<InputEvent>& inputs, AppContext& 
     for (const auto& input : inputs) {
         if (input.type() == InputType::GAME_PAUSE && input.down()) {
             paused = !paused;
+            if (paused)
+                app.audio().pauseAll();
+            else
+                app.audio().resumeAll();
             return;
         }
     }

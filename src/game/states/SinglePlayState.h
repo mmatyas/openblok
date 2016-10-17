@@ -9,6 +9,9 @@
 #include <string>
 
 
+class Texture;
+class Music;
+
 enum ScoreTypes {
     LINE_CLEAR_SINGLE = 1,
     LINE_CLEAR_DOUBLE = 2,
@@ -31,6 +34,7 @@ private:
     bool paused;
     bool gameover;
     std::unique_ptr<Texture> tex_background;
+    std::shared_ptr<Music> music;
     bool texts_need_update;
 
     Layout::WellBox ui_well;

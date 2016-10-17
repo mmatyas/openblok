@@ -13,6 +13,7 @@ public:
 
     Window& window() { return *m_window; }
     GraphicsContext& gcx() { return m_window->graphicsContext(); }
+    AudioContext& audio() { return m_window->audioContext(); }
     std::stack<std::unique_ptr<GameState>>& states() { return m_states; }
 
 private:
