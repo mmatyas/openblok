@@ -11,7 +11,7 @@
 const std::string LOG_TAG("audio");
 
 SDLAudioContext::SDLAudioContext()
-    : mixer(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 4096)
+    : mixer(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 1024)
 {
     SDLMusic::mixer = &mixer;
     SDLSoundEffect::mixer = &mixer;
