@@ -431,6 +431,8 @@ void Well::lockThenRequestNext()
 
 void Well::lockAndReleasePiece()
 {
+    std::list<std::pair<unsigned, unsigned>> pending_anims;
+
     for (unsigned row = 0; row < 4; row++) {
         for (unsigned cell = 0; cell < 4; cell++) {
             if (active_piece_y + row >= matrix.size() ||
@@ -444,9 +446,8 @@ void Well::lockAndReleasePiece()
                 );
 
                 if (active_piece_y + row >= 2) {
-                    animations.emplace_back(
-                        std::make_unique<CellLockAnim>(active_piece_y + row - 2,
-                                                       active_piece_x + cell));
+                    pending_anims.emplace_back(active_piece_y + row - 2,
+                                               active_piece_x + cell);
                 }
             }
         }
@@ -455,7 +456,14 @@ void Well::lockAndReleasePiece()
     active_piece.reset();
     lock_countdown.stop();
     notify(WellEvent(WellEvent::Type::PIECE_LOCKED));
+
     checkLineclear();
+    if (pending_cleared_rows.empty()) {
+        // To avoid graphical glitches (animations flying in the air),
+        // only add cell lock animation if there was no line clear event
+        for (const auto& coord : pending_anims)
+            animations.emplace_back(std::make_unique<CellLockAnim>(coord.first, coord.second));
+    }
 }
 
 void Well::checkLineclear()
