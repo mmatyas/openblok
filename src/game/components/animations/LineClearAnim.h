@@ -11,9 +11,9 @@ public:
     void update(Duration t) final;
     void draw(GraphicsContext& gcx, int x, int y) const final;
 
-    bool isActive() const final { return alpha.running(); }
+    bool isActive() const final { return row_percent.running(); }
 
 private:
-    const unsigned row;
-    Transition<uint8_t> alpha;
+    const int row;
+    Transition<double> row_percent;
 };

@@ -4,23 +4,29 @@
 #include "system/GraphicsContext.h"
 
 
+constexpr Duration TIME_PER_ROW = Timing::frame_duration_60Hz * 40;
+
 LineClearAnim::LineClearAnim(unsigned row)
     : WellAnimation()
     , row(row)
-    , alpha(Timing::frame_duration_60Hz * 40, [](double t){
-            return static_cast<uint8_t>((1.0 - t) * 0xFF);
+    , row_percent(TIME_PER_ROW, [this](double t){
+            return t;
         })
 {}
 
 void LineClearAnim::update(Duration t)
 {
-    alpha.update(t);
+    row_percent.update(t);
 }
 
 void LineClearAnim::draw(GraphicsContext& gcx, int x, int y) const
 {
     // TODO: fix magic numbers
-    gcx.drawFilledRect({x, static_cast<int>(y + (row - 2) * Mino::texture_size_px),
-                        Mino::texture_size_px * 10, Mino::texture_size_px},
-                       {0xFF, 0xFF, 0xFF, alpha.value()});
+    static const int row_width = Mino::texture_size_px * 10;
+    gcx.drawFilledRect({
+        x + static_cast<int>(row_percent.value() * row_width),
+        y + (row - 2) * Mino::texture_size_px,
+        static_cast<int>(row_width * (1 - row_percent.value())),
+        Mino::texture_size_px},
+        0xEEEEEE_rgb);
 }
