@@ -4,12 +4,24 @@
 
 #include "sol.hpp"
 #include "SDL2/SDL_scancode.h" // TODO: fix this
+#include <algorithm>
+#include <fstream>
+#include <sstream>
 
-
-const std::string LOG_TAG("config");
 
 using InputScancodeMap = ConfigManager::InputScancodeMap;
 
+const std::string LOG_TAG("config");
+const std::map<InputType, const std::string> name_map = {
+    {InputType::GAME_PAUSE, "pause"},
+    {InputType::GAME_HOLD, "hold"},
+    {InputType::GAME_HARDDROP, "hard_drop"},
+    {InputType::GAME_SOFTDROP, "move_down"},
+    {InputType::GAME_MOVE_LEFT, "move_left"},
+    {InputType::GAME_MOVE_RIGHT, "move_right"},
+    {InputType::GAME_ROTATE_LEFT, "rotate_left"},
+    {InputType::GAME_ROTATE_RIGHT, "rotate_right"},
+};
 
 InputScancodeMap LuaConfigManager::loadInputMapping(const std::string& scriptfile)
 {
@@ -22,17 +34,6 @@ InputScancodeMap LuaConfigManager::loadInputMapping(const std::string& scriptfil
         {InputType::GAME_MOVE_RIGHT, {SDL_SCANCODE_RIGHT}},
         {InputType::GAME_ROTATE_LEFT, {SDL_SCANCODE_Z}},
         {InputType::GAME_ROTATE_RIGHT, {SDL_SCANCODE_X}},
-    };
-
-    static const std::vector<std::pair<InputType, std::string>> name_map = {
-        {InputType::GAME_PAUSE, "pause"},
-        {InputType::GAME_HOLD, "hold"},
-        {InputType::GAME_HARDDROP, "hard_drop"},
-        {InputType::GAME_SOFTDROP, "move_down"},
-        {InputType::GAME_MOVE_LEFT, "move_left"},
-        {InputType::GAME_MOVE_RIGHT, "move_right"},
-        {InputType::GAME_ROTATE_LEFT, "rotate_left"},
-        {InputType::GAME_ROTATE_RIGHT, "rotate_right"},
     };
 
     InputScancodeMap out = default_map;
@@ -48,7 +49,6 @@ InputScancodeMap LuaConfigManager::loadInputMapping(const std::string& scriptfil
             if (!arr_or_num.valid())
                 continue;
 
-            out[key.first].clear();
             auto& scancodes = out[key.first];
             scancodes.clear();
 
@@ -89,4 +89,28 @@ InputScancodeMap LuaConfigManager::loadInputMapping(const std::string& scriptfil
 
 void LuaConfigManager::saveInputMapping(const InputScancodeMap& mapping, const std::string& scriptfile)
 {
+    std::ofstream out(scriptfile);
+    if (!out.is_open()) {
+        Log::warning(LOG_TAG) << "Could not save input config to " << scriptfile << "\n";
+        return;
+    }
+
+
+    out << "game = {\n";
+    for (const auto& elem : mapping) {
+        assert(name_map.count(elem.first));
+
+        out << "\t" << name_map.at(elem.first) << " = ";
+        if (elem.second.size() == 1) {
+            out << *elem.second.begin() << ",\n";
+        }
+        else {
+            // this puts commas between the numbers only
+            std::ostringstream ss;
+            std::copy(elem.second.begin(), elem.second.end() - 1, std::ostream_iterator<int>(ss, ", "));
+            ss << elem.second.back();
+            out << "{" << ss.str() << "},\n";
+        }
+    }
+    out << "}\n";
 }
