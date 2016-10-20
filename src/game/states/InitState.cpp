@@ -8,6 +8,10 @@
 
 InitState::InitState(AppContext& app)
 {
+    auto mapping = app.config().loadInputMapping("data/config/input.lua");
+    app.config().saveInputMapping(mapping, "data/config/input.lua");
+    app.window().setInputMapping(mapping);
+
     Log::info("init") << "Loading resources\n";
 
     MinoStorage::loadTintedMinos(app.gcx(), "data/mino.png");

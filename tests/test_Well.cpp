@@ -136,7 +136,7 @@ TEST_FIXTURE(WellFixture, Gravity) {
 
 TEST_FIXTURE(WellFixture, MoveLeft) {
     well.addPiece(PieceType::I);
-    well.update({InputEvent(InputType::LEFT, true)}, app);
+    well.update({InputEvent(InputType::GAME_MOVE_LEFT, true)}, app);
 
     std::string expected_ascii = emptyline_ascii;
     expected_ascii += emptyline_ascii;
@@ -150,7 +150,7 @@ TEST_FIXTURE(WellFixture, MoveLeft) {
 }
 TEST_FIXTURE(WellFixture, MoveRight) {
     well.addPiece(PieceType::I);
-    well.update({InputEvent(InputType::RIGHT, true)}, app);
+    well.update({InputEvent(InputType::GAME_MOVE_RIGHT, true)}, app);
 
     std::string expected_ascii = emptyline_ascii;
     expected_ascii += emptyline_ascii;
@@ -164,7 +164,7 @@ TEST_FIXTURE(WellFixture, MoveRight) {
 }
 TEST_FIXTURE(WellFixture, MoveDown) {
     well.addPiece(PieceType::I);
-    well.update({InputEvent(InputType::DOWN, true)}, app);
+    well.update({InputEvent(InputType::GAME_SOFTDROP, true)}, app);
 
     std::string expected_ascii = emptyline_ascii;
     expected_ascii += emptyline_ascii;
@@ -183,7 +183,7 @@ TEST_FIXTURE(WellFixture, Rotate) {
     well.addPiece(PieceType::S);
     CHECK(well.activePiece() != nullptr);
 
-    well.update({InputEvent(InputType::A, true)}, app);
+    well.update({InputEvent(InputType::GAME_ROTATE_LEFT, true)}, app);
 
     std::string expected_ascii = emptyline_ascii;
     expected_ascii += emptyline_ascii;

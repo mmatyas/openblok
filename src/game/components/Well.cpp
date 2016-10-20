@@ -34,11 +34,11 @@ Well::Well()
             this->lockThenRequestNext();
         })
 {
-    keystates[InputType::LEFT] = false;
-    keystates[InputType::RIGHT] = false;
-    keystates[InputType::DOWN] = false;
-    keystates[InputType::A] = false;
-    keystates[InputType::B] = false;
+    keystates[InputType::GAME_MOVE_LEFT] = false;
+    keystates[InputType::GAME_MOVE_RIGHT] = false;
+    keystates[InputType::GAME_SOFTDROP] = false;
+    keystates[InputType::GAME_ROTATE_LEFT] = false;
+    keystates[InputType::GAME_ROTATE_RIGHT] = false;
     previous_keystates = keystates;
 }
 
@@ -97,14 +97,14 @@ void Well::updateKeystate(const std::vector<InputEvent>& events)
 void Well::handleKeys(const std::vector<InputEvent>& events)
 {
     // keep it true only if down key is still down
-    skip_gravity = (keystates.at(InputType::DOWN) && previous_keystates.at(InputType::DOWN));
+    skip_gravity = (keystates.at(InputType::GAME_SOFTDROP)
+                    && previous_keystates.at(InputType::GAME_SOFTDROP));
 
     // for some events onpress/onrelease handling is better suited
     for (const auto& event : events) {
         // press
         if (event.down()) {
             switch (event.type()) {
-            case InputType::UP:
             case InputType::GAME_HARDDROP:
                 hardDrop();
                 skip_gravity = true;
@@ -122,8 +122,8 @@ void Well::handleKeys(const std::vector<InputEvent>& events)
         // release
         else {
             switch (event.type()) {
-            case InputType::LEFT:
-            case InputType::RIGHT:
+            case InputType::GAME_MOVE_LEFT:
+            case InputType::GAME_MOVE_RIGHT:
                 resetDAS();
                 break;
             default:
@@ -134,8 +134,9 @@ void Well::handleKeys(const std::vector<InputEvent>& events)
 
 
     rotation_timer -= Timing::frame_duration;
-    if (keystates.at(InputType::A) != keystates.at(InputType::B) && rotation_timer <= Duration::zero()) {
-        if (keystates.at(InputType::A))
+    if (keystates.at(InputType::GAME_ROTATE_LEFT) != keystates.at(InputType::GAME_ROTATE_RIGHT)
+        && rotation_timer <= Duration::zero()) {
+        if (keystates.at(InputType::GAME_ROTATE_LEFT))
             rotateCCWNow();
         else
             rotateCWNow();
@@ -146,8 +147,8 @@ void Well::handleKeys(const std::vector<InputEvent>& events)
 
     horizontal_timer -= Timing::frame_duration;
     if (horizontal_timer <= Duration::zero()) {
-        if (keystates.at(InputType::LEFT) != keystates.at(InputType::RIGHT)) {
-            if (keystates.at(InputType::LEFT))
+        if (keystates.at(InputType::GAME_MOVE_LEFT) != keystates.at(InputType::GAME_MOVE_RIGHT)) {
+            if (keystates.at(InputType::GAME_MOVE_LEFT))
                 moveLeftNow();
             else
                 moveRightNow();
@@ -163,7 +164,7 @@ void Well::handleKeys(const std::vector<InputEvent>& events)
     }
 
     softdrop_timer -= Timing::frame_duration;
-    if (keystates.at(InputType::DOWN) && softdrop_timer <= Duration::zero()) {
+    if (keystates.at(InputType::GAME_SOFTDROP) && softdrop_timer <= Duration::zero()) {
         moveDownNow();
         skip_gravity = true;
         softdrop_timer = softdrop_delay;
