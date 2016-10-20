@@ -24,6 +24,14 @@ void SDLWindow::requestScreenshot(const std::string& path)
     gcx.requestScreenshot(window, path);
 }
 
+void SDLWindow::setInputMapping(std::map<InputType, std::set<uint16_t>> mapping)
+{
+    for (const auto& elem : mapping) {
+        for (const auto& scancode : elem.second)
+            input_mapping[scancode] = elem.first;
+    }
+}
+
 std::vector<InputEvent> SDLWindow::collectEvents()
 {
     std::vector<InputEvent> output;
@@ -50,49 +58,15 @@ std::vector<InputEvent> SDLWindow::collectEvents()
             }
             break;
         case SDL_KEYUP:
-        case SDL_KEYDOWN:
-            switch (sdl_event.key.keysym.scancode) {
-            case SDL_SCANCODE_ESCAPE:
-            case SDL_SCANCODE_F1:
-            case SDL_SCANCODE_P:
-                if (!sdl_event.key.repeat)
-                    output.emplace_back(InputEvent(InputType::GAME_PAUSE, sdl_event.type == SDL_KEYDOWN));
-                break;
-            case SDL_SCANCODE_UP:
-                if (!sdl_event.key.repeat)
-                    output.emplace_back(InputEvent(InputType::UP, sdl_event.type == SDL_KEYDOWN));
-                break;
-            case SDL_SCANCODE_DOWN:
-                output.emplace_back(InputEvent(InputType::DOWN, sdl_event.type == SDL_KEYDOWN));
-                break;
-            case SDL_SCANCODE_LEFT:
-                output.emplace_back(InputEvent(InputType::LEFT, sdl_event.type == SDL_KEYDOWN));
-                break;
-            case SDL_SCANCODE_RIGHT:
-                output.emplace_back(InputEvent(InputType::RIGHT, sdl_event.type == SDL_KEYDOWN));
-                break;
-            case SDL_SCANCODE_Z:
-                output.emplace_back(InputEvent(InputType::A, sdl_event.type == SDL_KEYDOWN));
-                break;
-            case SDL_SCANCODE_X:
-                output.emplace_back(InputEvent(InputType::B, sdl_event.type == SDL_KEYDOWN));
-                break;
-            case SDL_SCANCODE_C:
-            case SDL_SCANCODE_LSHIFT:
-            case SDL_SCANCODE_RSHIFT:
-                if (!sdl_event.key.repeat)
-                    output.emplace_back(InputEvent(InputType::GAME_HOLD, sdl_event.type == SDL_KEYDOWN));
-                break;
-            case SDL_SCANCODE_SPACE:
-                if (!sdl_event.key.repeat)
-                    output.emplace_back(InputEvent(InputType::GAME_HARDDROP, sdl_event.type == SDL_KEYDOWN));
-                break;
             case SDL_SCANCODE_F4:
                 if (SDL_GetModState() & KMOD_ALT)
                     m_quit_requested = true;
-                break;
-            default:
-                break;
+            // do NOT break
+        case SDL_KEYDOWN:
+            if (!sdl_event.key.repeat) {
+                uint16_t scancode = sdl_event.key.keysym.scancode;
+                if (input_mapping.count(scancode))
+                    output.emplace_back(InputEvent(input_mapping.at(scancode), sdl_event.type == SDL_KEYDOWN));
             }
         default:
             break;

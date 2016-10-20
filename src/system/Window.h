@@ -2,7 +2,9 @@
 
 #include "InputEvent.h"
 
+#include <map>
 #include <memory>
+#include <set>
 #include <string>
 #include <vector>
 
@@ -37,6 +39,8 @@ public:
     /// If the user wants to quit the game by a native event, then after this call
     /// `quit_requested()` should return true.
     virtual std::vector<InputEvent> collectEvents() = 0;
+    /// Set the input mapping between game events and keyboard scancodes
+    virtual void setInputMapping(std::map<InputType, std::set<uint16_t>>) = 0;
     /// Return `true` if the user wants to quit the program, eg. by closing the game
     /// window or pressing certain key combinations (Alt-F4, Ctrl-Q, ...).
     virtual bool quitRequested() = 0;

@@ -1,6 +1,5 @@
 #include "Window.h"
 
-#include "GraphicsContext.h"
 #include "sdl/SDLWindow.h"
 
 

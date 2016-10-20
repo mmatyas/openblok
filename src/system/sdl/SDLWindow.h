@@ -7,6 +7,7 @@
 #include "SDL2pp/SDL2pp.hh"
 #include <memory>
 #include <string>
+#include <unordered_map>
 
 
 class SDLWindow : public Window {
@@ -19,6 +20,7 @@ public:
     AudioContext& audioContext() final { return audio; };
 
     std::vector<InputEvent> collectEvents() final;
+    void setInputMapping(std::map<InputType, std::set<uint16_t>>) final;
     bool quitRequested() final { return m_quit_requested; }
 
 private:
@@ -26,6 +28,7 @@ private:
     SDL2pp::Window window;
     SDLGraphicsContext gcx;
     SDLAudioContext audio;
+    std::unordered_map<uint8_t, InputType> input_mapping;
 
     bool m_quit_requested;
 };
