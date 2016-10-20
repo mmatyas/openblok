@@ -23,6 +23,9 @@ set(SDL2PP_WITH_MIXER ON)
 set(SDL2PP_WITH_TTF ON)
 add_subdirectory(external/libSDL2pp)
 
+# Dependencies: LuaJIT
+find_package(LuaJIT REQUIRED)
+
 
 include_directories("src")
 add_subdirectory(src)
