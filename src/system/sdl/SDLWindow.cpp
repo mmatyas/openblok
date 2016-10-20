@@ -24,7 +24,7 @@ void SDLWindow::requestScreenshot(const std::string& path)
     gcx.requestScreenshot(window, path);
 }
 
-void SDLWindow::setInputMapping(std::map<InputType, std::set<uint16_t>> mapping)
+void SDLWindow::setInputMapping(std::map<InputType, std::vector<uint16_t>> mapping)
 {
     for (const auto& elem : mapping) {
         for (const auto& scancode : elem.second)

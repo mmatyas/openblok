@@ -5,13 +5,13 @@
 #include <map>
 #include <memory>
 #include <string>
-#include <set>
+#include <vector>
 #include <stdint.h>
 
 
 class ConfigManager {
 public:
-    using InputScancodeMap = std::map<InputType, std::set<uint16_t>>;
+    using InputScancodeMap = std::map<InputType, std::vector<uint16_t>>;
 
     virtual ~ConfigManager() {}
 

@@ -49,17 +49,26 @@ InputScancodeMap LuaConfigManager::loadInputMapping(const std::string& scriptfil
                 continue;
 
             out[key.first].clear();
+            auto& scancodes = out[key.first];
+            scancodes.clear();
+
+            // an array
             if (arr_or_num.get_type() == sol::type::table) {
                 sol::table arr = arr_or_num;
                 for (unsigned i = 1; i <= arr.size(); i++) {
                     sol::optional<uint16_t> val = arr[i];
                     if (val != sol::nullopt)
-                        out[key.first].emplace(val.value());
+                        scancodes.emplace_back(val.value());
                 }
+
+                // remove duplicates and sort
+                std::sort(scancodes.begin(), scancodes.end());
+                scancodes.erase(std::unique(scancodes.begin(), scancodes.end()), scancodes.end());
             }
+            // one number
             else if (arr_or_num.get_type() == sol::type::number){
                 uint16_t val = arr_or_num.as<uint16_t>();
-                out[key.first].emplace(val);
+                scancodes.emplace_back(val);
             }
 
             std::string dbg = key.second + ": ";

@@ -8,6 +8,7 @@
 #include <memory>
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 
 class SDLWindow : public Window {
@@ -20,7 +21,7 @@ public:
     AudioContext& audioContext() final { return audio; };
 
     std::vector<InputEvent> collectEvents() final;
-    void setInputMapping(std::map<InputType, std::set<uint16_t>>) final;
+    void setInputMapping(std::map<InputType, std::vector<uint16_t>>) final;
     bool quitRequested() final { return m_quit_requested; }
 
 private:
