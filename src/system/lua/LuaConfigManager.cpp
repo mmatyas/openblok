@@ -9,7 +9,7 @@
 #include <sstream>
 
 
-using InputScancodeMap = ConfigManager::InputScancodeMap;
+using ScancodeMap = ConfigManager::ScancodeMap;
 
 const std::string LOG_TAG("config");
 const std::map<InputType, const std::string> name_map = {
@@ -23,9 +23,9 @@ const std::map<InputType, const std::string> name_map = {
     {InputType::GAME_ROTATE_RIGHT, "rotate_right"},
 };
 
-InputScancodeMap LuaConfigManager::loadInputMapping(const std::string& scriptfile)
+ScancodeMap LuaConfigManager::loadInputMapping(const std::string& scriptfile)
 {
-    static const InputScancodeMap default_map = {
+    static const ScancodeMap default_map = {
         {InputType::GAME_PAUSE, {SDL_SCANCODE_P}},
         {InputType::GAME_HOLD, {SDL_SCANCODE_C, SDL_SCANCODE_LSHIFT, SDL_SCANCODE_RSHIFT}},
         {InputType::GAME_HARDDROP, {SDL_SCANCODE_UP, SDL_SCANCODE_SPACE}},
@@ -36,7 +36,7 @@ InputScancodeMap LuaConfigManager::loadInputMapping(const std::string& scriptfil
         {InputType::GAME_ROTATE_RIGHT, {SDL_SCANCODE_X}},
     };
 
-    InputScancodeMap out = default_map;
+    ScancodeMap out = default_map;
     try {
         sol::state lua;
         lua.script_file(scriptfile);
@@ -44,8 +44,12 @@ InputScancodeMap LuaConfigManager::loadInputMapping(const std::string& scriptfil
         if (!game.valid())
             throw std::runtime_error(scriptfile + ": No 'game' block defined, using defaults.");
 
+        sol::table keyboard = game["keyboard"];
+        if (!keyboard.valid())
+            throw std::runtime_error(scriptfile + ": No 'keyboard' block defined, using defaults.");
+
         for (const auto& key : name_map) {
-            sol::object arr_or_num = game[key.second];
+            sol::object arr_or_num = keyboard[key.second];
             if (!arr_or_num.valid())
                 continue;
 
@@ -87,7 +91,7 @@ InputScancodeMap LuaConfigManager::loadInputMapping(const std::string& scriptfil
     return out;
 }
 
-void LuaConfigManager::saveInputMapping(const InputScancodeMap& mapping, const std::string& scriptfile)
+void LuaConfigManager::saveInputMapping(const ScancodeMap& mapping, const std::string& scriptfile)
 {
     std::ofstream out(scriptfile);
     if (!out.is_open()) {
@@ -97,10 +101,11 @@ void LuaConfigManager::saveInputMapping(const InputScancodeMap& mapping, const s
 
 
     out << "game = {\n";
+    out << "\tkeyboard = {\n";
     for (const auto& elem : mapping) {
         assert(name_map.count(elem.first));
 
-        out << "\t" << name_map.at(elem.first) << " = ";
+        out << "\t\t" << name_map.at(elem.first) << " = ";
         if (elem.second.size() == 1) {
             out << *elem.second.begin() << ",\n";
         }
@@ -112,5 +117,6 @@ void LuaConfigManager::saveInputMapping(const InputScancodeMap& mapping, const s
             out << "{" << ss.str() << "},\n";
         }
     }
+    out << "\t}\n";
     out << "}\n";
 }
