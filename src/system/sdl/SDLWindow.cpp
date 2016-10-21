@@ -44,17 +44,17 @@ std::vector<InputEvent> SDLWindow::collectEvents()
             break;
         case SDL_WINDOWEVENT:
             switch (sdl_event.window.event) {
-            case SDL_WINDOWEVENT_CLOSE:
-                m_quit_requested = true;
-                break;
-            case SDL_WINDOWEVENT_FOCUS_LOST:
-                output.emplace_back(InputEvent(InputType::GAME_PAUSE, true));
-                break;
-            case SDL_WINDOWEVENT_RESIZED:
-                gcx.onResize(sdl_event.window.data1, sdl_event.window.data2);
-                break;
-            default:
-                break;
+                case SDL_WINDOWEVENT_CLOSE:
+                    m_quit_requested = true;
+                    break;
+                case SDL_WINDOWEVENT_FOCUS_LOST:
+                    output.emplace_back(InputEvent(InputType::GAME_PAUSE, true));
+                    break;
+                case SDL_WINDOWEVENT_RESIZED:
+                    gcx.onResize(sdl_event.window.data1, sdl_event.window.data2);
+                    break;
+                default:
+                    break;
             }
             break;
         case SDL_KEYUP:
@@ -68,6 +68,7 @@ std::vector<InputEvent> SDLWindow::collectEvents()
                 if (input_mapping.count(scancode))
                     output.emplace_back(InputEvent(input_mapping.at(scancode), sdl_event.type == SDL_KEYDOWN));
             }
+            break;
         default:
             break;
         }
