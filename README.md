@@ -17,7 +17,7 @@ Features:
 - [x] Wall kick, floor kick support (TGM-based)
 - [ ] T-spin support
 - [ ] ARE support
-- [ ] Gamepad support
+- [x] Gamepad support
 - [ ] Menu
 - [ ] Battle mode
 - [ ] Plugins
