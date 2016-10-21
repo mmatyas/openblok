@@ -29,6 +29,8 @@ private:
     SDL2pp::Window window;
     SDLGraphicsContext gcx;
     SDLAudioContext audio;
+    std::unordered_map<SDL_JoystickID, std::unique_ptr<SDL_Joystick, std::function<void(SDL_Joystick*)>>> joysticks;
+
     std::unordered_map<uint8_t, InputType> input_mapping;
 
     bool m_quit_requested;
