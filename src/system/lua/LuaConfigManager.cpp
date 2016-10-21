@@ -74,11 +74,6 @@ ScancodeMap LuaConfigManager::loadInputMapping(const std::string& scriptfile)
                 uint16_t val = arr_or_num.as<uint16_t>();
                 scancodes.emplace_back(val);
             }
-
-            std::string dbg = key.second + ": ";
-            for (const auto& elem : out.at(key.first))
-                dbg += std::to_string(elem) + " ";
-            Log::info(LOG_TAG) << dbg << "\n";
         }
     }
     catch (const sol::error& err) {
