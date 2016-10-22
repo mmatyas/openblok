@@ -2,8 +2,9 @@
 -- there's a collision using a piece's default rotated position.
 --
 -- piece: a letter, one of I,J,L,O,S,T,Z
--- direction: where the piece should face on succesful rotation, one of N,S,W,E
-function possibleRotations(piece, direction)
+-- start: the orientation of the piece before the rotation, one of N,S,W,E
+-- clockwise: true if the piece should be rotated clockwise, false otherwise
+function possibleRotations(piece, from, to)
     output = {
         {1, 0}, -- try 1 tile right
         {-1, 0}, -- try 1 tile left

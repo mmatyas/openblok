@@ -22,11 +22,11 @@ LuaRotationFn::LuaRotationFn(const std::string& scriptfile)
         throw new std::runtime_error("A rotation plugin must have a possibleRotations function");
 }
 
-std::vector<std::pair<int, int>> LuaRotationFn::call(PieceType piece, PieceDirection direction)
+std::vector<std::pair<int, int>> LuaRotationFn::call(PieceType piece, PieceDirection from, bool clockwise)
 {
     std::vector<std::pair<int, int>> output;
 
-    auto fn_call = fn(toAscii(piece), toAscii(direction));
+    auto fn_call = fn(toAscii(piece), toAscii(from), clockwise);
     if (!fn_call.valid()) {
         sol::error err = fn_call;
         Log::error(LOG_TAG) << err.what() << '\n';

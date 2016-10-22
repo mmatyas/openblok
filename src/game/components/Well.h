@@ -118,7 +118,7 @@ private:
     void hardDrop();
     void rotateCWNow(); // clockwise
     void rotateCCWNow(); // counter-clockwise
-    bool placeByWallKick();
+    bool placeByWallKick(bool cw_rotation);
     std::unique_ptr<RotationFn> rotation_fn;
 
     // lock delay

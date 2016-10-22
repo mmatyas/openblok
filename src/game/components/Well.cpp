@@ -357,11 +357,14 @@ void Well::hardDrop()
     notify(harddrop_event);
 }
 
-bool Well::placeByWallKick()
+bool Well::placeByWallKick(bool cw_rotation)
 {
     assert(active_piece);
 
-    const auto offsets = rotation_fn->call(active_piece->type(), active_piece->orientation());
+    const auto target_rot = active_piece->orientation();
+    const auto starting_rot = cw_rotation ? prevCW(target_rot) : nextCW(target_rot);
+    const auto offsets = rotation_fn->call(active_piece->type(), starting_rot, cw_rotation);
+
     for (const auto& offset : offsets) {
         if (!hasCollisionAt(active_piece_x + offset.first, active_piece_y + offset.second)) {
             active_piece_x += offset.first;
@@ -380,7 +383,7 @@ void Well::rotateCWNow()
 
     active_piece->rotateCW();
     if (hasCollisionAt(active_piece_x, active_piece_y)) {
-        if (!placeByWallKick()) {
+        if (!placeByWallKick(true)) {
             active_piece->rotateCCW();
             return;
         }
@@ -399,7 +402,7 @@ void Well::rotateCCWNow()
 
     active_piece->rotateCCW();
     if (hasCollisionAt(active_piece_x, active_piece_y)) {
-        if (!placeByWallKick()) {
+        if (!placeByWallKick(false)) {
             active_piece->rotateCW();
             return;
         }
