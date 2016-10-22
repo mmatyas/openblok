@@ -42,9 +42,9 @@ set(MOD_GAME_H
 	layout/singleplayer/LeftSidebarBox.h
 	layout/singleplayer/RightSidebarBox.h
 	layout/singleplayer/WellBox.h
+	script/ClassicRotationFn.h
 	script/ScriptLoader.h
 	script/RotationFn.h
-	script/DefaultRotationFn.h
 	script/lua/LuaRotationFn.h
 	states/InitState.h
 	states/MainMenuState.h

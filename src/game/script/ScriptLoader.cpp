@@ -1,6 +1,6 @@
 #include "ScriptLoader.h"
 
-#include "DefaultRotationFn.h"
+#include "ClassicRotationFn.h"
 #include "lua/LuaRotationFn.h"
 #include "system/Log.h"
 
@@ -19,5 +19,5 @@ std::unique_ptr<RotationFn> ScriptLoader::loadRotationFn(const std::string& scri
         Log::warning(LOG_TAG) << err->what() << "\n";
     }
 
-    return std::make_unique<DefaultRotationFn>();
+    return std::make_unique<ClassicRotationFn>();
 }

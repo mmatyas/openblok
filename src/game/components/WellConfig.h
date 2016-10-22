@@ -1,6 +1,6 @@
 #pragma once
 
-#include "game/script/DefaultRotationFn.h"
+#include "game/script/ClassicRotationFn.h"
 
 #include <memory>
 
@@ -26,6 +26,6 @@ struct WellConfig {
         infinity_lock = true,
         lock_delay = 30,
         rotation_delay = 10,
-        rotation_fn = std::make_unique<DefaultRotationFn>();
+        rotation_fn = std::make_unique<ClassicRotationFn>();
     };
 };
