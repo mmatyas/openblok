@@ -34,6 +34,7 @@ set(MOD_GAME_H
 	components/PieceFactory.h
 	components/PieceType.h
 	components/Well.h
+	components/WellConfig.h
 	components/animations/WellAnimation.h
 	components/animations/CellLockAnim.h
 	components/animations/LineClearAnim.h

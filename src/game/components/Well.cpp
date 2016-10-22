@@ -12,25 +12,28 @@
 #include <assert.h>
 
 
-Well::Well()
+Well::Well() : Well(WellConfig()) {}
+
+Well::Well(WellConfig&& config)
     : gameover(false)
     , active_piece_x(0)
     , active_piece_y(0)
     , ghost_piece_y(0)
-    , gravity_delay(Timing::frame_duration_60Hz * 64)
+    , gravity_delay(Timing::frame_duration_60Hz * config.starting_gravity)
     , gravity_timer(Duration::zero())
-    , horizontal_delay_normal(Timing::frame_duration_60Hz * 14)
-    , horizontal_delay_turbo(Timing::frame_duration_60Hz * 4)
+    , horizontal_delay_normal(Timing::frame_duration_60Hz * config.shift_normal)
+    , horizontal_delay_turbo(Timing::frame_duration_60Hz * config.shift_turbo)
     , horizontal_delay_current(horizontal_delay_normal)
     , horizontal_timer(Duration::zero())
     , das_timer(horizontal_delay_normal)
     , softdrop_delay(gravity_delay / 20)
     , softdrop_timer(Duration::zero())
-    , rotation_delay(Timing::frame_duration_60Hz * 10)
+    , rotation_delay(Timing::frame_duration_60Hz * config.rotation_delay)
     , rotation_timer(Duration::zero())
-    , harddrop_locks_instantly(true)
-    , lock_infinity(true)
-    , lock_countdown(Timing::frame_duration_60Hz * 30, [](double){}, [this](){
+    , rotation_fn(std::move(config.rotation_fn))
+    , harddrop_locks_instantly(config.instant_harddrop)
+    , lock_infinity(config.infinity_lock)
+    , lock_countdown(Timing::frame_duration_60Hz * config.lock_delay, [](double){}, [this](){
             this->lockThenRequestNext();
         })
 {

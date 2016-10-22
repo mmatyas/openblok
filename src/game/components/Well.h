@@ -1,5 +1,6 @@
 #pragma once
 
+#include "WellConfig.h"
 #include "game/Matrix.h"
 #include "game/Transition.h"
 #include "game/WellEvent.h"
@@ -29,6 +30,7 @@ class Well {
 public:
     /// Create a new well
     Well();
+    Well(WellConfig&&);
     ~Well();
 
     /// Update the well
