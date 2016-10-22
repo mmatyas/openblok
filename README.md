@@ -9,12 +9,12 @@ Features:
 - [x] Hold support
 - [x] Next pieces support
 - [x] DAS support
-- [x] SRS pieces
+- [x] SRS or TGM rotation
+- [x] Wall kick, floor kick support
 - [x] 7-piece bag random generator
-- [x] Sonic drop and Zangi-move support (optional)
 - [x] Lock delay, line clear delay support
+- [x] Sonic drop and Zangi-move support (optional)
 - [x] Infinity lock support (optional)
-- [x] Wall kick, floor kick support (TGM-based)
 - [ ] T-spin support
 - [ ] ARE support
 - [x] Gamepad support
