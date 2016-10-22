@@ -8,6 +8,7 @@
 const std::string LOG_TAG = "lua_rotation_plugin";
 
 LuaRotationFn::LuaRotationFn(const std::string& scriptfile)
+    : RotationFn(scriptfile)
 {
     lua.open_libraries(sol::lib::base, sol::lib::table);
     try {
@@ -16,6 +17,10 @@ LuaRotationFn::LuaRotationFn(const std::string& scriptfile)
     catch (const sol::error& err) {
         throw new std::runtime_error(err.what());
     }
+
+    sol::optional<std::string> name = lua["plugin_name"];
+    if (name != sol::nullopt)
+        plugin_name = name.value();
 
     fn = lua["possibleRotations"];
     if (!fn.valid())

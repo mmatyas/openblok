@@ -1,3 +1,5 @@
+plugin_name = 'SRS rotation system'
+
 -- Returns an array of (x,y) offsets the game should try when
 -- there's a collision using a piece's default rotated position.
 --
