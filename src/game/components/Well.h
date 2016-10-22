@@ -46,6 +46,8 @@ public:
 
     /// Set the gravity update rate, in frames
     void setGravity(Duration);
+    /// Set the rotation function
+    void setRotationFn(std::unique_ptr<RotationFn>&&);
 
     /// Draw the Minos in the Well
     void drawContent(GraphicsContext&, int x, int y) const;
@@ -115,6 +117,7 @@ private:
     void rotateCWNow(); // clockwise
     void rotateCCWNow(); // counter-clockwise
     bool placeByWallKick();
+    std::unique_ptr<RotationFn> rotation_fn;
 
     // lock delay
     bool harddrop_locks_instantly;

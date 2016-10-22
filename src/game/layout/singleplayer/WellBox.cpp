@@ -10,6 +10,8 @@ namespace Layout {
 
 WellBox::WellBox(AppContext& app)
 {
+    m_well.setRotationFn(app.scripts().loadRotationFn("data/rotations/tgm.lua"));
+
     bounding_box.w = 10 * Mino::texture_size_px + border_width * 2;
     bounding_box.h = 20 * Mino::texture_size_px + border_width * 2;
 

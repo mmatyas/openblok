@@ -234,13 +234,22 @@ void Well::setGravity(Duration duration)
     softdrop_delay = gravity_delay / 20;
 }
 
+void Well::setRotationFn(std::unique_ptr<RotationFn>&& fn)
+{
+    rotation_fn.swap(fn);
+}
+
 bool Well::hasCollisionAt(int offset_x, unsigned offset_y) const
 {
     // At least one line of the piece grid must be on the board.
     // Horizontally, a piece can go between -3 and width+3,
     // vertically from 0 to heigh+3 (it cannot be over the board)
-    assert(offset_x + 3 >= 0 && offset_x < static_cast<int>(matrix[0].size()));
-    assert(offset_y < matrix.size());
+    if (offset_x + 3 < 0 || offset_x >= static_cast<int>(matrix.at(0).size()))
+        return true;
+
+    if (offset_y >= matrix.size())
+        return true;
+
     assert(active_piece);
 
     size_t piece_gridx = 0, piece_gridy = 0;
@@ -249,7 +258,7 @@ bool Well::hasCollisionAt(int offset_x, unsigned offset_y) const
             bool board_has_mino_here = true;
             if (row < matrix.size() &&
                 cell >= 0 &&
-                cell < static_cast<int>(matrix[0].size()))
+                cell < static_cast<int>(matrix.at(0).size()))
                 board_has_mino_here = matrix.at(row).at(cell).operator bool();
 
             bool piece_has_mino_here = active_piece->currentGrid()
@@ -349,36 +358,12 @@ bool Well::placeByWallKick()
 {
     assert(active_piece);
 
-    // try at the same row first, then floor kick
-    // I pieces can kick higher
-    // TODO: check max width/height instead of piece type
-    for (unsigned floor = 0; floor < (active_piece->type() == PieceType::I ? 3 : 2); floor++) {
-        // try 1 tile right
-        if (!hasCollisionAt(active_piece_x + 1, active_piece_y - floor)) {
-            active_piece_x++;
-            active_piece_y -= floor;
+    const auto offsets = rotation_fn->call(active_piece->type(), active_piece->orientation());
+    for (const auto& offset : offsets) {
+        if (!hasCollisionAt(active_piece_x + offset.first, active_piece_y + offset.second)) {
+            active_piece_x += offset.first;
+            active_piece_y += offset.second;
             return true;
-        }
-        // try 1 tile left
-        if (!hasCollisionAt(active_piece_x - 1, active_piece_y - floor)) {
-            active_piece_x--;
-            active_piece_y -= floor;
-            return true;
-        }
-        // if I piece, also try 2 tiles left/right
-        if (active_piece->type() == PieceType::I) {
-            if (active_piece_x + 2 < static_cast<int>(matrix.at(0).size())
-                && !hasCollisionAt(active_piece_x + 2, active_piece_y - floor)) {
-                active_piece_x += 2;
-                active_piece_y -= floor;
-                return true;
-            }
-            if (active_piece_x - 2 >= 0
-                && !hasCollisionAt(active_piece_x - 2, active_piece_y - floor)) {
-                active_piece_x -= 2;
-                active_piece_y -= floor;
-                return true;
-            }
         }
     }
 

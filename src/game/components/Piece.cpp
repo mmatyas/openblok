@@ -33,7 +33,7 @@ uint8_t Piece::displayWidth(PieceType type) {
 
 Piece::Piece(PieceType type, const std::array<std::bitset<16>, 4>& gridbits)
     : piece_type(type)
-    , current_rotation(0)
+    , current_rotation(PieceDirection::NORTH)
 {
     // fill 4 frames of 4x4 grids
     for (size_t frame = 0; frame < 4; frame++) {
@@ -48,24 +48,22 @@ Piece::Piece(PieceType type, const std::array<std::bitset<16>, 4>& gridbits)
 void Piece::rotateCCW()
 {
     // wrap around from right to remain unsigned
-    current_rotation = (current_rotation + 3) % 4;
+    current_rotation = prevCW(current_rotation);
 }
 
 void Piece::rotateCW()
 {
-    current_rotation = (current_rotation + 1) % 4;
+    current_rotation = nextCW(current_rotation);
 }
 
 const PieceGrid& Piece::currentGrid() const
 {
-    assert(current_rotation < 4);
-    return grids.at(current_rotation);
+    return grids.at(static_cast<uint8_t>(current_rotation));
 }
 
 PieceGrid& Piece::currentGridMut()
 {
-    assert(current_rotation < 4);
-    return grids[current_rotation];
+    return grids[static_cast<uint8_t>(current_rotation)];
 }
 
 void Piece::draw(int x, int y)

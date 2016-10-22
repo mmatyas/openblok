@@ -21,6 +21,7 @@ public:
     static PieceType typeFromAscii(char);
     static uint8_t displayWidth(PieceType);
     PieceType type() const { return piece_type; }
+    PieceDirection orientation() const { return current_rotation; }
 
     /// Create a Piece of type, with the four rotations as bitflags
     Piece(PieceType, const std::array<std::bitset<16>, 4>&);
@@ -39,6 +40,6 @@ public:
 
 private:
     const PieceType piece_type;
-    uint8_t current_rotation;
+    PieceDirection current_rotation;
     std::array<PieceGrid, 4> grids;
 };

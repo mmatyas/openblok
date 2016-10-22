@@ -35,3 +35,5 @@ enum class PieceDirection : uint8_t {
 };
 
 char toAscii(PieceDirection);
+PieceDirection nextCW(PieceDirection);
+PieceDirection prevCW(PieceDirection);

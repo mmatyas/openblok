@@ -27,3 +27,25 @@ char toAscii(PieceDirection direction)
     }
     assert(false);
 }
+
+PieceDirection nextCW(PieceDirection direction)
+{
+    switch(direction) {
+        case PieceDirection::NORTH: return PieceDirection::EAST;
+        case PieceDirection::EAST: return PieceDirection::SOUTH;
+        case PieceDirection::SOUTH: return PieceDirection::WEST;
+        case PieceDirection::WEST: return PieceDirection::NORTH;
+    }
+    assert(false);
+}
+
+PieceDirection prevCW(PieceDirection direction)
+{
+    switch(direction) {
+        case PieceDirection::NORTH: return PieceDirection::WEST;
+        case PieceDirection::EAST: return PieceDirection::NORTH;
+        case PieceDirection::SOUTH: return PieceDirection::EAST;
+        case PieceDirection::WEST: return PieceDirection::SOUTH;
+    }
+    assert(false);
+}
