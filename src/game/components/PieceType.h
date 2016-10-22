@@ -23,3 +23,15 @@ struct PieceTypeHash {
         return static_cast<size_t>(t);
     }
 };
+
+char toAscii(PieceType);
+
+
+enum class PieceDirection : uint8_t {
+    NORTH,
+    EAST,
+    SOUTH,
+    WEST
+};
+
+char toAscii(PieceDirection);

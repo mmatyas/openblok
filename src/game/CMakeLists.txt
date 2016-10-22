@@ -6,6 +6,7 @@ set(MOD_GAME_SRC
 	components/NextQueue.cpp
 	components/Piece.cpp
 	components/PieceFactory.cpp
+	components/PieceType.cpp
 	components/Well.cpp
 	components/animations/CellLockAnim.cpp
 	components/animations/LineClearAnim.cpp
@@ -38,6 +39,9 @@ set(MOD_GAME_H
 	layout/singleplayer/LeftSidebarBox.h
 	layout/singleplayer/RightSidebarBox.h
 	layout/singleplayer/WellBox.h
+	script/ScriptLoader.h
+	script/RotationFn.h
+	script/DefaultRotationFn.h
 	states/InitState.h
 	states/MainMenuState.h
 	states/SinglePlayState.h
@@ -45,6 +49,3 @@ set(MOD_GAME_H
 
 add_library(module_game ${MOD_GAME_SRC} ${MOD_GAME_H})
 target_link_libraries(module_game module_system)
-
-# std::future support
-target_link_libraries(module_game ${CMAKE_THREAD_LIBS_INIT})
