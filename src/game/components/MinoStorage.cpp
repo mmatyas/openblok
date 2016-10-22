@@ -14,7 +14,7 @@ std::shared_ptr<Mino> MinoStorage::matrixcell;
 void MinoStorage::loadDummyMinos()
 {
     for (const auto& type : PieceTypeList) {
-        minos[type] = std::make_shared<Mino>(nullptr, ascii(type));
+        minos[type] = std::make_shared<Mino>(nullptr, ::toAscii(type));
         ghosts[type] = std::make_shared<Mino>(nullptr, 'g');
     }
     matrixcell.reset();
@@ -24,7 +24,7 @@ void MinoStorage::loadDummyMinos()
 void MinoStorage::loadTintedMinos(GraphicsContext& gcx, const std::string& path)
 {
     for (const auto& type : PieceTypeList)
-        minos[type] = std::make_shared<Mino>(gcx.loadTexture(path, color(type)), ascii(type));
+        minos[type] = std::make_shared<Mino>(gcx.loadTexture(path, color(type)), ::toAscii(type));
 }
 
 void MinoStorage::loadTintedGhosts(GraphicsContext& gcx, const std::string& path)
@@ -66,20 +66,6 @@ RGBColor MinoStorage::color(PieceType type)
     case PieceType::S : return 0x80FF00_rgb;
     case PieceType::T : return 0xAA00FF_rgb;
     case PieceType::Z : return 0xFF0000_rgb;
-    }
-    assert(false);
-}
-
-char MinoStorage::ascii(PieceType type)
-{
-    switch(type) {
-    case PieceType::I : return 'I';
-    case PieceType::J : return 'J';
-    case PieceType::L : return 'L';
-    case PieceType::O : return 'O';
-    case PieceType::S : return 'S';
-    case PieceType::T : return 'T';
-    case PieceType::Z : return 'Z';
     }
     assert(false);
 }

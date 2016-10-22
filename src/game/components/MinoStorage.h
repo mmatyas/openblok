@@ -21,7 +21,6 @@ public:
     static std::shared_ptr<Mino> getMatrixCell();
 
     static RGBColor color(PieceType);
-    static char ascii(PieceType);
 
 #ifndef NDEBUG
     static void loadDummyMinos();
