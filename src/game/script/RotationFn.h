@@ -2,6 +2,7 @@
 
 #include "game/components/PieceType.h"
 
+#include <string>
 #include <vector>
 
 
