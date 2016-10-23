@@ -28,8 +28,6 @@ Well::Well(WellConfig&& config)
     , das_timer(horizontal_delay_normal)
     , softdrop_delay(gravity_delay / 20)
     , softdrop_timer(Duration::zero())
-    , rotation_delay(Timing::frame_duration_60Hz * config.rotation_delay)
-    , rotation_timer(Duration::zero())
     , rotation_fn(std::move(config.rotation_fn))
     , harddrop_locks_instantly(config.instant_harddrop)
     , lock_infinity(config.infinity_lock)
@@ -118,6 +116,16 @@ void Well::handleKeys(const std::vector<InputEvent>& events)
                 skip_gravity = true;
                 break;
 
+            case InputType::GAME_ROTATE_LEFT:
+                rotateCCWNow();
+                notify(WellEvent(WellEvent::Type::PIECE_ROTATED));
+                break;
+
+            case InputType::GAME_ROTATE_RIGHT:
+                rotateCWNow();
+                notify(WellEvent(WellEvent::Type::PIECE_ROTATED));
+                break;
+
             default:
                 break;
             }
@@ -135,18 +143,6 @@ void Well::handleKeys(const std::vector<InputEvent>& events)
         }
     }
 
-
-    rotation_timer -= Timing::frame_duration;
-    if (keystates.at(InputType::GAME_ROTATE_LEFT) != keystates.at(InputType::GAME_ROTATE_RIGHT)
-        && rotation_timer <= Duration::zero()) {
-        if (keystates.at(InputType::GAME_ROTATE_LEFT))
-            rotateCCWNow();
-        else
-            rotateCWNow();
-
-        rotation_timer = rotation_delay;
-        notify(WellEvent(WellEvent::Type::PIECE_ROTATED));
-    }
 
     horizontal_timer -= Timing::frame_duration;
     if (horizontal_timer <= Duration::zero()) {

@@ -14,7 +14,6 @@ struct WellConfig {
     bool instant_harddrop;
     bool infinity_lock;
     unsigned short lock_delay;
-    unsigned short rotation_delay;
     std::unique_ptr<RotationFn> rotation_fn;
 
     WellConfig() {
@@ -25,7 +24,6 @@ struct WellConfig {
         instant_harddrop = true,
         infinity_lock = true,
         lock_delay = 30,
-        rotation_delay = 10,
         rotation_fn = std::make_unique<ClassicRotationFn>();
     };
 };

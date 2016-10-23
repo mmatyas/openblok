@@ -108,8 +108,6 @@ private:
     // autorepeat other keys
     Duration softdrop_delay;
     Duration softdrop_timer;
-    const Duration rotation_delay;
-    Duration rotation_timer;
 
     // active piece movement
     void moveLeftNow();
