@@ -52,9 +52,9 @@ set(MOD_GAME_H
 )
 
 # use Lua
-include_directories(${LUAJIT_INCLUDE_DIR})
+include_directories(${LUA_INCLUDE_DIR})
 include_directories(${PROJECT_SOURCE_DIR}/external/sol)
 
 add_library(module_game ${MOD_GAME_SRC} ${MOD_GAME_H})
 target_link_libraries(module_game module_system)
-target_link_libraries(module_game ${LUAJIT_LIBRARIES})
+target_link_libraries(module_game ${LUA_LIBRARY})

@@ -5,6 +5,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
 
 # Build options
 option(BUILD_TESTS "Build the unit tests" ON)
+option(WITH_LUAJIT "Use LuaJIT instead of default Lua" ON)
 
 # Global compiler settings
 set(CMAKE_CXX_STANDARD 14)
@@ -23,8 +24,8 @@ set(SDL2PP_WITH_MIXER ON)
 set(SDL2PP_WITH_TTF ON)
 add_subdirectory(external/libSDL2pp)
 
-# Dependencies: LuaJIT
-find_package(LuaJIT REQUIRED)
+# Dependencies: Lua
+find_package(Lua REQUIRED)
 
 
 include_directories("src")
