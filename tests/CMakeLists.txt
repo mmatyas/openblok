@@ -4,6 +4,7 @@ set(TEST_SRC
 	test_Piece.cpp
 	test_Transition.cpp
 	test_Well.cpp
+	test_WellTSpin.cpp
 
 	# TestUtils.cpp
 	main.cpp

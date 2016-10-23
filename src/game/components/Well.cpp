@@ -34,6 +34,10 @@ Well::Well(WellConfig&& config)
     , lock_countdown(Timing::frame_duration_60Hz * config.lock_delay, [](double){}, [this](){
             this->lockThenRequestNext();
         })
+    , tspin_enabled(config.tspin_enabled)
+    , tspin_allowed_action(false)
+    , tspin_allow_wall(config.tspin_allow_wallblock)
+    , tspin_allow_kick(config.tspin_allow_wallkick)
 {
     keystates[InputType::GAME_MOVE_LEFT] = false;
     keystates[InputType::GAME_MOVE_RIGHT] = false;
@@ -100,6 +104,9 @@ void Well::handleKeys(const std::vector<InputEvent>& events)
     // keep it true only if down key is still down
     skip_gravity = (keystates.at(InputType::GAME_SOFTDROP)
                     && previous_keystates.at(InputType::GAME_SOFTDROP));
+
+    if (!lock_countdown.running())
+        tspin_allowed_action = false;
 
     // for some events onpress/onrelease handling is better suited
     for (const auto& event : events) {
@@ -377,10 +384,15 @@ void Well::rotateCWNow()
     if (!active_piece)
         return;
 
+    tspin_allowed_action = true; // rotation itself can be a valid tspin
     active_piece->rotateCW();
     if (hasCollisionAt(active_piece_x, active_piece_y)) {
+        if (!tspin_allow_kick) // rotation by kick may not be a valid tspin
+            tspin_allowed_action = false;
+
         if (!placeByWallKick(true)) {
             active_piece->rotateCCW();
+            tspin_allowed_action = false;
             return;
         }
     }
@@ -396,10 +408,15 @@ void Well::rotateCCWNow()
     if (!active_piece)
         return;
 
+    tspin_allowed_action = true; // rotation itself can be a valid tspin
     active_piece->rotateCCW();
     if (hasCollisionAt(active_piece_x, active_piece_y)) {
+        if (!tspin_allow_kick) // rotation by kick may not be a valid tspin
+            tspin_allowed_action = false;
+
         if (!placeByWallKick(false)) {
             active_piece->rotateCW();
+            tspin_allowed_action = false;
             return;
         }
     }
@@ -412,9 +429,44 @@ void Well::rotateCCWNow()
 
 void Well::lockThenRequestNext()
 {
+    checkTSpin();
     lockAndReleasePiece();
     if (!gameover && blocking_anims.empty())
         notify(WellEvent(WellEvent::Type::NEXT_REQUESTED));
+}
+
+void Well::checkTSpin()
+{
+    if (!tspin_enabled || active_piece->type() != PieceType::T || !tspin_allowed_action)
+        return;
+
+    const std::vector<std::pair<int8_t, uint8_t>> diagonals = {
+        {active_piece_x, active_piece_y},
+        {active_piece_x + 2, active_piece_y},
+        {active_piece_x, active_piece_y + 2},
+        {active_piece_x + 2, active_piece_y + 2}
+    };
+
+    unsigned diagonally_occupied_block_count = 0;
+    for (const auto& coord : diagonals) {
+        // the walls may not count
+        if (coord.first < 0 || coord.first >= static_cast<int>(matrix.at(0).size())) {
+            if (tspin_allow_wall)
+                diagonally_occupied_block_count++;
+            continue;
+        }
+        // the bottom layer always counts
+        if (coord.second >= matrix.size()) {
+            diagonally_occupied_block_count++;
+            continue;
+        }
+
+        if (matrix.at(coord.second).at(coord.first).operator bool())
+            diagonally_occupied_block_count++;
+    }
+
+    tspin_allowed_action = false;
+    notify(WellEvent(WellEvent::Type::TSPIN_DETECTED));
 }
 
 void Well::lockAndReleasePiece()

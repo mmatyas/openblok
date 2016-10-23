@@ -137,6 +137,13 @@ private:
     void removeEmptyRows();
     std::set<uint8_t> pending_cleared_rows;
 
+    // tspins
+    void checkTSpin();
+    const bool tspin_enabled;
+    bool tspin_allowed_action;
+    bool tspin_allow_wall;
+    bool tspin_allow_kick;
+
     // listeners
     std::unordered_map<uint8_t, std::vector<std::function<void(const WellEvent&)>>> observers;
     void notify(const WellEvent&);
