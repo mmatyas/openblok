@@ -1,8 +1,8 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index e3ddb31..6459d30 100644
+index 6acd2a4..457530a 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -16,6 +16,24 @@ if(BUILD_TESTS AND CMAKE_COMPILER_IS_GNUCXX)
+@@ -17,6 +17,27 @@ if(BUILD_TESTS AND CMAKE_COMPILER_IS_GNUCXX)
  	setup_target_for_coverage(openblok_coverage openblok_test coverage)
  endif()
  
@@ -16,17 +16,29 @@ index e3ddb31..6459d30 100644
 +	set(EMOPTIONS "${EMOPTIONS} -s USE_SDL_IMAGE=2 -s SDL2_IMAGE_FORMATS='[\"png\"]'")
 +	set(EMOPTIONS "${EMOPTIONS} -s USE_SDL_TTF=2")
 +	set(EMOPTIONS "${EMOPTIONS} -s USE_OGG=1 -s USE_VORBIS=1")
++	set(EMOPTIONS "${EMOPTIONS} -s NO_EXIT_RUNTIME=1")
 +	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${EMOPTIONS}")
 +	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${EMOPTIONS}")
 +	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --preload-file ${CMAKE_SOURCE_DIR}/data@data")
 +
 +	# SDL2_mixer
 +	include_directories(external/SDL2_mixer/installdir/include)
++	# Lua
++	include_directories(external/lua/src)
 +endif()
 +
  
  # Dependencies: SDL2
  set(SDL2PP_WITH_IMAGE ON)
+@@ -25,7 +46,7 @@ set(SDL2PP_WITH_TTF ON)
+ add_subdirectory(external/libSDL2pp)
+ 
+ # Dependencies: Lua
+-find_package(Lua REQUIRED)
++# find_package(Lua REQUIRED)
+ 
+ 
+ include_directories("src")
 diff --git a/external/libSDL2pp/CMakeLists.txt b/external/libSDL2pp/CMakeLists.txt
 index aaa6d90..d08669b 100644
 --- a/external/libSDL2pp/CMakeLists.txt
@@ -115,6 +127,35 @@ index 0eb187d..dfc067b 100644
  
  #include <SDL2pp/SDLTTF.hh>
  #include <SDL2pp/Exception.hh>
+diff --git a/src/game/CMakeLists.txt b/src/game/CMakeLists.txt
+index 664d9e8..284a7dc 100644
+--- a/src/game/CMakeLists.txt
++++ b/src/game/CMakeLists.txt
+@@ -52,9 +52,9 @@ set(MOD_GAME_H
+ )
+ 
+ # use Lua
+-include_directories(${LUA_INCLUDE_DIR})
++#include_directories(${LUA_INCLUDE_DIR})
+ include_directories(${PROJECT_SOURCE_DIR}/external/sol)
+ 
+ add_library(module_game ${MOD_GAME_SRC} ${MOD_GAME_H})
+ target_link_libraries(module_game module_system)
+-target_link_libraries(module_game ${LUA_LIBRARY})
++#target_link_libraries(module_game ${LUA_LIBRARY})
+diff --git a/src/game/states/InitState.cpp b/src/game/states/InitState.cpp
+index b9ada19..3ca4b3d 100644
+--- a/src/game/states/InitState.cpp
++++ b/src/game/states/InitState.cpp
+@@ -9,6 +9,8 @@
+ InitState::InitState(AppContext& app)
+ {
+     auto mapping = app.config().loadInputMapping("data/config/input.lua");
++    Log::info("init") << "config: " << mapping.size() << "\n";
++
+     app.config().saveInputMapping(mapping, "data/config/input.lua");
+     app.window().setInputMapping(mapping);
+ 
 diff --git a/src/main.cpp b/src/main.cpp
 index 1043860..23f17fa 100644
 --- a/src/main.cpp
@@ -179,6 +220,21 @@ index 1043860..23f17fa 100644
 +    app.states().top()->draw(app.gcx());
 +    app.gcx().render();
 +}
+diff --git a/src/system/CMakeLists.txt b/src/system/CMakeLists.txt
+index 1cc1931..ec45fd8 100644
+--- a/src/system/CMakeLists.txt
++++ b/src/system/CMakeLists.txt
+@@ -52,8 +52,8 @@ add_library(module_system ${MOD_SYSTEM_SRC} ${MOD_SYSTEM_H})
+ include_directories(${SDL2PP_INCLUDE_DIRS})
+ 
+ # use Lua
+-include_directories(${LUA_INCLUDE_DIR})
++# include_directories(${LUA_INCLUDE_DIR})
+ include_directories(${PROJECT_SOURCE_DIR}/external/sol)
+ 
+ target_link_libraries(module_system ${SDL2PP_LIBRARIES})
+-target_link_libraries(module_system ${LUA_LIBRARY})
++# target_link_libraries(module_system ${LUA_LIBRARY})
 diff --git a/src/system/sdl/SDLGraphicsContext.cpp b/src/system/sdl/SDLGraphicsContext.cpp
 index 9667936..e75c1b0 100644
 --- a/src/system/sdl/SDLGraphicsContext.cpp
