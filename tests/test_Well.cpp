@@ -199,9 +199,19 @@ TEST_FIXTURE(WellFixture, Rotate) {
     CHECK_EQUAL(expected_ascii, well.asAscii());
 }
 
-// TODO: Make Well configurable
-/*
-TEST_FIXTURE(WellFixture, Zangi) {
+TEST(Zangi) {
+    AppContext app;
+    std::string emptyline_ascii;
+    MinoStorage::loadDummyMinos();
+    for (unsigned i = 0; i < 10; i++)
+        emptyline_ascii += '.';
+    emptyline_ascii += '\n';
+
+    WellConfig cfg;
+    cfg.instant_harddrop = false;
+    Well well(std::move(cfg));
+
+
     std::string base_ascii;
     for (unsigned i = 0; i < 18; i++)
         base_ascii += emptyline_ascii;
@@ -220,31 +230,30 @@ TEST_FIXTURE(WellFixture, Zangi) {
 
     well.fromAscii(base_ascii);
 
-    well.addPiece(Piece::Type::J);
+    well.addPiece(PieceType::J);
     // rotate CCW
-    well.update({InputEvent(InputType::A, true)}, app);
-    well.update({InputEvent(InputType::A, false)}, app);
+    well.update({InputEvent(InputType::GAME_ROTATE_LEFT, true)}, app);
+    well.update({InputEvent(InputType::GAME_ROTATE_LEFT, false)}, app);
     // move right
     for (unsigned i = 0; i < horizontal_delay_frames * 4; i++)
-        well.update({InputEvent(InputType::RIGHT, true)}, app);
-    well.update({InputEvent(InputType::RIGHT, false)}, app);
+        well.update({InputEvent(InputType::GAME_MOVE_RIGHT, true)}, app);
+    well.update({InputEvent(InputType::GAME_MOVE_RIGHT, false)}, app);
     // sonic drop
-    well.update({InputEvent(InputType::UP, true)}, app);
-    well.update({InputEvent(InputType::UP, false)}, app);
+    well.update({InputEvent(InputType::GAME_HARDDROP, true)}, app);
+    well.update({InputEvent(InputType::GAME_HARDDROP, false)}, app);
     CHECK(well.activePiece() != nullptr); // piece must survive landing on sonic drop
     // move left
-    well.update({InputEvent(InputType::LEFT, true)}, app);
+    well.update({InputEvent(InputType::GAME_MOVE_LEFT, true)}, app);
     CHECK(well.activePiece() != nullptr);
-    well.update({InputEvent(InputType::LEFT, false)}, app);
+    well.update({InputEvent(InputType::GAME_MOVE_LEFT, false)}, app);
     CHECK(well.activePiece() != nullptr);
     // lock
-    well.update({InputEvent(InputType::DOWN, true)}, app);
+    well.update({InputEvent(InputType::GAME_SOFTDROP, true)}, app);
     CHECK(well.activePiece() == nullptr);
-    well.update({InputEvent(InputType::DOWN, false)}, app);
+    well.update({InputEvent(InputType::GAME_SOFTDROP, false)}, app);
     CHECK(well.activePiece() == nullptr);
 
     CHECK_EQUAL(expected_ascii, well.asAscii());
 }
-*/
 
 } // Suite
