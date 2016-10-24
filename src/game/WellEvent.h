@@ -12,6 +12,7 @@ struct WellEvent {
         LINE_CLEAR_ANIMATION_START,
         LINE_CLEAR,
         TSPIN_DETECTED,
+        MINI_TSPIN_DETECTED,
         SOFTDROPPED,
         HARDDROPPED,
         GAME_OVER,

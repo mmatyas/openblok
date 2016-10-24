@@ -9,6 +9,7 @@
 #include "game/Timing.h"
 #include "game/WellEvent.h"
 
+#include <algorithm>
 #include <assert.h>
 
 
@@ -38,6 +39,7 @@ Well::Well(WellConfig&& config)
     , tspin_allowed_action(false)
     , tspin_allow_wall(config.tspin_allow_wallblock)
     , tspin_allow_kick(config.tspin_allow_wallkick)
+    , tspin_last_rotation_point(0)
 {
     keystates[InputType::GAME_MOVE_LEFT] = false;
     keystates[InputType::GAME_MOVE_RIGHT] = false;
@@ -369,6 +371,8 @@ bool Well::placeByWallKick(bool cw_rotation)
     const auto offsets = rotation_fn->call(active_piece->type(), starting_rot, cw_rotation);
 
     for (const auto& offset : offsets) {
+        tspin_last_rotation_point++;
+
         if (!hasCollisionAt(active_piece_x + offset.first, active_piece_y + offset.second)) {
             active_piece_x += offset.first;
             active_piece_y += offset.second;
@@ -385,6 +389,8 @@ void Well::rotateCWNow()
         return;
 
     tspin_allowed_action = true; // rotation itself can be a valid tspin
+    tspin_last_rotation_point = 0; // this is the default rotation point
+
     active_piece->rotateCW();
     if (hasCollisionAt(active_piece_x, active_piece_y)) {
         if (!tspin_allow_kick) // rotation by kick may not be a valid tspin
@@ -409,6 +415,8 @@ void Well::rotateCCWNow()
         return;
 
     tspin_allowed_action = true; // rotation itself can be a valid tspin
+    tspin_last_rotation_point = 0; // this is the default rotation point
+
     active_piece->rotateCCW();
     if (hasCollisionAt(active_piece_x, active_piece_y)) {
         if (!tspin_allow_kick) // rotation by kick may not be a valid tspin
@@ -440,33 +448,70 @@ void Well::checkTSpin()
     if (!tspin_enabled || active_piece->type() != PieceType::T || !tspin_allowed_action)
         return;
 
-    const std::vector<std::pair<int8_t, uint8_t>> diagonals = {
-        {active_piece_x, active_piece_y},
-        {active_piece_x + 2, active_piece_y},
-        {active_piece_x, active_piece_y + 2},
-        {active_piece_x + 2, active_piece_y + 2}
+    // ack
+    tspin_allowed_action = false;
+
+
+    // First, collect the coords we'll have to check,
+    // then rotate the coords to the same orientation as the T piece
+
+    // A?B
+    // ?T?
+    // D?C
+    std::array<std::pair<int8_t, uint8_t>, 4> diagonals = {
+        std::make_pair(active_piece_x, active_piece_y),
+        std::make_pair(active_piece_x + 2, active_piece_y),
+        std::make_pair(active_piece_x + 2, active_piece_y + 2),
+        std::make_pair(active_piece_x, active_piece_y + 2),
     };
 
-    unsigned diagonally_occupied_block_count = 0;
-    for (const auto& coord : diagonals) {
+    auto pattern_orientation = PieceDirection::NORTH;
+    while (pattern_orientation != active_piece->orientation()) {
+        pattern_orientation = nextCW(pattern_orientation);
+        std::rotate(diagonals.begin(), diagonals.begin() + 1, diagonals.end());
+    }
+
+
+    // Check if we're in a T-slot:
+    // at least 3 of the diagonally adjacent blocks must be occupied
+
+    std::array<bool, 4> diagonals_occupied;
+    diagonals_occupied.fill(false);
+    for (unsigned i = 0; i < 4; i++) {
+        const auto& coord = diagonals.at(i);
+
         // the walls may not count
         if (coord.first < 0 || coord.first >= static_cast<int>(matrix.at(0).size())) {
             if (tspin_allow_wall)
-                diagonally_occupied_block_count++;
+                diagonals_occupied[i] = true;
             continue;
         }
         // the bottom layer always counts
         if (coord.second >= matrix.size()) {
-            diagonally_occupied_block_count++;
+            diagonals_occupied[i] = true;
             continue;
         }
 
         if (matrix.at(coord.second).at(coord.first).operator bool())
-            diagonally_occupied_block_count++;
+            diagonals_occupied[i] = true;
     }
+    if (std::count(diagonals_occupied.begin(), diagonals_occupied.end(), true) < 3)
+        return;
 
-    tspin_allowed_action = false;
-    notify(WellEvent(WellEvent::Type::TSPIN_DETECTED));
+
+    // Decide if it's a mini or a proper T-Spin:
+    // Proper: front touch OR rotation by p5
+    // Mini: back touch (=> only one front)
+
+    bool is_proper_tspin = false;
+    const bool front_touch = diagonals_occupied[0] && diagonals_occupied[1];
+    if (tspin_last_rotation_point == 3 || front_touch)
+        is_proper_tspin = true;
+
+    if (is_proper_tspin)
+        notify(WellEvent(WellEvent::Type::TSPIN_DETECTED));
+    else
+        notify(WellEvent(WellEvent::Type::MINI_TSPIN_DETECTED));
 }
 
 void Well::lockAndReleasePiece()

@@ -143,6 +143,8 @@ private:
     bool tspin_allowed_action;
     bool tspin_allow_wall;
     bool tspin_allow_kick;
+    // SRS defines multiple rotation points, a proper tspin requires the use of the last one (== 3)
+    uint8_t tspin_last_rotation_point;
 
     // listeners
     std::unordered_map<uint8_t, std::vector<std::function<void(const WellEvent&)>>> observers;
