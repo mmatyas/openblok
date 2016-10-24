@@ -15,9 +15,9 @@ Features:
 - [x] Lock delay, line clear delay support
 - [x] Sonic drop and Zangi-move support (optional)
 - [x] Infinity lock support (optional)
-- [ ] T-spin support
+- [x] T-Spin and Mini T-Spin support (optional)
 - [ ] ARE support
-- [x] Gamepad support
+- [x] Gamepad support (partial)
 - [ ] Menu
 - [ ] Battle mode
 - [ ] Plugins
@@ -29,7 +29,7 @@ Dependencies
 - CMake 3.1+
 - C++14 supporting compiler (GCC 4.9 or better)
 - SDL2, SDL2_image, SDL2_mixer, SDL2_ttf
-- Lua (LuaJIT recommended)
+- Lua 5.1+ (LuaJIT recommended)
 - gcov, lcov (only for generating test coverage report)
 
 Eg. on Debian: `sudo apt install cmake libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev libluajit-5.1-dev`
