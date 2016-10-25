@@ -5,6 +5,7 @@
 #include "game/layout/singleplayer/RightSidebarBox.h"
 #include "game/layout/singleplayer/WellBox.h"
 
+#include <map>
 #include <stack>
 #include <string>
 
@@ -13,11 +14,17 @@ class Texture;
 class Music;
 class SoundEffect;
 
-enum ScoreTypes {
-    LINE_CLEAR_SINGLE = 1,
-    LINE_CLEAR_DOUBLE = 2,
-    LINE_CLEAR_TRIPLE = 3,
-    LINE_CLEAR_PERFECT = 4,
+enum class ScoreType : uint8_t {
+    CLEAR_SINGLE,
+    CLEAR_DOUBLE,
+    CLEAR_TRIPLE,
+    CLEAR_PERFECT,
+    MINI_TSPIN,
+    CLEAR_MINI_TSPIN_SINGLE,
+    TSPIN,
+    CLEAR_TSPIN_SINGLE,
+    CLEAR_TSPIN_DOUBLE,
+    CLEAR_TSPIN_TRIPLE,
     SOFTDROP,
     HARDDROP
 };
@@ -52,8 +59,8 @@ private:
     std::stack<Duration> gravity_levels;
     unsigned current_level;
     unsigned current_score;
-    std::unordered_map<ScoreTypes, unsigned, std::hash<size_t>> score_table;
-    ScoreTypes previous_lineclear_type;
+    std::map<ScoreType, unsigned> score_table;
+    ScoreType previous_lineclear_type;
 
     void registerObservers();
     void addNextPiece();

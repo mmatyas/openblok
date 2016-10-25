@@ -136,9 +136,15 @@ private:
     void checkLineclear();
     void removeEmptyRows();
     std::set<uint8_t> pending_cleared_rows;
+    LineClearType last_lineclear_type;
 
     // tspins
-    void checkTSpin();
+    enum class TSpinDetectionResult : uint8_t {
+        NONE,
+        TSPIN,
+        MINI_TSPIN
+    };
+    TSpinDetectionResult checkTSpin();
     const bool tspin_enabled;
     bool tspin_allowed_action;
     bool tspin_allow_wall;

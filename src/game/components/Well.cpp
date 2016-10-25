@@ -35,6 +35,7 @@ Well::Well(WellConfig&& config)
     , lock_countdown(Timing::frame_duration_60Hz * config.lock_delay, [](double){}, [this](){
             this->lockThenRequestNext();
         })
+    , last_lineclear_type(LineClearType::NORMAL)
     , tspin_enabled(config.tspin_enabled)
     , tspin_allowed_action(false)
     , tspin_allow_wall(config.tspin_allow_wallblock)
@@ -352,7 +353,7 @@ void Well::hardDrop()
     assert(active_piece);
 
     WellEvent harddrop_event(WellEvent::Type::HARDDROPPED);
-    harddrop_event.count = ghost_piece_y - active_piece_y;
+    harddrop_event.harddrop.count = ghost_piece_y - active_piece_y;
 
     active_piece_y = ghost_piece_y;
     moveDownNow();
@@ -437,16 +438,51 @@ void Well::rotateCCWNow()
 
 void Well::lockThenRequestNext()
 {
-    checkTSpin();
+    auto tspin_type = checkTSpin();
     lockAndReleasePiece();
-    if (!gameover && blocking_anims.empty())
-        notify(WellEvent(WellEvent::Type::NEXT_REQUESTED));
+    if (!gameover) {
+        // no line clear happened
+        if (pending_cleared_rows.empty()) {
+            switch(tspin_type) {
+                case TSpinDetectionResult::TSPIN:
+                    notify(WellEvent(WellEvent::Type::TSPIN_DETECTED));
+                    break;
+                case TSpinDetectionResult::MINI_TSPIN:
+                    notify(WellEvent(WellEvent::Type::MINI_TSPIN_DETECTED));
+                    break;
+                default:
+                    break;
+            }
+            notify(WellEvent(WellEvent::Type::NEXT_REQUESTED));
+        }
+        // at least one line has been cleared
+        else {
+            switch(tspin_type) {
+                case TSpinDetectionResult::TSPIN:
+                    assert(pending_cleared_rows.size() < 4);
+                    last_lineclear_type = LineClearType::TSPIN;
+                    break;
+                case TSpinDetectionResult::MINI_TSPIN:
+                    assert(pending_cleared_rows.size() < 4);
+                    last_lineclear_type = LineClearType::MINI_TSPIN;
+                    break;
+                default:
+                    last_lineclear_type = LineClearType::NORMAL;
+                    break;
+            }
+
+            WellEvent clear_anim_event(WellEvent::Type::LINE_CLEAR_ANIMATION_START);
+            clear_anim_event.lineclear.count = pending_cleared_rows.size();
+            clear_anim_event.lineclear.type = last_lineclear_type;
+            notify(clear_anim_event);
+        }
+    }
 }
 
-void Well::checkTSpin()
+Well::TSpinDetectionResult Well::checkTSpin()
 {
     if (!tspin_enabled || active_piece->type() != PieceType::T || !tspin_allowed_action)
-        return;
+        return TSpinDetectionResult::NONE;
 
     // ack
     tspin_allowed_action = false;
@@ -496,7 +532,7 @@ void Well::checkTSpin()
             diagonals_occupied[i] = true;
     }
     if (std::count(diagonals_occupied.begin(), diagonals_occupied.end(), true) < 3)
-        return;
+        return TSpinDetectionResult::NONE;
 
 
     // Decide if it's a mini or a proper T-Spin:
@@ -509,9 +545,9 @@ void Well::checkTSpin()
         is_proper_tspin = true;
 
     if (is_proper_tspin)
-        notify(WellEvent(WellEvent::Type::TSPIN_DETECTED));
+        return TSpinDetectionResult::TSPIN;
     else
-        notify(WellEvent(WellEvent::Type::MINI_TSPIN_DETECTED));
+        return TSpinDetectionResult::MINI_TSPIN;
 }
 
 void Well::lockAndReleasePiece()
@@ -577,10 +613,6 @@ void Well::checkLineclear()
             if (row >= 2)
                 blocking_anims.emplace_back(std::make_unique<LineClearAnim>(row));
         }
-
-        WellEvent clear_anim_event(WellEvent::Type::LINE_CLEAR_ANIMATION_START);
-        clear_anim_event.count = pending_cleared_rows.size();
-        notify(clear_anim_event);
     }
 }
 
@@ -591,7 +623,8 @@ void Well::removeEmptyRows()
     assert(pending_cleared_rows.size() <= 4);
 
     WellEvent clear_event(WellEvent::Type::LINE_CLEAR);
-    clear_event.count = pending_cleared_rows.size();
+    clear_event.lineclear.count = pending_cleared_rows.size();
+    clear_event.lineclear.type = last_lineclear_type;
     notify(clear_event);
 
     for (int row = matrix.size(); row >= 0; row--) {

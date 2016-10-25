@@ -30,14 +30,20 @@ SinglePlayState::SinglePlayState(AppContext& app)
     , current_level(1)
     , current_score(0)
     , score_table({
-            {LINE_CLEAR_SINGLE, 100},
-            {LINE_CLEAR_DOUBLE, 200},
-            {LINE_CLEAR_TRIPLE, 500},
-            {LINE_CLEAR_PERFECT, 800},
-            {SOFTDROP, 1},
-            {HARDDROP, 2}
+            {ScoreType::CLEAR_SINGLE, 100},
+            {ScoreType::CLEAR_DOUBLE, 200},
+            {ScoreType::CLEAR_TRIPLE, 500},
+            {ScoreType::CLEAR_PERFECT, 800},
+            {ScoreType::MINI_TSPIN, 100},
+            {ScoreType::CLEAR_MINI_TSPIN_SINGLE, 200},
+            {ScoreType::TSPIN, 400},
+            {ScoreType::CLEAR_TSPIN_SINGLE, 800},
+            {ScoreType::CLEAR_TSPIN_DOUBLE, 1200},
+            {ScoreType::CLEAR_TSPIN_TRIPLE, 1600},
+            {ScoreType::SOFTDROP, 1},
+            {ScoreType::HARDDROP, 2}
         })
-    , previous_lineclear_type(LINE_CLEAR_SINGLE)
+    , previous_lineclear_type(ScoreType::CLEAR_SINGLE)
 {
     registerObservers();
 
@@ -89,7 +95,7 @@ void SinglePlayState::registerObservers()
     });
 
     ui_well.well().registerObserver(WellEvent::Type::LINE_CLEAR_ANIMATION_START, [this](const WellEvent& event){
-        if (this->lineclears_left - event.count <= 0 && !this->gravity_levels.empty())
+        if (this->lineclears_left - event.lineclear.count <= 0 && !this->gravity_levels.empty())
             this->sfx_onlevelup->playOnce();
         else
             this->sfx_onlineclear->playOnce();
@@ -97,20 +103,53 @@ void SinglePlayState::registerObservers()
 
     ui_well.well().registerObserver(WellEvent::Type::LINE_CLEAR, [this](const WellEvent& event){
         assert(event.type == WellEvent::Type::LINE_CLEAR);
-        assert(event.count > 0);
-        assert(event.count <= 4);
+        assert(event.lineclear.count > 0);
+        assert(event.lineclear.count <= 4);
 
         this->texts_need_update = true;
-        this->lineclears_left -= event.count;
+        this->lineclears_left -= event.lineclear.count;
 
 
         // increase score
-        this->current_score += this->score_table.at(static_cast<ScoreTypes>(event.count))
-                               * this->current_level;
-        if (event.count == 4 && this->previous_lineclear_type == LINE_CLEAR_PERFECT)
-            this->current_score += this->score_table.at(LINE_CLEAR_PERFECT) * 0.5f; // back-to-back bonus
+        ScoreType score_type = ScoreType::SOFTDROP; // a dummy value
+        switch(event.lineclear.type) {
+            case LineClearType::NORMAL:
+                switch(event.lineclear.count) {
+                    case 1: score_type = ScoreType::CLEAR_SINGLE; break;
+                    case 2: score_type = ScoreType::CLEAR_DOUBLE; break;
+                    case 3: score_type = ScoreType::CLEAR_TRIPLE; break;
+                    case 4: score_type = ScoreType::CLEAR_PERFECT; break;
+                }
+                break;
+            case LineClearType::MINI_TSPIN:
+                if (event.lineclear.count == 1)
+                    score_type = ScoreType::CLEAR_MINI_TSPIN_SINGLE;
+                break;
+            case LineClearType::TSPIN:
+                switch(event.lineclear.count) {
+                    case 1: score_type = ScoreType::CLEAR_TSPIN_SINGLE; break;
+                    case 2: score_type = ScoreType::CLEAR_TSPIN_DOUBLE; break;
+                    case 3: score_type = ScoreType::CLEAR_TSPIN_TRIPLE; break;
+                }
+                break;
+        }
+        assert(score_type != ScoreType::SOFTDROP);
+        unsigned score = this->score_table.at(score_type);
 
-        this->previous_lineclear_type = static_cast<ScoreTypes>(event.count);
+        // if the previous and the current clear types are both in this set, add Back-to-Back bonus
+        static const std::set<ScoreType> b2b_allowed = {
+            ScoreType::CLEAR_PERFECT,
+            ScoreType::CLEAR_MINI_TSPIN_SINGLE,
+            ScoreType::CLEAR_TSPIN_SINGLE,
+            ScoreType::CLEAR_TSPIN_DOUBLE,
+            ScoreType::CLEAR_TSPIN_TRIPLE,
+        };
+
+        if (b2b_allowed.count(score_type) && b2b_allowed.count(this->previous_lineclear_type))
+            score *= 1.5;
+
+        this->current_score += score * this->current_level;
+        this->previous_lineclear_type = score_type;
 
 
         // increase gravity level
@@ -126,15 +165,25 @@ void SinglePlayState::registerObservers()
         }
     });
 
-    ui_well.well().registerObserver(WellEvent::Type::HARDDROPPED, [this](const WellEvent& event){
-        assert(event.count < 22);
+    ui_well.well().registerObserver(WellEvent::Type::MINI_TSPIN_DETECTED, [this](const WellEvent&){
         this->texts_need_update = true;
-        this->current_score += event.count * this->score_table.at(HARDDROP);
+        this->current_score += this->score_table.at(ScoreType::MINI_TSPIN);
+    });
+
+    ui_well.well().registerObserver(WellEvent::Type::TSPIN_DETECTED, [this](const WellEvent&){
+        this->texts_need_update = true;
+        this->current_score += this->score_table.at(ScoreType::TSPIN);
+    });
+
+    ui_well.well().registerObserver(WellEvent::Type::HARDDROPPED, [this](const WellEvent& event){
+        assert(event.harddrop.count < 22);
+        this->texts_need_update = true;
+        this->current_score += event.harddrop.count * this->score_table.at(ScoreType::HARDDROP);
     });
 
     ui_well.well().registerObserver(WellEvent::Type::SOFTDROPPED, [this](const WellEvent&){
         this->texts_need_update = true;
-        this->current_score += this->score_table.at(SOFTDROP);
+        this->current_score += this->score_table.at(ScoreType::SOFTDROP);
     });
 
     ui_well.well().registerObserver(WellEvent::Type::GAME_OVER, [this](const WellEvent&){

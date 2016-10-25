@@ -9,7 +9,6 @@ SUITE(WellTSpin) {
 
 // TODO: get these values from config
 constexpr unsigned softdrop_delay_frames = 64 / 20.0;
-constexpr unsigned lock_delay_frames = 30;
 
 struct WellFixture {
     AppContext app;
@@ -30,8 +29,9 @@ struct WellFixture {
 TEST_FIXTURE(WellFixture, Basic)
 {
     bool tspin_detected = false;
-    well.registerObserver(WellEvent::Type::TSPIN_DETECTED, [&tspin_detected](const WellEvent&){
-        tspin_detected = true;
+    well.registerObserver(WellEvent::Type::LINE_CLEAR, [&tspin_detected](const WellEvent& event){
+        if (event.lineclear.type == LineClearType::TSPIN && event.lineclear.count == 2)
+            tspin_detected = true;
     });
 
     std::string base_ascii;
@@ -69,17 +69,22 @@ TEST_FIXTURE(WellFixture, Basic)
     CHECK_EQUAL(expected_ascii, well.asAscii());
 
     // wait for lock
-    for (unsigned i = 0; i < lock_delay_frames; i++)
+    unsigned limit = 0;
+    while (limit < 100) {
         well.update({}, app);
+        limit++;
+    }
 
+    CHECK(well.activePiece() == nullptr);
     CHECK_EQUAL(true, tspin_detected);
 }
 
 TEST_FIXTURE(WellFixture, Tricky)
 {
     bool tspin_detected = false;
-    well.registerObserver(WellEvent::Type::TSPIN_DETECTED, [&tspin_detected](const WellEvent&){
-        tspin_detected = true;
+    well.registerObserver(WellEvent::Type::LINE_CLEAR, [&tspin_detected](const WellEvent& event){
+        if (event.lineclear.type == LineClearType::TSPIN && event.lineclear.count == 3)
+            tspin_detected = true;
     });
 
     std::string base_ascii;
@@ -121,17 +126,22 @@ TEST_FIXTURE(WellFixture, Tricky)
     CHECK_EQUAL(expected_ascii, well.asAscii());
 
     // wait for lock
-    for (unsigned i = 0; i < lock_delay_frames; i++)
+    unsigned limit = 0;
+    while (limit < 100) {
         well.update({}, app);
+        limit++;
+    }
 
+    CHECK(well.activePiece() == nullptr);
     CHECK_EQUAL(true, tspin_detected);
 }
 
 TEST_FIXTURE(WellFixture, TrickyCross)
 {
     bool tspin_detected = false;
-    well.registerObserver(WellEvent::Type::TSPIN_DETECTED, [&tspin_detected](const WellEvent&){
-        tspin_detected = true;
+    well.registerObserver(WellEvent::Type::LINE_CLEAR, [&tspin_detected](const WellEvent& event){
+        if (event.lineclear.type == LineClearType::TSPIN && event.lineclear.count == 2)
+            tspin_detected = true;
     });
 
     std::string base_ascii;
@@ -162,17 +172,22 @@ TEST_FIXTURE(WellFixture, TrickyCross)
     well.update({InputEvent(InputType::GAME_ROTATE_LEFT, false)}, app);
 
     // wait for lock
-    for (unsigned i = 0; i < lock_delay_frames; i++)
+    unsigned limit = 0;
+    while (limit < 100) {
         well.update({}, app);
+        limit++;
+    }
 
+    CHECK(well.activePiece() == nullptr);
     CHECK_EQUAL(true, tspin_detected);
 }
 
 TEST_FIXTURE(WellFixture, Mini)
 {
     bool tspin_detected = false;
-    well.registerObserver(WellEvent::Type::MINI_TSPIN_DETECTED, [&tspin_detected](const WellEvent&){
-        tspin_detected = true;
+    well.registerObserver(WellEvent::Type::LINE_CLEAR, [&tspin_detected](const WellEvent& event){
+        if (event.lineclear.type == LineClearType::MINI_TSPIN && event.lineclear.count == 1)
+            tspin_detected = true;
     });
 
     std::string base_ascii;
@@ -197,9 +212,13 @@ TEST_FIXTURE(WellFixture, Mini)
     well.update({InputEvent(InputType::GAME_ROTATE_RIGHT, false)}, app);
 
     // wait for lock
-    for (unsigned i = 0; i < lock_delay_frames; i++)
+    unsigned limit = 0;
+    while (limit < 100) {
         well.update({}, app);
+        limit++;
+    }
 
+    CHECK(well.activePiece() == nullptr);
     CHECK_EQUAL(true, tspin_detected);
 }
 
