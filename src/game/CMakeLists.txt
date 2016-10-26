@@ -13,6 +13,7 @@ set(MOD_GAME_SRC
 	components/well/Ascii.cpp
 	components/well/AutoRepeat.cpp
 	components/well/Gravity.cpp
+	components/well/Input.cpp
 	components/well/LockDelay.cpp
 	components/well/TSpin.cpp
 	components/well/Render.cpp
@@ -47,6 +48,7 @@ set(MOD_GAME_H
 	components/well/Ascii.h
 	components/well/AutoRepeat.h
 	components/well/Gravity.h
+	components/well/Input.h
 	components/well/LockDelay.h
 	components/well/TSpin.h
 	components/well/Render.h

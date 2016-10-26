@@ -1,7 +1,5 @@
 #include "Well.h"
 
-#include "Mino.h"
-#include "MinoStorage.h"
 #include "Piece.h"
 #include "PieceFactory.h"
 #include "animations/CellLockAnim.h"
@@ -26,13 +24,6 @@ Well::Well(WellConfig&& config)
                  config.infinity_lock, config.instant_harddrop)
     , last_lineclear_type(LineClearType::NORMAL)
 {
-    keystates[InputType::GAME_MOVE_LEFT] = false;
-    keystates[InputType::GAME_MOVE_RIGHT] = false;
-    keystates[InputType::GAME_SOFTDROP] = false;
-    keystates[InputType::GAME_ROTATE_LEFT] = false;
-    keystates[InputType::GAME_ROTATE_RIGHT] = false;
-    previous_keystates = keystates;
-
     components.das = WellComponents::AutoRepeat(Timing::frame_duration_60Hz * config.shift_normal,
                                                 Timing::frame_duration_60Hz * config.shift_turbo);
     components.tspin = WellComponents::TSpin(config.tspin_enabled,
@@ -46,7 +37,7 @@ Well::~Well() = default;
 
 void Well::update(const std::vector<InputEvent>& events, AppContext&)
 {
-    updateKeystate(events);
+    components.input.updateKeystate(events);
     updateAnimations();
 
     if (gameover)
@@ -61,7 +52,7 @@ void Well::update(const std::vector<InputEvent>& events, AppContext&)
         return;
     }
 
-    handleKeys(events);
+    components.input.handleKeys(*this, events);
 
     if (!active_piece)
         return;
@@ -83,89 +74,6 @@ void Well::updateAnimations()
     blocking_anims.remove_if([](std::unique_ptr<WellAnimation>& animptr){
         return !animptr->isActive();
     });
-}
-
-void Well::updateKeystate(const std::vector<InputEvent>& events)
-{
-    previous_keystates = keystates;
-
-    for (const auto& event : events)
-        keystates[event.type()] = event.down();
-}
-
-void Well::handleKeys(const std::vector<InputEvent>& events)
-{
-    // keep it true only if down key is still down
-    if (keystates.at(InputType::GAME_SOFTDROP) && previous_keystates.at(InputType::GAME_SOFTDROP))
-        components.gravity.skipNextUpdate();
-
-    if (!lock_delay.lockInProgress())
-        components.tspin.clear();
-
-
-    // for some events onpress/onrelease handling is better suited
-    for (const auto& event : events) {
-        // press
-        if (event.down()) {
-            switch (event.type()) {
-            case InputType::GAME_HARDDROP:
-                hardDrop();
-                components.gravity.skipNextUpdate();
-                break;
-
-            case InputType::GAME_HOLD:
-                notify(WellEvent(WellEvent::Type::HOLD_REQUESTED));
-                components.gravity.skipNextUpdate();
-                break;
-
-            case InputType::GAME_ROTATE_LEFT:
-                rotateNow(RotationDirection::COUNTER_CLOCKWISE);
-                notify(WellEvent(WellEvent::Type::PIECE_ROTATED));
-                break;
-
-            case InputType::GAME_ROTATE_RIGHT:
-                rotateNow(RotationDirection::CLOCKWISE);
-                notify(WellEvent(WellEvent::Type::PIECE_ROTATED));
-                break;
-
-            default:
-                break;
-            }
-        }
-        // release
-        else {
-            switch (event.type()) {
-            case InputType::GAME_MOVE_LEFT:
-            case InputType::GAME_MOVE_RIGHT:
-                components.das.reset();
-                break;
-            default:
-                break;
-            }
-        }
-    }
-
-
-    components.das.update();
-    if (components.das.movementAllowed()) {
-        if (keystates.at(InputType::GAME_MOVE_LEFT) != keystates.at(InputType::GAME_MOVE_RIGHT)) {
-            if (keystates.at(InputType::GAME_MOVE_LEFT))
-                moveLeftNow();
-            else
-                moveRightNow();
-
-            components.das.onHorizontalMove();
-        }
-    }
-
-    softdrop_timer -= Timing::frame_duration;
-    if (keystates.at(InputType::GAME_SOFTDROP) && softdrop_timer <= Duration::zero()) {
-        moveDownNow();
-        components.gravity.skipNextUpdate();
-        softdrop_timer = softdrop_delay;
-        if (active_piece && !lock_delay.lockInProgress())
-            notify(WellEvent(WellEvent::Type::SOFTDROPPED));
-    }
 }
 
 void Well::addPiece(PieceType type)
@@ -361,6 +269,8 @@ void Well::rotateNow(RotationDirection direction)
     calculateGhostOffset();
     components.tspin.onSuccesfulRotation();
     lock_delay.onSuccesfulRotation();
+
+    notify(WellEvent(WellEvent::Type::PIECE_ROTATED));
 }
 
 void Well::lockThenRequestNext()

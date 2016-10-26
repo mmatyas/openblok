@@ -2,15 +2,14 @@
 
 #include "WellConfig.h"
 #include "game/Matrix.h"
-#include "game/Transition.h"
 #include "game/WellEvent.h"
 #include "well/Ascii.h"
 #include "well/AutoRepeat.h"
+#include "well/Input.h"
 #include "well/Gravity.h"
 #include "well/LockDelay.h"
 #include "well/Render.h"
 #include "well/TSpin.h"
-#include "system/InputEvent.h"
 
 #include <list>
 #include <memory>
@@ -71,6 +70,7 @@ public:
     struct {
         WellComponents::AutoRepeat das;
         WellComponents::Gravity gravity;
+        WellComponents::Input input;
         WellComponents::Render renderer;
         WellComponents::TSpin tspin;
 #ifndef NDEBUG
@@ -96,12 +96,6 @@ private:
     uint8_t active_piece_y;
     uint8_t ghost_piece_y;
     std::unique_ptr<Piece> active_piece;
-
-    // input handling
-    std::unordered_map<InputType, bool, InputTypeHash> keystates;
-    decltype(keystates) previous_keystates;
-    void updateKeystate(const std::vector<InputEvent>&);
-    void handleKeys(const std::vector<InputEvent>&);
 
     // softdrop timers
     Duration softdrop_delay;
@@ -144,6 +138,7 @@ private:
     // TODO: These are the classes that are still too much coupled to the Well
     friend class WellComponents::Ascii;
     friend class WellComponents::Gravity;
+    friend class WellComponents::Input;
     friend class WellComponents::LockDelay;
     friend class WellComponents::Render;
     friend class WellComponents::TSpin;
