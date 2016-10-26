@@ -119,12 +119,12 @@ void Well::handleKeys(const std::vector<InputEvent>& events)
                 break;
 
             case InputType::GAME_ROTATE_LEFT:
-                rotateCCWNow();
+                rotateNow(RotationDirection::COUNTER_CLOCKWISE);
                 notify(WellEvent(WellEvent::Type::PIECE_ROTATED));
                 break;
 
             case InputType::GAME_ROTATE_RIGHT:
-                rotateCWNow();
+                rotateNow(RotationDirection::CLOCKWISE);
                 notify(WellEvent(WellEvent::Type::PIECE_ROTATED));
                 break;
 
@@ -314,13 +314,14 @@ void Well::hardDrop()
     notify(harddrop_event);
 }
 
-bool Well::placeByWallKick(bool cw_rotation)
+bool Well::placeByWallKick(RotationDirection direction)
 {
     assert(active_piece);
 
+    const bool clockwise = (direction == RotationDirection::CLOCKWISE);
     const auto target_rot = active_piece->orientation();
-    const auto starting_rot = cw_rotation ? prevCW(target_rot) : nextCW(target_rot);
-    const auto offsets = rotation_fn->call(active_piece->type(), starting_rot, cw_rotation);
+    const auto starting_rot = clockwise ? prevCW(target_rot) : nextCW(target_rot);
+    const auto offsets = rotation_fn->call(active_piece->type(), starting_rot, clockwise);
 
     for (const auto& offset : offsets) {
         components.tspin.onWallKick();
@@ -335,37 +336,24 @@ bool Well::placeByWallKick(bool cw_rotation)
     return false;
 }
 
-void Well::rotateCWNow()
+void Well::rotateNow(RotationDirection direction)
 {
     if (!active_piece)
         return;
 
     components.tspin.clear();
 
-    active_piece->rotateCW();
+    if (direction == RotationDirection::CLOCKWISE)
+        active_piece->rotateCW();
+    else
+        active_piece->rotateCCW();
+
     if (hasCollisionAt(active_piece_x, active_piece_y)) {
-        if (!placeByWallKick(true)) {
-            active_piece->rotateCCW();
-            return;
-        }
-    }
-
-    calculateGhostOffset();
-    components.tspin.onSuccesfulRotation();
-    lock_delay.onSuccesfulRotation();
-}
-
-void Well::rotateCCWNow()
-{
-    if (!active_piece)
-        return;
-
-    components.tspin.clear();
-
-    active_piece->rotateCCW();
-    if (hasCollisionAt(active_piece_x, active_piece_y)) {
-        if (!placeByWallKick(false)) {
-            active_piece->rotateCW();
+        if (!placeByWallKick(direction)) {
+            if (direction == RotationDirection::CLOCKWISE)
+                active_piece->rotateCCW();
+            else
+                active_piece->rotateCW();
             return;
         }
     }

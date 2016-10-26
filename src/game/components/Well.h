@@ -108,13 +108,13 @@ private:
     Duration softdrop_timer;
 
     // active piece movement
+    enum class RotationDirection : uint8_t { CLOCKWISE, COUNTER_CLOCKWISE };
     void moveLeftNow();
     void moveRightNow();
     void moveDownNow();
     void hardDrop();
-    void rotateCWNow(); // clockwise
-    void rotateCCWNow(); // counter-clockwise
-    bool placeByWallKick(bool cw_rotation);
+    void rotateNow(RotationDirection);
+    bool placeByWallKick(RotationDirection);
     std::unique_ptr<RotationFn> rotation_fn;
 
     WellComponents::LockDelay lock_delay;
