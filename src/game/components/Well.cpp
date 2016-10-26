@@ -653,88 +653,14 @@ void Well::notify(const WellEvent& event)
 
 #ifndef NDEBUG
 
-void Well::fromAscii(const std::string& text)
-{
-    assert(text.length() == matrix.size() * (matrix[0].size() + 1));
-
-    unsigned str_i = 0;
-    for (unsigned row = 0; row < matrix.size(); row++) {
-        for (unsigned cell = 0; cell < matrix[0].size(); cell++) {
-            if (text.at(str_i) == '.')
-                matrix[row][cell].reset();
-            else
-                matrix[row][cell] = MinoStorage::getMino(Piece::typeFromAscii(text.at(str_i)));
-
-            str_i++;
-        }
-        // newline skip
-        str_i++;
-    }
-}
-
 std::string Well::asAscii() const
 {
-    // the piece must be inside the grid, at least partially
-    assert(0 <= active_piece_x + 3);
-    assert(active_piece_x < static_cast<int>(matrix[0].size()));
-    assert(active_piece_y < matrix.size());
+    return components.ascii.asAscii(*this);
+}
 
-    std::string board_layer;
-    std::string piece_layer;
-
-    // print board
-    for (size_t row = 0; row < matrix.size(); row++) {
-        for (size_t cell = 0; cell < matrix[0].size(); cell++) {
-            if (matrix[row][cell])
-                board_layer += matrix[row][cell]->asAscii();
-            else
-                board_layer += '.';
-        }
-        board_layer += '\n';
-    }
-
-    // print piece layer
-    for (unsigned row = 0; row < matrix.size(); row++) {
-        for (unsigned cell = 0; cell < matrix[0].size(); cell++) {
-            char appended_char = '.';
-
-            if (active_piece) {
-                // if there may be some piece minos (real or ghost) in this column
-                if (active_piece_x <= static_cast<int>(cell)
-                    && static_cast<int>(cell) <= active_piece_x + 3) {
-                    // check ghost first - it should be under the real piece
-                    if (ghost_piece_y <= row && row <= ghost_piece_y + 3u) {
-                        const auto& mino = active_piece->currentGrid().at(row - ghost_piece_y)
-                                                                      .at(cell - active_piece_x);
-                        if (mino)
-                            appended_char = 'g';
-                    }
-                    // check piece - overwrite the ascii char even if it has a value
-                    if (active_piece_y <= row && row <= active_piece_y + 3u) {
-                        const auto& mino = active_piece->currentGrid().at(row - active_piece_y)
-                                                                      .at(cell - active_piece_x);
-                        if (mino)
-                            appended_char = std::tolower(mino->asAscii());
-                    }
-                }
-            }
-
-            piece_layer += appended_char;
-        }
-        piece_layer += '\n';
-    }
-
-    assert(board_layer.length() == piece_layer.length());
-    std::string output;
-    for (size_t i = 0; i < board_layer.length(); i++) {
-        if (piece_layer.at(i) != '.') {
-            output += piece_layer.at(i);
-            continue;
-        }
-
-        output += board_layer.at(i);
-    }
-    return output;
+void Well::fromAscii(const std::string& text)
+{
+    components.ascii.fromAscii(*this, text);
 }
 
 #endif

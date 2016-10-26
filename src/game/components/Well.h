@@ -5,6 +5,7 @@
 #include "game/Transition.h"
 #include "game/WellEvent.h"
 #include "well/Render.h"
+#include "well/Ascii.h"
 #include "system/InputEvent.h"
 
 #include <list>
@@ -65,13 +66,13 @@ public:
 
     struct {
         WellComponents::Render renderer;
+#ifndef NDEBUG
+        WellComponents::Ascii ascii;
+#endif
     } components;
 
 #ifndef NDEBUG
-    /// Get the well's string representation.
-    /// Can be useful for testing and debugging.
     std::string asAscii() const;
-    /// Set the contents of the well from an Ascii string.
     void fromAscii(const std::string&);
 #endif
 
@@ -167,5 +168,6 @@ private:
     std::list<std::unique_ptr<WellAnimation>> blocking_anims;
 
     // TODO: These are the classes that are still too much coupled to the Well
+    friend class WellComponents::Ascii;
     friend class WellComponents::Render;
 };
