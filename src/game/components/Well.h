@@ -4,6 +4,7 @@
 #include "game/Matrix.h"
 #include "game/Transition.h"
 #include "game/WellEvent.h"
+#include "well/Render.h"
 #include "system/InputEvent.h"
 
 #include <list>
@@ -54,13 +55,17 @@ public:
     /// Draw the Minos in the Well
     void drawContent(GraphicsContext&, int x, int y) const;
     /// Draw the background of the Well
-    void drawBackground(int x, int y) const;
+    void drawBackground(GraphicsContext&, int x, int y) const;
 
     /// Register an external event observer.
     template <typename WellObserver>
     void registerObserver(WellEvent::Type evtype, WellObserver&& obs) {
         observers[static_cast<uint8_t>(evtype)].push_back(std::forward<WellObserver>(obs));
     }
+
+    struct {
+        WellComponents::Render renderer;
+    } components;
 
 #ifndef NDEBUG
     /// Get the well's string representation.
@@ -160,4 +165,7 @@ private:
     void updateAnimations();
     std::list<std::unique_ptr<WellAnimation>> animations;
     std::list<std::unique_ptr<WellAnimation>> blocking_anims;
+
+    // TODO: These are the classes that are still too much coupled to the Well
+    friend class WellComponents::Render;
 };

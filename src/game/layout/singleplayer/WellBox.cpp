@@ -40,7 +40,7 @@ void WellBox::update(const std::vector<InputEvent>& events, AppContext& app)
 
 void WellBox::draw(GraphicsContext& gcx, bool paused) const
 {
-    m_well.drawBackground(x() + border_width, y() + border_width);
+    m_well.drawBackground(gcx, x() + border_width, y() + border_width);
     if (paused) {
         tex_pause->drawAt(x() + (width() - tex_pause->width()) / 2,
                           y() + (height() - tex_pause->height()) / 2);

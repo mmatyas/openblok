@@ -739,62 +739,12 @@ std::string Well::asAscii() const
 
 #endif
 
-void Well::drawBackground(int x, int y) const
+void Well::drawBackground(GraphicsContext& gcx, int x, int y) const
 {
-    const auto& cell = MinoStorage::getMatrixCell();
-    for (size_t row = 0; row < 20; row++) {
-        for (size_t col = 0; col < 10; col++) {
-            cell->draw(x + col * Mino::texture_size_px,
-                       y + row * Mino::texture_size_px);
-        }
-    }
+    components.renderer.drawBackground(*this, gcx, x, y);
 }
 
 void Well::drawContent(GraphicsContext& gcx, int x, int y) const
 {
-    // Draw board Minos
-    for (size_t row = 0; row < 20; row++) {
-        for (size_t col = 0; col < 10; col++) {
-            const auto& cell = matrix.at(row + 2).at(col);
-            if (cell) {
-                cell->draw(x + col * Mino::texture_size_px,
-                           y + row * Mino::texture_size_px);
-            }
-        }
-    }
-
-    // Draw current piece
-    if (active_piece) {
-        // draw ghost
-        for (unsigned row = 0; row < 4; row++) {
-            if (ghost_piece_y + row < 2) // hide rows 21-22
-                continue;
-            for (unsigned col = 0; col < 4; col++) {
-                if (active_piece->currentGrid().at(row).at(col)) {
-                    const auto& cell = MinoStorage::getGhost(active_piece->type());
-                    cell->draw(x + (active_piece_x + col) * Mino::texture_size_px,
-                               y + (ghost_piece_y + row - 2) * Mino::texture_size_px);
-                }
-            }
-        }
-
-        // draw piece
-        for (unsigned row = 0; row < 4; row++) {
-            if (active_piece_y + row < 2) // hide rows 21-22
-                continue;
-            for (unsigned col = 0; col < 4; col++) {
-                const auto& cell = active_piece->currentGrid().at(row).at(col);
-                if (cell) {
-                    cell->draw(x + (active_piece_x + col) * Mino::texture_size_px,
-                               y + (active_piece_y + row - 2) * Mino::texture_size_px);
-                }
-            }
-        }
-    }
-
-    // Draw animations
-    for (auto& anim : animations)
-        anim->draw(gcx, x, y);
-    for (auto& anim : blocking_anims)
-        anim->draw(gcx, x, y);
+    components.renderer.drawContent(*this, gcx, x, y);
 }
