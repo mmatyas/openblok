@@ -5,6 +5,7 @@
 #include "game/Transition.h"
 #include "game/WellEvent.h"
 #include "well/Ascii.h"
+#include "well/AutoRepeat.h"
 #include "well/Render.h"
 #include "well/TSpin.h"
 #include "system/InputEvent.h"
@@ -66,6 +67,7 @@ public:
     }
 
     struct {
+        WellComponents::AutoRepeat das;
         WellComponents::Render renderer;
         WellComponents::TSpin tspin;
 #ifndef NDEBUG
@@ -105,15 +107,7 @@ private:
     void updateKeystate(const std::vector<InputEvent>&);
     void handleKeys(const std::vector<InputEvent>&);
 
-    // autorepeat horizontal (aka DAS)
-    const Duration horizontal_delay_normal; // normal key repeat rate
-    const Duration horizontal_delay_turbo; // turbo key repeat rate
-    Duration horizontal_delay_current; // current input rate, either normal or turbo
-    Duration horizontal_timer; // timer for horizontal autorepeat
-    Duration das_timer; // timer for turbo mode activation
-    void resetDAS(); // turn off autorepeat mode
-
-    // autorepeat other keys
+    // softdrop timers
     Duration softdrop_delay;
     Duration softdrop_timer;
 

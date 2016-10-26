@@ -22,11 +22,6 @@ Well::Well(WellConfig&& config)
     , ghost_piece_y(0)
     , gravity_delay(Timing::frame_duration_60Hz * config.starting_gravity)
     , gravity_timer(Duration::zero())
-    , horizontal_delay_normal(Timing::frame_duration_60Hz * config.shift_normal)
-    , horizontal_delay_turbo(Timing::frame_duration_60Hz * config.shift_turbo)
-    , horizontal_delay_current(horizontal_delay_normal)
-    , horizontal_timer(Duration::zero())
-    , das_timer(horizontal_delay_normal)
     , softdrop_delay(gravity_delay / 20)
     , softdrop_timer(Duration::zero())
     , rotation_fn(std::move(config.rotation_fn))
@@ -44,6 +39,8 @@ Well::Well(WellConfig&& config)
     keystates[InputType::GAME_ROTATE_RIGHT] = false;
     previous_keystates = keystates;
 
+    components.das = WellComponents::AutoRepeat(Timing::frame_duration_60Hz * config.shift_normal,
+                                                Timing::frame_duration_60Hz * config.shift_turbo);
     components.tspin = WellComponents::TSpin(config.tspin_enabled,
                                              config.tspin_allow_wallblock,
                                              config.tspin_allow_wallkick);
@@ -144,7 +141,7 @@ void Well::handleKeys(const std::vector<InputEvent>& events)
             switch (event.type()) {
             case InputType::GAME_MOVE_LEFT:
             case InputType::GAME_MOVE_RIGHT:
-                resetDAS();
+                components.das.reset();
                 break;
             default:
                 break;
@@ -153,21 +150,16 @@ void Well::handleKeys(const std::vector<InputEvent>& events)
     }
 
 
-    horizontal_timer -= Timing::frame_duration;
-    if (horizontal_timer <= Duration::zero()) {
+
+    components.das.update();
+    if (components.das.movementAllowed()) {
         if (keystates.at(InputType::GAME_MOVE_LEFT) != keystates.at(InputType::GAME_MOVE_RIGHT)) {
             if (keystates.at(InputType::GAME_MOVE_LEFT))
                 moveLeftNow();
             else
                 moveRightNow();
 
-
-            // update DAS
-            das_timer -= horizontal_delay_normal;
-            if (das_timer < Duration::zero())
-                horizontal_delay_current = horizontal_delay_turbo;
-
-            horizontal_timer = horizontal_delay_current;
+            components.das.onHorizontalMove();
         }
     }
 
@@ -179,12 +171,6 @@ void Well::handleKeys(const std::vector<InputEvent>& events)
         if (active_piece && !lock_countdown.running())
             notify(WellEvent(WellEvent::Type::SOFTDROPPED));
     }
-}
-
-void Well::resetDAS()
-{
-    das_timer = horizontal_delay_normal;
-    horizontal_delay_current = horizontal_delay_normal;
 }
 
 void Well::updateGravity()
