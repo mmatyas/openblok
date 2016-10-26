@@ -7,6 +7,7 @@
 #include "well/Ascii.h"
 #include "well/AutoRepeat.h"
 #include "well/Gravity.h"
+#include "well/LockDelay.h"
 #include "well/Render.h"
 #include "well/TSpin.h"
 #include "system/InputEvent.h"
@@ -116,11 +117,7 @@ private:
     bool placeByWallKick(bool cw_rotation);
     std::unique_ptr<RotationFn> rotation_fn;
 
-    // lock delay
-    bool harddrop_locks_instantly;
-    bool lock_infinity;
-    Transition<void> lock_countdown;
-    void updateLockDelay();
+    WellComponents::LockDelay lock_delay;
 
     // active piece collision and ghost
     bool isOnGround() const;
@@ -147,6 +144,7 @@ private:
     // TODO: These are the classes that are still too much coupled to the Well
     friend class WellComponents::Ascii;
     friend class WellComponents::Gravity;
+    friend class WellComponents::LockDelay;
     friend class WellComponents::Render;
     friend class WellComponents::TSpin;
 };

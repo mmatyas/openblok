@@ -22,11 +22,8 @@ Well::Well(WellConfig&& config)
     , ghost_piece_y(0)
     , softdrop_timer(Duration::zero())
     , rotation_fn(std::move(config.rotation_fn))
-    , harddrop_locks_instantly(config.instant_harddrop)
-    , lock_infinity(config.infinity_lock)
-    , lock_countdown(Timing::frame_duration_60Hz * config.lock_delay, [](double){}, [this](){
-            this->lockThenRequestNext();
-        })
+    , lock_delay(*this, Timing::frame_duration_60Hz * config.lock_delay,
+                 config.infinity_lock, config.instant_harddrop)
     , last_lineclear_type(LineClearType::NORMAL)
 {
     keystates[InputType::GAME_MOVE_LEFT] = false;
@@ -59,7 +56,6 @@ void Well::update(const std::vector<InputEvent>& events, AppContext&)
         // when the animation has ended, but the rows weren't removed yet
         if (blocking_anims.empty()) {
             this->removeEmptyRows();
-            this->lock_countdown.stop();
             this->notify(WellEvent(WellEvent::Type::NEXT_REQUESTED));
         }
         return;
@@ -71,7 +67,7 @@ void Well::update(const std::vector<InputEvent>& events, AppContext&)
         return;
 
     components.gravity.update(*this);
-    updateLockDelay();
+    lock_delay.update(*this);
 }
 
 void Well::updateAnimations()
@@ -103,8 +99,9 @@ void Well::handleKeys(const std::vector<InputEvent>& events)
     if (keystates.at(InputType::GAME_SOFTDROP) && previous_keystates.at(InputType::GAME_SOFTDROP))
         components.gravity.skipNextUpdate();
 
-    if (!lock_countdown.running())
+    if (!lock_delay.lockInProgress())
         components.tspin.clear();
+
 
     // for some events onpress/onrelease handling is better suited
     for (const auto& event : events) {
@@ -149,7 +146,6 @@ void Well::handleKeys(const std::vector<InputEvent>& events)
     }
 
 
-
     components.das.update();
     if (components.das.movementAllowed()) {
         if (keystates.at(InputType::GAME_MOVE_LEFT) != keystates.at(InputType::GAME_MOVE_RIGHT)) {
@@ -167,18 +163,9 @@ void Well::handleKeys(const std::vector<InputEvent>& events)
         moveDownNow();
         components.gravity.skipNextUpdate();
         softdrop_timer = softdrop_delay;
-        if (active_piece && !lock_countdown.running())
+        if (active_piece && !lock_delay.lockInProgress())
             notify(WellEvent(WellEvent::Type::SOFTDROPPED));
     }
-}
-
-void Well::updateLockDelay()
-{
-    if (isOnGround())
-        lock_countdown.unpause();
-    else
-        lock_countdown.stop();
-    lock_countdown.update(Timing::frame_duration);
 }
 
 void Well::addPiece(PieceType type)
@@ -274,9 +261,7 @@ void Well::moveLeftNow()
     if (!hasCollisionAt(active_piece_x - 1, active_piece_y)) {
         active_piece_x--;
         calculateGhostOffset();
-
-        if (lock_infinity)
-            lock_countdown.stop();
+        lock_delay.onHorizontalMove();
     }
 }
 
@@ -288,9 +273,7 @@ void Well::moveRightNow()
     if (!hasCollisionAt(active_piece_x + 1, active_piece_y)) {
         active_piece_x++;
         calculateGhostOffset();
-
-        if (lock_infinity)
-            lock_countdown.stop();
+        lock_delay.onHorizontalMove();
     }
 }
 
@@ -307,12 +290,13 @@ void Well::moveDownNow()
     if (!active_piece || active_piece_y + 1u >= matrix.size())
         return;
 
+    // This function does NOT lock (unless Sonic Drop is active),
+    // and the lock delay is activated/updated in the main update().
+
     if (!isOnGround())
         active_piece_y++;
-    else if (!harddrop_locks_instantly && lock_countdown.running()) {
-        // sonic drop on-demand lock
-        lockThenRequestNext();
-    }
+    else if (lock_delay.sonicLockPossible())
+        lockThenRequestNext(); // sonic drop manual lock
 }
 
 void Well::hardDrop()
@@ -324,7 +308,7 @@ void Well::hardDrop()
 
     active_piece_y = ghost_piece_y;
     moveDownNow();
-    if (harddrop_locks_instantly)
+    if (lock_delay.harddropLocksInstantly())
         lockThenRequestNext();
 
     notify(harddrop_event);
@@ -366,11 +350,9 @@ void Well::rotateCWNow()
         }
     }
 
-    components.tspin.onSuccesfulRotation();
     calculateGhostOffset();
-
-    if (lock_infinity)
-        lock_countdown.stop();
+    components.tspin.onSuccesfulRotation();
+    lock_delay.onSuccesfulRotation();
 }
 
 void Well::rotateCCWNow()
@@ -388,11 +370,9 @@ void Well::rotateCCWNow()
         }
     }
 
-    components.tspin.onSuccesfulRotation();
     calculateGhostOffset();
-
-    if (lock_infinity)
-        lock_countdown.stop();
+    components.tspin.onSuccesfulRotation();
+    lock_delay.onSuccesfulRotation();
 }
 
 void Well::lockThenRequestNext()
@@ -463,7 +443,6 @@ void Well::lockAndReleasePiece()
     }
 
     active_piece.reset();
-    lock_countdown.stop();
     notify(WellEvent(WellEvent::Type::PIECE_LOCKED));
 
     checkLineclear();
