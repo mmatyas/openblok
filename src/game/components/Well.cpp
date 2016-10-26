@@ -20,9 +20,6 @@ Well::Well(WellConfig&& config)
     , active_piece_x(0)
     , active_piece_y(0)
     , ghost_piece_y(0)
-    , gravity_delay(Timing::frame_duration_60Hz * config.starting_gravity)
-    , gravity_timer(Duration::zero())
-    , softdrop_delay(gravity_delay / 20)
     , softdrop_timer(Duration::zero())
     , rotation_fn(std::move(config.rotation_fn))
     , harddrop_locks_instantly(config.instant_harddrop)
@@ -44,6 +41,8 @@ Well::Well(WellConfig&& config)
     components.tspin = WellComponents::TSpin(config.tspin_enabled,
                                              config.tspin_allow_wallblock,
                                              config.tspin_allow_wallkick);
+
+    setGravity(Timing::frame_duration_60Hz * config.starting_gravity);
 }
 
 Well::~Well() = default;
@@ -71,7 +70,7 @@ void Well::update(const std::vector<InputEvent>& events, AppContext&)
     if (!active_piece)
         return;
 
-    updateGravity();
+    components.gravity.update(*this);
     updateLockDelay();
 }
 
@@ -101,8 +100,8 @@ void Well::updateKeystate(const std::vector<InputEvent>& events)
 void Well::handleKeys(const std::vector<InputEvent>& events)
 {
     // keep it true only if down key is still down
-    skip_gravity = (keystates.at(InputType::GAME_SOFTDROP)
-                    && previous_keystates.at(InputType::GAME_SOFTDROP));
+    if (keystates.at(InputType::GAME_SOFTDROP) && previous_keystates.at(InputType::GAME_SOFTDROP))
+        components.gravity.skipNextUpdate();
 
     if (!lock_countdown.running())
         components.tspin.clear();
@@ -114,12 +113,12 @@ void Well::handleKeys(const std::vector<InputEvent>& events)
             switch (event.type()) {
             case InputType::GAME_HARDDROP:
                 hardDrop();
-                skip_gravity = true;
+                components.gravity.skipNextUpdate();
                 break;
 
             case InputType::GAME_HOLD:
                 notify(WellEvent(WellEvent::Type::HOLD_REQUESTED));
-                skip_gravity = true;
+                components.gravity.skipNextUpdate();
                 break;
 
             case InputType::GAME_ROTATE_LEFT:
@@ -166,22 +165,10 @@ void Well::handleKeys(const std::vector<InputEvent>& events)
     softdrop_timer -= Timing::frame_duration;
     if (keystates.at(InputType::GAME_SOFTDROP) && softdrop_timer <= Duration::zero()) {
         moveDownNow();
-        skip_gravity = true;
+        components.gravity.skipNextUpdate();
         softdrop_timer = softdrop_delay;
         if (active_piece && !lock_countdown.running())
             notify(WellEvent(WellEvent::Type::SOFTDROPPED));
-    }
-}
-
-void Well::updateGravity()
-{
-    gravity_timer += Timing::frame_duration;
-    while (gravity_timer >= gravity_delay) {
-        gravity_timer -= gravity_delay;
-
-        // do not apply downward movement twice
-        if (!skip_gravity)
-            applyGravity();
     }
 }
 
@@ -224,8 +211,8 @@ void Well::deletePiece()
 void Well::setGravity(Duration duration)
 {
     // do not go below 20G
-    gravity_delay = std::max<Duration>(duration, GRAVITY_20G);
-    softdrop_delay = gravity_delay / 20;
+    components.gravity = WellComponents::Gravity(std::max<Duration>(duration, GRAVITY_20G));
+    softdrop_delay = components.gravity.currentDelay() / 20;
 }
 
 void Well::setRotationFn(std::unique_ptr<RotationFn>&& fn)
@@ -277,11 +264,6 @@ void Well::calculateGhostOffset()
     ghost_piece_y = active_piece_y;
     while (ghost_piece_y + 1u < matrix.size() && !hasCollisionAt(active_piece_x, ghost_piece_y + 1))
         ghost_piece_y++;
-}
-
-void Well::applyGravity()
-{
-    moveDownNow();
 }
 
 void Well::moveLeftNow()

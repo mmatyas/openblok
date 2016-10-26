@@ -6,6 +6,7 @@
 #include "game/WellEvent.h"
 #include "well/Ascii.h"
 #include "well/AutoRepeat.h"
+#include "well/Gravity.h"
 #include "well/Render.h"
 #include "well/TSpin.h"
 #include "system/InputEvent.h"
@@ -68,6 +69,7 @@ public:
 
     struct {
         WellComponents::AutoRepeat das;
+        WellComponents::Gravity gravity;
         WellComponents::Render renderer;
         WellComponents::TSpin tspin;
 #ifndef NDEBUG
@@ -93,13 +95,6 @@ private:
     uint8_t active_piece_y;
     uint8_t ghost_piece_y;
     std::unique_ptr<Piece> active_piece;
-
-    // gravity
-    bool skip_gravity;
-    Duration gravity_delay;
-    Duration gravity_timer;
-    void applyGravity(); // moves the active piece one row down, if it does not collide
-    void updateGravity(); // updates the gravity timer, and calls applyGravity() if needed
 
     // input handling
     std::unordered_map<InputType, bool, InputTypeHash> keystates;
@@ -151,6 +146,7 @@ private:
 
     // TODO: These are the classes that are still too much coupled to the Well
     friend class WellComponents::Ascii;
+    friend class WellComponents::Gravity;
     friend class WellComponents::Render;
     friend class WellComponents::TSpin;
 };
