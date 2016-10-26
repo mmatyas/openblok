@@ -11,6 +11,7 @@ set(MOD_GAME_SRC
 	components/animations/CellLockAnim.cpp
 	components/animations/LineClearAnim.cpp
 	components/well/Ascii.cpp
+	components/well/TSpin.cpp
 	components/well/Render.cpp
 	layout/singleplayer/LeftSidebarBox.cpp
 	layout/singleplayer/RightSidebarBox.cpp
@@ -41,6 +42,7 @@ set(MOD_GAME_H
 	components/animations/CellLockAnim.h
 	components/animations/LineClearAnim.h
 	components/well/Ascii.h
+	components/well/TSpin.h
 	components/well/Render.h
 	layout/singleplayer/Box.h
 	layout/singleplayer/LeftSidebarBox.h

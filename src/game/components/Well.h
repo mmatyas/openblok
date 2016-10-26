@@ -4,8 +4,9 @@
 #include "game/Matrix.h"
 #include "game/Transition.h"
 #include "game/WellEvent.h"
-#include "well/Render.h"
 #include "well/Ascii.h"
+#include "well/Render.h"
+#include "well/TSpin.h"
 #include "system/InputEvent.h"
 
 #include <list>
@@ -66,6 +67,7 @@ public:
 
     struct {
         WellComponents::Render renderer;
+        WellComponents::TSpin tspin;
 #ifndef NDEBUG
         WellComponents::Ascii ascii;
 #endif
@@ -144,20 +146,6 @@ private:
     std::set<uint8_t> pending_cleared_rows;
     LineClearType last_lineclear_type;
 
-    // tspins
-    enum class TSpinDetectionResult : uint8_t {
-        NONE,
-        TSPIN,
-        MINI_TSPIN
-    };
-    TSpinDetectionResult checkTSpin();
-    const bool tspin_enabled;
-    bool tspin_allowed_action;
-    bool tspin_allow_wall;
-    bool tspin_allow_kick;
-    // SRS defines multiple rotation points, a proper tspin requires the use of the last one (== 3)
-    uint8_t tspin_last_rotation_point;
-
     // listeners
     std::unordered_map<uint8_t, std::vector<std::function<void(const WellEvent&)>>> observers;
     void notify(const WellEvent&);
@@ -170,4 +158,5 @@ private:
     // TODO: These are the classes that are still too much coupled to the Well
     friend class WellComponents::Ascii;
     friend class WellComponents::Render;
+    friend class WellComponents::TSpin;
 };
