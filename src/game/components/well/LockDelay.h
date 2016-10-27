@@ -29,7 +29,7 @@ private:
     const bool harddrop_locks_instantly;
     const bool infinity_lock;
 
-    Transition<void> countdown; //< starts when a piece reaches the ground, resets on movement
+    Transition<void> countdown; ///< starts when a piece reaches the ground, resets on movement
 };
 
 } // namespace WellComponents

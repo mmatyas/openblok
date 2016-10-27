@@ -11,9 +11,6 @@
 #include <assert.h>
 
 
-constexpr Duration GRAVITY_20G = Timing::frame_duration_60Hz / 20;
-
-
 Well::Well() : Well(WellConfig()) {}
 
 Well::Well(WellConfig&& config)
@@ -23,16 +20,13 @@ Well::Well(WellConfig&& config)
     , ghost_piece_y(0)
     , softdrop_timer(Duration::zero())
     , rotation_fn(std::move(config.rotation_fn))
+    , last_lineclear_type(LineClearType::NORMAL)
+    , das(Timing::frame_duration_60Hz * config.shift_normal,
+          Timing::frame_duration_60Hz * config.shift_turbo)
     , lock_delay(*this, Timing::frame_duration_60Hz * config.lock_delay,
                  config.infinity_lock, config.instant_harddrop)
-    , last_lineclear_type(LineClearType::NORMAL)
+    , tspin(config.tspin_enabled, config.tspin_allow_wallblock, config.tspin_allow_wallkick)
 {
-    components.das = WellComponents::AutoRepeat(Timing::frame_duration_60Hz * config.shift_normal,
-                                                Timing::frame_duration_60Hz * config.shift_turbo);
-    components.tspin = WellComponents::TSpin(config.tspin_enabled,
-                                             config.tspin_allow_wallblock,
-                                             config.tspin_allow_wallkick);
-
     setGravity(Timing::frame_duration_60Hz * config.starting_gravity);
 }
 
@@ -40,7 +34,7 @@ Well::~Well() = default;
 
 void Well::update(const std::vector<InputEvent>& events, AppContext&)
 {
-    components.input.updateKeystate(events);
+    input.updateKeystate(events);
     updateAnimations();
 
     if (gameover)
@@ -55,12 +49,12 @@ void Well::update(const std::vector<InputEvent>& events, AppContext&)
         return;
     }
 
-    components.input.handleKeys(*this, events);
+    input.handleKeys(*this, events);
 
     if (!active_piece)
         return;
 
-    components.gravity.update(*this);
+    gravity.update(*this);
     lock_delay.update(*this);
 }
 
@@ -108,9 +102,8 @@ void Well::deletePiece()
 
 void Well::setGravity(Duration duration)
 {
-    // do not go below 20G
-    components.gravity = WellComponents::Gravity(std::max<Duration>(duration, GRAVITY_20G));
-    softdrop_delay = components.gravity.currentDelay() / 20;
+    gravity.setRate(duration);
+    softdrop_delay = gravity.currentDelay() / 20;
 }
 
 void Well::setRotationFn(std::unique_ptr<RotationFn>&& fn)
@@ -235,7 +228,7 @@ bool Well::placeByWallKick(RotationDirection direction)
     const auto offsets = rotation_fn->call(active_piece->type(), starting_rot, clockwise);
 
     for (const auto& offset : offsets) {
-        components.tspin.onWallKick();
+        tspin.onWallKick();
 
         if (!hasCollisionAt(active_piece_x + offset.first, active_piece_y + offset.second)) {
             active_piece_x += offset.first;
@@ -252,7 +245,7 @@ void Well::rotateNow(RotationDirection direction)
     if (!active_piece)
         return;
 
-    components.tspin.clear();
+    tspin.clear();
 
     if (direction == RotationDirection::CLOCKWISE)
         active_piece->rotateCW();
@@ -270,7 +263,7 @@ void Well::rotateNow(RotationDirection direction)
     }
 
     calculateGhostOffset();
-    components.tspin.onSuccesfulRotation();
+    tspin.onSuccesfulRotation();
     lock_delay.onSuccesfulRotation();
 
     notify(WellEvent(WellEvent::Type::PIECE_ROTATED));
@@ -278,7 +271,7 @@ void Well::rotateNow(RotationDirection direction)
 
 void Well::lockThenRequestNext()
 {
-    auto tspin_type = components.tspin.check(*this);
+    auto tspin_type = tspin.check(*this);
     lockAndReleasePiece();
 
     // no line clear happened
@@ -432,22 +425,22 @@ void Well::notify(const WellEvent& event)
 
 std::string Well::asAscii() const
 {
-    return components.ascii.asAscii(*this);
+    return ascii.asAscii(*this);
 }
 
 void Well::fromAscii(const std::string& text)
 {
-    components.ascii.fromAscii(*this, text);
+    ascii.fromAscii(*this, text);
 }
 
 #endif
 
 void Well::drawBackground(GraphicsContext& gcx, int x, int y) const
 {
-    components.renderer.drawBackground(*this, gcx, x, y);
+    renderer.drawBackground(*this, gcx, x, y);
 }
 
 void Well::drawContent(GraphicsContext& gcx, int x, int y) const
 {
-    components.renderer.drawContent(*this, gcx, x, y);
+    renderer.drawContent(*this, gcx, x, y);
 }

@@ -10,8 +10,9 @@ namespace WellComponents {
 
 class Gravity {
 public:
-    Gravity(Duration delay = Duration::max());
+    Gravity(Duration duration = Duration::max());
 
+    void setRate(Duration);
     /// Updates the gravity timer, and calls applyGravity() if needed
     void update(Well&);
     /// Do not apply gravity during the next update() call
@@ -20,7 +21,6 @@ public:
     Duration currentDelay() { return gravity_delay; }
 
 private:
-    // TODO: Make this const
     Duration gravity_delay;
     Duration gravity_timer;
     bool skip_gravity;

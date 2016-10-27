@@ -26,10 +26,9 @@ public:
     void onSuccesfulRotation();
 
 private:
-    // TODO: Make these const
-    bool enabled;
-    bool allow_wall;
-    bool allow_kick;
+    const bool enabled;
+    const bool allow_wall;
+    const bool allow_kick;
 
     bool allowed;
     // SRS defines multiple rotation points, a proper tspin requires the use of the last one (== 3)

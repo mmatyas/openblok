@@ -66,17 +66,6 @@ public:
         observers[static_cast<uint8_t>(evtype)].push_back(std::forward<WellObserver>(obs));
     }
 
-    struct {
-        WellComponents::AutoRepeat das;
-        WellComponents::Gravity gravity;
-        WellComponents::Input input;
-        WellComponents::Render renderer;
-        WellComponents::TSpin tspin;
-#ifndef NDEBUG
-        WellComponents::Ascii ascii;
-#endif
-    } components;
-
 #ifndef NDEBUG
     std::string asAscii() const;
     void fromAscii(const std::string&);
@@ -110,8 +99,6 @@ private:
     bool placeByWallKick(RotationDirection);
     std::unique_ptr<RotationFn> rotation_fn;
 
-    WellComponents::LockDelay lock_delay;
-
     // active piece collision and ghost
     bool isOnGround() const;
     void calculateGhostOffset();
@@ -133,6 +120,17 @@ private:
     void updateAnimations();
     std::list<std::unique_ptr<WellAnimation>> animations;
     std::list<std::unique_ptr<WellAnimation>> blocking_anims;
+
+    // components
+    WellComponents::AutoRepeat das;
+    WellComponents::Gravity gravity;
+    WellComponents::Input input;
+    WellComponents::LockDelay lock_delay;
+    WellComponents::Render renderer;
+    WellComponents::TSpin tspin;
+#ifndef NDEBUG
+    WellComponents::Ascii ascii;
+#endif
 
     // TODO: These are the classes that are still too much coupled to the Well
     friend class WellComponents::Gravity;
