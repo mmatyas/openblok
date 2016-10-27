@@ -1,5 +1,5 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 6acd2a4..457530a 100644
+index 6acd2a4..b3f4003 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -17,6 +17,27 @@ if(BUILD_TESTS AND CMAKE_COMPILER_IS_GNUCXX)
@@ -39,6 +39,19 @@ index 6acd2a4..457530a 100644
  
  
  include_directories("src")
+diff --git a/data/config/input.lua b/data/config/input.lua
+index e8667db..57d0d98 100644
+--- a/data/config/input.lua
++++ b/data/config/input.lua
+@@ -6,7 +6,7 @@ game = {
+ 		move_down = 81,
+ 		move_left = 80,
+ 		move_right = 79,
+-		rotate_left = 29,
++		rotate_left = {28, 29},
+ 		rotate_right = 27,
+ 	}
+ }
 diff --git a/external/libSDL2pp/CMakeLists.txt b/external/libSDL2pp/CMakeLists.txt
 index aaa6d90..d08669b 100644
 --- a/external/libSDL2pp/CMakeLists.txt
@@ -128,21 +141,21 @@ index 0eb187d..dfc067b 100644
  #include <SDL2pp/SDLTTF.hh>
  #include <SDL2pp/Exception.hh>
 diff --git a/src/game/CMakeLists.txt b/src/game/CMakeLists.txt
-index 664d9e8..284a7dc 100644
+index 6417570..100d5ab 100644
 --- a/src/game/CMakeLists.txt
 +++ b/src/game/CMakeLists.txt
-@@ -52,9 +52,9 @@ set(MOD_GAME_H
- )
+@@ -82,9 +82,9 @@ if(NOT CMAKE_BUILD_TYPE MATCHES Release)
+ endif()
  
  # use Lua
 -include_directories(${LUA_INCLUDE_DIR})
-+#include_directories(${LUA_INCLUDE_DIR})
++# include_directories(${LUA_INCLUDE_DIR})
  include_directories(${PROJECT_SOURCE_DIR}/external/sol)
  
  add_library(module_game ${MOD_GAME_SRC} ${MOD_GAME_H})
  target_link_libraries(module_game module_system)
 -target_link_libraries(module_game ${LUA_LIBRARY})
-+#target_link_libraries(module_game ${LUA_LIBRARY})
++# target_link_libraries(module_game ${LUA_LIBRARY})
 diff --git a/src/game/states/InitState.cpp b/src/game/states/InitState.cpp
 index b9ada19..3ca4b3d 100644
 --- a/src/game/states/InitState.cpp
@@ -221,7 +234,7 @@ index 1043860..23f17fa 100644
 +    app.gcx().render();
 +}
 diff --git a/src/system/CMakeLists.txt b/src/system/CMakeLists.txt
-index 1cc1931..ec45fd8 100644
+index 1cc1931..74eba79 100644
 --- a/src/system/CMakeLists.txt
 +++ b/src/system/CMakeLists.txt
 @@ -52,8 +52,8 @@ add_library(module_system ${MOD_SYSTEM_SRC} ${MOD_SYSTEM_H})
