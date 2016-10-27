@@ -28,9 +28,6 @@ class WellAnimation;
 enum class PieceType : uint8_t;
 
 
-constexpr Duration GRAVITY_20G = Timing::frame_duration_60Hz / 20;
-
-
 class Well {
 public:
     /// Create a new well

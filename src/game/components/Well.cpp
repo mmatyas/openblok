@@ -11,6 +11,9 @@
 #include <assert.h>
 
 
+constexpr Duration GRAVITY_20G = Timing::frame_duration_60Hz / 20;
+
+
 Well::Well() : Well(WellConfig()) {}
 
 Well::Well(WellConfig&& config)
@@ -277,47 +280,52 @@ void Well::lockThenRequestNext()
 {
     auto tspin_type = components.tspin.check(*this);
     lockAndReleasePiece();
-    if (!gameover) {
-        // no line clear happened
-        if (pending_cleared_rows.empty()) {
-            switch(tspin_type) {
-                case TSpinDetectionResult::TSPIN:
-                    notify(WellEvent(WellEvent::Type::TSPIN_DETECTED));
-                    break;
-                case TSpinDetectionResult::MINI_TSPIN:
-                    notify(WellEvent(WellEvent::Type::MINI_TSPIN_DETECTED));
-                    break;
-                default:
-                    break;
-            }
-            notify(WellEvent(WellEvent::Type::NEXT_REQUESTED));
-        }
-        // at least one line has been cleared
-        else {
-            switch(tspin_type) {
-                case TSpinDetectionResult::TSPIN:
-                    assert(pending_cleared_rows.size() < 4);
-                    last_lineclear_type = LineClearType::TSPIN;
-                    break;
-                case TSpinDetectionResult::MINI_TSPIN:
-                    assert(pending_cleared_rows.size() < 4);
-                    last_lineclear_type = LineClearType::MINI_TSPIN;
-                    break;
-                default:
-                    last_lineclear_type = LineClearType::NORMAL;
-                    break;
-            }
 
-            WellEvent clear_anim_event(WellEvent::Type::LINE_CLEAR_ANIMATION_START);
-            clear_anim_event.lineclear.count = pending_cleared_rows.size();
-            clear_anim_event.lineclear.type = last_lineclear_type;
-            notify(clear_anim_event);
+    // no line clear happened
+    if (pending_cleared_rows.empty()) {
+        switch(tspin_type) {
+            case TSpinDetectionResult::TSPIN:
+                notify(WellEvent(WellEvent::Type::TSPIN_DETECTED));
+                break;
+            case TSpinDetectionResult::MINI_TSPIN:
+                notify(WellEvent(WellEvent::Type::MINI_TSPIN_DETECTED));
+                break;
+            default:
+                break;
         }
+        notify(WellEvent(WellEvent::Type::NEXT_REQUESTED));
+    }
+    // at least one line has been cleared
+    else {
+        switch(tspin_type) {
+            case TSpinDetectionResult::TSPIN:
+                assert(pending_cleared_rows.size() < 4);
+                last_lineclear_type = LineClearType::TSPIN;
+                break;
+            case TSpinDetectionResult::MINI_TSPIN:
+                assert(pending_cleared_rows.size() < 4);
+                last_lineclear_type = LineClearType::MINI_TSPIN;
+                break;
+            default:
+                last_lineclear_type = LineClearType::NORMAL;
+                break;
+        }
+
+        WellEvent clear_anim_event(WellEvent::Type::LINE_CLEAR_ANIMATION_START);
+        clear_anim_event.lineclear.count = pending_cleared_rows.size();
+        clear_anim_event.lineclear.type = last_lineclear_type;
+        notify(clear_anim_event);
     }
 }
 
+/// This function locks the active piece at its current location:
+/// moves the minos of the piece into the matrix, fires a PIECE_LOCKED event,
+/// and checks if there are clearable lines
 void Well::lockAndReleasePiece()
 {
+    assert(active_piece);
+    assert(isOnGround());
+
     std::list<std::pair<unsigned, unsigned>> pending_anims;
 
     for (unsigned row = 0; row < 4; row++) {
@@ -352,6 +360,8 @@ void Well::lockAndReleasePiece()
     }
 }
 
+/// This function checks if there are fully filled rows, puts them
+/// into pending_cleared_rows, and creates the line clear animations
 void Well::checkLineclear()
 {
     assert(!active_piece);
@@ -381,6 +391,8 @@ void Well::checkLineclear()
     }
 }
 
+/// This function consumes the lines previously stored in pending_cleared_rows,
+/// and fires the LINE_CLEAR event
 void Well::removeEmptyRows()
 {
     // this function should be called if there are empty rows
