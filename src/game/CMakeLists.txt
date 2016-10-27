@@ -10,7 +10,6 @@ set(MOD_GAME_SRC
 	components/Well.cpp
 	components/animations/CellLockAnim.cpp
 	components/animations/LineClearAnim.cpp
-	components/well/Ascii.cpp
 	components/well/AutoRepeat.cpp
 	components/well/Gravity.cpp
 	components/well/Input.cpp
@@ -45,7 +44,6 @@ set(MOD_GAME_H
 	components/animations/WellAnimation.h
 	components/animations/CellLockAnim.h
 	components/animations/LineClearAnim.h
-	components/well/Ascii.h
 	components/well/AutoRepeat.h
 	components/well/Gravity.h
 	components/well/Input.h
@@ -64,6 +62,11 @@ set(MOD_GAME_H
 	states/MainMenuState.h
 	states/SinglePlayState.h
 )
+
+if(NOT CMAKE_BUILD_TYPE MATCHES Release)
+    list(APPEND MOD_GAME_SRC components/well/Ascii.cpp)
+    list(APPEND MOD_GAME_H components/well/Ascii.h)
+endif()
 
 # use Lua
 include_directories(${LUA_INCLUDE_DIR})

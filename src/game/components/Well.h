@@ -3,13 +3,15 @@
 #include "WellConfig.h"
 #include "game/Matrix.h"
 #include "game/WellEvent.h"
-#include "well/Ascii.h"
 #include "well/AutoRepeat.h"
 #include "well/Input.h"
 #include "well/Gravity.h"
 #include "well/LockDelay.h"
 #include "well/Render.h"
 #include "well/TSpin.h"
+#ifndef NDEBUG
+#include "well/Ascii.h"
+#endif
 
 #include <list>
 #include <memory>
@@ -133,10 +135,12 @@ private:
     std::list<std::unique_ptr<WellAnimation>> blocking_anims;
 
     // TODO: These are the classes that are still too much coupled to the Well
-    friend class WellComponents::Ascii;
     friend class WellComponents::Gravity;
     friend class WellComponents::Input;
     friend class WellComponents::LockDelay;
     friend class WellComponents::Render;
     friend class WellComponents::TSpin;
+#ifndef NDEBUG
+    friend class WellComponents::Ascii;
+#endif
 };
