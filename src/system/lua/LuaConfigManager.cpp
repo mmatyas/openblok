@@ -60,9 +60,9 @@ ScancodeMap LuaConfigManager::loadInputMapping(const std::string& scriptfile)
             if (arr_or_num.get_type() == sol::type::table) {
                 sol::table arr = arr_or_num;
                 for (unsigned i = 1; i <= arr.size(); i++) {
-                    sol::optional<uint16_t> val = arr[i];
-                    if (val != sol::nullopt)
-                        scancodes.emplace_back(val.value());
+                    sol::optional<uint16_t> is_int = arr[i];
+                    if (is_int != sol::nullopt)
+                        scancodes.emplace_back(arr[i]);
                 }
 
                 // remove duplicates and sort

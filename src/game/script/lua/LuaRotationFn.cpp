@@ -15,16 +15,16 @@ LuaRotationFn::LuaRotationFn(const std::string& scriptfile)
         lua.script_file(scriptfile);
     }
     catch (const sol::error& err) {
-        throw new std::runtime_error(err.what());
+        throw std::runtime_error(err.what());
     }
 
     sol::optional<std::string> name = lua["plugin_name"];
     if (name != sol::nullopt)
-        plugin_name = name.value();
+        plugin_name = lua["plugin_name"];
 
     fn = lua["possibleRotations"];
     if (!fn.valid())
-        throw new std::runtime_error("A rotation plugin must have a possibleRotations function");
+        throw std::runtime_error("A rotation plugin must have a possibleRotations function");
 }
 
 std::vector<std::pair<int, int>> LuaRotationFn::call(PieceType piece, PieceDirection from, bool clockwise)
@@ -52,7 +52,7 @@ std::vector<std::pair<int, int>> LuaRotationFn::call(PieceType piece, PieceDirec
                 Log::error(LOG_TAG) << "offsets must contain integers\n";
                 continue;
             }
-            output.emplace_back(x.value(), y.value());
+            output.emplace_back(pair[1], pair[2]);
         }
     }
 
