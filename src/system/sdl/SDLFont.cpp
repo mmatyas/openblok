@@ -57,6 +57,7 @@ std::unique_ptr<Texture> SDLFont::renderText(const std::string& text, const RGBC
     const SDL_Color rgba_color({color.r, color.g, color.b, 255});
     SDL2pp::Surface basesurf(0, width,  line_height * lines.size(),
                              bpp, rmask, gmask, bmask, amask);
+    basesurf.SetBlendMode(SDL_BLENDMODE_ADD);
     for (unsigned l = 0; l < lines.size(); l++) {
         auto surf = font.RenderUTF8_Blended(lines.at(l), rgba_color);
         surf.Blit(SDL2pp::NullOpt,
