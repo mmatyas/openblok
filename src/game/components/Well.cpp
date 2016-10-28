@@ -2,6 +2,7 @@
 
 #include "Piece.h"
 #include "PieceFactory.h"
+#include "WellConfig.h"
 #include "animations/CellLockAnim.h"
 #include "animations/LineClearAnim.h"
 #include "game/Timing.h"
@@ -48,6 +49,9 @@ void Well::update(const std::vector<InputEvent>& events, AppContext&)
         }
         return;
     }
+
+    if (!lock_delay.lockInProgress())
+        tspin.clear();
 
     input.handleKeys(*this, events);
 

@@ -1,6 +1,5 @@
 #pragma once
 
-#include "WellConfig.h"
 #include "game/Matrix.h"
 #include "game/WellEvent.h"
 #include "well/AutoRepeat.h"
@@ -9,24 +8,27 @@
 #include "well/LockDelay.h"
 #include "well/Render.h"
 #include "well/TSpin.h"
-#ifndef NDEBUG
-#include "well/Ascii.h"
-#endif
 
 #include <list>
 #include <memory>
 #include <set>
-#include <string>
 #include <unordered_map>
 #include <vector>
 #include <stdint.h>
+
+#ifndef NDEBUG
+#include "well/Ascii.h"
+#include <string>
+#endif
 
 
 class AppContext;
 class GraphicsContext;
 class Mino;
 class Piece;
+class RotationFn;
 class WellAnimation;
+class WellConfig;
 enum class PieceType : uint8_t;
 
 
@@ -47,10 +49,10 @@ public:
     /// Returns the current, active piece, controllable by the player.
     /// Can return nullptr, eg. during animations.
     /// This function is only for reading the piece information.
-    /// For actual input handling, call GameBoard's functions.
+    /// For actual input handling, call Well's update method.
     const std::unique_ptr<Piece>& activePiece() const { return active_piece; }
 
-    /// Set the gravity update rate, in frames
+    /// Set the gravity update rate
     void setGravity(Duration);
     /// Set the rotation function
     void setRotationFn(std::unique_ptr<RotationFn>&&);

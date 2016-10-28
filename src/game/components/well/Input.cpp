@@ -25,14 +25,6 @@ void Input::updateKeystate(const std::vector<InputEvent>& events)
 
 void Input::handleKeys(Well& well, const std::vector<InputEvent>& events)
 {
-    // keep it true only if down key is still down
-    if (keystates.at(InputType::GAME_SOFTDROP) && previous_keystates.at(InputType::GAME_SOFTDROP))
-        well.gravity.skipNextUpdate();
-
-    if (!well.lock_delay.lockInProgress())
-        well.tspin.clear();
-
-
     // for some events onpress/onrelease handling is better suited
     for (const auto& event : events) {
         // press
@@ -87,12 +79,15 @@ void Input::handleKeys(Well& well, const std::vector<InputEvent>& events)
     }
 
     well.softdrop_timer -= Timing::frame_duration;
-    if (keystates.at(InputType::GAME_SOFTDROP) && well.softdrop_timer <= Duration::zero()) {
-        well.moveDownNow();
+    if (keystates.at(InputType::GAME_SOFTDROP)) {
         well.gravity.skipNextUpdate();
-        well.softdrop_timer = well.softdrop_delay;
-        if (well.active_piece && !well.lock_delay.lockInProgress())
-            well.notify(WellEvent(WellEvent::Type::SOFTDROPPED));
+
+        if (well.softdrop_timer <= Duration::zero()) {
+            well.moveDownNow();
+            well.softdrop_timer = well.softdrop_delay;
+            if (well.active_piece && !well.lock_delay.lockInProgress())
+                well.notify(WellEvent(WellEvent::Type::SOFTDROPPED));
+        }
     }
 }
 

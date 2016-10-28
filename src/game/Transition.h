@@ -97,7 +97,7 @@ public:
             last_value = animator(timer / (duration * 1.0));
     }
 
-    /// Restart the transition.
+    /// Activate and (re)start the transition from the beginning.
     void restart() {
         TransitionBase::restart();
         last_value = animator(0.0);
@@ -114,7 +114,7 @@ private:
 template<>
 class Transition<void> : public TransitionBase {
 public:
-     Transition(Duration duration, std::function<void(double)> on_update, std::function<void()> on_end = [](){})
+    Transition(Duration duration, std::function<void(double)> on_update, std::function<void()> on_end = [](){})
         : TransitionBase(duration, on_end)
         , animator(on_update)
     {
@@ -145,7 +145,7 @@ public:
         animator(0.0);
     }
 
-    void value() const {};
+    void value() const {}
 
 private:
     std::function<void(double)> animator;
