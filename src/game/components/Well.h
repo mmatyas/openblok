@@ -76,6 +76,8 @@ public:
 private:
     // true when gameover detected
     bool gameover;
+    // input is temporally disabled, eg, during blocking animations
+    Duration temporal_disable_timer;
 
     // the grid matrix
     // TODO: set dimensions from config
@@ -121,7 +123,6 @@ private:
     // animations
     void updateAnimations();
     std::list<std::unique_ptr<WellAnimation>> animations;
-    std::list<std::unique_ptr<WellAnimation>> blocking_anims;
 
     // components
     WellComponents::AutoRepeat das;

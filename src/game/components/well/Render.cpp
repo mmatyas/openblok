@@ -67,8 +67,6 @@ void Render::drawContent(const Well& well, GraphicsContext& gcx, int draw_offset
     // Draw animations
     for (auto& anim : well.animations)
         anim->draw(gcx, draw_offset_x, draw_offset_y);
-    for (auto& anim : well.blocking_anims)
-        anim->draw(gcx, draw_offset_x, draw_offset_y);
 }
 
 } // namespace WellComponents

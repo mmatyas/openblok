@@ -16,6 +16,7 @@ Well::Well() : Well(WellConfig()) {}
 
 Well::Well(WellConfig&& config)
     : gameover(false)
+    , temporal_disable_timer(Duration::zero())
     , active_piece_x(0)
     , active_piece_y(0)
     , ghost_piece_y(0)
@@ -41,12 +42,14 @@ void Well::update(const std::vector<InputEvent>& events, AppContext&)
     if (gameover)
         return;
 
+    if (temporal_disable_timer > Duration::zero()) {
+        temporal_disable_timer -= Timing::frame_duration;
+        return;
+    }
+
     if (pending_cleared_rows.size()) {
-        // when the animation has ended, but the rows weren't removed yet
-        if (blocking_anims.empty()) {
-            this->removeEmptyRows();
-            this->notify(WellEvent(WellEvent::Type::NEXT_REQUESTED));
-        }
+        this->removeEmptyRows();
+        this->notify(WellEvent(WellEvent::Type::NEXT_REQUESTED));
         return;
     }
 
@@ -67,12 +70,6 @@ void Well::updateAnimations()
     for (auto& anim : animations)
         anim->update(Timing::frame_duration);
     animations.remove_if([](std::unique_ptr<WellAnimation>& animptr){
-        return !animptr->isActive();
-    });
-
-    for (auto& anim : blocking_anims)
-        anim->update(Timing::frame_duration);
-    blocking_anims.remove_if([](std::unique_ptr<WellAnimation>& animptr){
         return !animptr->isActive();
     });
 }
@@ -382,8 +379,10 @@ void Well::checkLineclear()
             for (auto& cell : matrix[row])
                 cell = nullptr;
 
-            if (row >= 2)
-                blocking_anims.emplace_back(std::make_unique<LineClearAnim>(row));
+            if (row >= 2) {
+                animations.emplace_back(std::make_unique<LineClearAnim>(row));
+                temporal_disable_timer = Timing::frame_duration_60Hz * 40; // TODO: make this configurable
+            }
         }
     }
 }
