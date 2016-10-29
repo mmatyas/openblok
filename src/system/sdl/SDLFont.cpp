@@ -27,6 +27,11 @@ SDLFont::SDLFont(SDL2pp::Font&& font)
 
 std::unique_ptr<Texture> SDLFont::renderText(const std::string& text, const RGBColor& color)
 {
+    return renderText(text, RGBAColor {color.r, color.g, color.b, 255});
+}
+
+std::unique_ptr<Texture> SDLFont::renderText(const std::string& text, const RGBAColor& color)
+{
     assert(renderer);
 
     const auto lines = splitByNL(text);
@@ -34,7 +39,7 @@ std::unique_ptr<Texture> SDLFont::renderText(const std::string& text, const RGBC
     // shortcut for single lines
     if (lines.size() <= 1) {
         return std::make_unique<SDLTexture>(SDL2pp::Texture(
-            *renderer, font.RenderUTF8_Blended(text, {color.r, color.g, color.b, 255})
+            *renderer, font.RenderUTF8_Blended(text, {color.r, color.g, color.b, 255}).SetAlphaMod(color.a)
         ));
     }
 
@@ -65,5 +70,5 @@ std::unique_ptr<Texture> SDLFont::renderText(const std::string& text, const RGBC
                   SDL2pp::Rect(0, l * line_height, surf.GetWidth(), surf.GetHeight()));
     }
 
-    return std::make_unique<SDLTexture>(SDL2pp::Texture(*renderer, basesurf));
+    return std::make_unique<SDLTexture>(SDL2pp::Texture(*renderer, basesurf.SetAlphaMod(color.a)));
 }

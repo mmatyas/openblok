@@ -12,4 +12,5 @@ class Font {
 public:
     virtual ~Font() {}
     virtual std::unique_ptr<Texture> renderText(const std::string&, const RGBColor&) = 0;
+    virtual std::unique_ptr<Texture> renderText(const std::string&, const RGBAColor&) = 0;
 };
