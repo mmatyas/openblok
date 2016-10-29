@@ -51,14 +51,26 @@ void NextQueue::draw(GraphicsContext& gcx, int x, int y) const
         0x0A0AFF80_rgba);
 
     int offset_y = y + Mino::texture_size_px;
-    for (unsigned i = 0; i < displayed_piece_count; i++) {
-        const auto& piece = piece_storage.at(static_cast<size_t>(piece_queue.at(i)));
-        const float padding_x = (4 - Piece::displayWidth(piece->type())) / 2.0f;
-        piece->draw(x + Mino::texture_size_px * (0.5f + padding_x),
-                    offset_y);
+    draw_nth_piece(0, x, offset_y);
+    offset_y += Mino::texture_size_px * 3;
 
+    const auto scale = gcx.getDrawScale();
+    gcx.modifyDrawScale(scale * 0.75);
+    x *= (1 / 0.75);
+    offset_y *= (1 / 0.75);
+    offset_y += Mino::texture_size_px;
+    for (unsigned i = 1; i < displayed_piece_count; i++) {
+        draw_nth_piece(i, x, offset_y);
         offset_y += Mino::texture_size_px * 3;
-        if (i == 0)
-            offset_y += Mino::texture_size_px;
     }
+    gcx.modifyDrawScale(scale);
+}
+
+void NextQueue::draw_nth_piece(unsigned i, int x, int y) const
+{
+    assert(i < piece_queue.size());
+    assert(i < displayed_piece_count);
+    const auto& piece = piece_storage.at(static_cast<size_t>(piece_queue.at(i)));
+    const float padding_x = (4 - Piece::displayWidth(piece->type())) / 2.0f;
+    piece->draw(x + Mino::texture_size_px * (0.5f + padding_x), y);
 }

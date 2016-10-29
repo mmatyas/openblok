@@ -29,4 +29,5 @@ private:
     unsigned displayed_piece_count;
 
     void generate_pieces();
+    void draw_nth_piece(unsigned i, int x, int y) const;
 };

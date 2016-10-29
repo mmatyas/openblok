@@ -9,7 +9,7 @@
 namespace Layout {
 
 RightSidebarBox::RightSidebarBox(AppContext& app, int height)
-    : next_queue(4)
+    : next_queue(5)
     , gametime(Duration::zero())
     , gametime_text("00:00")
 {
