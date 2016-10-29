@@ -44,7 +44,8 @@ void LeftSidebarBox::update()
 
 void LeftSidebarBox::updateGoalCounter(unsigned num)
 {
-    tex_goal_counter = font_content->renderText(std::to_string(num), 0xEEEEEE_rgb);
+    tex_goal_counter = font_content->renderText(std::to_string(num),
+                                                num <= 5 ? 0xFFA500_rgb : 0xEEEEEE_rgb);
 }
 
 void LeftSidebarBox::updateLevelCounter(unsigned num)
