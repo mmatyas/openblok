@@ -5,20 +5,32 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
 
 # Build options
 option(BUILD_TESTS "Build the unit tests" ON)
+option(BUILD_TEST_COVERAGE "Build the test coverage report" OFF)
 option(WITH_LUAJIT "Use LuaJIT instead of default Lua" ON)
 
 # Global compiler settings
+# Use C++14
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra") # TODO: multiplatform
-if(BUILD_TESTS AND CMAKE_COMPILER_IS_GNUCXX)
+# Turn on warnings
+include(CheckCXXCompilerFlag)
+if(MSVC)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W3")
+else()
+    check_cxx_compiler_flag("-Wall -Wextra -pedantic" OBLOK_WARNING_FLAGS_SUPPORTED)
+    if(OBLOK_WARNING_FLAGS_SUPPORTED)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic")
+    endif()
+endif()
+# Build coverage report if requested
+if(BUILD_TEST_COVERAGE)
 	include(CodeCoverage)
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -fprofile-arcs -ftest-coverage")
 	setup_target_for_coverage(openblok_coverage openblok_test coverage)
 endif()
 
 
 # Dependencies: SDL2
+set(SDL2PP_CXXSTD "c++14")
 set(SDL2PP_WITH_IMAGE ON)
 set(SDL2PP_WITH_MIXER ON)
 set(SDL2PP_WITH_TTF ON)
