@@ -87,6 +87,7 @@ void Well::addPiece(PieceType type)
     for (active_piece_y = 3; active_piece_y > 0; /* note: unsigned */ ) {
         if (!hasCollisionAt(active_piece_x, --active_piece_y)) {
             calculateGhostOffset();
+            lock_delay.cancel();
             return;
         }
     }
