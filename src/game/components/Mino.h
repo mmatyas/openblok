@@ -14,6 +14,8 @@ public:
 
     /// Draw the Mino at the provided coordinates
     void draw(int x, int y);
+    /// Draw part of the Mino texture to the provided area
+    void drawPartial(const Rectangle& from, const Rectangle& to);
     /// The Ascii value of the Mino, used mainly for debugging
     char asAscii() const { return ascii_val; }
 

@@ -11,6 +11,7 @@ set(MOD_GAME_SRC
 	components/Well.cpp
 
 	components/animations/CellLockAnim.cpp
+	components/animations/HalfHeightLineClearAnim.cpp
 	components/animations/LineClearAnim.cpp
 
 	components/well/AutoRepeat.cpp
@@ -52,6 +53,7 @@ set(MOD_GAME_H
 
 	components/animations/WellAnimation.h
 	components/animations/CellLockAnim.h
+	components/animations/HalfHeightLineClearAnim.h
 	components/animations/LineClearAnim.h
 
 	components/well/AutoRepeat.h

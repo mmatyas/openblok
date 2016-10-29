@@ -20,7 +20,7 @@ WellBox::WellBox(AppContext& app)
     m_well.setRotationFn(app.scripts().loadRotationFn("data/rotations/srs.lua"));
 
     bounding_box.w = 10 * Mino::texture_size_px + border_width * 2;
-    bounding_box.h = 20 * Mino::texture_size_px + border_width * 2;
+    bounding_box.h = 20.5 * Mino::texture_size_px + border_width * 2;
 
     font_big = app.gcx().loadFont("data/fonts/PTC75F.ttf", 45);
     tex_pause = font_big->renderText(tr("PAUSE"), 0xEEEEEE_rgb);

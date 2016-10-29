@@ -4,6 +4,7 @@
 #include "PieceFactory.h"
 #include "WellConfig.h"
 #include "animations/CellLockAnim.h"
+#include "animations/HalfHeightLineClearAnim.h"
 #include "animations/LineClearAnim.h"
 #include "game/Timing.h"
 #include "game/WellEvent.h"
@@ -379,10 +380,12 @@ void Well::checkLineclear()
             for (auto& cell : matrix[row])
                 cell = nullptr;
 
-            if (row >= 2) {
+            if (row >= 2)
                 animations.emplace_back(std::make_unique<LineClearAnim>(row));
-                temporal_disable_timer = Timing::frame_duration_60Hz * 40; // TODO: make this configurable
-            }
+            else if (row == 1)
+                animations.emplace_back(std::make_unique<HalfHeightLineClearAnim>());
+
+            temporal_disable_timer = Timing::frame_duration_60Hz * 40; // TODO: make this configurable
         }
     }
 }
