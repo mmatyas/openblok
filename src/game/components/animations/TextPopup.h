@@ -3,6 +3,7 @@
 #include "game/Transition.h"
 
 #include <memory>
+#include <string>
 
 
 class Font;
