@@ -16,6 +16,6 @@ void HalfHeightLineClearAnim::draw(GraphicsContext& gcx, int x, int y) const
         x + static_cast<int>(row_percent.value() * row_width),
         y,
         static_cast<int>(row_width * (1 - row_percent.value())),
-        static_cast<int>(Mino::texture_size_px * 0.5f)},
+        static_cast<int>(Mino::texture_size_px * 0.3f)},
         0xEEEEEE_rgb);
 }

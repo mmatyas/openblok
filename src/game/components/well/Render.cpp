@@ -12,7 +12,7 @@
 namespace WellComponents {
 
 Render::Render()
-    : top_row_height(Mino::texture_size_px * 0.5)
+    : top_row_height(Mino::texture_size_px * 0.3)
     , top_row_cliprect({0, Mino::texture_size_px - top_row_height, Mino::texture_size_px, top_row_height})
 {}
 
