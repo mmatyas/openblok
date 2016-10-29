@@ -24,8 +24,12 @@ public:
 private:
     Well m_well;
 
+    bool gameover;
+    Transition<double> gameover_background;
+
     std::shared_ptr<Font> font_big;
     std::unique_ptr<Texture> tex_pause;
+    std::unique_ptr<Texture> tex_gameover;
 
     static constexpr uint8_t border_width = 5;
     ::Rectangle border_left;
