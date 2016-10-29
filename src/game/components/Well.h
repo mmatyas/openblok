@@ -28,7 +28,7 @@ class Mino;
 class Piece;
 class RotationFn;
 class WellAnimation;
-class WellConfig;
+struct WellConfig;
 enum class PieceType : uint8_t;
 
 
