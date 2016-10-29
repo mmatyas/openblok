@@ -60,6 +60,19 @@ unsigned short SDLGraphicsContext::screenHeight() const
     return renderer.GetLogicalHeight();
 }
 
+float SDLGraphicsContext::getDrawScale() const
+{
+    float x, y;
+    renderer.GetScale(x, y);
+    assert(std::abs(x - y) < 0.001);
+    return x;
+}
+
+void SDLGraphicsContext::modifyDrawScale(float scale)
+{
+    renderer.SetScale(scale, scale);
+}
+
 std::shared_ptr<Font> SDLGraphicsContext::loadFont(const std::string& path, unsigned pt)
 {
     return std::make_shared<SDLFont>(SDL2pp::Font(path, pt));

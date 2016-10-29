@@ -15,6 +15,9 @@ public:
     unsigned short screenWidth() const final;
     unsigned short screenHeight() const final;
 
+    float getDrawScale() const final;
+    void modifyDrawScale(float scale) final;
+
     std::shared_ptr<Font> loadFont(const std::string& path, unsigned pt) final;
     std::unique_ptr<Texture> loadTexture(const std::string& path) final;
     std::unique_ptr<Texture> loadTexture(const std::string& path, const RGBColor& tint) final;
