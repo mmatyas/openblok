@@ -11,6 +11,7 @@ public:
 
     void drawAt(int x, int y) final;
     void drawScaled(const Rectangle&) final;
+    void drawPartialScaled(const Rectangle& from, const Rectangle& to) final;
 
     unsigned width() const final { return tex.GetWidth(); }
     unsigned height() const final { return tex.GetHeight(); }
