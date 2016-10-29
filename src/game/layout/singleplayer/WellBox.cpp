@@ -69,12 +69,12 @@ void WellBox::draw(GraphicsContext& gcx, bool paused) const
             width() - border_width * 2, box_h
         }, 0xA0_rgba);
 
-        tex_gameover->drawAt(x() + (width() - tex_gameover->width()) / 2,
-                            y() + (height() - tex_gameover->height()) / 2);
+        tex_gameover->drawAt(x() + (width() - static_cast<int>(tex_gameover->width())) / 2,
+                            y() + (height() - static_cast<int>(tex_gameover->height())) / 2);
     }
     else if (paused)
-        tex_pause->drawAt(x() + (width() - tex_pause->width()) / 2,
-                          y() + (height() - tex_pause->height()) / 2);
+        tex_pause->drawAt(x() + (width() - static_cast<int>(tex_pause->width())) / 2,
+                          y() + (height() - static_cast<int>(tex_pause->height())) / 2);
     else {
         m_well.drawContent(gcx, x() + border_width, y() + border_width);
     }

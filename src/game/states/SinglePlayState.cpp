@@ -3,11 +3,13 @@
 #include "game/AppContext.h"
 #include "game/WellEvent.h"
 #include "game/components/Piece.h"
+#include "game/components/animations/TextPopup.h"
 #include "system/AudioContext.h"
 #include "system/Localize.h"
 #include "system/Music.h"
 #include "system/SoundEffect.h"
 
+#include <algorithm>
 #include <cmath>
 
 
@@ -43,8 +45,26 @@ SinglePlayState::SinglePlayState(AppContext& app)
             {ScoreType::SOFTDROP, 1},
             {ScoreType::HARDDROP, 2}
         })
+    , score_name({
+            {ScoreType::CLEAR_SINGLE, tr("SINGLE")},
+            {ScoreType::CLEAR_DOUBLE, tr("DOUBLE")},
+            {ScoreType::CLEAR_TRIPLE, tr("TRIPLE")},
+            {ScoreType::CLEAR_PERFECT, tr("PERFECT!")},
+            {ScoreType::MINI_TSPIN, tr("T-SPIN MINI")},
+            {ScoreType::CLEAR_MINI_TSPIN_SINGLE, tr("T-MINI SINGLE")},
+            {ScoreType::TSPIN, tr("T-SPIN")},
+            {ScoreType::CLEAR_TSPIN_SINGLE, tr("T-SPIN SINGLE")},
+            {ScoreType::CLEAR_TSPIN_DOUBLE, tr("T-SPIN DOUBLE")},
+            {ScoreType::CLEAR_TSPIN_TRIPLE, tr("T-SPIN TRIPLE")}
+        })
     , previous_lineclear_type(ScoreType::CLEAR_SINGLE)
+    , pending_levelup_msg(std::chrono::seconds(1), [](double){}, [this](){
+            this->textpopups.emplace_back(std::make_unique<TextPopup>(tr("LEVEL UP!"), font_popuptext));
+        })
 {
+    font_popuptext = app.gcx().loadFont("data/fonts/PTS76F.ttf", 34);
+    pending_levelup_msg.stop();
+
     registerObservers();
 
     // TODO: consider alternative algorithm
@@ -135,6 +155,7 @@ void SinglePlayState::registerObservers()
         }
         assert(score_type != ScoreType::SOFTDROP);
         unsigned score = this->score_table.at(score_type);
+        std::string popup_text = this->score_name.at(score_type);
 
         // if the previous and the current clear types are both in this set, add Back-to-Back bonus
         static const std::set<ScoreType> b2b_allowed = {
@@ -145,11 +166,18 @@ void SinglePlayState::registerObservers()
             ScoreType::CLEAR_TSPIN_TRIPLE,
         };
 
-        if (b2b_allowed.count(score_type) && b2b_allowed.count(this->previous_lineclear_type))
+        if (b2b_allowed.count(score_type) && b2b_allowed.count(this->previous_lineclear_type)) {
             score *= 1.5;
+            popup_text = tr("BACK-TO-BACK\n") + popup_text;
+        }
 
         this->current_score += score * this->current_level;
         this->previous_lineclear_type = score_type;
+
+        if (score_type != ScoreType::CLEAR_SINGLE) {
+            this->textpopups.emplace_back(
+                std::make_unique<TextPopup>(popup_text, this->font_popuptext));
+        }
 
 
         // increase gravity level
@@ -162,17 +190,27 @@ void SinglePlayState::registerObservers()
             this->ui_well.well().setGravity(this->gravity_levels.top());
             this->lineclears_left += lineclears_per_level;
             this->current_level++;
+            // produce delayed popup if there are other popups already
+            this->pending_levelup_msg.restart();
+            if (this->textpopups.empty())
+                this->pending_levelup_msg.update(this->pending_levelup_msg.length());
         }
     });
 
     ui_well.well().registerObserver(WellEvent::Type::MINI_TSPIN_DETECTED, [this](const WellEvent&){
         this->texts_need_update = true;
         this->current_score += this->score_table.at(ScoreType::MINI_TSPIN);
+        this->textpopups.emplace_back(std::make_unique<TextPopup>(
+            this->score_name.at(ScoreType::MINI_TSPIN),
+            this->font_popuptext));
     });
 
     ui_well.well().registerObserver(WellEvent::Type::TSPIN_DETECTED, [this](const WellEvent&){
         this->texts_need_update = true;
         this->current_score += this->score_table.at(ScoreType::TSPIN);
+        this->textpopups.emplace_back(std::make_unique<TextPopup>(
+            this->score_name.at(ScoreType::TSPIN),
+            this->font_popuptext));
     });
 
     ui_well.well().registerObserver(WellEvent::Type::HARDDROPPED, [this](const WellEvent& event){
@@ -210,6 +248,12 @@ void SinglePlayState::update(const std::vector<InputEvent>& inputs, AppContext& 
         }
     }
 
+    pending_levelup_msg.update(Timing::frame_duration);
+    // remove old animations
+    textpopups.erase(std::remove_if(textpopups.begin(), textpopups.end(),
+        [](std::unique_ptr<TextPopup>& popup){ return !popup->isActive(); }),
+        textpopups.end());
+
 
     // UI
     // TODO: only on screen resize event
@@ -232,6 +276,15 @@ void SinglePlayState::update(const std::vector<InputEvent>& inputs, AppContext& 
         texts_need_update = false;
     }
 
+    // Score texts popping up
+    for (const auto& popup : textpopups) {
+        popup->setInitialPosition(
+            ui_leftside.x() + (ui_leftside.width() - static_cast<int>(popup->width())) / 2.0,
+            ui_leftside.y() + ui_leftside.height() * 0.5
+        );
+        popup->update();
+    }
+
     if (gameover)
         return;
 
@@ -245,4 +298,7 @@ void SinglePlayState::draw(GraphicsContext& gcx)
     ui_well.draw(gcx, paused);
     ui_leftside.draw(gcx);
     ui_rightside.draw(gcx);
+
+    for (const auto& popup : textpopups)
+        popup->draw();
 }

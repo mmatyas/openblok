@@ -13,6 +13,7 @@ set(MOD_GAME_SRC
 	components/animations/CellLockAnim.cpp
 	components/animations/HalfHeightLineClearAnim.cpp
 	components/animations/LineClearAnim.cpp
+	components/animations/TextPopup.cpp
 
 	components/well/AutoRepeat.cpp
 	components/well/Gravity.cpp
@@ -55,6 +56,7 @@ set(MOD_GAME_H
 	components/animations/CellLockAnim.h
 	components/animations/HalfHeightLineClearAnim.h
 	components/animations/LineClearAnim.h
+	components/animations/TextPopup.h
 
 	components/well/AutoRepeat.h
 	components/well/Gravity.h

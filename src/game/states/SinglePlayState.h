@@ -13,6 +13,7 @@
 class Texture;
 class Music;
 class SoundEffect;
+class TextPopup;
 
 enum class ScoreType : uint8_t {
     CLEAR_SINGLE,
@@ -48,6 +49,7 @@ private:
     std::shared_ptr<SoundEffect> sfx_onlineclear;
     std::shared_ptr<SoundEffect> sfx_onlock;
     std::shared_ptr<SoundEffect> sfx_onrotate;
+    std::shared_ptr<Font> font_popuptext;
     bool texts_need_update;
 
     Layout::WellBox ui_well;
@@ -60,8 +62,12 @@ private:
     unsigned current_level;
     unsigned current_score;
     std::map<ScoreType, unsigned> score_table;
+    std::map<ScoreType, const std::string> score_name;
     ScoreType previous_lineclear_type;
 
     void registerObservers();
     void addNextPiece();
+
+    Transition<void> pending_levelup_msg;
+    std::vector<std::unique_ptr<TextPopup>> textpopups;
 };
