@@ -15,6 +15,7 @@ set(MOD_GAME_SRC
 	components/animations/LineClearAnim.cpp
 	components/animations/TextPopup.cpp
 
+	components/rotations/Classic.cpp
 	components/rotations/SRS.cpp
 	components/rotations/TGM.cpp
 

@@ -24,6 +24,8 @@ struct WellFixture {
         for (unsigned i = 0; i < 10; i++)
             emptyline_ascii += '.';
         emptyline_ascii += '\n';
+
+        PieceFactory::changeInitialPositions(Rotations::SRS().initialPositions());
     }
 };
 

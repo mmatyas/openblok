@@ -1,6 +1,7 @@
 #include "UnitTest++/UnitTest++.h"
 
 #include "game/components/MinoStorage.h"
+#include "game/components/PieceFactory.h"
 #include "game/components/Well.h"
 #include "game/components/rotations/SRS.h"
 
@@ -21,6 +22,7 @@ struct WellFixture {
             emptyline_ascii += '.';
         emptyline_ascii += '\n';
 
+        PieceFactory::changeInitialPositions(Rotations::SRS().initialPositions());
         well.setRotationFn(std::make_unique<Rotations::SRS>());
     }
 };
