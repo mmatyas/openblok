@@ -5,6 +5,7 @@ set(TEST_SRC
 	test_Transition.cpp
 	test_Well.cpp
 	test_WellTSpin.cpp
+	test_Well_TGM.cpp
 
 	# TestUtils.cpp
 	main.cpp
