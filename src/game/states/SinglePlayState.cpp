@@ -144,6 +144,8 @@ void SinglePlayState::registerObservers()
             case LineClearType::MINI_TSPIN:
                 if (event.lineclear.count == 1)
                     score_type = ScoreType::CLEAR_MINI_TSPIN_SINGLE;
+                else
+                    score_type = ScoreType::CLEAR_DOUBLE; // corner case: next to the wall
                 break;
             case LineClearType::TSPIN:
                 switch(event.lineclear.count) {
