@@ -13,9 +13,6 @@ set(MOD_SYSTEM_SRC
 	sdl/SDLSoundEffect.cpp
 	sdl/SDLTexture.cpp
 	sdl/SDLWindow.cpp
-
-	# Lua
-	lua/LuaConfigManager.cpp
 )
 
 set(MOD_SYSTEM_H
@@ -41,19 +38,10 @@ set(MOD_SYSTEM_H
 	sdl/SDLSoundEffect.h
 	sdl/SDLTexture.h
 	sdl/SDLWindow.h
-
-	# Lua
-	lua/LuaConfigManager.h
 )
 
 add_library(module_system ${MOD_SYSTEM_SRC} ${MOD_SYSTEM_H})
 
 # use SDL2
 include_directories(${SDL2PP_INCLUDE_DIRS})
-
-# use Lua
-include_directories(${LUA_INCLUDE_DIR})
-include_directories(${PROJECT_SOURCE_DIR}/external/sol)
-
 target_link_libraries(module_system ${SDL2PP_LIBRARIES})
-target_link_libraries(module_system ${LUA_LIBRARY})

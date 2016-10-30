@@ -10,8 +10,6 @@ bool AppContext::init()
         Log::info(log_tag) << "Initializing video...\n";
         m_window = Window::create();
 
-        m_config = ConfigManager::create();
-
         srand(time(nullptr));
     }
     catch (const std::exception& err) {

@@ -8,8 +8,8 @@
 
 InitState::InitState(AppContext& app)
 {
-    auto mapping = app.config().loadInputMapping("data/config/input.lua");
-    app.config().saveInputMapping(mapping, "data/config/input.lua");
+    auto mapping = app.config().loadInputMapping("data/config/input.cfg");
+    app.config().saveInputMapping(mapping, "data/config/input.cfg");
     app.window().setInputMapping(mapping);
 
     Log::info("init") << "Loading resources\n";
