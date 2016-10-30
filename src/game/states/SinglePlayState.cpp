@@ -266,7 +266,7 @@ void SinglePlayState::update(const std::vector<InputEvent>& inputs, AppContext& 
     if (paused)
         return;
 
-    ui_well.update(inputs, app);
+    ui_well.update(inputs);
     ui_leftside.update();
 
     if (texts_need_update) {

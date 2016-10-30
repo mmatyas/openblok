@@ -7,8 +7,6 @@
 #include "game/components/WellConfig.h"
 
 
-class AppContext {};
-
 SUITE(Well) {
 
 // TODO: get these values from config
@@ -17,7 +15,6 @@ constexpr unsigned lock_delay_frames = 30;
 constexpr unsigned horizontal_delay_frames = 14;
 
 struct WellFixture {
-    AppContext app;
     Well well;
     std::string emptyline_ascii;
 
@@ -75,7 +72,7 @@ TEST_FIXTURE(WellFixture, Gravity) {
 
     // the piece will reach the bottom
     for (unsigned i = 0; i < 18 * gravity_delay_frames; i++)
-        well.update({}, app);
+        well.update({});
 
     std::string expected_ascii;
     expected_ascii += emptyline_ascii;
@@ -89,7 +86,7 @@ TEST_FIXTURE(WellFixture, Gravity) {
 
     // it will lock there
     for (unsigned i = 0; i < lock_delay_frames; i++)
-        well.update({}, app);
+        well.update({});
 
     expected_ascii = "";
     for (unsigned i = 0; i < 20; i++)
@@ -102,7 +99,7 @@ TEST_FIXTURE(WellFixture, Gravity) {
 
     // a new piece will appear at the top
     well.addPiece(PieceType::Z);
-    well.update({}, app);
+    well.update({});
     REQUIRE CHECK(well.activePiece() != nullptr);
 
     expected_ascii = emptyline_ascii;
@@ -120,7 +117,7 @@ TEST_FIXTURE(WellFixture, Gravity) {
 
     // and land on top of the previous
     for (unsigned i = 0; i < 17 * gravity_delay_frames; i++)
-        well.update({}, app);
+        well.update({});
 
     expected_ascii = "";
     for (unsigned i = 0; i < 18; i++)
@@ -137,7 +134,7 @@ TEST_FIXTURE(WellFixture, Gravity) {
 
 TEST_FIXTURE(WellFixture, MoveLeft) {
     well.addPiece(PieceType::I);
-    well.update({InputEvent(InputType::GAME_MOVE_LEFT, true)}, app);
+    well.update({InputEvent(InputType::GAME_MOVE_LEFT, true)});
 
     std::string expected_ascii = emptyline_ascii;
     expected_ascii += emptyline_ascii;
@@ -151,7 +148,7 @@ TEST_FIXTURE(WellFixture, MoveLeft) {
 }
 TEST_FIXTURE(WellFixture, MoveRight) {
     well.addPiece(PieceType::I);
-    well.update({InputEvent(InputType::GAME_MOVE_RIGHT, true)}, app);
+    well.update({InputEvent(InputType::GAME_MOVE_RIGHT, true)});
 
     std::string expected_ascii = emptyline_ascii;
     expected_ascii += emptyline_ascii;
@@ -165,7 +162,7 @@ TEST_FIXTURE(WellFixture, MoveRight) {
 }
 TEST_FIXTURE(WellFixture, MoveDown) {
     well.addPiece(PieceType::I);
-    well.update({InputEvent(InputType::GAME_SOFTDROP, true)}, app);
+    well.update({InputEvent(InputType::GAME_SOFTDROP, true)});
 
     std::string expected_ascii = emptyline_ascii;
     expected_ascii += emptyline_ascii;
@@ -184,7 +181,7 @@ TEST_FIXTURE(WellFixture, Rotate) {
     well.addPiece(PieceType::S);
     CHECK(well.activePiece() != nullptr);
 
-    well.update({InputEvent(InputType::GAME_ROTATE_LEFT, true)}, app);
+    well.update({InputEvent(InputType::GAME_ROTATE_LEFT, true)});
 
     std::string expected_ascii = emptyline_ascii;
     expected_ascii += emptyline_ascii;
@@ -201,7 +198,6 @@ TEST_FIXTURE(WellFixture, Rotate) {
 }
 
 TEST(Zangi) {
-    AppContext app;
     std::string emptyline_ascii;
     MinoStorage::loadDummyMinos();
     for (unsigned i = 0; i < 10; i++)
@@ -233,25 +229,25 @@ TEST(Zangi) {
 
     well.addPiece(PieceType::J);
     // rotate CCW
-    well.update({InputEvent(InputType::GAME_ROTATE_LEFT, true)}, app);
-    well.update({InputEvent(InputType::GAME_ROTATE_LEFT, false)}, app);
+    well.update({InputEvent(InputType::GAME_ROTATE_LEFT, true)});
+    well.update({InputEvent(InputType::GAME_ROTATE_LEFT, false)});
     // move right
     for (unsigned i = 0; i < horizontal_delay_frames * 4; i++)
-        well.update({InputEvent(InputType::GAME_MOVE_RIGHT, true)}, app);
-    well.update({InputEvent(InputType::GAME_MOVE_RIGHT, false)}, app);
+        well.update({InputEvent(InputType::GAME_MOVE_RIGHT, true)});
+    well.update({InputEvent(InputType::GAME_MOVE_RIGHT, false)});
     // sonic drop
-    well.update({InputEvent(InputType::GAME_HARDDROP, true)}, app);
-    well.update({InputEvent(InputType::GAME_HARDDROP, false)}, app);
+    well.update({InputEvent(InputType::GAME_HARDDROP, true)});
+    well.update({InputEvent(InputType::GAME_HARDDROP, false)});
     CHECK(well.activePiece() != nullptr); // piece must survive landing on sonic drop
     // move left
-    well.update({InputEvent(InputType::GAME_MOVE_LEFT, true)}, app);
+    well.update({InputEvent(InputType::GAME_MOVE_LEFT, true)});
     CHECK(well.activePiece() != nullptr);
-    well.update({InputEvent(InputType::GAME_MOVE_LEFT, false)}, app);
+    well.update({InputEvent(InputType::GAME_MOVE_LEFT, false)});
     CHECK(well.activePiece() != nullptr);
     // lock
-    well.update({InputEvent(InputType::GAME_SOFTDROP, true)}, app);
+    well.update({InputEvent(InputType::GAME_SOFTDROP, true)});
     CHECK(well.activePiece() == nullptr);
-    well.update({InputEvent(InputType::GAME_SOFTDROP, false)}, app);
+    well.update({InputEvent(InputType::GAME_SOFTDROP, false)});
     CHECK(well.activePiece() == nullptr);
 
     CHECK_EQUAL(expected_ascii, well.asAscii());

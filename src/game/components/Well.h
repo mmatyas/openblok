@@ -40,7 +40,7 @@ public:
     ~Well();
 
     /// Update the well
-    void update(const std::vector<InputEvent>&, AppContext&);
+    void update(const std::vector<InputEvent>&);
 
     /// Add a new, player-controllable piece to the well.
     void addPiece(PieceType);

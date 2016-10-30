@@ -16,7 +16,7 @@ public:
     WellBox(AppContext&);
 
     void setPosition(int x, int y) override;
-    void update(const std::vector<InputEvent>&, AppContext&);
+    void update(const std::vector<InputEvent>&);
     void draw(GraphicsContext&, bool paused) const;
 
     Well& well() { return m_well; }

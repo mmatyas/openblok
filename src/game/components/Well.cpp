@@ -35,7 +35,7 @@ Well::Well(WellConfig&& config)
 
 Well::~Well() = default;
 
-void Well::update(const std::vector<InputEvent>& events, AppContext&)
+void Well::update(const std::vector<InputEvent>& events)
 {
     input.updateKeystate(events);
     updateAnimations();

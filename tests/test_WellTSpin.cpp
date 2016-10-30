@@ -1,6 +1,5 @@
 #include "UnitTest++/UnitTest++.h"
 
-#include "game/AppContext.h"
 #include "game/components/MinoStorage.h"
 #include "game/components/Well.h"
 #include "game/components/rotations/SRS.h"
@@ -12,7 +11,6 @@ SUITE(WellTSpin) {
 constexpr unsigned softdrop_delay_frames = 64 / 20.0;
 
 struct WellFixture {
-    AppContext app;
     Well well;
     std::string emptyline_ascii;
 
@@ -46,19 +44,19 @@ TEST_FIXTURE(WellFixture, Basic)
     well.addPiece(PieceType::T);
 
     // rotate CCW
-    well.update({InputEvent(InputType::GAME_ROTATE_LEFT, true)}, app);
-    well.update({InputEvent(InputType::GAME_ROTATE_LEFT, false)}, app);
+    well.update({InputEvent(InputType::GAME_ROTATE_LEFT, true)});
+    well.update({InputEvent(InputType::GAME_ROTATE_LEFT, false)});
 
     // move to bottom
     for (unsigned row = 0; row < 22 * softdrop_delay_frames; row++) {
-        well.update({InputEvent(InputType::GAME_SOFTDROP, true)}, app);
+        well.update({InputEvent(InputType::GAME_SOFTDROP, true)});
     }
-    well.update({InputEvent(InputType::GAME_SOFTDROP, false)}, app);
+    well.update({InputEvent(InputType::GAME_SOFTDROP, false)});
     CHECK(well.activePiece() != nullptr);
 
     // rotate CCW
-    well.update({InputEvent(InputType::GAME_ROTATE_LEFT, true)}, app);
-    well.update({InputEvent(InputType::GAME_ROTATE_LEFT, false)}, app);
+    well.update({InputEvent(InputType::GAME_ROTATE_LEFT, true)});
+    well.update({InputEvent(InputType::GAME_ROTATE_LEFT, false)});
 
     // check position
     std::string expected_ascii;
@@ -72,7 +70,7 @@ TEST_FIXTURE(WellFixture, Basic)
     // wait for lock
     unsigned limit = 0;
     while (limit < 100) {
-        well.update({}, app);
+        well.update({});
         limit++;
     }
 
@@ -102,18 +100,18 @@ TEST_FIXTURE(WellFixture, Tricky)
 
     // move to bottom
     for (unsigned row = 0; row < 20 * softdrop_delay_frames; row++) {
-        well.update({InputEvent(InputType::GAME_SOFTDROP, true)}, app);
+        well.update({InputEvent(InputType::GAME_SOFTDROP, true)});
     }
-    well.update({InputEvent(InputType::GAME_SOFTDROP, false)}, app);
+    well.update({InputEvent(InputType::GAME_SOFTDROP, false)});
     CHECK(well.activePiece() != nullptr);
 
     // move right
-    well.update({InputEvent(InputType::GAME_MOVE_RIGHT, true)}, app);
-    well.update({InputEvent(InputType::GAME_MOVE_RIGHT, false)}, app);
+    well.update({InputEvent(InputType::GAME_MOVE_RIGHT, true)});
+    well.update({InputEvent(InputType::GAME_MOVE_RIGHT, false)});
 
     // rotate CCW
-    well.update({InputEvent(InputType::GAME_ROTATE_LEFT, true)}, app);
-    well.update({InputEvent(InputType::GAME_ROTATE_LEFT, false)}, app);
+    well.update({InputEvent(InputType::GAME_ROTATE_LEFT, true)});
+    well.update({InputEvent(InputType::GAME_ROTATE_LEFT, false)});
 
     // check position
     std::string expected_ascii;
@@ -129,7 +127,7 @@ TEST_FIXTURE(WellFixture, Tricky)
     // wait for lock
     unsigned limit = 0;
     while (limit < 100) {
-        well.update({}, app);
+        well.update({});
         limit++;
     }
 
@@ -159,23 +157,23 @@ TEST_FIXTURE(WellFixture, TrickyCross)
 
     // move to bottom
     for (unsigned row = 0; row < 20 * softdrop_delay_frames; row++) {
-        well.update({InputEvent(InputType::GAME_SOFTDROP, true)}, app);
+        well.update({InputEvent(InputType::GAME_SOFTDROP, true)});
     }
-    well.update({InputEvent(InputType::GAME_SOFTDROP, false)}, app);
+    well.update({InputEvent(InputType::GAME_SOFTDROP, false)});
     CHECK(well.activePiece() != nullptr);
 
     // move right
-    well.update({InputEvent(InputType::GAME_MOVE_RIGHT, true)}, app);
-    well.update({InputEvent(InputType::GAME_MOVE_RIGHT, false)}, app);
+    well.update({InputEvent(InputType::GAME_MOVE_RIGHT, true)});
+    well.update({InputEvent(InputType::GAME_MOVE_RIGHT, false)});
 
     // rotate CCW
-    well.update({InputEvent(InputType::GAME_ROTATE_LEFT, true)}, app);
-    well.update({InputEvent(InputType::GAME_ROTATE_LEFT, false)}, app);
+    well.update({InputEvent(InputType::GAME_ROTATE_LEFT, true)});
+    well.update({InputEvent(InputType::GAME_ROTATE_LEFT, false)});
 
     // wait for lock
     unsigned limit = 0;
     while (limit < 100) {
-        well.update({}, app);
+        well.update({});
         limit++;
     }
 
@@ -203,19 +201,19 @@ TEST_FIXTURE(WellFixture, Mini)
 
     // move to bottom
     for (unsigned row = 0; row < 22 * softdrop_delay_frames; row++) {
-        well.update({InputEvent(InputType::GAME_SOFTDROP, true)}, app);
+        well.update({InputEvent(InputType::GAME_SOFTDROP, true)});
     }
-    well.update({InputEvent(InputType::GAME_SOFTDROP, false)}, app);
+    well.update({InputEvent(InputType::GAME_SOFTDROP, false)});
     CHECK(well.activePiece() != nullptr);
 
     // rotate CW
-    well.update({InputEvent(InputType::GAME_ROTATE_RIGHT, true)}, app);
-    well.update({InputEvent(InputType::GAME_ROTATE_RIGHT, false)}, app);
+    well.update({InputEvent(InputType::GAME_ROTATE_RIGHT, true)});
+    well.update({InputEvent(InputType::GAME_ROTATE_RIGHT, false)});
 
     // wait for lock
     unsigned limit = 0;
     while (limit < 100) {
-        well.update({}, app);
+        well.update({});
         limit++;
     }
 
