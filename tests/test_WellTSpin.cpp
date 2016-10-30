@@ -3,6 +3,7 @@
 #include "game/AppContext.h"
 #include "game/components/MinoStorage.h"
 #include "game/components/Well.h"
+#include "game/components/rotations/SRS.h"
 
 
 SUITE(WellTSpin) {
@@ -22,7 +23,7 @@ struct WellFixture {
             emptyline_ascii += '.';
         emptyline_ascii += '\n';
 
-        well.setRotationFn(app.scripts().loadRotationFn("data/rotations/srs.lua"));
+        well.setRotationFn(std::make_unique<Rotations::SRS>());
     }
 };
 

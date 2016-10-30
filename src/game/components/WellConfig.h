@@ -1,6 +1,6 @@
 #pragma once
 
-#include "game/script/ClassicRotationFn.h"
+#include "game/components/rotations/Classic.h"
 
 #include <memory>
 
@@ -30,6 +30,6 @@ struct WellConfig {
         tspin_enabled = true,
         tspin_allow_wallblock = true,
         tspin_allow_wallkick = true,
-        rotation_fn = std::make_unique<ClassicRotationFn>();
+        rotation_fn = std::make_unique<Rotations::Classic>();
     };
 };

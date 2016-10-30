@@ -15,6 +15,9 @@ set(MOD_GAME_SRC
 	components/animations/LineClearAnim.cpp
 	components/animations/TextPopup.cpp
 
+	components/rotations/SRS.cpp
+	components/rotations/TGM.cpp
+
 	components/well/AutoRepeat.cpp
 	components/well/Gravity.cpp
 	components/well/Input.cpp
@@ -25,9 +28,6 @@ set(MOD_GAME_SRC
 	layout/singleplayer/LeftSidebarBox.cpp
 	layout/singleplayer/RightSidebarBox.cpp
 	layout/singleplayer/WellBox.cpp
-
-	script/ScriptLoader.cpp
-	script/lua/LuaRotationFn.cpp
 
 	states/InitState.cpp
 	states/MainMenuState.cpp
@@ -58,6 +58,11 @@ set(MOD_GAME_H
 	components/animations/LineClearAnim.h
 	components/animations/TextPopup.h
 
+	components/rotations/Classic.h
+	components/rotations/RotationFn.h
+	components/rotations/SRS.h
+	components/rotations/TGM.h
+
 	components/well/AutoRepeat.h
 	components/well/Gravity.h
 	components/well/Input.h
@@ -70,11 +75,6 @@ set(MOD_GAME_H
 	layout/singleplayer/RightSidebarBox.h
 	layout/singleplayer/WellBox.h
 
-	script/ClassicRotationFn.h
-	script/ScriptLoader.h
-	script/RotationFn.h
-	script/lua/LuaRotationFn.h
-
 	states/InitState.h
 	states/MainMenuState.h
 	states/SinglePlayState.h
@@ -85,10 +85,5 @@ if(NOT CMAKE_BUILD_TYPE MATCHES Release)
     list(APPEND MOD_GAME_H components/well/Ascii.h)
 endif()
 
-# use Lua
-include_directories(${LUA_INCLUDE_DIR})
-include_directories(${PROJECT_SOURCE_DIR}/external/sol)
-
 add_library(module_game ${MOD_GAME_SRC} ${MOD_GAME_H})
 target_link_libraries(module_game module_system)
-target_link_libraries(module_game ${LUA_LIBRARY})

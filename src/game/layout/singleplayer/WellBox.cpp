@@ -2,6 +2,7 @@
 
 #include "game/AppContext.h"
 #include "game/components/Mino.h"
+#include "game/components/rotations/SRS.h"
 #include "system/Font.h"
 #include "system/Localize.h"
 
@@ -17,7 +18,7 @@ WellBox::WellBox(AppContext& app)
         gameover_background.restart();
     });
 
-    m_well.setRotationFn(app.scripts().loadRotationFn("data/rotations/srs.lua"));
+    m_well.setRotationFn(std::make_unique<Rotations::SRS>()); // TODO: make a shared rotation store
 
     bounding_box.w = 10 * Mino::texture_size_px + border_width * 2;
     bounding_box.h = 20.3 * Mino::texture_size_px + border_width * 2;

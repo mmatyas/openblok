@@ -228,14 +228,14 @@ bool Well::placeByWallKick(RotationDirection direction)
     const bool clockwise = (direction == RotationDirection::CLOCKWISE);
     const auto target_rot = active_piece->orientation();
     const auto starting_rot = clockwise ? prevCW(target_rot) : nextCW(target_rot);
-    const auto offsets = rotation_fn->call(active_piece->type(), starting_rot, clockwise);
+    const auto offsets = rotation_fn->possibleOffsets(active_piece->type(), starting_rot, clockwise);
 
     for (const auto& offset : offsets) {
         tspin.onWallKick();
 
-        if (!hasCollisionAt(active_piece_x + offset.first, active_piece_y + offset.second)) {
-            active_piece_x += offset.first;
-            active_piece_y += offset.second;
+        if (!hasCollisionAt(active_piece_x + offset.x, active_piece_y + offset.y)) {
+            active_piece_x += offset.x;
+            active_piece_y += offset.y;
             return true;
         }
     }

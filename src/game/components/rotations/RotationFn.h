@@ -5,6 +5,12 @@
 #include <string>
 #include <vector>
 
+namespace Rotations {
+    struct Offset {
+        int x;
+        int y;
+    };
+}
 
 class RotationFn {
 public:
@@ -13,9 +19,9 @@ public:
 
     const std::string& pluginName() const { return plugin_name; };
 
-    virtual std::vector<std::pair<int, int>> call(PieceType, PieceDirection, bool) = 0;
-    std::vector<std::pair<int, int>> operator() (PieceType p, PieceDirection from, bool cw) {
-        return call(p, from, cw);
+    virtual std::vector<Rotations::Offset> possibleOffsets(PieceType, PieceDirection, bool) = 0;
+    std::vector<Rotations::Offset> operator() (PieceType p, PieceDirection from, bool cw) {
+        return possibleOffsets(p, from, cw);
     };
 
 protected:
