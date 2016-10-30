@@ -279,7 +279,7 @@ void SinglePlayState::update(const std::vector<InputEvent>& inputs, AppContext& 
     // Score texts popping up
     for (const auto& popup : textpopups) {
         popup->setInitialPosition(
-            ui_leftside.x() + (ui_leftside.width() - static_cast<int>(popup->width())) / 2.0,
+            ui_leftside.x() - 10 + (ui_leftside.width() - static_cast<int>(popup->width())) / 2.0,
             ui_leftside.y() + ui_leftside.height() * 0.5
         );
         popup->update();
