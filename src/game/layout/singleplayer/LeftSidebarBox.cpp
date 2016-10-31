@@ -16,6 +16,7 @@ LeftSidebarBox::LeftSidebarBox(AppContext& app, int height)
     // TODO: cache
     font_label = app.gcx().loadFont("data/fonts/PTN57F.ttf", 28);
     font_content = app.gcx().loadFont("data/fonts/PTN77F.ttf", 30);
+    font_content_highlight = app.gcx().loadFont("data/fonts/PTN77F.ttf", 32);
 
     tex_hold = font_label->renderText(tr("HOLD"), 0xEEEEEE_rgb);
     tex_goal = font_label->renderText(tr("GOAL"), 0xEEEEEE_rgb);
@@ -44,8 +45,10 @@ void LeftSidebarBox::update()
 
 void LeftSidebarBox::updateGoalCounter(unsigned num)
 {
-    tex_goal_counter = font_content->renderText(std::to_string(num),
-                                                num <= 5 ? 0xFFA500_rgb : 0xEEEEEE_rgb);
+    if (num <= 5)
+        tex_goal_counter = font_content_highlight->renderText(std::to_string(num), 0xFFA500_rgb);
+    else
+        tex_goal_counter = font_content->renderText(std::to_string(num), 0xEEEEEE_rgb);
 }
 
 void LeftSidebarBox::updateLevelCounter(unsigned num)

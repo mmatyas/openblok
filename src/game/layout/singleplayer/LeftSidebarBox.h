@@ -32,6 +32,7 @@ private:
 
     std::shared_ptr<Font> font_label;
     std::shared_ptr<Font> font_content;
+    std::shared_ptr<Font> font_content_highlight;
 
     std::unique_ptr<Texture> tex_hold;
     HoldQueue hold_queue;
