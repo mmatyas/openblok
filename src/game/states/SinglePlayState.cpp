@@ -20,7 +20,12 @@ SinglePlayState::SinglePlayState(AppContext& app)
     , music(app.audio().loadMusic("data/music/gameplay.ogg"))
     , sfx_onhold(app.audio().loadSound("data/sfx/hold.ogg"))
     , sfx_onlevelup(app.audio().loadSound("data/sfx/levelup.ogg"))
-    , sfx_onlineclear(app.audio().loadSound("data/sfx/lineclear.ogg"))
+    , sfx_onlineclear({
+            app.audio().loadSound("data/sfx/lineclear1.ogg"),
+            app.audio().loadSound("data/sfx/lineclear2.ogg"),
+            app.audio().loadSound("data/sfx/lineclear3.ogg"),
+            app.audio().loadSound("data/sfx/lineclear4.ogg"),
+        })
     , sfx_onlock(app.audio().loadSound("data/sfx/lock.ogg"))
     , sfx_onrotate(app.audio().loadSound("data/sfx/rotate.ogg"))
     , texts_need_update(true)
@@ -58,7 +63,7 @@ SinglePlayState::SinglePlayState(AppContext& app)
             {ScoreType::CLEAR_TSPIN_TRIPLE, tr("T-SPIN TRIPLE")}
         })
     , previous_lineclear_type(ScoreType::CLEAR_SINGLE)
-    , pending_levelup_msg(std::chrono::seconds(1), [](double){}, [this](){
+    , pending_levelup_msg(std::chrono::milliseconds(500), [](double){}, [this](){
             this->textpopups.emplace_back(std::make_unique<TextPopup>(tr("LEVEL UP!"), font_popuptext));
         })
 {
@@ -115,10 +120,10 @@ void SinglePlayState::registerObservers()
     });
 
     ui_well.well().registerObserver(WellEvent::Type::LINE_CLEAR_ANIMATION_START, [this](const WellEvent& event){
-        if (this->lineclears_left - event.lineclear.count <= 0 && !this->gravity_levels.empty())
-            this->sfx_onlevelup->playOnce();
-        else
-            this->sfx_onlineclear->playOnce();
+        assert(event.type == WellEvent::Type::LINE_CLEAR_ANIMATION_START);
+        assert(event.lineclear.count > 0);
+        assert(event.lineclear.count <= 4);
+        this->sfx_onlineclear.at(event.lineclear.count - 1)->playOnce();
     });
 
     ui_well.well().registerObserver(WellEvent::Type::LINE_CLEAR, [this](const WellEvent& event){
@@ -192,6 +197,7 @@ void SinglePlayState::registerObservers()
             this->ui_well.well().setGravity(this->gravity_levels.top());
             this->lineclears_left += lineclears_per_level;
             this->current_level++;
+            this->sfx_onlevelup->playOnce();
             // produce delayed popup if there are other popups already
             this->pending_levelup_msg.restart();
             if (this->textpopups.empty())

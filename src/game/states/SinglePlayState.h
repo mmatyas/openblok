@@ -46,7 +46,7 @@ private:
     std::shared_ptr<Music> music;
     std::shared_ptr<SoundEffect> sfx_onhold;
     std::shared_ptr<SoundEffect> sfx_onlevelup;
-    std::shared_ptr<SoundEffect> sfx_onlineclear;
+    std::array<std::shared_ptr<SoundEffect>, 4> sfx_onlineclear;
     std::shared_ptr<SoundEffect> sfx_onlock;
     std::shared_ptr<SoundEffect> sfx_onrotate;
     std::shared_ptr<Font> font_popuptext;
