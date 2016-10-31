@@ -9,6 +9,7 @@ public:
     SDLMusic(SDL2pp::Music&&);
 
     void playLoop() final;
+    void fadeOut(std::chrono::steady_clock::duration) final;
 
 private:
     static SDL2pp::Mixer* mixer;

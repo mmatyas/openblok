@@ -12,3 +12,8 @@ void SDLMusic::playLoop()
     assert(mixer);
     mixer->PlayMusic(music, -1);
 }
+
+void SDLMusic::fadeOut(std::chrono::steady_clock::duration duration)
+{
+    mixer->FadeOutMusic(std::chrono::duration_cast<std::chrono::milliseconds>(duration).count());
+}
