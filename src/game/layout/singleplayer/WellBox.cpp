@@ -3,15 +3,20 @@
 #include "game/AppContext.h"
 #include "game/components/Mino.h"
 #include "game/components/rotations/SRS.h"
+#include "system/AudioContext.h"
 #include "system/Font.h"
 #include "system/Localize.h"
+#include "system/SoundEffect.h"
 
 
 namespace Layout {
 
 WellBox::WellBox(AppContext& app)
     : gameover(false)
-    , gameover_background(std::chrono::seconds(2), [](double t){ return t; })
+    , gameover_background(std::chrono::seconds(2),
+        [](double t){ return t; },
+        [this](){ sfx_ongameover->playOnce(); })
+    , sfx_ongameover(app.audio().loadSound("data/sfx/gameover.ogg"))
 {
     m_well.registerObserver(WellEvent::Type::GAME_OVER, [this](const WellEvent&){
         gameover = true;

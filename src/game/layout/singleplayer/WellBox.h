@@ -8,6 +8,7 @@
 
 class AppContext;
 class Font;
+class SoundEffect;
 class Texture;
 
 namespace Layout {
@@ -30,6 +31,7 @@ private:
     std::shared_ptr<Font> font_big;
     std::unique_ptr<Texture> tex_pause;
     std::unique_ptr<Texture> tex_gameover;
+    std::shared_ptr<SoundEffect> sfx_ongameover;
 
     static constexpr uint8_t border_width = 5;
     ::Rectangle border_left;

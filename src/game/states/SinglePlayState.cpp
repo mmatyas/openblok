@@ -234,6 +234,7 @@ void SinglePlayState::registerObservers()
 
     ui_well.well().registerObserver(WellEvent::Type::GAME_OVER, [this](const WellEvent&){
         gameover = true;
+        music->fadeOut(std::chrono::seconds(1));
     });
 }
 
