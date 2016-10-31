@@ -1,6 +1,6 @@
 #pragma once
 
-#include "game/components/rotations/SRS.h"
+#include "rotations/SRS.h"
 
 #include <memory>
 
