@@ -169,6 +169,7 @@ void Well::moveLeftNow()
         active_piece_x--;
         calculateGhostOffset();
         lock_delay.onHorizontalMove();
+        notify(WellEvent(WellEvent::Type::PIECE_MOVED_HORIZONTALLY));
     }
 }
 
@@ -181,6 +182,7 @@ void Well::moveRightNow()
         active_piece_x++;
         calculateGhostOffset();
         lock_delay.onHorizontalMove();
+        notify(WellEvent(WellEvent::Type::PIECE_MOVED_HORIZONTALLY));
     }
 }
 
