@@ -10,7 +10,7 @@ SDLWindow::SDLWindow()
     : sdl(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK)
     , window("OpenBlok",
         SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-        960, 720,
+        960, 540,
         SDL_WINDOW_RESIZABLE)
     , gcx(window)
     , m_quit_requested(false)
