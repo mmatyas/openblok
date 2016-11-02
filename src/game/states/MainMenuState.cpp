@@ -4,9 +4,11 @@
 #include "game/AppContext.h"
 #include "game/components/PieceFactory.h"
 #include "game/components/rotations/SRS.h"
+#include "system/AudioContext.h"
 #include "system/GraphicsContext.h"
 #include "system/InputEvent.h"
 #include "system/Localize.h"
+#include "system/Music.h"
 #include "system/Texture.h"
 
 
@@ -20,6 +22,7 @@ MainMenuState::MainMenuState(AppContext& app)
     : tex_background(app.gcx().loadTexture("data/gamebg.png"))
     , logo(app.gcx(), 150)
     , current_button_index(0)
+    , music(app.audio().loadMusic("data/music/menu.ogg"))
 {
     PieceFactory::changeInitialPositions(Rotations::SRS().initialPositions());
 
@@ -35,6 +38,8 @@ MainMenuState::MainMenuState(AppContext& app)
     // move one of the rains lower
     auto& rain = rains.at(0);
     rain.setPosition(0, 48); // about 1.5 minos, TODO: Fix magic numbers
+
+    music->playLoop();
 }
 
 MainMenuState::~MainMenuState() = default;

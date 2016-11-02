@@ -24,6 +24,9 @@ private:
     std::unique_ptr<Texture> tex_background;
     Layout::Logo logo;
     std::array<Layout::PieceRain, 2> rains;
+
     std::vector<Layout::MainMenuButton> buttons;
     unsigned current_button_index;
+
+    std::shared_ptr<Music> music;
 };
