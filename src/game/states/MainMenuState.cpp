@@ -18,7 +18,7 @@ int circularModulo(int num, int mod) {
 
 MainMenuState::MainMenuState(AppContext& app)
     : tex_background(app.gcx().loadTexture("data/gamebg.png"))
-    , logo(app.gcx(), 180)
+    , logo(app.gcx(), 150)
     , current_button_index(0)
 {
     PieceFactory::changeInitialPositions(Rotations::SRS().initialPositions());
