@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Box.h"
 #include "game/Timing.h"
 #include "game/components/NextQueue.h"
+#include "game/layout/Box.h"
 #include "system/Color.h"
 
 #include <string>

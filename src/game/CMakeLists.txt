@@ -71,7 +71,7 @@ set(MOD_GAME_H
 	components/well/TSpin.h
 	components/well/Render.h
 
-	layout/singleplayer/Box.h
+	layout/Box.h
 	layout/singleplayer/LeftSidebarBox.h
 	layout/singleplayer/RightSidebarBox.h
 	layout/singleplayer/WellBox.h

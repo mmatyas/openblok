@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Box.h"
 #include "game/components/Well.h"
+#include "game/layout/Box.h"
 
 #include <vector>
 

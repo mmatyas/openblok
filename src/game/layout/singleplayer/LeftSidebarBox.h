@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Box.h"
 #include "game/components/HoldQueue.h"
+#include "game/layout/Box.h"
 #include "system/Color.h"
 
 
