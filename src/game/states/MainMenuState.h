@@ -1,6 +1,7 @@
 #pragma once
 
 #include "game/GameState.h"
+#include "game/layout/menu/Logo.h"
 #include "game/layout/menu/MainMenuBtn.h"
 
 
@@ -18,7 +19,7 @@ public:
 
 private:
     std::unique_ptr<Texture> tex_background;
-    std::unique_ptr<Texture> tex_logo;
+    Layout::Logo logo;
     std::vector<Layout::MainMenuButton> buttons;
     unsigned current_button_index;
 };

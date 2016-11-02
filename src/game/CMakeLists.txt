@@ -26,6 +26,7 @@ set(MOD_GAME_SRC
 	components/well/TSpin.cpp
 	components/well/Render.cpp
 
+	layout/menu/Logo.cpp
 	layout/menu/MainMenuBtn.cpp
 	layout/singleplayer/LeftSidebarBox.cpp
 	layout/singleplayer/RightSidebarBox.cpp
@@ -74,6 +75,7 @@ set(MOD_GAME_H
 
 	layout/Box.h
 	layout/menu/Button.h
+	layout/menu/Logo.h
 	layout/menu/MainMenuBtn.h
 	layout/singleplayer/LeftSidebarBox.h
 	layout/singleplayer/RightSidebarBox.h
