@@ -31,7 +31,7 @@ void SDLWindow::setInputMapping(std::map<InputType, std::vector<uint16_t>> mappi
 {
     for (const auto& elem : mapping) {
         for (const auto& scancode : elem.second)
-            input_mapping[scancode] = elem.first;
+            input_mapping[scancode].emplace(elem.first);
     }
 }
 
@@ -92,15 +92,19 @@ std::vector<InputEvent> SDLWindow::collectEvents()
             switch (sdl_event.jhat.value) {
                 case SDL_HAT_LEFT:
                     output.emplace_back(InputEvent(InputType::GAME_MOVE_LEFT, true));
+                    output.emplace_back(InputEvent(InputType::MENU_LEFT, true));
                     break;
                 case SDL_HAT_RIGHT:
                     output.emplace_back(InputEvent(InputType::GAME_MOVE_RIGHT, true));
+                    output.emplace_back(InputEvent(InputType::MENU_RIGHT, true));
                     break;
                 case SDL_HAT_UP:
                     output.emplace_back(InputEvent(InputType::GAME_HARDDROP, true));
+                    output.emplace_back(InputEvent(InputType::MENU_UP, true));
                     break;
                 case SDL_HAT_DOWN:
                     output.emplace_back(InputEvent(InputType::GAME_SOFTDROP, true));
+                    output.emplace_back(InputEvent(InputType::MENU_DOWN, true));
                     break;
                 default:
                     break;
@@ -141,8 +145,10 @@ std::vector<InputEvent> SDLWindow::collectEvents()
         case SDL_KEYDOWN:
             if (!sdl_event.key.repeat) {
                 uint16_t scancode = sdl_event.key.keysym.scancode;
-                if (input_mapping.count(scancode))
-                    output.emplace_back(InputEvent(input_mapping.at(scancode), sdl_event.type == SDL_KEYDOWN));
+                if (input_mapping.count(scancode)) {
+                    for (const auto& input_event : input_mapping.at(scancode))
+                        output.emplace_back(InputEvent(input_event, sdl_event.type == SDL_KEYDOWN));
+                }
             }
             break;
         default:

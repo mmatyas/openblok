@@ -13,6 +13,12 @@ enum class InputType: uint8_t {
     GAME_MOVE_RIGHT,
     GAME_ROTATE_LEFT,
     GAME_ROTATE_RIGHT,
+    MENU_UP,
+    MENU_DOWN,
+    MENU_LEFT,
+    MENU_RIGHT,
+    MENU_OK,
+    MENU_CANCEL,
 };
 
 struct InputTypeHash {

@@ -21,6 +21,12 @@ const std::map<const std::string, InputType> name_to_key = {
     {"move_right", InputType::GAME_MOVE_RIGHT},
     {"rotate_left", InputType::GAME_ROTATE_LEFT},
     {"rotate_right", InputType::GAME_ROTATE_RIGHT},
+    {"menu_up", InputType::MENU_UP},
+    {"menu_down", InputType::MENU_DOWN},
+    {"menu_left", InputType::MENU_LEFT},
+    {"menu_right", InputType::MENU_RIGHT},
+    {"menu_ok", InputType::MENU_OK},
+    {"menu_cancel", InputType::MENU_CANCEL},
 };
 
 
@@ -35,6 +41,12 @@ ScancodeMap ConfigManager::loadInputMapping(const std::string& path)
         {InputType::GAME_MOVE_RIGHT, {SDL_SCANCODE_RIGHT}},
         {InputType::GAME_ROTATE_LEFT, {SDL_SCANCODE_Z}},
         {InputType::GAME_ROTATE_RIGHT, {SDL_SCANCODE_X}},
+        {InputType::MENU_LEFT, {SDL_SCANCODE_LEFT}},
+        {InputType::MENU_RIGHT, {SDL_SCANCODE_RIGHT}},
+        {InputType::MENU_UP, {SDL_SCANCODE_UP}},
+        {InputType::MENU_DOWN, {SDL_SCANCODE_DOWN}},
+        {InputType::MENU_OK, {SDL_SCANCODE_RETURN, SDL_SCANCODE_SPACE, SDL_SCANCODE_Z}},
+        {InputType::MENU_CANCEL, {SDL_SCANCODE_ESCAPE, SDL_SCANCODE_X}},
     };
 
     ScancodeMap out = default_map;

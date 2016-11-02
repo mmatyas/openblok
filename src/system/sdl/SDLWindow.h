@@ -6,6 +6,7 @@
 
 #include "SDL2pp/SDL2pp.hh"
 #include <memory>
+#include <set>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -31,7 +32,7 @@ private:
     SDLAudioContext audio;
     std::unordered_map<SDL_JoystickID, std::unique_ptr<SDL_Joystick, std::function<void(SDL_Joystick*)>>> joysticks;
 
-    std::unordered_map<uint8_t, InputType> input_mapping;
+    std::unordered_map<uint8_t, std::set<InputType>> input_mapping;
 
     bool m_quit_requested;
 };
