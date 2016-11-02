@@ -36,7 +36,7 @@ public:
     PieceGrid& currentGridMut();
 
     /// Draw the Piece
-    void draw(int x, int y);
+    void draw(int x, int y) const;
 
 private:
     const PieceType piece_type;

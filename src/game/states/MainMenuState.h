@@ -3,6 +3,7 @@
 #include "game/GameState.h"
 #include "game/layout/menu/Logo.h"
 #include "game/layout/menu/MainMenuBtn.h"
+#include "game/layout/menu/PieceRain.h"
 
 
 class Texture;
@@ -20,6 +21,7 @@ public:
 private:
     std::unique_ptr<Texture> tex_background;
     Layout::Logo logo;
+    std::array<Layout::PieceRain, 2> rains;
     std::vector<Layout::MainMenuButton> buttons;
     unsigned current_button_index;
 };

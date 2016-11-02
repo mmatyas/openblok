@@ -66,7 +66,7 @@ PieceGrid& Piece::currentGridMut()
     return grids[static_cast<uint8_t>(current_rotation)];
 }
 
-void Piece::draw(int x, int y)
+void Piece::draw(int x, int y) const
 {
     const auto& frame = currentGrid();
     for (size_t row = 0; row < 4; row++) {

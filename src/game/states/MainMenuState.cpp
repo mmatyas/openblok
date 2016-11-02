@@ -31,6 +31,10 @@ MainMenuState::MainMenuState(AppContext& app)
     buttons.emplace_back(app, tr("EXIT"), [](){});
 
     buttons.at(current_button_index).onHoverEnter();
+
+    // move one of the rains lower
+    auto& rain = rains.at(0);
+    rain.setPosition(0, 48); // about 1.5 minos, TODO: Fix magic numbers
 }
 
 MainMenuState::~MainMenuState() = default;
@@ -39,8 +43,17 @@ void MainMenuState::update(const std::vector<InputEvent>& events, AppContext& ap
 {
     const int center_y = app.gcx().screenHeight() / 2;
     const int left_x = 20 + app.gcx().screenWidth() * 0.1;
+    const int right_x = app.gcx().screenWidth() - left_x + 32; // move 1 mino left, TODO: Fix magic numbers
 
     logo.setPosition(left_x, center_y - 260);
+
+    int rain_x = right_x;
+    for (auto& rain : rains) {
+        rain_x -= rain.width();
+        rain.setPosition(rain_x, rain.y());
+        rain.setHeight(app.gcx().screenHeight());
+        rain.update();
+    }
 
     buttons.at(0).setPosition(left_x, center_y);
     for (unsigned i = 1; i < buttons.size(); i++) {
@@ -75,6 +88,9 @@ void MainMenuState::update(const std::vector<InputEvent>& events, AppContext& ap
 void MainMenuState::draw(GraphicsContext& gcx)
 {
     tex_background->drawScaled({0, 0, gcx.screenWidth(), gcx.screenHeight()});
+
+    for (const auto& rain : rains)
+        rain.draw();
 
     logo.draw();
     for (const auto& btn : buttons)
