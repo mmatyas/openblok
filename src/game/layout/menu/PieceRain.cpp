@@ -5,6 +5,7 @@
 #include "game/components/PieceFactory.h"
 
 #include <cmath>
+#include <cstdlib>
 
 
 static const int PADDING_PX = 5;

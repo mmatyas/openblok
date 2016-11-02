@@ -5,6 +5,8 @@
 #include "game/layout/menu/MainMenuBtn.h"
 #include "game/layout/menu/PieceRain.h"
 
+#include <array>
+
 
 class Texture;
 class Music;
