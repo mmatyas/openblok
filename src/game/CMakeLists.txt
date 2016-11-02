@@ -26,6 +26,7 @@ set(MOD_GAME_SRC
 	components/well/TSpin.cpp
 	components/well/Render.cpp
 
+	layout/menu/MainMenuBtn.cpp
 	layout/singleplayer/LeftSidebarBox.cpp
 	layout/singleplayer/RightSidebarBox.cpp
 	layout/singleplayer/WellBox.cpp
@@ -72,6 +73,8 @@ set(MOD_GAME_H
 	components/well/Render.h
 
 	layout/Box.h
+	layout/menu/Button.h
+	layout/menu/MainMenuBtn.h
 	layout/singleplayer/LeftSidebarBox.h
 	layout/singleplayer/RightSidebarBox.h
 	layout/singleplayer/WellBox.h
