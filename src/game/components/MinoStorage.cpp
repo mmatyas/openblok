@@ -60,7 +60,7 @@ RGBColor MinoStorage::color(PieceType type)
 {
     switch(type) {
     case PieceType::I : return 0x00FFFF_rgb;
-    case PieceType::J : return 0x0000FF_rgb;
+    case PieceType::J : return 0x0040FF_rgb;
     case PieceType::L : return 0xFFA500_rgb;
     case PieceType::O : return 0xFFFF00_rgb;
     case PieceType::S : return 0x80FF00_rgb;
