@@ -13,7 +13,7 @@ bool AppContext::init()
         srand(time(nullptr));
     }
     catch (const std::exception& err) {
-        Log::error(log_tag) << err.what() << std::endl;
+        Window::showErrorMessage(err.what());
         return false;
     }
 
