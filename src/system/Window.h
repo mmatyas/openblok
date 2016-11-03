@@ -44,6 +44,10 @@ public:
     /// window or pressing certain key combinations (Alt-F4, Ctrl-Q, ...).
     virtual bool quitRequested() = 0;
 
+    /// If possible, show an error message box with the title "Error" and the
+    /// provided content text. This operation should work even without a Window object.
+    static void showErrorMessage(const std::string& content);
+
 private:
     static std::unique_ptr<Window> create();
 

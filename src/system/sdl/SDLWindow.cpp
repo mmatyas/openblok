@@ -158,3 +158,8 @@ std::vector<InputEvent> SDLWindow::collectEvents()
 
     return output;
 }
+
+void SDLWindow::showErrorMessage(const std::string& title, const std::string& content)
+{
+    SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, title.c_str(), content.c_str(), NULL);
+}
