@@ -31,7 +31,9 @@ MainMenuState::MainMenuState(AppContext& app)
     });
     buttons.emplace_back(app, tr("BATTLE"), [](){});
     buttons.emplace_back(app, tr("OPTIONS"), [](){});
-    buttons.emplace_back(app, tr("EXIT"), [](){});
+    buttons.emplace_back(app, tr("EXIT"), [&app](){
+        app.states().pop();
+    });
 
     buttons.at(current_button_index).onHoverEnter();
 

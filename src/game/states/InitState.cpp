@@ -17,13 +17,16 @@ InitState::InitState(AppContext& app)
     MinoStorage::loadTintedMinos(app.gcx(), "data/mino.png");
     MinoStorage::loadTintedGhosts(app.gcx(), "data/ghost.png");
     MinoStorage::loadMatrixCell(app.gcx(), "data/matrix.png");
+
+    app.states().emplace(std::make_unique<MainMenuState>(app));
 }
 
 void InitState::update(const std::vector<InputEvent>&, AppContext& app)
 {
-    app.states().emplace(std::make_unique<MainMenuState>(app));
+    app.states().pop();
 }
 
 void InitState::draw(GraphicsContext&)
 {
+    assert(false);
 }
