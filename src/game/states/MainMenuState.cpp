@@ -54,7 +54,7 @@ void MainMenuState::update(const std::vector<InputEvent>& events, AppContext& ap
 
     int rain_x = right_x;
     for (auto& rain : rains) {
-        rain_x -= rain.width() - 10;
+        rain_x -= rain.width() + 10;
         rain.setPosition(rain_x, rain.y());
         rain.setHeight(app.gcx().screenHeight());
         rain.update();
