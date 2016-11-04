@@ -124,7 +124,7 @@ void ConfigManager::saveInputMapping(const ScancodeMap& mapping, const std::stri
         key_to_name.emplace(pair.second, pair.first);
 
 
-    out << "[game.keyboard]\n";
+    out << "[keyboard]\n";
     for (const auto& elem : mapping) {
         assert(key_to_name.count(elem.first));
 
