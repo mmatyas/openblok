@@ -1,5 +1,6 @@
 #pragma once
 
+#include "LockDelayType.h"
 #include "rotations/SRS.h"
 
 #include <memory>
@@ -12,7 +13,7 @@ struct WellConfig {
     unsigned short shift_turbo;
     unsigned short shift_activate_das;
     bool instant_harddrop;
-    bool infinity_lock;
+    LockDelayType lock_delay_type;
     unsigned short lock_delay;
     bool tspin_enabled;
     bool tspin_allow_wallblock;
@@ -25,7 +26,7 @@ struct WellConfig {
         shift_turbo = 4,
         shift_activate_das = 14,
         instant_harddrop = true,
-        infinity_lock = true,
+        lock_delay_type = LockDelayType::EXTENDED,
         lock_delay = 30,
         tspin_enabled = true,
         tspin_allow_wallblock = true,

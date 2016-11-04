@@ -27,7 +27,7 @@ Well::Well(WellConfig&& config)
     , das(Timing::frame_duration_60Hz * config.shift_normal,
           Timing::frame_duration_60Hz * config.shift_turbo)
     , lock_delay(*this, Timing::frame_duration_60Hz * config.lock_delay,
-                 config.infinity_lock, config.instant_harddrop)
+                 config.lock_delay_type, config.instant_harddrop)
     , tspin(config.tspin_enabled, config.tspin_allow_wallblock, config.tspin_allow_wallkick)
 {
     setGravity(Timing::frame_duration_60Hz * config.starting_gravity);
@@ -202,8 +202,10 @@ void Well::moveDownNow()
     // This function does NOT lock (unless Sonic Drop is active),
     // and the lock delay is activated/updated in the main update().
 
-    if (!isOnGround())
+    if (!isOnGround()) {
         active_piece_y++;
+        lock_delay.onDescend(*this);
+    }
     else if (lock_delay.sonicLockPossible())
         lockThenRequestNext(); // sonic drop manual lock
 }
