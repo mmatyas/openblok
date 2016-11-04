@@ -36,7 +36,7 @@ public:
     SinglePlayState(AppContext&);
     ~SinglePlayState();
 
-    void update(const std::vector<InputEvent>&, AppContext&) final;
+    void update(const std::vector<Event>&, AppContext&) final;
     void draw(GraphicsContext&) final;
 
 private:
@@ -65,6 +65,7 @@ private:
     std::map<ScoreType, const std::string> score_name;
     ScoreType previous_lineclear_type;
 
+    void updatePositions(GraphicsContext&);
     void registerObservers();
     void addNextPiece();
 

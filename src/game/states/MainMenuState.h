@@ -17,7 +17,7 @@ class MainMenuState: public GameState {
 public:
     MainMenuState(AppContext&);
     ~MainMenuState();
-    void update(const std::vector<InputEvent>&, AppContext&) final;
+    void update(const std::vector<Event>&, AppContext&) final;
     void draw(GraphicsContext& gcx) final;
 
 private:

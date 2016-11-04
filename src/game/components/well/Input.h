@@ -1,6 +1,6 @@
 #pragma once
 
-#include "system/InputEvent.h"
+#include "system/Event.h"
 
 #include <unordered_map>
 #include <vector>

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "InputEvent.h"
+#include "Event.h"
 
 #include <map>
 #include <memory>
@@ -37,7 +37,7 @@ public:
     /// and return them in a platform-independent format.
     /// If the user wants to quit the game by a native event, then after this call
     /// `quit_requested()` should return true.
-    virtual std::vector<InputEvent> collectEvents() = 0;
+    virtual std::vector<Event> collectEvents() = 0;
     /// Set the input mapping between game events and keyboard scancodes
     virtual void setInputMapping(std::map<InputType, std::vector<uint16_t>>) = 0;
     /// Return `true` if the user wants to quit the program, eg. by closing the game

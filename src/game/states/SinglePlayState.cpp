@@ -81,6 +81,7 @@ SinglePlayState::SinglePlayState(AppContext& app)
     addNextPiece();
     ui_well.well().setGravity(gravity_levels.top());
 
+    updatePositions(app.gcx());
     music->playLoop();
 }
 
@@ -244,16 +245,37 @@ void SinglePlayState::addNextPiece()
     ui_leftside.holdQueue().onNextTurn();
 }
 
-void SinglePlayState::update(const std::vector<InputEvent>& inputs, AppContext& app)
+void SinglePlayState::updatePositions(GraphicsContext& gcx)
 {
-    for (const auto& input : inputs) {
-        if (input.type() == InputType::GAME_PAUSE && input.down()) {
-            paused = !paused;
-            if (paused)
-                app.audio().pauseAll();
-            else
-                app.audio().resumeAll();
-            return;
+    ui_well.setPosition((gcx.screenWidth() - ui_well.width()) / 2,
+                        (gcx.screenHeight() - ui_well.height()) / 2);
+    ui_leftside.setPosition(ui_well.x() - ui_leftside.width() - 10, ui_well.y());
+    ui_rightside.setPosition(ui_well.x() + ui_well.width() + 10, ui_well.y());
+}
+
+void SinglePlayState::update(const std::vector<Event>& events, AppContext& app)
+{
+    for (const auto& event : events) {
+        switch (event.type) {
+            case EventType::WINDOW:
+                switch (event.window) {
+                    case WindowEvent::RESIZED:
+                        updatePositions(app.gcx());
+                        break;
+                    default:
+                        break;
+                }
+            break;
+            case EventType::INPUT:
+                if (event.input.type() == InputType::GAME_PAUSE && event.input.down()) {
+                    paused = !paused;
+                    if (paused)
+                        app.audio().pauseAll();
+                    else
+                        app.audio().resumeAll();
+                    return;
+                }
+            break;
         }
     }
 
@@ -264,18 +286,10 @@ void SinglePlayState::update(const std::vector<InputEvent>& inputs, AppContext& 
         textpopups.end());
 
 
-    // UI
-    // TODO: only on screen resize event
-    ui_well.setPosition((app.gcx().screenWidth() - ui_well.width()) / 2,
-                        (app.gcx().screenHeight() - ui_well.height()) / 2);
-    ui_leftside.setPosition(ui_well.x() - ui_leftside.width() - 10, ui_well.y());
-    ui_rightside.setPosition(ui_well.x() + ui_well.width() + 10, ui_well.y());
-
-
     if (paused)
         return;
 
-    ui_well.update(inputs);
+    ui_well.update(events);
     ui_leftside.update();
 
     if (texts_need_update) {

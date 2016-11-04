@@ -35,9 +35,9 @@ void SDLWindow::setInputMapping(std::map<InputType, std::vector<uint16_t>> mappi
     }
 }
 
-std::vector<InputEvent> SDLWindow::collectEvents()
+std::vector<Event> SDLWindow::collectEvents()
 {
-    std::vector<InputEvent> output;
+    std::vector<Event> output;
 
     SDL_Event sdl_event;
     while (SDL_PollEvent(&sdl_event)) {
@@ -51,10 +51,14 @@ std::vector<InputEvent> SDLWindow::collectEvents()
                     m_quit_requested = true;
                     break;
                 case SDL_WINDOWEVENT_FOCUS_LOST:
-                    output.emplace_back(InputEvent(InputType::GAME_PAUSE, true));
+                    output.emplace_back(WindowEvent::FOCUS_LOST);
+                    break;
+                case SDL_WINDOWEVENT_FOCUS_GAINED:
+                    output.emplace_back(WindowEvent::FOCUS_GAINED);
                     break;
                 case SDL_WINDOWEVENT_RESIZED:
                     gcx.onResize(sdl_event.window.data1, sdl_event.window.data2);
+                    output.emplace_back(WindowEvent::RESIZED);
                     break;
                 default:
                     break;

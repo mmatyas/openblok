@@ -1,6 +1,6 @@
 #pragma once
 
-#include "InputEvent.h"
+#include "Event.h"
 
 #include <map>
 #include <string>

@@ -21,7 +21,7 @@ InitState::InitState(AppContext& app)
     app.states().emplace(std::make_unique<MainMenuState>(app));
 }
 
-void InitState::update(const std::vector<InputEvent>&, AppContext& app)
+void InitState::update(const std::vector<Event>&, AppContext& app)
 {
     app.states().pop();
 }

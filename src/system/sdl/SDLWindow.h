@@ -21,7 +21,7 @@ public:
     GraphicsContext& graphicsContext() final { return gcx; };
     AudioContext& audioContext() final { return audio; };
 
-    std::vector<InputEvent> collectEvents() final;
+    std::vector<Event> collectEvents() final;
     void setInputMapping(std::map<InputType, std::vector<uint16_t>>) final;
     bool quitRequested() final { return m_quit_requested; }
 

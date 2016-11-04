@@ -1,6 +1,6 @@
 #pragma once
 
-#include "system/InputEvent.h"
+#include "system/Event.h"
 #include "system/GraphicsContext.h"
 
 #include <chrono>
@@ -13,7 +13,7 @@ class GameState {
 public:
     virtual ~GameState() {};
 
-    virtual void update(const std::vector<InputEvent>&, AppContext&) = 0;
+    virtual void update(const std::vector<Event>&, AppContext&) = 0;
     virtual void draw(GraphicsContext& gcx) = 0;
 
     virtual void on_pause() {}

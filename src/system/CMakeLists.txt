@@ -1,7 +1,7 @@
 set(MOD_SYSTEM_SRC
 	Color.cpp
 	ConfigManager.cpp
-	InputEvent.cpp
+	Event.cpp
 	Log.cpp
 	Window.cpp
 
@@ -19,9 +19,9 @@ set(MOD_SYSTEM_H
 	AudioContext.h
 	Color.h
 	ConfigManager.h
+	Event.h
 	Font.h
 	GraphicsContext.h
-	InputEvent.h
 	Localize.h
 	Log.h
 	Music.h

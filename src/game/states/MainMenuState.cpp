@@ -5,8 +5,8 @@
 #include "game/components/PieceFactory.h"
 #include "game/components/rotations/SRS.h"
 #include "system/AudioContext.h"
+#include "system/Event.h"
 #include "system/GraphicsContext.h"
-#include "system/InputEvent.h"
 #include "system/Localize.h"
 #include "system/Music.h"
 #include "system/Texture.h"
@@ -46,7 +46,7 @@ MainMenuState::MainMenuState(AppContext& app)
 
 MainMenuState::~MainMenuState() = default;
 
-void MainMenuState::update(const std::vector<InputEvent>& events, AppContext& app)
+void MainMenuState::update(const std::vector<Event>& events, AppContext& app)
 {
     const int center_y = app.gcx().screenHeight() / 2;
     const int left_x = 20 + app.gcx().screenWidth() * 0.1;
@@ -69,25 +69,32 @@ void MainMenuState::update(const std::vector<InputEvent>& events, AppContext& ap
     }
 
     for (const auto& event : events) {
-        if (event.down()) {
-            switch (event.type()) {
-                case InputType::MENU_UP:
-                    buttons.at(current_button_index).onHoverLeave();
-                    current_button_index = circularModulo(static_cast<int>(current_button_index) - 1, buttons.size());
-                    buttons.at(current_button_index).onHoverEnter();
-                    break;
-                case InputType::MENU_DOWN:
-                    buttons.at(current_button_index).onHoverLeave();
-                    current_button_index++;
-                    current_button_index %= buttons.size();
-                    buttons.at(current_button_index).onHoverEnter();
-                    break;
-                case InputType::MENU_OK:
-                    buttons.at(current_button_index).onPress();
-                    break;
-                default:
-                    break;
-            }
+        switch (event.type) {
+            case EventType::WINDOW:
+            break;
+            case EventType::INPUT:
+                if (!event.input.down())
+                    continue;
+                switch (event.input.type()) {
+                    case InputType::MENU_UP:
+                        buttons.at(current_button_index).onHoverLeave();
+                        current_button_index = circularModulo(static_cast<int>(current_button_index) - 1,
+                                                              buttons.size());
+                        buttons.at(current_button_index).onHoverEnter();
+                        break;
+                    case InputType::MENU_DOWN:
+                        buttons.at(current_button_index).onHoverLeave();
+                        current_button_index++;
+                        current_button_index %= buttons.size();
+                        buttons.at(current_button_index).onHoverEnter();
+                        break;
+                    case InputType::MENU_OK:
+                        buttons.at(current_button_index).onPress();
+                        break;
+                    default:
+                        break;
+                }
+            break;
         }
     }
 }

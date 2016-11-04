@@ -49,9 +49,16 @@ void WellBox::setPosition(int x, int y)
 }
 
 
-void WellBox::update(const std::vector<InputEvent>& events)
+void WellBox::update(const std::vector<Event>& events)
 {
-    m_well.update(events);
+    // filter the input events only
+    std::vector<InputEvent> input_events;
+    for (const auto& event : events) {
+        if (event.type == EventType::INPUT)
+            input_events.emplace_back(event.input.type(), event.input.down());
+    }
+    m_well.update(input_events);
+
     if (gameover) {
         gameover_background.update(Timing::frame_duration);
         if (gameover_background.running()) {

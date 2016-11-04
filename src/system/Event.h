@@ -38,3 +38,25 @@ private:
     InputType m_type;
     bool m_down;
 };
+
+enum class WindowEvent : uint8_t {
+    RESIZED,
+    FOCUS_LOST,
+    FOCUS_GAINED,
+};
+
+enum class EventType : uint8_t {
+    WINDOW,
+    INPUT,
+};
+
+struct Event {
+    EventType type;
+    union {
+        InputEvent input;
+        WindowEvent window;
+    };
+
+    Event(InputEvent&&);
+    Event(WindowEvent&&);
+};
