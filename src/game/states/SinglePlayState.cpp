@@ -262,6 +262,10 @@ void SinglePlayState::update(const std::vector<Event>& events, AppContext& app)
                     case WindowEvent::RESIZED:
                         updatePositions(app.gcx());
                         break;
+                    case WindowEvent::FOCUS_LOST:
+                        paused = true;
+                        app.audio().pauseAll();
+                        break;
                     default:
                         break;
                 }
