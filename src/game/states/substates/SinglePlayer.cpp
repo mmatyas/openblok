@@ -32,15 +32,17 @@ void FadeIn::draw(SinglePlayState&, GraphicsContext& gcx) const
 
 
 Countdown::Countdown()
-    : timer(std::chrono::seconds(3), [](double){})
+    : timer(std::chrono::milliseconds(2500), [](double){})
 {}
 
-void Countdown::update(SinglePlayState& parent, const std::vector<Event>&, AppContext&)
+void Countdown::update(SinglePlayState& parent, const std::vector<Event>& events, AppContext&)
 {
-    // TODO : display countdown
-    //timer.update(Timing::frame_duration);
-    //if (!timer.running())
+    timer.update(Timing::frame_duration);
+    if (!timer.running()) {
         parent.current_state = std::make_unique<Gameplay>();
+        return;
+    }
+    parent.ui_well.update(events, type());
 }
 
 
@@ -51,18 +53,22 @@ void Gameplay::update(SinglePlayState& parent, const std::vector<Event>& events,
     for (const auto& event : events) {
         switch (event.type) {
             case EventType::WINDOW:
-                if (event.window == WindowEvent::FOCUS_LOST)
+                if (event.window == WindowEvent::FOCUS_LOST) {
                     parent.current_state = std::make_unique<Pause>(app);
+                    return;
+                }
             case EventType::INPUT:
-                if (event.input.type() == InputType::GAME_PAUSE && event.input.down())
+                if (event.input.type() == InputType::GAME_PAUSE && event.input.down()) {
                     parent.current_state = std::make_unique<Pause>(app);
+                    return;
+                }
                 break;
             default:
                 break;
         }
     }
 
-    parent.ui_well.update(events);
+    parent.ui_well.update(events, type());
     parent.ui_leftside.update();
 
     if (parent.texts_need_update) {
@@ -103,8 +109,11 @@ void Pause::update(SinglePlayState& parent, const std::vector<Event>& events, Ap
             // exit pause mode
             app.audio().resumeAll();
             parent.current_state = std::make_unique<Countdown>();
+            return;
         }
     }
+
+    parent.ui_well.update(events, type());
 }
 
 } // namespace States

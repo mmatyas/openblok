@@ -18,6 +18,8 @@ WellBox::WellBox(AppContext& app)
         [](double t){ return t; },
         [this](){ sfx_ongameover->playOnce(); })
     , sfx_ongameover(app.audio().loadSound("data/sfx/gameover.ogg"))
+    , countdown(std::chrono::milliseconds(2500),
+                [](double t){ return t * 2.9999; })
 {
     m_well.registerObserver(WellEvent::Type::GAME_OVER, [this](const WellEvent&){
         gameover = true;
@@ -32,6 +34,13 @@ WellBox::WellBox(AppContext& app)
     font_big = app.gcx().loadFont("data/fonts/PTC75F.ttf", 45);
     tex_pause = font_big->renderText(tr("PAUSE"), 0xEEEEEE_rgb);
     tex_gameover = font_big->renderText(tr("GAME OVER"), 0xEEEEEE00_rgba);
+
+    auto font_huge = app.gcx().loadFont("data/fonts/PTC75F.ttf", 120);
+    tex_countdown = {
+        font_huge->renderText(tr("3"), 0xEEEEEE_rgb),
+        font_huge->renderText(tr("2"), 0xEEEEEE_rgb),
+        font_huge->renderText(tr("1"), 0xEEEEEE_rgb),
+    };
 
     setPosition(0, 0);
     gameover_background.stop();
@@ -50,7 +59,7 @@ void WellBox::setPosition(int x, int y)
 }
 
 
-void WellBox::update(const std::vector<Event>& events)
+void WellBox::update(const std::vector<Event>& events, SubStates::SinglePlayer::StateType current_state)
 {
     // filter the input events only
     std::vector<InputEvent> input_events;
@@ -58,16 +67,29 @@ void WellBox::update(const std::vector<Event>& events)
         if (event.type == EventType::INPUT)
             input_events.emplace_back(event.input.type(), event.input.down());
     }
-    m_well.update(input_events);
 
-    if (gameover) {
-        gameover_background.update(Timing::frame_duration);
-        if (gameover_background.running()) {
-            RGBAColor color = 0xEEEEEE00_rgba;
-            if (gameover_background.value() > 0.4)
-                color.a = std::min<int>(0xFF, (gameover_background.value() - 0.4) * 0x1FF);
-            tex_gameover = font_big->renderText(tr("GAME OVER"), color);
-        }
+    using StateType = SubStates::SinglePlayer::StateType;
+    switch (current_state) {
+        case StateType::COUNTDOWN:
+            countdown.update(Timing::frame_duration);
+            break;
+        case StateType::PAUSED:
+            countdown.restart();
+            break;
+        case StateType::GAME_RUNNING:
+            m_well.update(input_events);
+            if (gameover) {
+                gameover_background.update(Timing::frame_duration);
+                if (gameover_background.running()) {
+                    RGBAColor color = 0xEEEEEE00_rgba;
+                    if (gameover_background.value() > 0.4)
+                        color.a = std::min<int>(0xFF, (gameover_background.value() - 0.4) * 0x1FF);
+                    tex_gameover = font_big->renderText(tr("GAME OVER"), color);
+                }
+            }
+            break;
+        default:
+            break;
     }
 }
 
@@ -79,8 +101,13 @@ void WellBox::draw(GraphicsContext& gcx, SubStates::SinglePlayer::StateType curr
     switch (current_state) {
         case StateType::FADE_IN:
             break;
-        case StateType::COUNTDOWN:
-            // TODO: draw numbers
+        case StateType::COUNTDOWN: {
+                assert(countdown.value() < 3);
+                assert(countdown.running());
+                auto& tex = tex_countdown.at(countdown.value());
+                tex->drawAt(x() + (width() - static_cast<int>(tex->width())) / 2,
+                            y() + (height() - static_cast<int>(tex->height())) / 2);
+            }
             break;
         case StateType::PAUSED:
             tex_pause->drawAt(x() + (width() - static_cast<int>(tex_pause->width())) / 2,
