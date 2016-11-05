@@ -286,6 +286,8 @@ void SinglePlayState::drawCommon(GraphicsContext& gcx)
     ui_leftside.draw(gcx);
     ui_rightside.draw(gcx);
 
-    for (const auto& popup : textpopups)
-        popup->draw();
+    if (current_state->type() == SubStates::SinglePlayer::StateType::GAME_RUNNING) {
+        for (const auto& popup : textpopups)
+            popup->draw();
+    }
 }
