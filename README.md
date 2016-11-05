@@ -7,19 +7,26 @@ Features:
 
 - [x] Ghost piece support
 - [x] Hold piece support
-- [x] Next pieces support
-- [x] DAS support
+- [x] Customizable next pieces support
+- [x] Customizable DAS support
 - [x] SRS, TGM and Classic rotation
 - [x] Full wall- and floor kick support
 - [x] 7-piece bag random generator
-- [x] Lock delay, line clear delay support
+- [x] Classic, Extended and Infinity lock support
 - [x] Sonic drop and Zangi-move support
-- [x] Infinity lock support
 - [x] T-Spin and Mini T-Spin support
+- [ ] Combo support
 - [ ] ARE support
 - [x] Gamepad support (partial)
-- [ ] Menu
+- [ ] Menu, configuration and stats
 - [ ] Battle mode
+- [x] Music and sound effects
+- [x] Big screen support
+- [x] Small screen support
+- [x] Runs on most desktop systems
+- [x] Runs on embedded Linux, even without X11
+- [x] Runs in browsers (experimental)
+- [ ] Mobile (touch) support
 
 
 Dependencies
