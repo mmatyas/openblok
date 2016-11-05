@@ -40,7 +40,6 @@ public:
     void draw(GraphicsContext&) final;
 
 private:
-    bool paused;
     bool gameover;
     std::unique_ptr<Texture> tex_background;
     std::shared_ptr<Music> music;
@@ -71,4 +70,15 @@ private:
 
     Transition<void> pending_levelup_msg;
     std::vector<std::unique_ptr<TextPopup>> textpopups;
+
+    enum class SubState : uint8_t {
+        FADE_IN,
+        COUNTDOWN,
+        GAME_RUNNING,
+        PAUSED,
+        FINISHED,
+    };
+    SubState state;
+    void onPause(AppContext& app);
+    void onResume(AppContext& app);
 };
