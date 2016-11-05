@@ -11,7 +11,7 @@
 const std::string LOG_TAG("video");
 
 SDLGraphicsContext::SDLGraphicsContext(SDL2pp::Window& window)
-    : renderer(window, -1, SDL_RENDERER_ACCELERATED)
+    : renderer(window, -1, 0x0)
     , ttf()
     , on_render_callback([](){})
 {
