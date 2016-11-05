@@ -45,11 +45,12 @@ private:
 
 class Countdown : public State {
 public:
-    Countdown();
+    Countdown(SinglePlayState& parent);
     StateType type() const { return StateType::COUNTDOWN; }
     void update(SinglePlayState&, const std::vector<Event>& events, AppContext&) final;
 
 private:
+    uint8_t current_idx;
     Transition<void> timer;
 };
 

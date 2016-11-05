@@ -27,6 +27,11 @@ SinglePlayState::SinglePlayState(AppContext& app)
         })
     , sfx_onlock(app.audio().loadSound("data/sfx/lock.ogg"))
     , sfx_onrotate(app.audio().loadSound("data/sfx/rotate.ogg"))
+    , sfx_countdown({
+            app.audio().loadSound("data/sfx/countdown3.ogg"),
+            app.audio().loadSound("data/sfx/countdown2.ogg"),
+            app.audio().loadSound("data/sfx/countdown1.ogg"),
+        })
     , texts_need_update(true)
     , ui_well(app)
     , ui_leftside(app, ui_well.height())
@@ -83,6 +88,7 @@ SinglePlayState::SinglePlayState(AppContext& app)
 
     updatePositions(app.gcx());
     music->playLoop();
+    app.audio().pauseAll();
 }
 
 SinglePlayState::~SinglePlayState() = default;

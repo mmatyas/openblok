@@ -5,6 +5,7 @@
 #include "game/states/SinglePlayState.h"
 #include "system/AudioContext.h"
 #include "system/Color.h"
+#include "system/SoundEffect.h"
 
 
 namespace SubStates {
@@ -20,7 +21,7 @@ void FadeIn::update(SinglePlayState& parent, const std::vector<Event>&, AppConte
 {
     alpha.update(Timing::frame_duration);
     if (!alpha.running())
-        parent.current_state = std::make_unique<Countdown>();
+        parent.current_state = std::make_unique<Countdown>(parent);
 }
 
 void FadeIn::draw(SinglePlayState&, GraphicsContext& gcx) const
@@ -31,18 +32,28 @@ void FadeIn::draw(SinglePlayState&, GraphicsContext& gcx) const
 }
 
 
-Countdown::Countdown()
-    : timer(std::chrono::milliseconds(2500), [](double){})
-{}
-
-void Countdown::update(SinglePlayState& parent, const std::vector<Event>& events, AppContext&)
+Countdown::Countdown(SinglePlayState& parent)
+    : current_idx(0)
+    , timer(std::chrono::milliseconds(800), [](double){},
+            [this, &parent](){
+                this->timer.restart();
+                this->current_idx++;
+                if (this->current_idx < 3)
+                    parent.sfx_countdown.at(this->current_idx)->playOnce();
+            })
 {
+    parent.sfx_countdown.at(0)->playOnce();
+}
+
+void Countdown::update(SinglePlayState& parent, const std::vector<Event>& events, AppContext& app)
+{
+    parent.ui_well.update(events, type());
     timer.update(Timing::frame_duration);
-    if (!timer.running()) {
+    if (current_idx >= 3) {
+        app.audio().resumeAll();
         parent.current_state = std::make_unique<Gameplay>();
         return;
     }
-    parent.ui_well.update(events, type());
 }
 
 
@@ -100,15 +111,14 @@ Pause::Pause(AppContext& app)
     app.audio().pauseAll();
 }
 
-void Pause::update(SinglePlayState& parent, const std::vector<Event>& events, AppContext& app)
+void Pause::update(SinglePlayState& parent, const std::vector<Event>& events, AppContext&)
 {
     for (const auto& event : events) {
         if (event.type == EventType::INPUT
             && event.input.type() == InputType::GAME_PAUSE
             && event.input.down()) {
             // exit pause mode
-            app.audio().resumeAll();
-            parent.current_state = std::make_unique<Countdown>();
+            parent.current_state = std::make_unique<Countdown>(parent);
             return;
         }
     }

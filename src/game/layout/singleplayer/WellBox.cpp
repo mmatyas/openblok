@@ -18,7 +18,7 @@ WellBox::WellBox(AppContext& app)
         [](double t){ return t; },
         [this](){ sfx_ongameover->playOnce(); })
     , sfx_ongameover(app.audio().loadSound("data/sfx/gameover.ogg"))
-    , countdown(std::chrono::milliseconds(2500),
+    , countdown(std::chrono::milliseconds(2400),
                 [](double t){ return t * 2.9999; })
 {
     m_well.registerObserver(WellEvent::Type::GAME_OVER, [this](const WellEvent&){
@@ -103,7 +103,6 @@ void WellBox::draw(GraphicsContext& gcx, SubStates::SinglePlayer::StateType curr
             break;
         case StateType::COUNTDOWN: {
                 assert(countdown.value() < 3);
-                assert(countdown.running());
                 auto& tex = tex_countdown.at(countdown.value());
                 tex->drawAt(x() + (width() - static_cast<int>(tex->width())) / 2,
                             y() + (height() - static_cast<int>(tex->height())) / 2);

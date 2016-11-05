@@ -49,6 +49,7 @@ private:
     std::array<std::shared_ptr<SoundEffect>, 4> sfx_onlineclear;
     std::shared_ptr<SoundEffect> sfx_onlock;
     std::shared_ptr<SoundEffect> sfx_onrotate;
+    std::array<std::shared_ptr<SoundEffect>, 3> sfx_countdown;
     std::shared_ptr<Font> font_popuptext;
     bool texts_need_update;
 
