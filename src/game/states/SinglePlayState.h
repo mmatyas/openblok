@@ -4,6 +4,7 @@
 #include "game/layout/singleplayer/LeftSidebarBox.h"
 #include "game/layout/singleplayer/RightSidebarBox.h"
 #include "game/layout/singleplayer/WellBox.h"
+#include "substates/SinglePlayer.h"
 
 #include <map>
 #include <stack>
@@ -67,18 +68,15 @@ private:
     void updatePositions(GraphicsContext&);
     void registerObservers();
     void addNextPiece();
+    void drawCommon(GraphicsContext&);
 
     Transition<void> pending_levelup_msg;
     std::vector<std::unique_ptr<TextPopup>> textpopups;
 
-    enum class SubState : uint8_t {
-        FADE_IN,
-        COUNTDOWN,
-        GAME_RUNNING,
-        PAUSED,
-        FINISHED,
-    };
-    SubState state;
-    void onPause(AppContext& app);
-    void onResume(AppContext& app);
+
+    std::unique_ptr<SubStates::SinglePlayer::State> current_state;
+    friend class SubStates::SinglePlayer::States::FadeIn;
+    friend class SubStates::SinglePlayer::States::Countdown;
+    friend class SubStates::SinglePlayer::States::Pause;
+    friend class SubStates::SinglePlayer::States::Gameplay;
 };

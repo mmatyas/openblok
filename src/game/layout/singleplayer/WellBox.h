@@ -11,6 +11,11 @@ class Font;
 class SoundEffect;
 class Texture;
 
+namespace SubStates { namespace SinglePlayer {
+enum class StateType : uint8_t;
+} }
+
+
 namespace Layout {
 class WellBox : public Layout::Box {
 public:
@@ -18,7 +23,7 @@ public:
 
     void setPosition(int x, int y) override;
     void update(const std::vector<Event>&);
-    void draw(GraphicsContext&, bool paused) const;
+    void draw(GraphicsContext&, SubStates::SinglePlayer::StateType current_state) const;
 
     Well& well() { return m_well; }
 

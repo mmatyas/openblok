@@ -3,6 +3,7 @@
 #include "game/AppContext.h"
 #include "game/components/Mino.h"
 #include "game/components/rotations/SRS.h"
+#include "game/states/substates/SinglePlayer.h"
 #include "system/AudioContext.h"
 #include "system/Font.h"
 #include "system/Localize.h"
@@ -70,26 +71,36 @@ void WellBox::update(const std::vector<Event>& events)
     }
 }
 
-void WellBox::draw(GraphicsContext& gcx, bool paused) const
+void WellBox::draw(GraphicsContext& gcx, SubStates::SinglePlayer::StateType current_state) const
 {
     m_well.drawBackground(gcx, x() + border_width, y() + border_width);
-    if (gameover) {
-        m_well.drawContent(gcx, x() + border_width, y() + border_width);
 
-        int box_h = (height() - border_width * 2) * gameover_background.value();
-        gcx.drawFilledRect({
-            x() + border_width, y() + height() - border_width - box_h,
-            width() - border_width * 2, box_h
-        }, 0xA0_rgba);
+    using StateType = SubStates::SinglePlayer::StateType;
+    switch (current_state) {
+        case StateType::FADE_IN:
+            break;
+        case StateType::COUNTDOWN:
+            // TODO: draw numbers
+            break;
+        case StateType::PAUSED:
+            tex_pause->drawAt(x() + (width() - static_cast<int>(tex_pause->width())) / 2,
+                              y() + (height() - static_cast<int>(tex_pause->height())) / 2);
+            break;
+        case StateType::GAME_RUNNING:
+            m_well.drawContent(gcx, x() + border_width, y() + border_width);
+            if (gameover) {
+                int box_h = (height() - border_width * 2) * gameover_background.value();
+                gcx.drawFilledRect({
+                    x() + border_width, y() + height() - border_width - box_h,
+                    width() - border_width * 2, box_h
+                }, 0xA0_rgba);
 
-        tex_gameover->drawAt(x() + (width() - static_cast<int>(tex_gameover->width())) / 2,
-                            y() + (height() - static_cast<int>(tex_gameover->height())) / 2);
-    }
-    else if (paused)
-        tex_pause->drawAt(x() + (width() - static_cast<int>(tex_pause->width())) / 2,
-                          y() + (height() - static_cast<int>(tex_pause->height())) / 2);
-    else {
-        m_well.drawContent(gcx, x() + border_width, y() + border_width);
+                tex_gameover->drawAt(x() + (width() - static_cast<int>(tex_gameover->width())) / 2,
+                                     y() + (height() - static_cast<int>(tex_gameover->height())) / 2);
+            }
+        case StateType::FINISHED:
+            // TODO
+            break;
     }
 
     static const auto boardborder_color = 0x1A3A8A_rgb;

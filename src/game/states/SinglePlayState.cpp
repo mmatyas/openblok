@@ -65,7 +65,7 @@ SinglePlayState::SinglePlayState(AppContext& app)
     , pending_levelup_msg(std::chrono::milliseconds(500), [](double){}, [this](){
             this->textpopups.emplace_back(std::make_unique<TextPopup>(tr("LEVEL UP!"), font_popuptext));
         })
-    , state(SubState::FADE_IN)
+    , current_state(std::make_unique<SubStates::SinglePlayer::States::FadeIn>())
 {
     font_popuptext = app.gcx().loadFont("data/fonts/PTS76F.ttf", 34);
     pending_levelup_msg.stop();
@@ -253,42 +253,12 @@ void SinglePlayState::updatePositions(GraphicsContext& gcx)
     ui_rightside.setPosition(ui_well.x() + ui_well.width() + 10, ui_well.y());
 }
 
-void SinglePlayState::onPause(AppContext& app)
-{
-    state = SubState::PAUSED;
-    app.audio().pauseAll();
-}
-
-void SinglePlayState::onResume(AppContext& app)
-{
-    state = SubState::COUNTDOWN;
-    app.audio().resumeAll();
-}
-
 void SinglePlayState::update(const std::vector<Event>& events, AppContext& app)
 {
     for (const auto& event : events) {
-        switch (event.type) {
-            case EventType::WINDOW:
-                switch (event.window) {
-                    case WindowEvent::RESIZED:
-                        updatePositions(app.gcx());
-                        break;
-                    case WindowEvent::FOCUS_LOST:
-                        onPause(app);
-                        break;
-                    default:
-                        break;
-                }
-            break;
-            case EventType::INPUT:
-                if (event.input.type() == InputType::GAME_PAUSE && event.input.down()) {
-                    if (state == SubState::GAME_RUNNING)
-                        onPause(app);
-                    else if (state == SubState::PAUSED)
-                        onResume(app);
-                }
-            break;
+        if (event.type == EventType::WINDOW
+            && event.window == WindowEvent::RESIZED) {
+            updatePositions(app.gcx());
         }
     }
 
@@ -299,53 +269,20 @@ void SinglePlayState::update(const std::vector<Event>& events, AppContext& app)
         textpopups.end());
 
 
-    switch (state) {
-        case SubState::FADE_IN:
-            // TODO: update fade in timer
-            state = SubState::COUNTDOWN;
-            break;
-        case SubState::COUNTDOWN:
-            // TODO: update countdown timer
-            state = SubState::GAME_RUNNING;
-            break;
-        case SubState::GAME_RUNNING:
-            ui_well.update(events);
-            ui_leftside.update();
-
-            if (texts_need_update) {
-                ui_leftside.updateGoalCounter(lineclears_left);
-                ui_leftside.updateLevelCounter(current_level);
-                ui_rightside.updateScore(current_score);
-                texts_need_update = false;
-            }
-
-            // Score texts popping up
-            for (const auto& popup : textpopups) {
-                popup->setInitialPosition(
-                    ui_leftside.x() - 10 + (ui_leftside.width() - static_cast<int>(popup->width())) / 2.0,
-                    ui_leftside.y() + ui_leftside.height() * 0.5
-                );
-                popup->update();
-            }
-
-            if (gameover)
-                return;
-
-            ui_rightside.updateGametime();
-            break;
-        case SubState::PAUSED:
-            return;
-        case SubState::FINISHED:
-            // TODO: show stats
-            break;
-    }
+    current_state->update(*this, events, app);
 }
 
 void SinglePlayState::draw(GraphicsContext& gcx)
 {
+    drawCommon(gcx);
+    current_state->draw(*this, gcx);
+}
+
+void SinglePlayState::drawCommon(GraphicsContext& gcx)
+{
     tex_background->drawScaled({0, 0, gcx.screenWidth(), gcx.screenHeight()});
 
-    ui_well.draw(gcx, state == SubState::PAUSED);
+    ui_well.draw(gcx, current_state->type());
     ui_leftside.draw(gcx);
     ui_rightside.draw(gcx);
 

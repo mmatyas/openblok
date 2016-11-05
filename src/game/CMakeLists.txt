@@ -36,6 +36,7 @@ set(MOD_GAME_SRC
 	states/InitState.cpp
 	states/MainMenuState.cpp
 	states/SinglePlayState.cpp
+	states/substates/SinglePlayer.cpp
 )
 
 set(MOD_GAME_H
@@ -86,6 +87,7 @@ set(MOD_GAME_H
 	states/InitState.h
 	states/MainMenuState.h
 	states/SinglePlayState.h
+	states/substates/SinglePlayer.h
 )
 
 if(NOT CMAKE_BUILD_TYPE MATCHES Release)
