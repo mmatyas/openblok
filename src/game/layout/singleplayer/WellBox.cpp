@@ -35,7 +35,7 @@ WellBox::WellBox(AppContext& app)
     tex_pause = font_big->renderText(tr("PAUSE"), 0xEEEEEE_rgb);
     tex_gameover = font_big->renderText(tr("GAME OVER"), 0xEEEEEE00_rgba);
 
-    auto font_huge = app.gcx().loadFont("data/fonts/PTC75F.ttf", 120);
+    auto font_huge = app.gcx().loadFont("data/fonts/helsinki.ttf", 150);
     tex_countdown = {
         font_huge->renderText(tr("3"), 0xEEEEEE_rgb),
         font_huge->renderText(tr("2"), 0xEEEEEE_rgb),
