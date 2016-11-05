@@ -26,8 +26,14 @@ MainMenuState::MainMenuState(AppContext& app)
 {
     PieceFactory::changeInitialPositions(Rotations::SRS().initialPositions());
 
-    buttons.emplace_back(app, tr("MARATHON"), [&app](){
-        app.states().emplace(std::make_unique<SinglePlayState>(app));
+    buttons.emplace_back(app, tr("MARATHON"), [this, &app](){
+        const auto duration = std::chrono::milliseconds(500);
+        this->state_transition_alpha = std::make_unique<Transition<uint8_t>>(
+            duration,
+            [](double t){ return t * 0xFF; },
+            [&app](){ app.states().emplace(std::make_unique<SinglePlayState>(app)); }
+        );
+        music->fadeOut(duration);
     });
     buttons.emplace_back(app, tr("BATTLE"), [](){});
     buttons.emplace_back(app, tr("OPTIONS"), [](){});
@@ -66,6 +72,11 @@ void MainMenuState::update(const std::vector<Event>& events, AppContext& app)
     for (unsigned i = 1; i < buttons.size(); i++) {
         const auto& prev = buttons.at(i - 1);
         buttons.at(i).setPosition(left_x, prev.y() + prev.height() + 5);
+    }
+
+    if (state_transition_alpha) {
+        state_transition_alpha->update(Timing::frame_duration);
+        return;
     }
 
     for (const auto& event : events) {
@@ -111,7 +122,8 @@ void MainMenuState::update(const std::vector<Event>& events, AppContext& app)
 
 void MainMenuState::draw(GraphicsContext& gcx)
 {
-    tex_background->drawScaled({0, 0, gcx.screenWidth(), gcx.screenHeight()});
+    const ::Rectangle full_window = {0, 0, gcx.screenWidth(), gcx.screenHeight()};
+    tex_background->drawScaled(full_window);
 
     for (const auto& rain : rains)
         rain.draw();
@@ -119,4 +131,10 @@ void MainMenuState::draw(GraphicsContext& gcx)
     logo.draw();
     for (const auto& btn : buttons)
         btn.draw(gcx);
+
+    if (state_transition_alpha) {
+        RGBAColor color = 0xFF_rgba;
+        color.a = state_transition_alpha->value();
+        gcx.drawFilledRect(full_window, color);
+    }
 }

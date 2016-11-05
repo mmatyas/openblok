@@ -29,4 +29,6 @@ private:
     unsigned current_button_index;
 
     std::shared_ptr<Music> music;
+
+    std::unique_ptr<Transition<uint8_t>> state_transition_alpha;
 };
