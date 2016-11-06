@@ -70,7 +70,6 @@ SinglePlayState::SinglePlayState(AppContext& app)
     , pending_levelup_msg(std::chrono::milliseconds(500), [](double){}, [this](){
             this->textpopups.emplace_back(std::make_unique<TextPopup>(tr("LEVEL UP!"), font_popuptext));
         })
-    , current_state(std::make_unique<SubStates::SinglePlayer::States::FadeIn>())
 {
     font_popuptext = app.gcx().loadFont("data/fonts/PTS76F.ttf", 34);
     pending_levelup_msg.stop();
@@ -89,6 +88,8 @@ SinglePlayState::SinglePlayState(AppContext& app)
     updatePositions(app.gcx());
     music->playLoop();
     app.audio().pauseAll();
+
+    states.emplace_back(std::make_unique<SubStates::SinglePlayer::States::FadeIn>());
 }
 
 SinglePlayState::~SinglePlayState() = default;
@@ -275,24 +276,24 @@ void SinglePlayState::update(const std::vector<Event>& events, AppContext& app)
         textpopups.end());
 
 
-    current_state->update(*this, events, app);
+    states.back()->update(*this, events, app);
 }
 
 void SinglePlayState::draw(GraphicsContext& gcx)
 {
     drawCommon(gcx);
-    current_state->draw(*this, gcx);
+    states.back()->draw(*this, gcx);
 }
 
 void SinglePlayState::drawCommon(GraphicsContext& gcx)
 {
     tex_background->drawScaled({0, 0, gcx.screenWidth(), gcx.screenHeight()});
 
-    ui_well.draw(gcx, current_state->type());
+    ui_well.draw(gcx, states.back()->type());
     ui_leftside.draw(gcx);
     ui_rightside.draw(gcx);
 
-    if (current_state->type() == SubStates::SinglePlayer::StateType::GAME_RUNNING) {
+    if (states.back()->type() == SubStates::SinglePlayer::StateType::GAME_RUNNING) {
         for (const auto& popup : textpopups)
             popup->draw();
     }

@@ -12,6 +12,13 @@ namespace SubStates {
 namespace SinglePlayer {
 namespace States {
 
+// The state transitions:
+//
+// FadeIn -> Countdown -> Gameplay -> Finish
+//               ^           |
+//               +-- Pause <-+
+//
+
 FadeIn::FadeIn()
     : alpha(std::chrono::milliseconds(500),
             [](double t){ return (1.0 - t) * 0xFF; })
@@ -20,8 +27,11 @@ FadeIn::FadeIn()
 void FadeIn::update(SinglePlayState& parent, const std::vector<Event>&, AppContext&)
 {
     alpha.update(Timing::frame_duration);
-    if (!alpha.running())
-        parent.current_state = std::make_unique<Countdown>(parent);
+    if (!alpha.running()) {
+        parent.states.emplace_back(std::make_unique<Gameplay>());
+        parent.states.emplace_back(std::make_unique<Countdown>());
+        parent.states.pop_front(); // pops self!
+    }
 }
 
 void FadeIn::draw(SinglePlayState&, GraphicsContext& gcx) const
@@ -32,27 +42,30 @@ void FadeIn::draw(SinglePlayState&, GraphicsContext& gcx) const
 }
 
 
-Countdown::Countdown(SinglePlayState& parent)
+Countdown::Countdown()
     : current_idx(0)
-    , timer(std::chrono::milliseconds(800), [](double){},
-            [this, &parent](){
-                this->timer.restart();
-                this->current_idx++;
-                if (this->current_idx < 3)
-                    parent.sfx_countdown.at(this->current_idx)->playOnce();
-            })
+    , timer(std::chrono::milliseconds(800), [](double){})
 {
-    parent.sfx_countdown.at(0)->playOnce();
+    timer.stop();
 }
 
 void Countdown::update(SinglePlayState& parent, const std::vector<Event>& events, AppContext& app)
 {
     parent.ui_well.update(events, type());
     timer.update(Timing::frame_duration);
-    if (current_idx >= 3) {
-        app.audio().resumeAll();
-        parent.current_state = std::make_unique<Gameplay>();
-        return;
+
+    if (!timer.running()) {
+        if (current_idx < 3)
+            parent.sfx_countdown.at(current_idx)->playOnce();
+        else {
+            app.audio().resumeAll();
+            assert(parent.states.size() > 1); // there should be a Gameplay state below
+            parent.states.pop_back(); // pops self!
+            return;
+        }
+
+        this->current_idx++;
+        this->timer.restart();
     }
 }
 
@@ -65,12 +78,14 @@ void Gameplay::update(SinglePlayState& parent, const std::vector<Event>& events,
         switch (event.type) {
             case EventType::WINDOW:
                 if (event.window == WindowEvent::FOCUS_LOST) {
-                    parent.current_state = std::make_unique<Pause>(app);
+                    parent.states.emplace_back(std::make_unique<Countdown>());
+                    parent.states.emplace_back(std::make_unique<Pause>(app));
                     return;
                 }
             case EventType::INPUT:
                 if (event.input.type() == InputType::GAME_PAUSE && event.input.down()) {
-                    parent.current_state = std::make_unique<Pause>(app);
+                    parent.states.emplace_back(std::make_unique<Countdown>());
+                    parent.states.emplace_back(std::make_unique<Pause>(app));
                     return;
                 }
                 break;
@@ -118,7 +133,8 @@ void Pause::update(SinglePlayState& parent, const std::vector<Event>& events, Ap
             && event.input.type() == InputType::GAME_PAUSE
             && event.input.down()) {
             // exit pause mode
-            parent.current_state = std::make_unique<Countdown>(parent);
+            assert(parent.states.size() > 1); // there should be a Gameplay state below
+            parent.states.pop_back();
             return;
         }
     }

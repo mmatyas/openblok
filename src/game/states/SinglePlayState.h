@@ -6,6 +6,7 @@
 #include "game/layout/singleplayer/WellBox.h"
 #include "substates/SinglePlayer.h"
 
+#include <list>
 #include <map>
 #include <stack>
 #include <string>
@@ -75,7 +76,7 @@ private:
     std::vector<std::unique_ptr<TextPopup>> textpopups;
 
 
-    std::unique_ptr<SubStates::SinglePlayer::State> current_state;
+    std::list<std::unique_ptr<SubStates::SinglePlayer::State>> states;
     friend class SubStates::SinglePlayer::States::FadeIn;
     friend class SubStates::SinglePlayer::States::Countdown;
     friend class SubStates::SinglePlayer::States::Pause;

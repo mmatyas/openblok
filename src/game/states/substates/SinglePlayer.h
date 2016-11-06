@@ -45,7 +45,7 @@ private:
 
 class Countdown : public State {
 public:
-    Countdown(SinglePlayState& parent);
+    Countdown();
     StateType type() const { return StateType::COUNTDOWN; }
     void update(SinglePlayState&, const std::vector<Event>& events, AppContext&) final;
 
