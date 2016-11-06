@@ -48,11 +48,11 @@ void Well::update(const std::vector<InputEvent>& events)
         return;
     }
 
-    if (pending_cleared_rows.size()) {
+    if (pending_cleared_rows.size())
         this->removeEmptyRows();
+
+    if (!active_piece)
         this->notify(WellEvent(WellEvent::Type::NEXT_REQUESTED));
-        return;
-    }
 
     if (!lock_delay.lockInProgress())
         tspin.clear();
