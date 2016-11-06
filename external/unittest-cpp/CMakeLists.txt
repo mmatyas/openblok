@@ -60,20 +60,22 @@ add_custom_command(TARGET TestUnitTest++
 	POST_BUILD COMMAND TestUnitTest++
 	COMMENT "Running unit tests")
 
-# add install targets
-# need a custom install path?
-# define CMAKE_INSTALL_PREFIX to change root folder
-if(${UTPP_USE_PLUS_SIGN})
-	set (UTPP_INSTALL_DESTINATION "include/UnitTest++")
-else()
-	set (UTPP_INSTALL_DESTINATION "include/UnitTestPP")
+if(CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
+    # add install targets
+    # need a custom install path?
+    # define CMAKE_INSTALL_PREFIX to change root folder
+    if(${UTPP_USE_PLUS_SIGN})
+        set (UTPP_INSTALL_DESTINATION "include/UnitTest++")
+    else()
+        set (UTPP_INSTALL_DESTINATION "include/UnitTestPP")
+    endif()
+
+    set(config_install_dir_ lib/cmake/${PROJECT_NAME})
+    set(targets_export_name_ "${PROJECT_NAME}Targets")
+
+    install(TARGETS UnitTest++ EXPORT "${targets_export_name_}" DESTINATION lib)
+    install(FILES ${headers_} DESTINATION ${UTPP_INSTALL_DESTINATION})
+    install(FILES ${platformHeaders_} DESTINATION ${UTPP_INSTALL_DESTINATION}/${platformDir_})
+    install(FILES cmake/UnitTest++Config.cmake DESTINATION "${config_install_dir_}")
+    install(EXPORT "${targets_export_name_}" DESTINATION "${config_install_dir_}")
 endif()
-
-set(config_install_dir_ lib/cmake/${PROJECT_NAME})
-set(targets_export_name_ "${PROJECT_NAME}Targets")
-
-install(TARGETS UnitTest++ EXPORT "${targets_export_name_}" DESTINATION lib)
-install(FILES ${headers_} DESTINATION ${UTPP_INSTALL_DESTINATION})
-install(FILES ${platformHeaders_} DESTINATION ${UTPP_INSTALL_DESTINATION}/${platformDir_})
-install(FILES cmake/UnitTest++Config.cmake DESTINATION "${config_install_dir_}")
-install(EXPORT "${targets_export_name_}" DESTINATION "${config_install_dir_}")
