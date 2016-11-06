@@ -29,7 +29,6 @@ private:
     Layout::RightSidebarBox ui_rightside;
 
     void updatePositions(GraphicsContext&);
-    void addNextPiece();
     void drawCommon(GraphicsContext&);
 
     friend class SubStates::SinglePlayer::States::Gameplay;

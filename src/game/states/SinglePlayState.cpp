@@ -16,12 +16,6 @@ SinglePlayState::SinglePlayState(AppContext& app)
 
 SinglePlayState::~SinglePlayState() = default;
 
-void SinglePlayState::addNextPiece()
-{
-    ui_well.well().addPiece(ui_rightside.nextQueue().next());
-    ui_leftside.holdQueue().onNextTurn();
-}
-
 void SinglePlayState::updatePositions(GraphicsContext& gcx)
 {
     ui_well.setPosition((gcx.screenWidth() - ui_well.width()) / 2,

@@ -164,6 +164,12 @@ Gameplay::Gameplay(SinglePlayState& parent, AppContext& app)
     registerObservers(parent);
 }
 
+void Gameplay::addNextPiece(SinglePlayState& parent)
+{
+    parent.ui_well.well().addPiece(parent.ui_rightside.nextQueue().next());
+    parent.ui_leftside.holdQueue().onNextTurn();
+}
+
 void Gameplay::registerObservers(SinglePlayState& parent)
 {
     auto& well = parent.ui_well.well();
@@ -177,7 +183,7 @@ void Gameplay::registerObservers(SinglePlayState& parent)
     });
 
     well.registerObserver(WellEvent::Type::NEXT_REQUESTED, [this, &parent](const WellEvent&){
-        parent.addNextPiece();
+        this->addNextPiece(parent);
     });
 
     well.registerObserver(WellEvent::Type::HOLD_REQUESTED, [this, &parent](const WellEvent&){
@@ -190,7 +196,7 @@ void Gameplay::registerObservers(SinglePlayState& parent)
             well.deletePiece();
             if (hold_queue.isEmpty()) {
                 hold_queue.swapWithEmpty(type);
-                parent.addNextPiece();
+                this->addNextPiece(parent);
             }
             else
                 well.addPiece(hold_queue.swapWith(type));

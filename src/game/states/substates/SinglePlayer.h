@@ -117,6 +117,7 @@ private:
     std::map<ScoreType, const std::string> score_name;
     ScoreType previous_lineclear_type;
 
+    void addNextPiece(SinglePlayState& parent);
     void registerObservers(SinglePlayState& parent);
 };
 
