@@ -65,6 +65,13 @@ private:
     std::array<std::shared_ptr<SoundEffect>, 3> sfx_countdown;
 };
 
+class Pause : public State {
+public:
+    Pause(AppContext&);
+    StateType type() const { return StateType::PAUSED; }
+    void update(SinglePlayState&, const std::vector<Event>&, AppContext&) final;
+};
+
 class Gameplay : public State {
 public:
     Gameplay(SinglePlayState&, AppContext&);
@@ -111,13 +118,6 @@ private:
     ScoreType previous_lineclear_type;
 
     void registerObservers(SinglePlayState& parent);
-};
-
-class Pause : public State {
-public:
-    Pause(AppContext&);
-    StateType type() const { return StateType::PAUSED; }
-    void update(SinglePlayState&, const std::vector<Event>&, AppContext&) final;
 };
 
 } // namespace States

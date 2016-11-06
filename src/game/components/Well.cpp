@@ -58,9 +58,11 @@ void Well::update(const std::vector<InputEvent>& events)
         tspin.clear();
 
     input.handleKeys(*this, events);
-
+#ifndef NDEBUG
+    // for  easier testing only
     if (!active_piece)
         return;
+#endif
 
     gravity.update(*this);
     lock_delay.update(*this);
@@ -100,7 +102,7 @@ void Well::addPiece(PieceType type)
 
 void Well::deletePiece()
 {
-    active_piece = nullptr;
+    active_piece.reset();
 }
 
 void Well::setGravity(Duration duration)
@@ -348,7 +350,7 @@ void Well::lockAndReleasePiece()
         }
     }
 
-    active_piece.reset();
+    deletePiece();
     notify(WellEvent(WellEvent::Type::PIECE_LOCKED));
 
     checkLineclear();

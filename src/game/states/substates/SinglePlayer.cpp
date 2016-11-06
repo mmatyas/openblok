@@ -80,6 +80,25 @@ void Countdown::update(SinglePlayState& parent, const std::vector<Event>&, AppCo
 }
 
 
+Pause::Pause(AppContext& app)
+{
+    app.audio().pauseAll();
+}
+
+void Pause::update(SinglePlayState& parent, const std::vector<Event>& events, AppContext&)
+{
+    for (const auto& event : events) {
+        if (event.type == EventType::INPUT
+            && event.input.type() == InputType::GAME_PAUSE
+            && event.input.down()) {
+            // exit pause mode
+            assert(parent.states.size() > 1); // there should be a Gameplay state below
+            parent.states.pop_back();
+        }
+    }
+}
+
+
 Gameplay::Gameplay(SinglePlayState& parent, AppContext& app)
     : gameover(false)
     , music(app.audio().loadMusic("data/music/gameplay.ogg"))
@@ -357,25 +376,6 @@ void Gameplay::draw(SinglePlayState&, GraphicsContext&) const
 {
     for (const auto& popup : textpopups)
         popup->draw();
-}
-
-
-Pause::Pause(AppContext& app)
-{
-    app.audio().pauseAll();
-}
-
-void Pause::update(SinglePlayState& parent, const std::vector<Event>& events, AppContext&)
-{
-    for (const auto& event : events) {
-        if (event.type == EventType::INPUT
-            && event.input.type() == InputType::GAME_PAUSE
-            && event.input.down()) {
-            // exit pause mode
-            assert(parent.states.size() > 1); // there should be a Gameplay state below
-            parent.states.pop_back();
-        }
-    }
 }
 
 } // namespace States

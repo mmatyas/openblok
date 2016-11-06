@@ -11,7 +11,6 @@ SUITE(Well) {
 
 // TODO: get these values from config
 constexpr unsigned gravity_delay_frames = 64;
-constexpr unsigned lock_delay_frames = 30;
 constexpr unsigned horizontal_delay_frames = 14;
 
 struct WellFixture {
@@ -86,18 +85,20 @@ TEST_FIXTURE(WellFixture, Gravity) {
 
     CHECK_EQUAL(expected_ascii, well.asAscii());
 
-    // it will lock there
-    for (unsigned i = 0; i < lock_delay_frames; i++)
+    // it will lock here
+    unsigned lock_limit = 0;
+    while (lock_limit < 100 && well.activePiece()) {
         well.update({});
+        lock_limit++;
+    }
+    REQUIRE CHECK(well.activePiece() == nullptr);
 
     expected_ascii = "";
     for (unsigned i = 0; i < 20; i++)
         expected_ascii += emptyline_ascii;
     expected_ascii += "....SS....\n";
     expected_ascii += "...SS.....\n";
-
     CHECK_EQUAL(expected_ascii, well.asAscii());
-    REQUIRE CHECK(well.activePiece() == nullptr);
 
     // a new piece will appear at the top
     well.addPiece(PieceType::Z);
@@ -118,8 +119,9 @@ TEST_FIXTURE(WellFixture, Gravity) {
     CHECK_EQUAL(expected_ascii, well.asAscii());
 
     // and land on top of the previous
-    for (unsigned i = 0; i < 17 * gravity_delay_frames; i++)
+    for (unsigned i = 0; i < 17 * gravity_delay_frames && well.activePiece(); i++)
         well.update({});
+    CHECK(well.activePiece() == nullptr);
 
     expected_ascii = "";
     for (unsigned i = 0; i < 18; i++)
@@ -130,7 +132,6 @@ TEST_FIXTURE(WellFixture, Gravity) {
     expected_ascii += "...SS.....\n";
 
     CHECK_EQUAL(expected_ascii, well.asAscii());
-    CHECK(well.activePiece() == nullptr);
 }
 
 
