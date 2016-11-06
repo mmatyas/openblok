@@ -52,9 +52,9 @@ Countdown::Countdown(AppContext& app)
     : current_idx(0)
     , timer(std::chrono::milliseconds(800), [](double){})
     , sfx_countdown({
-            app.audio().loadSound("data/sfx/countdown3.ogg"),
-            app.audio().loadSound("data/sfx/countdown2.ogg"),
-            app.audio().loadSound("data/sfx/countdown1.ogg"),
+            app.audio().loadSound(DATADIR + "sfx/countdown3.ogg"),
+            app.audio().loadSound(DATADIR + "sfx/countdown2.ogg"),
+            app.audio().loadSound(DATADIR + "sfx/countdown1.ogg"),
         })
 {
     timer.stop();
@@ -101,18 +101,18 @@ void Pause::update(SinglePlayState& parent, const std::vector<Event>& events, Ap
 
 Gameplay::Gameplay(SinglePlayState& parent, AppContext& app)
     : gameover(false)
-    , music(app.audio().loadMusic("data/music/gameplay.ogg"))
-    , sfx_onhold(app.audio().loadSound("data/sfx/hold.ogg"))
-    , sfx_onlevelup(app.audio().loadSound("data/sfx/levelup.ogg"))
+    , music(app.audio().loadMusic(DATADIR + "music/gameplay.ogg"))
+    , sfx_onhold(app.audio().loadSound(DATADIR + "sfx/hold.ogg"))
+    , sfx_onlevelup(app.audio().loadSound(DATADIR + "sfx/levelup.ogg"))
     , sfx_onlineclear({
-            app.audio().loadSound("data/sfx/lineclear1.ogg"),
-            app.audio().loadSound("data/sfx/lineclear2.ogg"),
-            app.audio().loadSound("data/sfx/lineclear3.ogg"),
-            app.audio().loadSound("data/sfx/lineclear4.ogg"),
+            app.audio().loadSound(DATADIR + "sfx/lineclear1.ogg"),
+            app.audio().loadSound(DATADIR + "sfx/lineclear2.ogg"),
+            app.audio().loadSound(DATADIR + "sfx/lineclear3.ogg"),
+            app.audio().loadSound(DATADIR + "sfx/lineclear4.ogg"),
         })
-    , sfx_onlock(app.audio().loadSound("data/sfx/lock.ogg"))
-    , sfx_onrotate(app.audio().loadSound("data/sfx/rotate.ogg"))
-    , font_popuptext(app.gcx().loadFont("data/fonts/PTS76F.ttf", 34))
+    , sfx_onlock(app.audio().loadSound(DATADIR + "sfx/lock.ogg"))
+    , sfx_onrotate(app.audio().loadSound(DATADIR + "sfx/rotate.ogg"))
+    , font_popuptext(app.gcx().loadFont(DATADIR + "fonts/PTS76F.ttf", 34))
     , texts_need_update(true)
     , pending_levelup_msg(std::chrono::milliseconds(500), [](double){}, [this](){
             this->textpopups.emplace_back(std::make_unique<TextPopup>(tr("LEVEL UP!"), font_popuptext));

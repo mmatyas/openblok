@@ -11,7 +11,7 @@ namespace Layout {
 MainMenuButton::MainMenuButton(AppContext& app, std::string&& text, std::function<void()>&& on_press)
     : Button(std::forward<std::string>(text), std::forward<std::function<void()>>(on_press))
 {
-    auto font = app.gcx().loadFont("data/fonts/PTC75F.ttf", 35);
+    auto font = app.gcx().loadFont(DATADIR + "fonts/PTC75F.ttf", 35);
     tex_label_on = font->renderText(btn_label_text, 0xEEEEEE_rgb);
     tex_label_off = font->renderText(btn_label_text, 0x006080_rgb);
 

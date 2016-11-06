@@ -6,6 +6,12 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
 # Build options
 option(BUILD_TESTS "Build the unit tests" ON)
 option(BUILD_TEST_COVERAGE "Build the test coverage report" OFF)
+if(CMAKE_BUILD_TYPE MATCHES Release)
+    set(DATADIR "${CMAKE_INSTALL_PREFIX}/share/openblok"
+        CACHE STRING "Install location of the data files (release mode)")
+else()
+    set(DATADIR "data")
+endif()
 
 # Global compiler settings
 # Use C++14
@@ -34,6 +40,11 @@ set(SDL2PP_WITH_IMAGE ON)
 set(SDL2PP_WITH_MIXER ON)
 set(SDL2PP_WITH_TTF ON)
 add_subdirectory(external/libSDL2pp)
+
+
+# Data files
+add_definitions(-DOPENBLOK_DATADIR="${DATADIR}")
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/data/ DESTINATION ${DATADIR} PATTERN "*.txt" EXCLUDE)
 
 
 include_directories("src")

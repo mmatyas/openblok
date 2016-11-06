@@ -12,11 +12,11 @@ InitState::InitState(AppContext& app)
     app.config().saveInputMapping(mapping, "data/config/input.cfg");
     app.window().setInputMapping(mapping);
 
-    Log::info("init") << "Loading resources\n";
+    Log::info("init") << "Loading resources from '" << DATADIR << "'\n";
 
-    MinoStorage::loadTintedMinos(app.gcx(), "data/mino.png");
-    MinoStorage::loadTintedGhosts(app.gcx(), "data/ghost.png");
-    MinoStorage::loadMatrixCell(app.gcx(), "data/matrix.png");
+    MinoStorage::loadTintedMinos(app.gcx(), DATADIR + "mino.png");
+    MinoStorage::loadTintedGhosts(app.gcx(), DATADIR + "ghost.png");
+    MinoStorage::loadMatrixCell(app.gcx(), DATADIR + "matrix.png");
 
     app.states().emplace(std::make_unique<MainMenuState>(app));
 }

@@ -19,10 +19,10 @@ int circularModulo(int num, int mod) {
 }
 
 MainMenuState::MainMenuState(AppContext& app)
-    : tex_background(app.gcx().loadTexture("data/gamebg.png"))
+    : tex_background(app.gcx().loadTexture(DATADIR + "gamebg.png"))
     , logo(app.gcx(), 150)
     , current_button_index(0)
-    , music(app.audio().loadMusic("data/music/menu.ogg"))
+    , music(app.audio().loadMusic(DATADIR + "music/menu.ogg"))
 {
     PieceFactory::changeInitialPositions(Rotations::SRS().initialPositions());
 

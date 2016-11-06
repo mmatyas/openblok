@@ -11,4 +11,3 @@ target_link_libraries(openblok module_game)
 
 # Install
 install(TARGETS openblok RUNTIME DESTINATION bin)
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/data/ DESTINATION share/openblok PATTERN "*.txt" EXCLUDE)
