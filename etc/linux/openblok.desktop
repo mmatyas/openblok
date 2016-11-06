@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=OpenBlok
+Comment=A falling block puzzle game
+Exec=openblok
+Icon=openblok
+Terminal=false
+Categories=Game;BlocksGame;
+Keywords=tetris;mino;

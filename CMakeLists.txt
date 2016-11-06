@@ -7,8 +7,14 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
 option(BUILD_TESTS "Build the unit tests" ON)
 option(BUILD_TEST_COVERAGE "Build the test coverage report" OFF)
 if(CMAKE_BUILD_TYPE MATCHES Release)
-    set(DATADIR "${CMAKE_INSTALL_PREFIX}/share/openblok"
-        CACHE STRING "Install location of the data files (release mode)")
+    set(SHAREDIR "${CMAKE_INSTALL_PREFIX}/share")
+    set(DATADIR "${SHAREDIR}/openblok" CACHE STRING "Install location of the data files")
+
+    if(UNIX AND NOT APPLE AND NOT CYGWIN)
+        option(INSTALL_DESKTOPICON "Install desktop shortcut and icon" ON)
+        set(ICONDIR "${SHAREDIR}/pixmaps" CACHE STRING "Install location of the icon file")
+        set(DESKTOPDIR "${SHAREDIR}/applications" CACHE STRING "Install location of the desktop shortcut")
+    endif()
 else()
     set(DATADIR "data")
 endif()
@@ -44,7 +50,6 @@ add_subdirectory(external/libSDL2pp)
 
 # Data files
 add_definitions(-DOPENBLOK_DATADIR="${DATADIR}")
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/data/ DESTINATION ${DATADIR} PATTERN "*.txt" EXCLUDE)
 
 
 include_directories("src")
@@ -54,4 +59,12 @@ if(BUILD_TESTS)
 	add_subdirectory(external/unittest-cpp)
 	include_directories(external/unittest-cpp)
 	add_subdirectory(tests)
+endif()
+
+
+# Install
+install(DIRECTORY data/ DESTINATION ${DATADIR} PATTERN "*.txt" EXCLUDE)
+if(INSTALL_DESKTOPICON)
+    install(FILES etc/linux/openblok.desktop DESTINATION ${DESKTOPDIR})
+    install(FILES etc/icons/openblok.png DESTINATION ${ICONDIR})
 endif()
