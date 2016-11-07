@@ -27,9 +27,29 @@
 #include <assert.h>
 
 
-int main(int, const char**)
+const std::string LOG_MAIN = "main";
+const std::string LOG_HELP = "help";
+
+int main(int argc, const char** argv)
 {
-    Log::info("main") << "OpenBlok v0.1.0 by Mátyás Mustoha\n";
+    Log::info(LOG_MAIN) << "OpenBlok v0.1.0 by Mátyás Mustoha\n";
+
+    for (int arg_i = 1; arg_i < argc; arg_i++) {
+        std::string arg = argv[arg_i];
+        if (arg == "-v" || arg == "--version")
+            return 0;
+        else if (arg == "--help") {
+            Log::info(LOG_HELP) << "Usage:\n";
+            Log::info(LOG_HELP) << "  --help              Display this help then quit\n";
+            Log::info(LOG_HELP) << "  -v, --version       Display the version number then quit\n";
+            return 0;
+        }
+        else {
+            Log::info(LOG_MAIN) << "Unknown parameter '" << arg << "' skipped.\n";
+        }
+    }
+
+
     AppContext app;
     if (!app.init())
         return 1;
