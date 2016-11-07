@@ -5,6 +5,7 @@
 #include "SDL2/SDL.h"
 #include <sstream>
 #include <vector>
+#include <assert.h>
 
 
 SDL2pp::Renderer* SDLFont::renderer = nullptr;

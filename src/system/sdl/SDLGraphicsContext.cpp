@@ -6,6 +6,7 @@
 
 #include "SDL2pp/SDL2pp.hh"
 #include <exception>
+#include <assert.h>
 
 
 const std::string LOG_TAG("video");

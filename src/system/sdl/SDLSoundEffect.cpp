@@ -1,5 +1,7 @@
 #include "SDLSoundEffect.h"
 
+#include <assert.h>
+
 
 SDL2pp::Mixer* SDLSoundEffect::mixer = nullptr;
 

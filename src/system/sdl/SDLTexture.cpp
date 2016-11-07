@@ -1,5 +1,7 @@
 #include "SDLTexture.h"
 
+#include <assert.h>
+
 
 SDL2pp::Renderer* SDLTexture::renderer = nullptr;
 

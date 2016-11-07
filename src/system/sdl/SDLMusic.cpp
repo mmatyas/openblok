@@ -1,5 +1,7 @@
 #include "SDLMusic.h"
 
+#include <assert.h>
+
 
 SDL2pp::Mixer* SDLMusic::mixer = nullptr;
 
