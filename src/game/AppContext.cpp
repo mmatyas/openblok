@@ -2,11 +2,6 @@
 
 #include "system/Log.h"
 
-#ifndef OPENBLOK_DATADIR
-#define OPENBLOK_DATADIR "data"
-#endif
-const std::string DATADIR = std::string(OPENBLOK_DATADIR) + "/";
-
 
 bool AppContext::init()
 {

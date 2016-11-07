@@ -4,6 +4,7 @@
 #include "game/components/Mino.h"
 #include "system/Font.h"
 #include "system/Localize.h"
+#include "system/Paths.h"
 
 
 namespace Layout {
@@ -14,9 +15,9 @@ LeftSidebarBox::LeftSidebarBox(AppContext& app, int height)
     bounding_box.h = height;
 
     // TODO: cache
-    font_label = app.gcx().loadFont(DATADIR + "fonts/PTN57F.ttf", 28);
-    font_content = app.gcx().loadFont(DATADIR + "fonts/PTN77F.ttf", 30);
-    font_content_highlight = app.gcx().loadFont(DATADIR + "fonts/PTN77F.ttf", 32);
+    font_label = app.gcx().loadFont(Paths::data() + "fonts/PTN57F.ttf", 28);
+    font_content = app.gcx().loadFont(Paths::data() + "fonts/PTN77F.ttf", 30);
+    font_content_highlight = app.gcx().loadFont(Paths::data() + "fonts/PTN77F.ttf", 32);
 
     tex_hold = font_label->renderText(tr("HOLD"), 0xEEEEEE_rgb);
     tex_goal = font_label->renderText(tr("GOAL"), 0xEEEEEE_rgb);

@@ -3,6 +3,7 @@ set(MOD_SYSTEM_SRC
 	ConfigManager.cpp
 	Event.cpp
 	Log.cpp
+	Paths.cpp
 	Window.cpp
 
 	# SDL2
@@ -25,6 +26,7 @@ set(MOD_SYSTEM_H
 	Localize.h
 	Log.h
 	Music.h
+	Paths.h
 	Rectangle.h
 	SoundEffect.h
 	Texture.h

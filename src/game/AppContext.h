@@ -6,10 +6,6 @@
 
 #include <memory>
 #include <stack>
-#include <string>
-
-
-extern const std::string DATADIR;
 
 
 class AppContext {

@@ -4,6 +4,7 @@
 #include "game/components/MinoStorage.h"
 #include "game/states/MainMenuState.h"
 #include "system/Log.h"
+#include "system/Paths.h"
 
 
 InitState::InitState(AppContext& app)
@@ -12,11 +13,11 @@ InitState::InitState(AppContext& app)
     app.config().saveInputMapping(mapping, "data/config/input.cfg");
     app.window().setInputMapping(mapping);
 
-    Log::info("init") << "Loading resources from '" << DATADIR << "'\n";
+    Log::info("init") << "Loading resources from '" << Paths::data() << "'\n";
 
-    MinoStorage::loadTintedMinos(app.gcx(), DATADIR + "mino.png");
-    MinoStorage::loadTintedGhosts(app.gcx(), DATADIR + "ghost.png");
-    MinoStorage::loadMatrixCell(app.gcx(), DATADIR + "matrix.png");
+    MinoStorage::loadTintedMinos(app.gcx(), Paths::data() + "mino.png");
+    MinoStorage::loadTintedGhosts(app.gcx(), Paths::data() + "ghost.png");
+    MinoStorage::loadMatrixCell(app.gcx(), Paths::data() + "matrix.png");
 
     app.states().emplace(std::make_unique<MainMenuState>(app));
 }

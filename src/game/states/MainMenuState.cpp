@@ -9,6 +9,7 @@
 #include "system/GraphicsContext.h"
 #include "system/Localize.h"
 #include "system/Music.h"
+#include "system/Paths.h"
 #include "system/Texture.h"
 
 
@@ -19,10 +20,10 @@ int circularModulo(int num, int mod) {
 }
 
 MainMenuState::MainMenuState(AppContext& app)
-    : tex_background(app.gcx().loadTexture(DATADIR + "gamebg.png"))
+    : tex_background(app.gcx().loadTexture(Paths::data() + "gamebg.png"))
     , logo(app.gcx(), 150)
     , current_button_index(0)
-    , music(app.audio().loadMusic(DATADIR + "music/menu.ogg"))
+    , music(app.audio().loadMusic(Paths::data() + "music/menu.ogg"))
 {
     PieceFactory::changeInitialPositions(Rotations::SRS().initialPositions());
 

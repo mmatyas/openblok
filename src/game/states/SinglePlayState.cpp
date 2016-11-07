@@ -1,11 +1,12 @@
 #include "SinglePlayState.h"
 
 #include "game/AppContext.h"
+#include "system/Paths.h"
 #include "system/Texture.h"
 
 
 SinglePlayState::SinglePlayState(AppContext& app)
-    : tex_background(app.gcx().loadTexture(DATADIR + "gamebg.png"))
+    : tex_background(app.gcx().loadTexture(Paths::data() + "gamebg.png"))
     , ui_well(app)
     , ui_leftside(app, ui_well.height())
     , ui_rightside(app, ui_well.height())
