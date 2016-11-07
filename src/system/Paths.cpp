@@ -6,6 +6,13 @@
 #ifndef OPENBLOK_DATADIR
 #define OPENBLOK_DATADIR "data"
 #endif
-const std::string Paths::datadir_path = std::string(OPENBLOK_DATADIR) + "/";
+std::string Paths::datadir_path = std::string(OPENBLOK_DATADIR) + "/";
 
 const std::string Paths::configdir_path = SDL_GetPrefPath(".", "openblok");
+
+void Paths::changeDataDir(const std::string& dir)
+{
+    datadir_path = dir;
+    if (datadir_path.back() != '/' && datadir_path.back() != '\\')
+        datadir_path += '/';
+}

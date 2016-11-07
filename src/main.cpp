@@ -20,6 +20,7 @@
 #include "game/Timing.h"
 #include "game/states/InitState.h"
 #include "system/Log.h"
+#include "system/Paths.h"
 
 #include <chrono>
 #include <memory>
@@ -40,12 +41,21 @@ int main(int argc, const char** argv)
             return 0;
         else if (arg == "--help") {
             Log::info(LOG_HELP) << "Usage:\n";
-            Log::info(LOG_HELP) << "  --help              Display this help then quit\n";
-            Log::info(LOG_HELP) << "  -v, --version       Display the version number then quit\n";
+            Log::info(LOG_HELP) << "  --help                   Display this help then quit\n";
+            Log::info(LOG_HELP) << "  -v, --version            Display the version number then quit\n";
+            Log::info(LOG_HELP) << "  --data <dir>             Load game resources from the <dir> directory\n";
             return 0;
         }
+        else if (arg == "--data") {
+            if (++arg_i >= argc) {
+                Log::error(LOG_MAIN) << "'--data' requires a directory as parameter!\n";
+                return 1;
+            }
+            Paths::changeDataDir(argv[arg_i]);
+        }
         else {
-            Log::info(LOG_MAIN) << "Unknown parameter '" << arg << "' skipped.\n";
+            Log::error(LOG_MAIN) << "Unknown parameter '" << arg << "'.\n";
+            return 1;
         }
     }
 
