@@ -1,6 +1,5 @@
 #include "Logo.h"
 
-#include "game/AppContext.h"
 #include "system/GraphicsContext.h"
 #include "system/Paths.h"
 #include "system/Texture.h"
