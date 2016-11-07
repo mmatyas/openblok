@@ -64,3 +64,8 @@ if(INSTALL_DESKTOPICON)
     install(FILES etc/linux/openblok.desktop DESTINATION ${DESKTOPDIR})
     install(FILES data/icon.png DESTINATION ${ICONDIR} RENAME openblok.png)
 endif()
+
+
+# Package
+include(cmake/CPackConfig.cmake)
+include(CPack)
