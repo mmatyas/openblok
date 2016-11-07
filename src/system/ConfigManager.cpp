@@ -60,7 +60,7 @@ ScancodeMap ConfigManager::loadInputMapping(const std::string& path)
     std::ifstream infile(path);
     unsigned linenum = 0;
     while (std::getline(infile, line)) {
-        if (line.empty() || line.rfind("#", 0) == 0) // starts with
+        if (line.empty() || line.front() == '#')
             continue;
 
         if (std::regex_match(line, valid_head)) {
