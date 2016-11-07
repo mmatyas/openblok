@@ -6,18 +6,14 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
 # Build options
 option(BUILD_TESTS "Build the unit tests" ON)
 option(BUILD_TEST_COVERAGE "Build the test coverage report" OFF)
-if(CMAKE_BUILD_TYPE MATCHES Release)
-    set(SHAREDIR "${CMAKE_INSTALL_PREFIX}/share")
-    set(DATADIR "${SHAREDIR}/openblok" CACHE STRING "Install location of the data files")
-
-    if(UNIX AND NOT APPLE AND NOT CYGWIN)
-        option(INSTALL_DESKTOPICON "Install desktop shortcut and icon" ON)
-        set(ICONDIR "${SHAREDIR}/pixmaps" CACHE STRING "Install location of the icon file")
-        set(DESKTOPDIR "${SHAREDIR}/applications" CACHE STRING "Install location of the desktop shortcut")
-    endif()
-else()
-    set(DATADIR "data")
+set(SHAREDIR "${CMAKE_INSTALL_PREFIX}/share")
+set(DATADIR "${SHAREDIR}/openblok" CACHE STRING "Install location of the data files")
+if(UNIX AND NOT APPLE AND NOT CYGWIN)
+    option(INSTALL_DESKTOPICON "Install desktop shortcut and icon" ON)
+    set(ICONDIR "${SHAREDIR}/pixmaps" CACHE STRING "Install location of the icon file")
+    set(DESKTOPDIR "${SHAREDIR}/applications" CACHE STRING "Install location of the desktop shortcut")
 endif()
+
 
 # Global compiler settings
 # Use C++14
