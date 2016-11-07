@@ -9,8 +9,8 @@
 
 InitState::InitState(AppContext& app)
 {
-    auto mapping = app.config().loadInputMapping("data/config/input.cfg");
-    app.config().saveInputMapping(mapping, "data/config/input.cfg");
+    auto mapping = app.config().loadInputMapping(Paths::config() + "input.cfg");
+    app.config().saveInputMapping(mapping, Paths::config() + "input.cfg");
     app.window().setInputMapping(mapping);
 
     Log::info("init") << "Loading resources from '" << Paths::data() << "'\n";
