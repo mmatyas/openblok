@@ -2,6 +2,7 @@
 
 #include "SDLGraphicsContext.h"
 #include "system/Log.h"
+#include "system/Paths.h"
 
 
 const std::string LOG_INPUT_TAG = "input";
@@ -15,6 +16,7 @@ SDLWindow::SDLWindow()
     , gcx(window)
     , m_quit_requested(false)
 {
+    window.SetIcon(SDL2pp::Surface(Paths::data() + "icon.png"));
 }
 
 void SDLWindow::toggleFullscreen()
