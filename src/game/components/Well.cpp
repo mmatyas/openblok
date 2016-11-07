@@ -58,11 +58,8 @@ void Well::update(const std::vector<InputEvent>& events)
         tspin.clear();
 
     input.handleKeys(*this, events);
-#ifndef NDEBUG
-    // for  easier testing only
     if (!active_piece)
         return;
-#endif
 
     gravity.update(*this);
     lock_delay.update(*this);
