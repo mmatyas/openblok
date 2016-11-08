@@ -9,9 +9,6 @@
 
 SUITE(WellTGM) {
 
-// TODO: get these values from config
-constexpr unsigned softdrop_delay_frames = 64 / 20.0;
-
 struct WellFixture {
     std::unique_ptr<Well> well;
     std::string emptyline_ascii;
