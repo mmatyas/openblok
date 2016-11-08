@@ -1,0 +1,35 @@
+name: openblok
+version: 0.1.0+git
+summary: A falling block puzzle game
+description: |
+  A customizable, cross platform, open-source falling block game
+  with lots of features.
+grade: devel
+confinement: devmode
+
+apps:
+  openblok:
+    command: games/openblok --data ${SNAP}/share/openblok
+    plugs:
+      - home
+      - opengl
+      - pulseaudio
+      - x11
+
+parts:
+  game:
+    source: https://mmatyas@bitbucket.org/mmatyas/openblok.git
+    plugin: cmake
+    configflags:
+      - -DCMAKE_BUILD_TYPE=Release
+      - -DBUILD_TESTS=OFF
+    build-packages:
+      - libsdl2-dev
+      - libsdl2-image-dev
+      - libsdl2-mixer-dev
+      - libsdl2-ttf-dev
+    stage-packages:
+      - libsdl2-2.0-0
+      - libsdl2-image-2.0-0
+      - libsdl2-mixer-2.0-0
+      - libsdl2-ttf-2.0-0
