@@ -24,15 +24,19 @@ struct WellEvent {
         GAME_OVER,
     };
 
+    struct harddrop_t {
+        uint8_t count;
+    };
+
+    struct lineclear_t {
+        uint8_t count;
+        LineClearType type;
+    };
+
     Type type;
     union {
-        struct {
-            uint8_t count;
-        } harddrop;
-        struct {
-            uint8_t count;
-            LineClearType type;
-        } lineclear;
+        harddrop_t harddrop;
+        lineclear_t lineclear;
     };
 
     explicit WellEvent(Type type): type(type) {}
