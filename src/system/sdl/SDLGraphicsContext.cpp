@@ -26,6 +26,7 @@ SDLGraphicsContext::SDLGraphicsContext(SDL2pp::Window& window)
     renderer.SetDrawColor(0, 0, 0, 255);
     renderer.Clear();
     renderer.Present();
+    window.Raise();
 
     // save the window's preferred pixel format for optimal drawing later
     pixelformat = SDL_GetWindowPixelFormat(window.Get());
