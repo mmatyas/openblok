@@ -33,6 +33,25 @@ SDLWindow::SDLWindow()
         {SDL_CONTROLLER_BUTTON_GUIDE, {InputType::GAME_PAUSE}},
         {SDL_CONTROLLER_BUTTON_START, {InputType::GAME_PAUSE}},
     };
+
+    // In SDL, the legacy joystick API uses 1 byte for button indices,
+    // and also 1 byte for hats, both starting from 0. Here we store
+    // them in the same map using 2 bytes, buttons in the upper byte
+    // with 0xFF below, and hats in the lower byte.
+    joystick_mapping = {
+        {SDL_HAT_UP, {InputType::GAME_HARDDROP, InputType::MENU_UP}},
+        {SDL_HAT_DOWN, {InputType::GAME_SOFTDROP, InputType::MENU_DOWN}},
+        {SDL_HAT_LEFT, {InputType::GAME_MOVE_LEFT, InputType::MENU_LEFT}},
+        {SDL_HAT_RIGHT, {InputType::GAME_MOVE_RIGHT, InputType::MENU_RIGHT}},
+        {0 + 0xFF, {InputType::GAME_ROTATE_LEFT}},
+        {(1 << 8) + 0xFF, {InputType::GAME_ROTATE_LEFT}},
+        {(2 << 8) + 0xFF, {InputType::GAME_ROTATE_RIGHT}},
+        {(3 << 8) + 0xFF, {InputType::GAME_ROTATE_RIGHT}},
+        {(4 << 8) + 0xFF, {InputType::GAME_HOLD}},
+        {(5 << 8) + 0xFF, {InputType::GAME_HOLD}},
+        {(8 << 8) + 0xFF, {InputType::GAME_PAUSE}},
+        {(9 << 8) + 0xFF, {InputType::GAME_PAUSE}},
+    };
 }
 
 void SDLWindow::toggleFullscreen()
@@ -140,64 +159,33 @@ std::vector<Event> SDLWindow::collectEvents()
             break;
         case SDL_JOYHATMOTION:
             if (joysticks.count(sdl_event.jhat.which)) {
-                output.emplace_back(InputEvent(InputType::GAME_MOVE_LEFT, false));
-                output.emplace_back(InputEvent(InputType::GAME_MOVE_RIGHT, false));
-                output.emplace_back(InputEvent(InputType::GAME_HARDDROP, false));
-                output.emplace_back(InputEvent(InputType::GAME_SOFTDROP, false));
-                switch (sdl_event.jhat.value) {
-                    case SDL_HAT_LEFT:
-                        output.emplace_back(InputEvent(InputType::GAME_MOVE_LEFT, true));
-                        output.emplace_back(InputEvent(InputType::MENU_LEFT, true));
-                        break;
-                    case SDL_HAT_RIGHT:
-                        output.emplace_back(InputEvent(InputType::GAME_MOVE_RIGHT, true));
-                        output.emplace_back(InputEvent(InputType::MENU_RIGHT, true));
-                        break;
-                    case SDL_HAT_UP:
-                        output.emplace_back(InputEvent(InputType::GAME_HARDDROP, true));
-                        output.emplace_back(InputEvent(InputType::MENU_UP, true));
-                        break;
-                    case SDL_HAT_DOWN:
-                        output.emplace_back(InputEvent(InputType::GAME_SOFTDROP, true));
-                        output.emplace_back(InputEvent(InputType::MENU_DOWN, true));
-                        break;
-                    default:
-                        break;
+                if (joysticks.count(sdl_event.jhat.which)) {
+                    uint16_t button = sdl_event.jhat.value;
+                    // turn off all hat keys - there can be only one direction active at a time
+                    for (const auto& hat : {SDL_HAT_UP, SDL_HAT_DOWN, SDL_HAT_LEFT, SDL_HAT_RIGHT}) {
+                        for (const auto& event : joystick_mapping.at(hat))
+                            output.emplace_back(InputEvent(event, false));
+                    }
+                    // turn on only the current one
+                    for (const auto& event : joystick_mapping.at(button))
+                        output.emplace_back(InputEvent(event, true));
                 }
             }
             break;
         case SDL_JOYBUTTONUP:
         case SDL_JOYBUTTONDOWN:
-            if (joysticks.count(sdl_event.jhat.which)) {
-                // TODO: do not hardcode these values
-                const auto button = sdl_event.jbutton.button;
-                const bool isdown = sdl_event.type == SDL_JOYBUTTONDOWN;
-                switch (button) {
-                    case 0:
-                    case 1:
-                        output.emplace_back(InputEvent(InputType::GAME_ROTATE_LEFT, isdown));
-                        break;
-                    case 2:
-                    case 3:
-                        output.emplace_back(InputEvent(InputType::GAME_ROTATE_RIGHT, isdown));
-                        break;
-                    case 4:
-                        output.emplace_back(InputEvent(InputType::GAME_HOLD, isdown));
-                        break;
-                    case 8:
-                    case 9:
-                        output.emplace_back(InputEvent(InputType::GAME_PAUSE, isdown));
-                        break;
-                    default:
-                        break;
-                }
+            if (joysticks.count(sdl_event.jbutton.which)) {
+                // reminder: buttons are stored on the upper byte
+                uint16_t button = (sdl_event.jbutton.button << 8) + 0xFF;
+                for (const auto& event : joystick_mapping.at(button))
+                    output.emplace_back(InputEvent(event, false));
             }
             break;
         case SDL_KEYUP:
             case SDL_SCANCODE_F4:
                 if (SDL_GetModState() & KMOD_ALT)
                     m_quit_requested = true;
-            // do NOT break
+            // do NOT break - the code below should run for KEYUP too
         case SDL_KEYDOWN:
             if (!sdl_event.key.repeat) {
                 uint16_t scancode = sdl_event.key.keysym.scancode;
