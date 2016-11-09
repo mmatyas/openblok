@@ -8,7 +8,7 @@
 const std::string LOG_INPUT_TAG = "input";
 
 SDLWindow::SDLWindow()
-    : sdl(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK)
+    : sdl(SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER)
     , window("OpenBlok",
         SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
         960, 540,
@@ -66,8 +66,78 @@ std::vector<Event> SDLWindow::collectEvents()
                     break;
             }
             break;
-        case SDL_JOYDEVICEADDED:
+        case SDL_CONTROLLERDEVICEADDED:
             {
+                auto gamepad = std::unique_ptr<SDL_GameController, std::function<void(SDL_GameController*)>>(
+                    SDL_GameControllerOpen(sdl_event.cdevice.which),
+                    [](SDL_GameController* ptr){
+                        if (SDL_GameControllerGetAttached(ptr)) SDL_GameControllerClose(ptr); });
+
+                if (gamepad) {
+                    auto joystick = SDL_GameControllerGetJoystick(gamepad.get());
+                    auto iid = SDL_JoystickInstanceID(joystick); // returns negative on error
+                    if (iid >= 0) {
+                        gamepads[iid] = std::move(gamepad);
+                        Log::info(LOG_INPUT_TAG) << "Gamepad connected: "
+                                                 << SDL_GameControllerName(gamepads[iid].get()) << "\n";
+                    }
+                }
+            }
+
+            break;
+        case SDL_CONTROLLERDEVICEREMOVED:
+            if (gamepads.count(sdl_event.cdevice.which)) {
+                Log::info(LOG_INPUT_TAG) << "Gamepad disconnected: "
+                                         << SDL_GameControllerName(gamepads[sdl_event.cdevice.which].get()) << "\n";
+                gamepads.erase(sdl_event.cdevice.which);
+            }
+            break;
+        case SDL_CONTROLLERBUTTONUP:
+        case SDL_CONTROLLERBUTTONDOWN:
+            {
+                // TODO: do not hardcode these values
+                const bool isdown = sdl_event.type == SDL_CONTROLLERBUTTONDOWN;
+                switch (sdl_event.cbutton.button) {
+                    case SDL_CONTROLLER_BUTTON_DPAD_UP:
+                        output.emplace_back(InputEvent(InputType::GAME_HARDDROP, isdown));
+                        output.emplace_back(InputEvent(InputType::MENU_UP, isdown));
+                        break;
+                    case SDL_CONTROLLER_BUTTON_DPAD_DOWN:
+                        output.emplace_back(InputEvent(InputType::GAME_SOFTDROP, isdown));
+                        output.emplace_back(InputEvent(InputType::MENU_DOWN, isdown));
+                        break;
+                    case SDL_CONTROLLER_BUTTON_DPAD_LEFT:
+                        output.emplace_back(InputEvent(InputType::GAME_MOVE_LEFT, isdown));
+                        output.emplace_back(InputEvent(InputType::MENU_LEFT, isdown));
+                        break;
+                    case SDL_CONTROLLER_BUTTON_DPAD_RIGHT:
+                        output.emplace_back(InputEvent(InputType::GAME_MOVE_RIGHT, isdown));
+                        output.emplace_back(InputEvent(InputType::MENU_RIGHT, isdown));
+                        break;
+                    case SDL_CONTROLLER_BUTTON_A:
+                        output.emplace_back(InputEvent(InputType::GAME_ROTATE_LEFT, isdown));
+                        output.emplace_back(InputEvent(InputType::MENU_OK, isdown));
+                        break;
+                    case SDL_CONTROLLER_BUTTON_B:
+                        output.emplace_back(InputEvent(InputType::GAME_ROTATE_RIGHT, isdown));
+                        output.emplace_back(InputEvent(InputType::MENU_CANCEL, isdown));
+                        break;
+                    case SDL_CONTROLLER_BUTTON_LEFTSHOULDER:
+                    case SDL_CONTROLLER_BUTTON_RIGHTSHOULDER:
+                        output.emplace_back(InputEvent(InputType::GAME_HOLD, isdown));
+                        break;
+                    case SDL_CONTROLLER_BUTTON_BACK:
+                    case SDL_CONTROLLER_BUTTON_GUIDE:
+                    case SDL_CONTROLLER_BUTTON_START:
+                        output.emplace_back(InputEvent(InputType::GAME_PAUSE, isdown));
+                        break;
+                    default:
+                        break;
+                }
+            }
+            break;
+        case SDL_JOYDEVICEADDED:
+            if (!SDL_IsGameController(sdl_event.jdevice.which)) {
                 auto joy = std::unique_ptr<SDL_Joystick, std::function<void(SDL_Joystick*)>>(
                     SDL_JoystickOpen(sdl_event.jdevice.which),
                     [](SDL_Joystick* ptr){
@@ -77,7 +147,7 @@ std::vector<Event> SDLWindow::collectEvents()
                     auto iid = SDL_JoystickInstanceID(joy.get()); // returns negative on error
                     if (iid >= 0) {
                         joysticks[iid] = std::move(joy);
-                        Log::info(LOG_INPUT_TAG) << "Controller connected: "
+                        Log::info(LOG_INPUT_TAG) << "Joystick connected: "
                                                  << SDL_JoystickName(joysticks[iid].get()) << "\n";
                     }
                 }
@@ -85,40 +155,42 @@ std::vector<Event> SDLWindow::collectEvents()
             break;
         case SDL_JOYDEVICEREMOVED:
             if (joysticks.count(sdl_event.jdevice.which)) {
-                Log::info(LOG_INPUT_TAG) << "Controller disconnected: "
+                Log::info(LOG_INPUT_TAG) << "Joystick disconnected: "
                                          << SDL_JoystickName(joysticks[sdl_event.jdevice.which].get()) << "\n";
                 joysticks.erase(sdl_event.jdevice.which);
             }
             break;
         case SDL_JOYHATMOTION:
-            output.emplace_back(InputEvent(InputType::GAME_MOVE_LEFT, false));
-            output.emplace_back(InputEvent(InputType::GAME_MOVE_RIGHT, false));
-            output.emplace_back(InputEvent(InputType::GAME_HARDDROP, false));
-            output.emplace_back(InputEvent(InputType::GAME_SOFTDROP, false));
-            switch (sdl_event.jhat.value) {
-                case SDL_HAT_LEFT:
-                    output.emplace_back(InputEvent(InputType::GAME_MOVE_LEFT, true));
-                    output.emplace_back(InputEvent(InputType::MENU_LEFT, true));
-                    break;
-                case SDL_HAT_RIGHT:
-                    output.emplace_back(InputEvent(InputType::GAME_MOVE_RIGHT, true));
-                    output.emplace_back(InputEvent(InputType::MENU_RIGHT, true));
-                    break;
-                case SDL_HAT_UP:
-                    output.emplace_back(InputEvent(InputType::GAME_HARDDROP, true));
-                    output.emplace_back(InputEvent(InputType::MENU_UP, true));
-                    break;
-                case SDL_HAT_DOWN:
-                    output.emplace_back(InputEvent(InputType::GAME_SOFTDROP, true));
-                    output.emplace_back(InputEvent(InputType::MENU_DOWN, true));
-                    break;
-                default:
-                    break;
+            if (joysticks.count(sdl_event.jhat.which)) {
+                output.emplace_back(InputEvent(InputType::GAME_MOVE_LEFT, false));
+                output.emplace_back(InputEvent(InputType::GAME_MOVE_RIGHT, false));
+                output.emplace_back(InputEvent(InputType::GAME_HARDDROP, false));
+                output.emplace_back(InputEvent(InputType::GAME_SOFTDROP, false));
+                switch (sdl_event.jhat.value) {
+                    case SDL_HAT_LEFT:
+                        output.emplace_back(InputEvent(InputType::GAME_MOVE_LEFT, true));
+                        output.emplace_back(InputEvent(InputType::MENU_LEFT, true));
+                        break;
+                    case SDL_HAT_RIGHT:
+                        output.emplace_back(InputEvent(InputType::GAME_MOVE_RIGHT, true));
+                        output.emplace_back(InputEvent(InputType::MENU_RIGHT, true));
+                        break;
+                    case SDL_HAT_UP:
+                        output.emplace_back(InputEvent(InputType::GAME_HARDDROP, true));
+                        output.emplace_back(InputEvent(InputType::MENU_UP, true));
+                        break;
+                    case SDL_HAT_DOWN:
+                        output.emplace_back(InputEvent(InputType::GAME_SOFTDROP, true));
+                        output.emplace_back(InputEvent(InputType::MENU_DOWN, true));
+                        break;
+                    default:
+                        break;
+                }
             }
             break;
         case SDL_JOYBUTTONUP:
         case SDL_JOYBUTTONDOWN:
-            {
+            if (joysticks.count(sdl_event.jhat.which)) {
                 // TODO: do not hardcode these values
                 const auto button = sdl_event.jbutton.button;
                 const bool isdown = sdl_event.type == SDL_JOYBUTTONDOWN;
