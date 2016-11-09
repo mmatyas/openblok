@@ -10,8 +10,12 @@
 #include <assert.h>
 
 
-using ScancodeMap = ConfigManager::ScancodeMap;
+using DeviceID = ConfigManager::DeviceID;
+using ButtonMap = ConfigManager::ButtonMap;
+using DeviceMappings = ConfigManager::DeviceMappings;
+
 const std::string LOG_TAG("config");
+
 const std::map<const std::string, InputType> name_to_key = {
     {"pause", InputType::GAME_PAUSE},
     {"hold", InputType::GAME_HOLD},
@@ -30,9 +34,10 @@ const std::map<const std::string, InputType> name_to_key = {
 };
 
 
-ScancodeMap ConfigManager::loadInputMapping(const std::string& path)
+DeviceMappings ConfigManager::loadInputMappings(const std::string& path)
 {
-    const ScancodeMap default_map = {
+    DeviceMappings default_map;
+    default_map["keyboard"] = {
         {InputType::GAME_PAUSE, {SDL_SCANCODE_P}},
         {InputType::GAME_HOLD, {SDL_SCANCODE_C, SDL_SCANCODE_LSHIFT, SDL_SCANCODE_RSHIFT}},
         {InputType::GAME_HARDDROP, {SDL_SCANCODE_UP, SDL_SCANCODE_SPACE}},
@@ -48,8 +53,7 @@ ScancodeMap ConfigManager::loadInputMapping(const std::string& path)
         {InputType::MENU_OK, {SDL_SCANCODE_RETURN, SDL_SCANCODE_SPACE, SDL_SCANCODE_Z}},
         {InputType::MENU_CANCEL, {SDL_SCANCODE_ESCAPE, SDL_SCANCODE_X}},
     };
-
-    ScancodeMap out = default_map;
+    DeviceMappings out = default_map;
 
     std::string line;
     std::string current_head;
@@ -65,8 +69,15 @@ ScancodeMap ConfigManager::loadInputMapping(const std::string& path)
 
         if (std::regex_match(line, valid_head)) {
             current_head = line.substr(1, line.length() - 2);
+            assert(!current_head.empty()); // the regex requires at least one char
         }
         else if (std::regex_match(line, valid_data)) {
+            if (current_head.empty()) {
+                Log::warning(LOG_TAG) << path << ":" << linenum << ": No device defined before this line\n";
+                Log::warning(LOG_TAG) << "Using default settings\n";
+                return default_map;
+            }
+
             std::regex_replace(line, whitespace, "");
             const std::size_t split_pos = line.find("=");
             const std::string key = line.substr(0, split_pos - 1);
@@ -79,12 +90,13 @@ ScancodeMap ConfigManager::loadInputMapping(const std::string& path)
                 std::stringstream str_values(line.substr(split_pos + 1));
                 std::string str_item;
 
-                auto& codelist = out[name_to_key.at(key)];
+                auto& device = out[current_head];
+                auto& codelist = device[name_to_key.at(key)];
                 codelist.clear();
                 while (std::getline(str_values, str_item, ',')) {
                     try {
                         uint16_t value = std::stoul(str_item);
-                        if (value > 0x200)
+                        if (value > 0x200) // there can be 512 keys at most on a device
                             throw std::out_of_range("");
 
                         codelist.emplace_back(value);
@@ -102,7 +114,7 @@ ScancodeMap ConfigManager::loadInputMapping(const std::string& path)
         else {
             Log::warning(LOG_TAG) << path << ":" << linenum << ": Syntax error\n";
             Log::warning(LOG_TAG) << "Using default settings\n";
-            break;
+            return default_map;
         }
 
         linenum++;
@@ -111,7 +123,7 @@ ScancodeMap ConfigManager::loadInputMapping(const std::string& path)
     return out;
 }
 
-void ConfigManager::saveInputMapping(const ScancodeMap& mapping, const std::string& path)
+void ConfigManager::saveInputMapping(const DeviceMappings& mappings, const std::string& path)
 {
     std::ofstream out(path);
     if (!out.is_open()) {
@@ -124,15 +136,18 @@ void ConfigManager::saveInputMapping(const ScancodeMap& mapping, const std::stri
         key_to_name.emplace(pair.second, pair.first);
 
 
-    out << "[keyboard]\n";
-    for (const auto& elem : mapping) {
-        assert(key_to_name.count(elem.first));
+    for (const auto& device : mappings) {
+        out << "[" << device.first << "]\n";
+        for (const auto& elem : device.second) {
+            assert(key_to_name.count(elem.first));
 
-        out << key_to_name.at(elem.first) << " = ";
-        // this puts commas between the numbers only
-        std::ostringstream ss;
-        std::copy(elem.second.begin(), elem.second.end() - 1, std::ostream_iterator<int>(ss, ", "));
-        ss << elem.second.back();
-        out << ss.str() << "\n";
+            out << key_to_name.at(elem.first) << " = ";
+            // this puts commas between the numbers only
+            std::ostringstream ss;
+            std::copy(elem.second.begin(), elem.second.end() - 1, std::ostream_iterator<int>(ss, ", "));
+            ss << elem.second.back();
+            out << ss.str() << "\n";
+        }
+        out << "\n";
     }
 }

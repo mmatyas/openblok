@@ -4,14 +4,17 @@
 
 #include <map>
 #include <string>
+#include <unordered_map>
 #include <vector>
 #include <stdint.h>
 
 
 class ConfigManager {
 public:
-    using ScancodeMap = std::map<InputType, std::vector<uint16_t>>;
+    using DeviceID = std::string;
+    using ButtonMap = std::map<InputType, std::vector<uint16_t>>;
+    using DeviceMappings = std::unordered_map<DeviceID, ButtonMap>;
 
-    ScancodeMap loadInputMapping(const std::string& path);
-    void saveInputMapping(const ScancodeMap&, const std::string& path);
+    DeviceMappings loadInputMappings(const std::string& path);
+    void saveInputMapping(const DeviceMappings&, const std::string& path);
 };

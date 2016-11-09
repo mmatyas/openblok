@@ -9,9 +9,9 @@
 
 InitState::InitState(AppContext& app)
 {
-    auto mapping = app.config().loadInputMapping(Paths::config() + "input.cfg");
-    app.config().saveInputMapping(mapping, Paths::config() + "input.cfg");
-    app.window().setInputMapping(mapping);
+    auto mappings = app.config().loadInputMappings(Paths::config() + "input.cfg");
+    app.config().saveInputMapping(mappings, Paths::config() + "input.cfg");
+    app.window().setInputMapping(mappings.at("keyboard"));
 
     Log::info("init") << "Loading resources from '" << Paths::data() << "'\n";
 
