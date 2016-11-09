@@ -17,7 +17,7 @@ Features:
 - [x] T-Spin and Mini T-Spin support
 - [ ] Combo support
 - [ ] ARE support
-- [x] Gamepad support (partial)
+- [x] Gamepad support
 - [ ] Menu, configuration and stats
 - [ ] Battle mode
 - [x] Music and sound effects
@@ -27,6 +27,7 @@ Features:
 - [x] Runs on embedded Linux, even without X11
 - [x] Runs in browsers (experimental)
 - [ ] Mobile (touch) support
+- [ ] Mouse support
 
 
 Dependencies
@@ -47,7 +48,16 @@ Build
 mkdir build && cd build
 cmake ..
 make
-cd .. && ./build/src/openblok
+cd .. && ./build/src/openblok --data data/
 ```
 
-To run the tests, call `./build/tests/openblok_test` or run the `make coverage` target.
+**Optional build parameters:**
+
+- `BUILD_TESTS`: Builds the test suite. You can run them by calling `./build/tests/openblok_test`. Default: ON.
+- `BUILD_COVERAGE`: Allows building the test coverage report, requires `BUILD_TESTS` and `gcov`/`lcov`. Default: OFF.
+
+**Additional build targets**
+
+- `make coverage`: Builds the test coverage report
+- `make install/strip`: Installs the game on your system
+- `make package`: Creates `tar.gz` and Debian `deb` packages
