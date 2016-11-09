@@ -17,6 +17,7 @@ SDLWindow::SDLWindow()
     , m_quit_requested(false)
 {
     window.SetIcon(SDL2pp::Surface(Paths::data() + "icon.png"));
+    SDL_GameControllerAddMappingsFromFile((Paths::data() + "gamecontrollerdb").c_str());
 }
 
 void SDLWindow::toggleFullscreen()
