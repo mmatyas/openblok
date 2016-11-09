@@ -18,6 +18,21 @@ SDLWindow::SDLWindow()
 {
     window.SetIcon(SDL2pp::Surface(Paths::data() + "icon.png"));
     SDL_GameControllerAddMappingsFromFile((Paths::data() + "gamecontrollerdb").c_str());
+
+    // TODO: add per-device setting and loading from file
+    gamepad_mapping = {
+        {SDL_CONTROLLER_BUTTON_DPAD_UP, {InputType::GAME_HARDDROP, InputType::MENU_UP}},
+        {SDL_CONTROLLER_BUTTON_DPAD_DOWN, {InputType::GAME_SOFTDROP, InputType::MENU_DOWN}},
+        {SDL_CONTROLLER_BUTTON_DPAD_LEFT, {InputType::GAME_MOVE_LEFT, InputType::MENU_LEFT}},
+        {SDL_CONTROLLER_BUTTON_DPAD_RIGHT, {InputType::GAME_MOVE_RIGHT, InputType::MENU_RIGHT}},
+        {SDL_CONTROLLER_BUTTON_A, {InputType::GAME_ROTATE_LEFT, InputType::MENU_OK}},
+        {SDL_CONTROLLER_BUTTON_B, {InputType::GAME_ROTATE_RIGHT, InputType::MENU_CANCEL}},
+        {SDL_CONTROLLER_BUTTON_LEFTSHOULDER, {InputType::GAME_HOLD}},
+        {SDL_CONTROLLER_BUTTON_RIGHTSHOULDER, {InputType::GAME_HOLD}},
+        {SDL_CONTROLLER_BUTTON_BACK, {InputType::GAME_PAUSE}},
+        {SDL_CONTROLLER_BUTTON_GUIDE, {InputType::GAME_PAUSE}},
+        {SDL_CONTROLLER_BUTTON_START, {InputType::GAME_PAUSE}},
+    };
 }
 
 void SDLWindow::toggleFullscreen()
@@ -34,7 +49,7 @@ void SDLWindow::setInputMapping(std::map<InputType, std::vector<uint16_t>> mappi
 {
     for (const auto& elem : mapping) {
         for (const auto& scancode : elem.second)
-            input_mapping[scancode].emplace(elem.first);
+            keyboard_mapping[scancode].emplace(elem.first);
     }
 }
 
@@ -84,7 +99,6 @@ std::vector<Event> SDLWindow::collectEvents()
                     }
                 }
             }
-
             break;
         case SDL_CONTROLLERDEVICEREMOVED:
             if (gamepads.count(sdl_event.cdevice.which)) {
@@ -95,46 +109,9 @@ std::vector<Event> SDLWindow::collectEvents()
             break;
         case SDL_CONTROLLERBUTTONUP:
         case SDL_CONTROLLERBUTTONDOWN:
-            {
-                // TODO: do not hardcode these values
-                const bool isdown = sdl_event.type == SDL_CONTROLLERBUTTONDOWN;
-                switch (sdl_event.cbutton.button) {
-                    case SDL_CONTROLLER_BUTTON_DPAD_UP:
-                        output.emplace_back(InputEvent(InputType::GAME_HARDDROP, isdown));
-                        output.emplace_back(InputEvent(InputType::MENU_UP, isdown));
-                        break;
-                    case SDL_CONTROLLER_BUTTON_DPAD_DOWN:
-                        output.emplace_back(InputEvent(InputType::GAME_SOFTDROP, isdown));
-                        output.emplace_back(InputEvent(InputType::MENU_DOWN, isdown));
-                        break;
-                    case SDL_CONTROLLER_BUTTON_DPAD_LEFT:
-                        output.emplace_back(InputEvent(InputType::GAME_MOVE_LEFT, isdown));
-                        output.emplace_back(InputEvent(InputType::MENU_LEFT, isdown));
-                        break;
-                    case SDL_CONTROLLER_BUTTON_DPAD_RIGHT:
-                        output.emplace_back(InputEvent(InputType::GAME_MOVE_RIGHT, isdown));
-                        output.emplace_back(InputEvent(InputType::MENU_RIGHT, isdown));
-                        break;
-                    case SDL_CONTROLLER_BUTTON_A:
-                        output.emplace_back(InputEvent(InputType::GAME_ROTATE_LEFT, isdown));
-                        output.emplace_back(InputEvent(InputType::MENU_OK, isdown));
-                        break;
-                    case SDL_CONTROLLER_BUTTON_B:
-                        output.emplace_back(InputEvent(InputType::GAME_ROTATE_RIGHT, isdown));
-                        output.emplace_back(InputEvent(InputType::MENU_CANCEL, isdown));
-                        break;
-                    case SDL_CONTROLLER_BUTTON_LEFTSHOULDER:
-                    case SDL_CONTROLLER_BUTTON_RIGHTSHOULDER:
-                        output.emplace_back(InputEvent(InputType::GAME_HOLD, isdown));
-                        break;
-                    case SDL_CONTROLLER_BUTTON_BACK:
-                    case SDL_CONTROLLER_BUTTON_GUIDE:
-                    case SDL_CONTROLLER_BUTTON_START:
-                        output.emplace_back(InputEvent(InputType::GAME_PAUSE, isdown));
-                        break;
-                    default:
-                        break;
-                }
+            if (gamepad_mapping.count(sdl_event.cbutton.button)) {
+                for (const auto& input_event : gamepad_mapping.at(sdl_event.cbutton.button))
+                    output.emplace_back(InputEvent(input_event, sdl_event.type == SDL_CONTROLLERBUTTONDOWN));
             }
             break;
         case SDL_JOYDEVICEADDED:
@@ -224,8 +201,8 @@ std::vector<Event> SDLWindow::collectEvents()
         case SDL_KEYDOWN:
             if (!sdl_event.key.repeat) {
                 uint16_t scancode = sdl_event.key.keysym.scancode;
-                if (input_mapping.count(scancode)) {
-                    for (const auto& input_event : input_mapping.at(scancode))
+                if (keyboard_mapping.count(scancode)) {
+                    for (const auto& input_event : keyboard_mapping.at(scancode))
                         output.emplace_back(InputEvent(input_event, sdl_event.type == SDL_KEYDOWN));
                 }
             }
