@@ -1,7 +1,6 @@
 #include "AutoRepeat.h"
 
 
-
 namespace WellComponents {
 
 AutoRepeat::AutoRepeat(Duration shift_normal, Duration shift_turbo)
@@ -26,7 +25,12 @@ bool AutoRepeat::movementAllowed()
     return das_timer <= Duration::zero();
 }
 
-void AutoRepeat::onSimpleMove()
+bool AutoRepeat::inactive()
+{
+    return das_timer > time_to_activate;
+}
+
+void AutoRepeat::activate()
 {
     das_timer = time_to_activate;
 }
@@ -35,6 +39,5 @@ void AutoRepeat::onDASMove()
 {
     das_timer = autorepeat_delay;
 }
-
 
 } // namespace WellComponents

@@ -17,8 +17,9 @@ public:
     /// update the autorepeat timer
     void update();
 
+    bool inactive();
+    void activate();
     bool movementAllowed();
-    void onSimpleMove();
     void onDASMove();
 
 private:
