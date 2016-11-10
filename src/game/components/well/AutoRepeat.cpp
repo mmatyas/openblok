@@ -5,37 +5,35 @@
 namespace WellComponents {
 
 AutoRepeat::AutoRepeat(Duration shift_normal, Duration shift_turbo)
-    : horizontal_delay_normal(shift_normal)
-    , horizontal_delay_turbo(shift_turbo)
-    , horizontal_delay_current(horizontal_delay_normal)
-    , horizontal_timer(Duration::zero())
-    , das_timer(horizontal_delay_normal)
+    : time_to_activate(shift_normal)
+    , autorepeat_delay(shift_turbo)
+    , das_timer(Duration::max())
 {
 }
 
 void AutoRepeat::reset()
 {
-    das_timer = horizontal_delay_normal;
-    horizontal_delay_current = horizontal_delay_normal;
+    das_timer = Duration::max();
 }
 
 void AutoRepeat::update()
 {
-    horizontal_timer -= Timing::frame_duration;
+    das_timer -= Timing::frame_duration;
 }
 
 bool AutoRepeat::movementAllowed()
 {
-    return horizontal_timer <= Duration::zero();
+    return das_timer <= Duration::zero();
 }
 
-void AutoRepeat::onHorizontalMove()
+void AutoRepeat::onSimpleMove()
 {
-    das_timer -= horizontal_delay_normal;
-    if (das_timer < Duration::zero())
-        horizontal_delay_current = horizontal_delay_turbo;
+    das_timer = time_to_activate;
+}
 
-    horizontal_timer = horizontal_delay_current;
+void AutoRepeat::onDASMove()
+{
+    das_timer = autorepeat_delay;
 }
 
 

@@ -14,16 +14,16 @@ public:
 
     /// turn off autorepeat mode
     void reset();
-
+    /// update the autorepeat timer
     void update();
+
     bool movementAllowed();
-    void onHorizontalMove();
+    void onSimpleMove();
+    void onDASMove();
 
 private:
-    const Duration horizontal_delay_normal; // normal key repeat rate
-    const Duration horizontal_delay_turbo; // turbo key repeat rate
-    Duration horizontal_delay_current; // current input rate, either normal or turbo
-    Duration horizontal_timer; // timer for horizontal autorepeat
+    const Duration time_to_activate;
+    const Duration autorepeat_delay;
     Duration das_timer; // timer for turbo mode activation
 };
 

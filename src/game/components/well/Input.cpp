@@ -48,6 +48,16 @@ void Input::handleKeys(Well& well, const std::vector<InputEvent>& events)
                 well.rotateNow(Well::RotationDirection::CLOCKWISE);
                 break;
 
+            case InputType::GAME_MOVE_LEFT:
+                well.moveLeftNow();
+                well.das.onSimpleMove();
+                break;
+
+            case InputType::GAME_MOVE_RIGHT:
+                well.moveRightNow();
+                well.das.onSimpleMove();
+                break;
+
             default:
                 break;
             }
@@ -57,7 +67,8 @@ void Input::handleKeys(Well& well, const std::vector<InputEvent>& events)
             switch (event.type()) {
             case InputType::GAME_MOVE_LEFT:
             case InputType::GAME_MOVE_RIGHT:
-                well.das.reset();
+                if (!(keystates.at(InputType::GAME_MOVE_LEFT) || keystates.at(InputType::GAME_MOVE_RIGHT)))
+                    well.das.reset();
                 break;
             default:
                 break;
@@ -66,15 +77,15 @@ void Input::handleKeys(Well& well, const std::vector<InputEvent>& events)
     }
 
 
-    well.das.update();
-    if (well.das.movementAllowed()) {
-        if (keystates.at(InputType::GAME_MOVE_LEFT) != keystates.at(InputType::GAME_MOVE_RIGHT)) {
+    if (keystates.at(InputType::GAME_MOVE_LEFT) xor keystates.at(InputType::GAME_MOVE_RIGHT)) {
+        well.das.update();
+        if (well.das.movementAllowed()) {
             if (keystates.at(InputType::GAME_MOVE_LEFT))
                 well.moveLeftNow();
             else
                 well.moveRightNow();
 
-            well.das.onHorizontalMove();
+            well.das.onDASMove();
         }
     }
 
