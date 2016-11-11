@@ -4,8 +4,12 @@ project(openblok C CXX)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
 
 # Build options
-option(BUILD_TESTS "Build the unit tests" ON)
-option(BUILD_TEST_COVERAGE "Build the test coverage report" OFF)
+# Currently unit tests only work only in Debug
+if(NOT ${CMAKE_BUILD_TYPE} MATCHES Release)
+    option(BUILD_TESTS "Build the unit tests" ON)
+    option(BUILD_TEST_COVERAGE "Build the test coverage report" OFF)
+endif()
+# Intallation locations
 set(SHAREDIR "${CMAKE_INSTALL_PREFIX}/share")
 if(UNIX AND NOT APPLE AND NOT CYGWIN)
     option(INSTALL_DESKTOPICON "Install desktop shortcut and icon" ON)

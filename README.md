@@ -53,8 +53,8 @@ cd .. && ./build/src/openblok
 
 **Optional build parameters:**
 
-- `BUILD_TESTS`: Builds the test suite. You can run them by calling `./build/tests/openblok_test`. Default: ON.
-- `BUILD_COVERAGE`: Allows building the test coverage report, requires `BUILD_TESTS` and `gcov`/`lcov`. Default: OFF.
+- `BUILD_TESTS`: Builds the test suite. You can run them by calling `./build/tests/openblok_test`. Debug build only, default: `ON`.
+- `BUILD_COVERAGE`: Allows building the test coverage report. Requires `BUILD_TESTS` and `gcov`/`lcov`. Default: `OFF`.
 - `DATADIR`: Location of the data directory. Defaults to `./data` in debug build, and `<INSTALL LOCATION>/share/openblok` in release.
 
 **Additional build targets**
