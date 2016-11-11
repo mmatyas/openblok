@@ -10,7 +10,7 @@ if(NOT ${CMAKE_BUILD_TYPE} MATCHES Release)
     option(BUILD_TEST_COVERAGE "Build the test coverage report" OFF)
 endif()
 # Intallation locations
-set(SHAREDIR "${CMAKE_INSTALL_PREFIX}/share")
+set(SHAREDIR CACHE STRING "${CMAKE_INSTALL_PREFIX}/share")
 if(UNIX AND NOT APPLE AND NOT CYGWIN)
     option(INSTALL_DESKTOPICON "Install desktop shortcut and icon" ON)
     set(ICONDIR "${SHAREDIR}/pixmaps" CACHE STRING "Install location of the icon file")
@@ -43,8 +43,8 @@ else()
 endif()
 # Build coverage report if requested
 if(BUILD_TEST_COVERAGE)
-	include(CodeCoverage)
-	setup_target_for_coverage(openblok_coverage openblok_test coverage)
+    include(CodeCoverage)
+    setup_target_for_coverage(openblok_coverage openblok_test coverage)
 endif()
 
 
@@ -64,9 +64,9 @@ include_directories("src")
 add_subdirectory(src)
 
 if(BUILD_TESTS)
-	add_subdirectory(external/unittest-cpp)
-	include_directories(external/unittest-cpp)
-	add_subdirectory(tests)
+    add_subdirectory(external/unittest-cpp)
+    include_directories(external/unittest-cpp)
+    add_subdirectory(tests)
 endif()
 
 

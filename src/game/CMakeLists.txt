@@ -1,93 +1,93 @@
 set(MOD_GAME_SRC
-	AppContext.cpp
+    AppContext.cpp
 
-	components/HoldQueue.cpp
-	components/Mino.cpp
-	components/MinoStorage.cpp
-	components/NextQueue.cpp
-	components/Piece.cpp
-	components/PieceFactory.cpp
-	components/PieceType.cpp
-	components/Well.cpp
+    components/HoldQueue.cpp
+    components/Mino.cpp
+    components/MinoStorage.cpp
+    components/NextQueue.cpp
+    components/Piece.cpp
+    components/PieceFactory.cpp
+    components/PieceType.cpp
+    components/Well.cpp
 
-	components/animations/CellLockAnim.cpp
-	components/animations/HalfHeightLineClearAnim.cpp
-	components/animations/LineClearAnim.cpp
-	components/animations/TextPopup.cpp
+    components/animations/CellLockAnim.cpp
+    components/animations/HalfHeightLineClearAnim.cpp
+    components/animations/LineClearAnim.cpp
+    components/animations/TextPopup.cpp
 
-	components/rotations/Classic.cpp
-	components/rotations/SRS.cpp
-	components/rotations/TGM.cpp
+    components/rotations/Classic.cpp
+    components/rotations/SRS.cpp
+    components/rotations/TGM.cpp
 
-	components/well/AutoRepeat.cpp
-	components/well/Gravity.cpp
-	components/well/Input.cpp
-	components/well/LockDelay.cpp
-	components/well/TSpin.cpp
-	components/well/Render.cpp
+    components/well/AutoRepeat.cpp
+    components/well/Gravity.cpp
+    components/well/Input.cpp
+    components/well/LockDelay.cpp
+    components/well/TSpin.cpp
+    components/well/Render.cpp
 
-	layout/menu/Logo.cpp
-	layout/menu/MainMenuBtn.cpp
-	layout/menu/PieceRain.cpp
-	layout/singleplayer/LeftSidebarBox.cpp
-	layout/singleplayer/RightSidebarBox.cpp
-	layout/singleplayer/WellBox.cpp
+    layout/menu/Logo.cpp
+    layout/menu/MainMenuBtn.cpp
+    layout/menu/PieceRain.cpp
+    layout/singleplayer/LeftSidebarBox.cpp
+    layout/singleplayer/RightSidebarBox.cpp
+    layout/singleplayer/WellBox.cpp
 
-	states/InitState.cpp
-	states/MainMenuState.cpp
-	states/SinglePlayState.cpp
-	states/substates/SinglePlayer.cpp
+    states/InitState.cpp
+    states/MainMenuState.cpp
+    states/SinglePlayState.cpp
+    states/substates/SinglePlayer.cpp
 )
 
 set(MOD_GAME_H
-	AppContext.h
-	GameState.h
-	Matrix.h
-	Timing.h
-	Transition.h
-	WellEvent.h
+    AppContext.h
+    GameState.h
+    Matrix.h
+    Timing.h
+    Transition.h
+    WellEvent.h
 
-	components/HoldQueue.h
-	components/Mino.h
-	components/MinoStorage.h
-	components/NextQueue.h
-	components/Piece.h
-	components/PieceFactory.h
-	components/PieceType.h
-	components/Well.h
-	components/WellConfig.h
+    components/HoldQueue.h
+    components/Mino.h
+    components/MinoStorage.h
+    components/NextQueue.h
+    components/Piece.h
+    components/PieceFactory.h
+    components/PieceType.h
+    components/Well.h
+    components/WellConfig.h
 
-	components/animations/WellAnimation.h
-	components/animations/CellLockAnim.h
-	components/animations/HalfHeightLineClearAnim.h
-	components/animations/LineClearAnim.h
-	components/animations/TextPopup.h
+    components/animations/WellAnimation.h
+    components/animations/CellLockAnim.h
+    components/animations/HalfHeightLineClearAnim.h
+    components/animations/LineClearAnim.h
+    components/animations/TextPopup.h
 
-	components/rotations/Classic.h
-	components/rotations/RotationFn.h
-	components/rotations/SRS.h
-	components/rotations/TGM.h
+    components/rotations/Classic.h
+    components/rotations/RotationFn.h
+    components/rotations/SRS.h
+    components/rotations/TGM.h
 
-	components/well/AutoRepeat.h
-	components/well/Gravity.h
-	components/well/Input.h
-	components/well/LockDelay.h
-	components/well/TSpin.h
-	components/well/Render.h
+    components/well/AutoRepeat.h
+    components/well/Gravity.h
+    components/well/Input.h
+    components/well/LockDelay.h
+    components/well/TSpin.h
+    components/well/Render.h
 
-	layout/Box.h
-	layout/menu/Button.h
-	layout/menu/Logo.h
-	layout/menu/MainMenuBtn.h
-	layout/menu/PieceRain.h
-	layout/singleplayer/LeftSidebarBox.h
-	layout/singleplayer/RightSidebarBox.h
-	layout/singleplayer/WellBox.h
+    layout/Box.h
+    layout/menu/Button.h
+    layout/menu/Logo.h
+    layout/menu/MainMenuBtn.h
+    layout/menu/PieceRain.h
+    layout/singleplayer/LeftSidebarBox.h
+    layout/singleplayer/RightSidebarBox.h
+    layout/singleplayer/WellBox.h
 
-	states/InitState.h
-	states/MainMenuState.h
-	states/SinglePlayState.h
-	states/substates/SinglePlayer.h
+    states/InitState.h
+    states/MainMenuState.h
+    states/SinglePlayState.h
+    states/substates/SinglePlayer.h
 )
 
 if(NOT CMAKE_BUILD_TYPE MATCHES Release)
