@@ -35,9 +35,13 @@ Well::Well(WellConfig&& config)
 
 Well::~Well() = default;
 
-void Well::update(const std::vector<InputEvent>& events)
+void Well::updateKeystateOnly(const std::vector<InputEvent>& events)
 {
     input.updateKeystate(events);
+}
+
+void Well::updateGameplayOnly(const std::vector<InputEvent>& events)
+{
     updateAnimations();
 
     if (gameover)
@@ -64,6 +68,14 @@ void Well::update(const std::vector<InputEvent>& events)
     gravity.update(*this);
     lock_delay.update(*this);
 }
+
+#ifndef NDEBUG
+void Well::update(const std::vector<InputEvent>& events)
+{
+    updateKeystateOnly(events);
+    updateGameplayOnly(events);
+}
+#endif
 
 void Well::updateAnimations()
 {

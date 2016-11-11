@@ -69,6 +69,8 @@ void WellBox::update(const std::vector<Event>& events, SubStates::SinglePlayer::
             input_events.emplace_back(event.input.type(), event.input.down());
     }
 
+    m_well.updateKeystateOnly(input_events);
+
     using StateType = SubStates::SinglePlayer::StateType;
     switch (current_state) {
         case StateType::COUNTDOWN:
@@ -78,7 +80,7 @@ void WellBox::update(const std::vector<Event>& events, SubStates::SinglePlayer::
             countdown.restart();
             break;
         case StateType::GAME_RUNNING:
-            m_well.update(input_events);
+            m_well.updateGameplayOnly(input_events);
             if (gameover) {
                 gameover_background.update(Timing::frame_duration);
                 if (gameover_background.running()) {

@@ -39,8 +39,12 @@ public:
     Well(WellConfig&&);
     ~Well();
 
-    /// Update the well
-    void update(const std::vector<InputEvent>&);
+    /// Update the keystate of the well: Currently the system keystate
+    /// is not directly accessible, so it is required to check the input
+    /// events every frame. This function does not call any game logic.
+    void updateKeystateOnly(const std::vector<InputEvent>&);
+    /// Update the game logic of the well
+    void updateGameplayOnly(const std::vector<InputEvent>&);
 
     /// Add a new, player-controllable piece to the well.
     void addPiece(PieceType);
@@ -69,6 +73,7 @@ public:
     }
 
 #ifndef NDEBUG
+    void update(const std::vector<InputEvent>&); ///< Update both the keystate and the game logic
     std::string asAscii() const;
     void fromAscii(const std::string&);
 #endif
