@@ -6,6 +6,7 @@
 
 #include "SDL2pp/SDL2pp.hh"
 #include <exception>
+#include <map>
 
 
 const std::string LOG_TAG("audio");
@@ -25,12 +26,20 @@ SDLAudioContext::~SDLAudioContext()
 
 std::shared_ptr<Music> SDLAudioContext::loadMusic(const std::string& path)
 {
-    return std::make_shared<SDLMusic>(SDL2pp::Music(path));
+    static std::map<const std::string, std::weak_ptr<Music>> cache;
+    auto item = cache[path].lock();
+    if (!item)
+        cache[path] = item = std::make_shared<SDLMusic>(SDL2pp::Music(path));
+    return item;
 }
 
 std::shared_ptr<SoundEffect> SDLAudioContext::loadSound(const std::string& path)
 {
-    return std::make_shared<SDLSoundEffect>(SDL2pp::Chunk(path));
+    static std::map<const std::string, std::weak_ptr<SoundEffect>> cache;
+    auto item = cache[path].lock();
+    if (!item)
+        cache[path] = item = std::make_shared<SDLSoundEffect>(SDL2pp::Chunk(path));
+    return item;
 }
 
 void SDLAudioContext::pauseAll()
