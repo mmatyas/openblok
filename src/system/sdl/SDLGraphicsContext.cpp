@@ -6,6 +6,7 @@
 
 #include "SDL2pp/SDL2pp.hh"
 #include <exception>
+#include <map>
 #include <assert.h>
 
 
@@ -77,7 +78,11 @@ void SDLGraphicsContext::modifyDrawScale(float scale)
 
 std::shared_ptr<Font> SDLGraphicsContext::loadFont(const std::string& path, unsigned pt)
 {
-    return std::make_shared<SDLFont>(SDL2pp::Font(path, pt));
+    static std::map<std::pair<const std::string, unsigned>, std::weak_ptr<Font>> cache;
+    auto item = cache[{path, pt}].lock();
+    if (!item)
+        cache[{path, pt}] = item = std::make_shared<SDLFont>(SDL2pp::Font(path, pt));
+    return item;
 }
 
 std::unique_ptr<Texture> SDLGraphicsContext::loadTexture(const std::string& path)

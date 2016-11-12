@@ -35,6 +35,5 @@ private:
     uint32_t pixelformat;
 
     std::function<void()> on_render_callback;
-
     void saveScreenshotBMP(const SDL2pp::Window&, const std::string& path);
 };
