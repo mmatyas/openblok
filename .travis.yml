@@ -1,0 +1,55 @@
+language: cpp
+
+sudo: required
+dist: trusty
+
+branches:
+  only:
+    - master
+
+
+matrix:
+  include:
+  - compiler: gcc
+    env: BUILD=native
+    before_install:
+    - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
+    - sudo apt-get -qq update
+    - sudo apt-get install -y
+        g++-4.9
+        libsdl2-dev
+        libsdl2-image-dev
+        libsdl2-mixer-dev
+        libsdl2-ttf-dev
+    - export CC=gcc-4.9
+    - export CXX=g++-4.9
+  - os: osx
+    compiler: clang
+    env: BUILD=native
+    before_install:
+    - brew update
+    - brew install
+        sdl2
+        sdl2_image
+        sdl2_mixer
+        sdl2_ttf
+
+
+before_script:
+  - if [[ "$BUILD" == "native" ]]; then
+      $CXX --version;
+      cmake --version;
+      sdl2-config --version;
+    fi
+
+
+script:
+  - if [[ "$BUILD" == "native" ]]; then
+      mkdir build;
+      cd build;
+      cmake .. -DCMAKE_BUILD_TYPE=Debug;
+      make VERBOSE=1;
+    fi
+  - if [[ "$BUILD" == "native" ]]; then
+      ./tests/openblok_test;
+    fi
