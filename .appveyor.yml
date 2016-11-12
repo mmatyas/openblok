@@ -1,0 +1,47 @@
+os: Visual Studio 2015
+
+platform:
+  - x86
+
+branches:
+  only:
+    - master
+
+
+environment:
+  BASEDIR: c:\mylibs
+  INCLUDEDIR: c:\mylibs\include\SDL2
+  LIBDIR: c:\mylibs\lib
+
+
+install:
+  - cmake --version
+  - mkdir %INCLUDEDIR%
+  - mkdir %LIBDIR%
+  - cd %TEMP%
+  # Download SDL2
+  - appveyor DownloadFile https://www.libsdl.org/release/SDL2-devel-2.0.5-VC.zip
+  - appveyor DownloadFile https://www.libsdl.org/projects/SDL_image/release/SDL2_image-devel-2.0.1-VC.zip
+  - appveyor DownloadFile https://www.libsdl.org/projects/SDL_mixer/release/SDL2_mixer-devel-2.0.1-VC.zip
+  - appveyor DownloadFile https://www.libsdl.org/projects/SDL_ttf/release/SDL2_ttf-devel-2.0.14-VC.zip
+  # Extract files
+  - 7z x SDL2-devel-2.0.5-VC.zip > nul
+  - 7z x SDL2_image-devel-2.0.1-VC.zip > nul
+  - 7z x SDL2_mixer-devel-2.0.1-VC.zip > nul
+  - 7z x SDL2_ttf-devel-2.0.14-VC.zip > nul
+  # Set up includes
+  - copy SDL2-2.0.5\include\* %INCLUDEDIR% > nul
+  - copy SDL2_image-2.0.1\include\* %INCLUDEDIR% > nul
+  - copy SDL2_mixer-2.0.1\include\* %INCLUDEDIR% > nul
+  - copy SDL2_ttf-2.0.14\include\* %INCLUDEDIR% > nul
+  # Set up libs
+  - copy SDL2-2.0.5\lib\x86\* %LIBDIR% > nul
+  - copy SDL2_image-2.0.1\lib\x86\* %LIBDIR% > nul
+  - copy SDL2_mixer-2.0.1\lib\x86\* %LIBDIR% > nul
+  - copy SDL2_ttf-2.0.14\lib\x86\* %LIBDIR% > nul
+
+
+build_script:
+  - cd %APPVEYOR_BUILD_FOLDER%
+  - cmake -DCMAKE_PREFIX_PATH=%BASEDIR% -G "Visual Studio 14 2015" .
+  - cmake --build .
