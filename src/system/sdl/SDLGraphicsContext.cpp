@@ -5,6 +5,7 @@
 #include "system/Log.h"
 
 #include "SDL2pp/SDL2pp.hh"
+#include <cmath>
 #include <exception>
 #include <map>
 #include <assert.h>
@@ -67,7 +68,7 @@ float SDLGraphicsContext::getDrawScale() const
 {
     float x, y;
     renderer.GetScale(x, y);
-    assert(std::abs(x - y) < 0.001);
+    assert(std::fabs(x - y) < 0.001);
     return x;
 }
 
