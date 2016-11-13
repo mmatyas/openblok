@@ -6,24 +6,11 @@ dist: trusty
 branches:
   only:
     - master
-
+    - coverity_scan
 
 env:
-  - BUILD_TYPE=Release BOOSTREGEX=ON
-  - BUILD_TYPE=Debug BOOSTREGEX=ON
-
-matrix:
-  include:
-  - os: osx
-    compiler: clang
-    env: BOOSTREGEX=OFF
-    before_install:
-    - brew update
-    - brew install
-        sdl2
-        sdl2_image
-        sdl2_mixer
-        sdl2_ttf
+  global:
+    - secure: "e3nBcV8CAo7HRefQ/j20FnLplAgZ1iFqbykZZIYHJERsHZqJl36Oc36kALIsvS8vWrygASotoEEX2jiz7dUo2PQ5q9DQ9aEGpB7fVOPkhHGuLcKmp82/Vv+urZqrnw0DCSZ6RFV3OaYOjKMEgMFZ9tD0I5LOHP+0vV+xTbFgr6j5yCROgEND1h0Ul6myDOzPoJmc5lwUs8aDuwwpfHq7UiXk7SB00Y2kjp9xYNwbN5hvY2kyAtC2xTKUQoCRyjw6WOdBVnowg6JWrTLaopIJbroQbhMrxakghxGsAQLcB0MRrbDw5m50lINJfhad8oGFqqcEuLCLNzIiBFp30EeCgmnRJUUN6TNf3FWoAlO9gGsi5tEYP/fY6TWtq3pbGsbgc/1qCorzETnwwTEAsmS6PSZxIIdfmd70YdHDudu6u7E/+lXhhjJ1tkfqXLgzMVd3yB3l2OTaxs1dGgVYwYnJj7jS3VQklvuupkIUMPTl8tR4dQ6KjDhmYbKDCIZR11p5jC54k6733y+RTc0uYfDl6U1F2Ej/hDjG05tuXoEI0DIN1AsVphQ4QDgeW5wVnuNdyx//7+Uq4t2ZdAqKFiCfqrFBwnKAlrt2w7ZEDYaZUtgeHl/bI9a3TD2uIjbF015SOl2uZ5rVI1Cy9Rm2sDwzJp4m7ahtyAYAvmkKG8o4FcI="
 
 
 before_install:
@@ -33,10 +20,7 @@ before_install:
       libsdl2-image-dev
       libsdl2-mixer-dev
       libsdl2-ttf-dev
-  - if [[ $TRAVIS_OS_NAME == linux && $BUILD_TYPE == Release ]]; then
-      wget https://github.com/mmatyas/mmatyas.github.io/releases/download/arm-libs/appstream-085-ubuntu1404.tgz &&
-      sudo tar xzf appstream-085-ubuntu1404.tgz -C /;
-    fi
+  - echo -n | openssl s_client -connect scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
 
 before_script:
   - $CXX --version
@@ -44,19 +28,19 @@ before_script:
   - sdl2-config --version
 
 script:
-  - mkdir build && cd build
-  - cmake ..
+  - true
+
+
+addons:
+  coverity_scan:
+    project:
+      name: "mmatyas/openblok"
+      description: "Build submitted via Travis CI"
+    notification_email: "mmatyas@inf.u-szeged.hu"
+    build_command_prepend: cmake .
       -DCMAKE_INSTALL_PREFIX=/usr
-      -DCMAKE_BUILD_TYPE=${BUILD_TYPE}
-      -DUSE_BOOST_REGEX=${BOOSTREGEX}
+      -DCMAKE_BUILD_TYPE=Debug
+      -DUSE_BOOST_REGEX=ON
       -DENABLE_MP3=OFF
-  - make VERBOSE=1
-  - if [[ $BUILD_TYPE == Debug ]]; then
-      ./tests/openblok_test;
-    fi
-  - if [[ $TRAVIS_OS_NAME == linux && $BUILD_TYPE == Release ]]; then
-      bash -e ../etc/appimage/travis.sh &&
-      chmod +x ~/out/OpenBlok*.AppImage &&
-      wget -c https://github.com/probonopd/uploadtool/raw/master/upload.sh &&
-      bash ./upload.sh ~/out/OpenBlok*.AppImage;
-    fi
+    build_command: make
+    branch_pattern: coverity_scan
