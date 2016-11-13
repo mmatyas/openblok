@@ -56,12 +56,12 @@ TSpinDetectionResult TSpin::check(Well& well)
     // A?B
     // ?T?
     // D?C
-    std::array<std::pair<int8_t, uint8_t>, 4> diagonals = {
+    std::array<std::pair<int8_t, uint8_t>, 4> diagonals = {{
         std::make_pair(well.active_piece_x, well.active_piece_y),
         std::make_pair(well.active_piece_x + 2, well.active_piece_y),
         std::make_pair(well.active_piece_x + 2, well.active_piece_y + 2),
         std::make_pair(well.active_piece_x, well.active_piece_y + 2),
-    };
+    }};
 
     auto pattern_orientation = PieceDirection::NORTH;
     while (pattern_orientation != well.active_piece->orientation()) {

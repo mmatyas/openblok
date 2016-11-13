@@ -52,11 +52,11 @@ void FadeIn::draw(SinglePlayState&, GraphicsContext& gcx) const
 Countdown::Countdown(AppContext& app)
     : current_idx(0)
     , timer(std::chrono::milliseconds(800), [](double){})
-    , sfx_countdown({
+    , sfx_countdown({{
             app.audio().loadSound(Paths::data() + "sfx/countdown3.ogg"),
             app.audio().loadSound(Paths::data() + "sfx/countdown2.ogg"),
             app.audio().loadSound(Paths::data() + "sfx/countdown1.ogg"),
-        })
+        }})
 {
     timer.stop();
 }
@@ -105,12 +105,12 @@ Gameplay::Gameplay(SinglePlayState& parent, AppContext& app)
     , music(app.audio().loadMusic(Paths::data() + "music/gameplay.ogg"))
     , sfx_onhold(app.audio().loadSound(Paths::data() + "sfx/hold.ogg"))
     , sfx_onlevelup(app.audio().loadSound(Paths::data() + "sfx/levelup.ogg"))
-    , sfx_onlineclear({
+    , sfx_onlineclear({{
             app.audio().loadSound(Paths::data() + "sfx/lineclear1.ogg"),
             app.audio().loadSound(Paths::data() + "sfx/lineclear2.ogg"),
             app.audio().loadSound(Paths::data() + "sfx/lineclear3.ogg"),
             app.audio().loadSound(Paths::data() + "sfx/lineclear4.ogg"),
-        })
+        }})
     , sfx_onlock(app.audio().loadSound(Paths::data() + "sfx/lock.ogg"))
     , sfx_onrotate(app.audio().loadSound(Paths::data() + "sfx/rotate.ogg"))
     , font_popuptext(app.gcx().loadFont(Paths::data() + "fonts/PTS76F.ttf", 34))

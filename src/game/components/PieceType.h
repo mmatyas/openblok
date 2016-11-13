@@ -8,7 +8,7 @@ enum class PieceType : uint8_t {
     I, J, L, O, S, T, Z
 };
 
-constexpr std::array<PieceType, 7> PieceTypeList = {
+constexpr std::array<PieceType, 7> PieceTypeList = {{
     PieceType::I,
     PieceType::J,
     PieceType::L,
@@ -16,7 +16,7 @@ constexpr std::array<PieceType, 7> PieceTypeList = {
     PieceType::S,
     PieceType::T,
     PieceType::Z,
-};
+}};
 
 struct PieceTypeHash {
     size_t operator()(PieceType t) const {

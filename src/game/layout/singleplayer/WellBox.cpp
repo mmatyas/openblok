@@ -37,11 +37,11 @@ WellBox::WellBox(AppContext& app)
     tex_gameover = font_big->renderText(tr("GAME OVER"), 0xEEEEEE00_rgba);
 
     auto font_huge = app.gcx().loadFont(Paths::data() + "fonts/helsinki.ttf", 150);
-    tex_countdown = {
+    tex_countdown = {{
         font_huge->renderText(tr("3"), 0xEEEEEE_rgb),
         font_huge->renderText(tr("2"), 0xEEEEEE_rgb),
         font_huge->renderText(tr("1"), 0xEEEEEE_rgb),
-    };
+    }};
 
     setPosition(0, 0);
     gameover_background.stop();
