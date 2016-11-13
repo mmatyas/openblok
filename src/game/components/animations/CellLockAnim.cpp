@@ -4,6 +4,8 @@
 #include "game/Timing.h"
 #include "system/GraphicsContext.h"
 
+#include <algorithm>
+
 
 CellLockAnim::CellLockAnim(unsigned row, unsigned col)
     : WellAnimation()

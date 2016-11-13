@@ -4,6 +4,8 @@
 #include "game/components/Piece.h"
 #include "game/components/Well.h"
 
+#include <cctype>
+
 
 namespace WellComponents {
 

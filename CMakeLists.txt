@@ -30,7 +30,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Turn on warnings
 include(CheckCXXCompilerFlag)
 if(MSVC)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W3")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W3") # warnings
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Za") # boolean keywords
 else()
     check_cxx_compiler_flag("-Wall -Wextra -pedantic" OBLOK_WARNING_FLAGS_SUPPORTED)
     if(OBLOK_WARNING_FLAGS_SUPPORTED)

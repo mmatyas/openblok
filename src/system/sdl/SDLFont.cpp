@@ -60,7 +60,7 @@ std::unique_ptr<Texture> SDLFont::renderText(const std::string& text, const RGBA
         throw std::runtime_error(SDL_GetError());
 
     // create the surface and blit the lines on it
-    const SDL_Color rgba_color({color.r, color.g, color.b, 255});
+    const SDL_Color rgba_color = {color.r, color.g, color.b, 255};
     SDL2pp::Surface basesurf(0, width,  line_height * lines.size(),
                              bpp, rmask, gmask, bmask, amask);
     basesurf.SetBlendMode(SDL_BLENDMODE_ADD);
