@@ -39,7 +39,7 @@ private:
 
     std::unordered_map<uint16_t, std::set<InputType>> keyboard_mapping;
     std::unordered_map<uint8_t, std::set<InputType>> gamepad_mapping;
-    std::unordered_map<uint8_t, std::set<InputType>> joystick_mapping;
+    std::unordered_map<uint16_t, std::set<InputType>> joystick_mapping;
 
     bool m_quit_requested;
 };
