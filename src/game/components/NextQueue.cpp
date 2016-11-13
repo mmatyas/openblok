@@ -8,8 +8,6 @@
 #include <assert.h>
 
 
-std::array<PieceType, PieceTypeList.size()> possible_pieces = PieceTypeList;
-
 NextQueue::NextQueue (unsigned displayed_piece_count)
     : displayed_piece_count(displayed_piece_count)
 {
@@ -37,8 +35,8 @@ PieceType NextQueue::next()
 
 void NextQueue::generate_pieces()
 {
+    std::array<PieceType, PieceTypeList.size()> possible_pieces = PieceTypeList;
     std::random_shuffle(possible_pieces.begin(), possible_pieces.end());
-
     for (const auto p : possible_pieces)
         piece_queue.push_back(p);
 }
