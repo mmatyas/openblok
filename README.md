@@ -1,6 +1,8 @@
 OpenBlok
 ========
 
+[![Linux/OSX build status](https://travis-ci.org/mmatyas/openblok.svg?branch=master)](https://travis-ci.org/mmatyas/openblok)
+[![Windows build status](https://ci.appveyor.com/api/projects/status/github/mmatyas/openblok?svg=true&branch=master)](https://ci.appveyor.com/project/mmatyas/openblok)
 
 A customizable, cross platform, open-source falling block game, packed with a bunch of features.
 
