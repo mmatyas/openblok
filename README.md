@@ -67,3 +67,11 @@ cd .. && ./build/src/openblok
 - `make coverage`: Builds the test coverage report
 - `make install/strip`: Installs the game on your system
 - `make package`: Creates `tar.gz` and Debian `deb` packages
+
+
+Notes
+-----
+
+**Hardware acceleration on ARM Linux**
+
+Using the default SDL2 library shipped with Debian/Raspian, hardware acceleration may not work properly, causing slowness and ugly graphics. For the best performance, it is recommended to build your own SDL2, as described [here](https://github.com/mmatyas/openblok/wiki/Custom-SDL2-build-for-ARM). With hardware acceleration, OpenBlok runs full speed even on a first-gen Raspberry Pi.
