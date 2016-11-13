@@ -13,6 +13,7 @@
 #include "system/Texture.h"
 
 #include <algorithm>
+#include <cmath>
 
 
 namespace SubStates {
