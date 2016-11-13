@@ -1,9 +1,12 @@
 OpenBlok
 ========
 
-A customizable, open-source falling block game.
 
-Features:
+A customizable, cross platform, open-source falling block game, packed with a bunch of features.
+
+![Screenshot](etc/promo/screenshot01.png)
+
+**Features:**
 
 - [x] Ghost piece support
 - [x] Hold piece support
