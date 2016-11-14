@@ -28,3 +28,8 @@ void SDLTexture::drawPartialScaled(const Rectangle& from, const Rectangle& to)
                    SDL2pp::Rect(from.x, from.y, from.w, from.h),
                    SDL2pp::Rect(to.x, to.y, to.w, to.h));
 }
+
+void SDLTexture::setAlpha(uint8_t alpha)
+{
+    tex.SetAlphaMod(alpha);
+}

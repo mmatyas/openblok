@@ -13,6 +13,8 @@ public:
     void drawScaled(const Rectangle&) final;
     void drawPartialScaled(const Rectangle& from, const Rectangle& to) final;
 
+    void setAlpha(uint8_t) final;
+
     unsigned width() const final { return tex.GetWidth(); }
     unsigned height() const final { return tex.GetHeight(); }
 
