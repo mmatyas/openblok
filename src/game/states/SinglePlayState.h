@@ -20,6 +20,9 @@ public:
 
     std::list<std::unique_ptr<SubStates::SinglePlayer::State>> states;
 
+    int wellCenterX() const { return ui_well.x() + ui_well.width() / 2; };
+    int wellCenterY() const { return ui_well.y() + ui_well.height() / 2; };
+
 private:
     bool gameover;
     std::unique_ptr<Texture> tex_background;

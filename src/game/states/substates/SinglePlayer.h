@@ -18,6 +18,7 @@ class Music;
 class SinglePlayState;
 class SoundEffect;
 class TextPopup;
+class Texture;
 
 
 namespace SubStates {
@@ -57,12 +58,14 @@ public:
     Countdown(AppContext& app);
     StateType type() const { return StateType::COUNTDOWN; }
     void update(SinglePlayState&, const std::vector<Event>&, AppContext&) final;
+    void draw(SinglePlayState&, GraphicsContext&) const final;
 
 private:
     uint8_t current_idx;
     Transition<void> timer;
 
     std::array<std::shared_ptr<SoundEffect>, 3> sfx_countdown;
+    std::array<std::unique_ptr<Texture>, 3> tex_countdown;
 };
 
 class Pause : public State {
@@ -70,6 +73,10 @@ public:
     Pause(AppContext&);
     StateType type() const { return StateType::PAUSED; }
     void update(SinglePlayState&, const std::vector<Event>&, AppContext&) final;
+    void draw(SinglePlayState&, GraphicsContext&) const final;
+
+private:
+    std::unique_ptr<Texture> tex;
 };
 
 class Gameplay : public State {

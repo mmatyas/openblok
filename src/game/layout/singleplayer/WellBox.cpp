@@ -33,15 +33,7 @@ WellBox::WellBox(AppContext& app)
     bounding_box.h = 20.3 * Mino::texture_size_px + border_width * 2;
 
     font_big = app.gcx().loadFont(Paths::data() + "fonts/PTC75F.ttf", 45);
-    tex_pause = font_big->renderText(tr("PAUSE"), 0xEEEEEE_rgb);
     tex_gameover = font_big->renderText(tr("GAME OVER"), 0xEEEEEE00_rgba);
-
-    auto font_huge = app.gcx().loadFont(Paths::data() + "fonts/helsinki.ttf", 150);
-    tex_countdown = {{
-        font_huge->renderText(tr("3"), 0xEEEEEE_rgb),
-        font_huge->renderText(tr("2"), 0xEEEEEE_rgb),
-        font_huge->renderText(tr("1"), 0xEEEEEE_rgb),
-    }};
 
     setPosition(0, 0);
     gameover_background.stop();
@@ -73,12 +65,6 @@ void WellBox::update(const std::vector<Event>& events, SubStates::SinglePlayer::
 
     using StateType = SubStates::SinglePlayer::StateType;
     switch (current_state) {
-        case StateType::COUNTDOWN:
-            countdown.update(Timing::frame_duration);
-            break;
-        case StateType::PAUSED:
-            countdown.restart();
-            break;
         case StateType::GAME_RUNNING:
             m_well.updateGameplayOnly(input_events);
             if (gameover) {
@@ -102,19 +88,6 @@ void WellBox::draw(GraphicsContext& gcx, SubStates::SinglePlayer::StateType curr
 
     using StateType = SubStates::SinglePlayer::StateType;
     switch (current_state) {
-        case StateType::FADE_IN:
-            break;
-        case StateType::COUNTDOWN: {
-                assert(countdown.value() < 3);
-                auto& tex = tex_countdown.at(countdown.value());
-                tex->drawAt(x() + (width() - static_cast<int>(tex->width())) / 2,
-                            y() + (height() - static_cast<int>(tex->height())) / 2);
-            }
-            break;
-        case StateType::PAUSED:
-            tex_pause->drawAt(x() + (width() - static_cast<int>(tex_pause->width())) / 2,
-                              y() + (height() - static_cast<int>(tex_pause->height())) / 2);
-            break;
         case StateType::GAME_RUNNING:
             m_well.drawContent(gcx, x() + border_width, y() + border_width);
             if (gameover) {
@@ -129,6 +102,8 @@ void WellBox::draw(GraphicsContext& gcx, SubStates::SinglePlayer::StateType curr
             }
         case StateType::FINISHED:
             // TODO
+            break;
+        default:
             break;
     }
 

@@ -35,12 +35,10 @@ private:
     Transition<double> gameover_background;
 
     std::shared_ptr<Font> font_big;
-    std::unique_ptr<Texture> tex_pause;
     std::unique_ptr<Texture> tex_gameover;
     std::shared_ptr<SoundEffect> sfx_ongameover;
 
     Transition<uint8_t> countdown;
-    std::array<std::unique_ptr<Texture>, 3> tex_countdown;
 
     static constexpr uint8_t border_width = 5;
     ::Rectangle border_left;

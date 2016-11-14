@@ -6,6 +6,7 @@
 #include "game/states/SinglePlayState.h"
 #include "system/AudioContext.h"
 #include "system/Color.h"
+#include "system/Font.h"
 #include "system/Localize.h"
 #include "system/Music.h"
 #include "system/SoundEffect.h"
@@ -59,32 +60,49 @@ Countdown::Countdown(AppContext& app)
             app.audio().loadSound(Paths::data() + "sfx/countdown1.ogg"),
         }})
 {
-    timer.stop();
+    auto font_huge = app.gcx().loadFont(Paths::data() + "fonts/helsinki.ttf", 150);
+    tex_countdown = {{
+        font_huge->renderText(tr("3"), 0xEEEEEE_rgb),
+        font_huge->renderText(tr("2"), 0xEEEEEE_rgb),
+        font_huge->renderText(tr("1"), 0xEEEEEE_rgb),
+    }};
+
+    sfx_countdown.at(current_idx)->playOnce();
 }
 
 void Countdown::update(SinglePlayState& parent, const std::vector<Event>&, AppContext& app)
 {
-    timer.update(Timing::frame_duration);
-
     if (!timer.running()) {
-        if (current_idx < 3)
-            sfx_countdown.at(current_idx)->playOnce();
-        else {
+        current_idx++;
+        if (current_idx == 3) {
             app.audio().resumeAll();
             assert(parent.states.size() > 1); // there should be a Gameplay state below
             parent.states.pop_back(); // pops self!
             return;
         }
-
-        this->current_idx++;
+        assert(current_idx < 3);
+        sfx_countdown.at(current_idx)->playOnce();
         this->timer.restart();
     }
+
+    timer.update(Timing::frame_duration);
+}
+
+void Countdown::draw(SinglePlayState& parent, GraphicsContext&) const
+{
+    assert(current_idx < 3);
+    auto& tex = tex_countdown.at(current_idx);
+    tex->drawAt(parent.wellCenterX() - static_cast<int>(tex->width()) / 2,
+                parent.wellCenterY() - static_cast<int>(tex->height()) / 2);
 }
 
 
 Pause::Pause(AppContext& app)
 {
     app.audio().pauseAll();
+
+    auto font_big = app.gcx().loadFont(Paths::data() + "fonts/PTC75F.ttf", 45);
+    tex = font_big->renderText(tr("PAUSE"), 0xEEEEEE_rgb);
 }
 
 void Pause::update(SinglePlayState& parent, const std::vector<Event>& events, AppContext&)
@@ -98,6 +116,12 @@ void Pause::update(SinglePlayState& parent, const std::vector<Event>& events, Ap
             parent.states.pop_back();
         }
     }
+}
+
+void Pause::draw(SinglePlayState& parent, GraphicsContext&) const
+{
+    tex->drawAt(parent.wellCenterX() - static_cast<int>(tex->width()) / 2,
+                parent.wellCenterY() - static_cast<int>(tex->height()) / 2);
 }
 
 
