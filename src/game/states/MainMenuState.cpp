@@ -46,18 +46,20 @@ MainMenuState::MainMenuState(AppContext& app)
 
     // move one of the rains lower
     auto& rain = rains.at(0);
-    rain.setPosition(0, 48); // about 1.5 minos, TODO: Fix magic numbers
+    rain.setPosition(0, 48); // about 1.5 minos lower, TODO: Fix magic numbers
 
     music->playLoop();
+
+    updatePositions(app.gcx());
 }
 
 MainMenuState::~MainMenuState() = default;
 
-void MainMenuState::update(const std::vector<Event>& events, AppContext& app)
+void MainMenuState::updatePositions(GraphicsContext& gcx)
 {
-    const int center_y = app.gcx().screenHeight() / 2;
-    const int left_x = 20 + app.gcx().screenWidth() * 0.1;
-    const int right_x = app.gcx().screenWidth() - left_x + 32; // move 1 mino left, TODO: Fix magic numbers
+    const int center_y = gcx.screenHeight() / 2;
+    const int left_x = 20 + gcx.screenWidth() * 0.1;
+    const int right_x = gcx.screenWidth() - left_x + 32; // move 1 mino left, TODO: Fix magic numbers
 
     logo.setPosition(left_x, center_y - 260);
 
@@ -65,8 +67,7 @@ void MainMenuState::update(const std::vector<Event>& events, AppContext& app)
     for (auto& rain : rains) {
         rain_x -= rain.width() + 10;
         rain.setPosition(rain_x, rain.y());
-        rain.setHeight(app.gcx().screenHeight());
-        rain.update();
+        rain.setHeight(gcx.screenHeight());
     }
 
     buttons.at(0).setPosition(left_x, center_y);
@@ -74,6 +75,19 @@ void MainMenuState::update(const std::vector<Event>& events, AppContext& app)
         const auto& prev = buttons.at(i - 1);
         buttons.at(i).setPosition(left_x, prev.y() + prev.height() + 5);
     }
+}
+
+void MainMenuState::update(const std::vector<Event>& events, AppContext& app)
+{
+    for (const auto& event : events) {
+        if (event.type == EventType::WINDOW
+            && event.window == WindowEvent::RESIZED) {
+            updatePositions(app.gcx());
+        }
+    }
+
+    for (auto& rain : rains)
+        rain.update();
 
     if (state_transition_alpha) {
         state_transition_alpha->update(Timing::frame_duration);

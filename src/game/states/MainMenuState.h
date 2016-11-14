@@ -18,7 +18,7 @@ public:
     MainMenuState(AppContext&);
     ~MainMenuState();
     void update(const std::vector<Event>&, AppContext&) final;
-    void draw(GraphicsContext& gcx) final;
+    void draw(GraphicsContext&) final;
 
 private:
     std::unique_ptr<Texture> tex_background;
@@ -29,6 +29,7 @@ private:
     unsigned current_button_index;
 
     std::shared_ptr<Music> music;
-
     std::unique_ptr<Transition<uint8_t>> state_transition_alpha;
+
+    void updatePositions(GraphicsContext&);
 };
