@@ -28,15 +28,14 @@ endif()
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Turn on warnings
-include(CheckCXXCompilerFlag)
+include(TryAddingCompilerFlag)
 if(MSVC)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W3") # warnings
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Za") # boolean keywords
+    try_adding_compiler_flag(/W3) # warnings
+    try_adding_compiler_flag(/Za) # disables lang extensions, enables boolean keywords
 else()
-    check_cxx_compiler_flag("-Wall -Wextra -pedantic" OBLOK_WARNING_FLAGS_SUPPORTED)
-    if(OBLOK_WARNING_FLAGS_SUPPORTED)
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic")
-    endif()
+    try_adding_compiler_flag(-Wall)
+    try_adding_compiler_flag(-Wextra)
+    try_adding_compiler_flag(-pedantic)
 endif()
 # Build coverage report if requested
 if(BUILD_TEST_COVERAGE)
