@@ -34,5 +34,6 @@ private:
     void updatePositions(GraphicsContext&);
     void drawCommon(GraphicsContext&);
 
+    friend class SubStates::SinglePlayer::States::GameOver;
     friend class SubStates::SinglePlayer::States::Gameplay;
 };

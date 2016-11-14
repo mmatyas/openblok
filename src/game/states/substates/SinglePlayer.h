@@ -29,7 +29,7 @@ enum class StateType : uint8_t {
     COUNTDOWN,
     GAME_RUNNING,
     PAUSED,
-    FINISHED,
+    GAME_OVER,
 };
 
 class State {
@@ -79,6 +79,19 @@ private:
     std::unique_ptr<Texture> tex;
 };
 
+class GameOver : public State {
+public:
+    GameOver(AppContext&);
+    StateType type() const { return StateType::GAME_OVER; }
+    void update(SinglePlayState&, const std::vector<Event>&, AppContext&) final;
+    void draw(SinglePlayState&, GraphicsContext&) const final;
+
+private:
+    std::unique_ptr<Texture> tex_gameover;
+    std::shared_ptr<SoundEffect> sfx_ongameover;
+    Transition<double> background_percent;
+};
+
 class Gameplay : public State {
 public:
     Gameplay(SinglePlayState&, AppContext&);
@@ -102,7 +115,6 @@ private:
         HARDDROP
     };
 
-    bool gameover;
     std::shared_ptr<Music> music;
     std::shared_ptr<SoundEffect> sfx_onhold;
     std::shared_ptr<SoundEffect> sfx_onlevelup;
@@ -125,7 +137,7 @@ private:
     ScoreType previous_lineclear_type;
 
     void addNextPiece(SinglePlayState& parent);
-    void registerObservers(SinglePlayState& parent);
+    void registerObservers(SinglePlayState& parent, AppContext&);
 };
 
 } // namespace States

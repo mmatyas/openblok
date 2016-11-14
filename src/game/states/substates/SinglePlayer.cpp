@@ -125,9 +125,43 @@ void Pause::draw(SinglePlayState& parent, GraphicsContext&) const
 }
 
 
+GameOver::GameOver(AppContext& app)
+    : sfx_ongameover(app.audio().loadSound(Paths::data() + "sfx/gameover.ogg"))
+    , background_percent(std::chrono::seconds(2),
+        [](double t){ return t; },
+        [this](){ sfx_ongameover->playOnce(); })
+{
+    auto font_big = app.gcx().loadFont(Paths::data() + "fonts/PTC75F.ttf", 45);
+    tex_gameover = font_big->renderText(tr("GAME OVER"), 0xEEEEEE_rgb);
+    tex_gameover->setAlpha(0x0);
+}
+
+void GameOver::update(SinglePlayState&, const std::vector<Event>&, AppContext&)
+{
+    background_percent.update(Timing::frame_duration);
+    if (background_percent.value() > 0.4)
+        tex_gameover->setAlpha(std::min<int>(0xFF, (background_percent.value() - 0.4) * 0x1FF));
+}
+
+void GameOver::draw(SinglePlayState& parent, GraphicsContext& gcx) const
+{
+    // draw any leftover popup texts of Gameplay
+    assert(parent.states.size() > 1);
+    parent.states.front()->draw(parent, gcx);
+
+    int box_h = parent.ui_well.wellHeight() * background_percent.value();
+    gcx.drawFilledRect({
+        parent.ui_well.wellX(), parent.ui_well.wellY() + parent.ui_well.wellHeight() - box_h,
+        parent.ui_well.wellWidth(), box_h
+    }, 0xA0_rgba);
+
+    tex_gameover->drawAt(parent.wellCenterX() - static_cast<int>(tex_gameover->width()) / 2,
+                         parent.wellCenterY() - static_cast<int>(tex_gameover->height()) / 2);
+}
+
+
 Gameplay::Gameplay(SinglePlayState& parent, AppContext& app)
-    : gameover(false)
-    , music(app.audio().loadMusic(Paths::data() + "music/gameplay.ogg"))
+    : music(app.audio().loadMusic(Paths::data() + "music/gameplay.ogg"))
     , sfx_onhold(app.audio().loadSound(Paths::data() + "sfx/hold.ogg"))
     , sfx_onlevelup(app.audio().loadSound(Paths::data() + "sfx/levelup.ogg"))
     , sfx_onlineclear({{
@@ -187,7 +221,7 @@ Gameplay::Gameplay(SinglePlayState& parent, AppContext& app)
     music->playLoop();
     app.audio().pauseAll();
 
-    registerObservers(parent);
+    registerObservers(parent, app);
 }
 
 void Gameplay::addNextPiece(SinglePlayState& parent)
@@ -196,7 +230,7 @@ void Gameplay::addNextPiece(SinglePlayState& parent)
     parent.ui_leftside.holdQueue().onNextTurn();
 }
 
-void Gameplay::registerObservers(SinglePlayState& parent)
+void Gameplay::registerObservers(SinglePlayState& parent, AppContext& app)
 {
     auto& well = parent.ui_well.well();
 
@@ -344,9 +378,9 @@ void Gameplay::registerObservers(SinglePlayState& parent)
         this->current_score += this->score_table.at(ScoreType::SOFTDROP);
     });
 
-    well.registerObserver(WellEvent::Type::GAME_OVER, [this](const WellEvent&){
-        gameover = true;
+    well.registerObserver(WellEvent::Type::GAME_OVER, [this, &parent, &app](const WellEvent&){
         music->fadeOut(std::chrono::seconds(1));
+        parent.states.emplace_back(std::make_unique<GameOver>(app));
     });
 }
 
@@ -396,10 +430,6 @@ void Gameplay::update(SinglePlayState& parent, const std::vector<Event>& events,
         );
         popup->update();
     }
-
-    // TODO: new state
-    if (gameover)
-        return;
 
     parent.ui_rightside.updateGametime();
 }

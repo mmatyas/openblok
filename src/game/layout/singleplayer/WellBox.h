@@ -1,5 +1,6 @@
 #pragma once
 
+#include "game/components/Mino.h"
 #include "game/components/Well.h"
 #include "game/layout/Box.h"
 
@@ -28,17 +29,14 @@ public:
 
     Well& well() { return m_well; }
 
+    // TODO: fix magic numbers
+    int wellWidth() const { return 10 * Mino::texture_size_px; }
+    int wellHeight() const { return 20.3 * Mino::texture_size_px; }
+    int wellX() const { return x() + border_width; }
+    int wellY() const { return y() + border_width; }
+
 private:
     Well m_well;
-
-    bool gameover;
-    Transition<double> gameover_background;
-
-    std::shared_ptr<Font> font_big;
-    std::unique_ptr<Texture> tex_gameover;
-    std::shared_ptr<SoundEffect> sfx_ongameover;
-
-    Transition<uint8_t> countdown;
 
     static constexpr uint8_t border_width = 5;
     ::Rectangle border_left;

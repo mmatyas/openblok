@@ -1,7 +1,6 @@
 #include "WellBox.h"
 
 #include "game/AppContext.h"
-#include "game/components/Mino.h"
 #include "game/components/rotations/SRS.h"
 #include "game/states/substates/SinglePlayer.h"
 #include "system/AudioContext.h"
@@ -13,30 +12,14 @@
 
 namespace Layout {
 
-WellBox::WellBox(AppContext& app)
-    : gameover(false)
-    , gameover_background(std::chrono::seconds(2),
-        [](double t){ return t; },
-        [this](){ sfx_ongameover->playOnce(); })
-    , sfx_ongameover(app.audio().loadSound(Paths::data() + "sfx/gameover.ogg"))
-    , countdown(std::chrono::milliseconds(2400),
-                [](double t){ return t * 2.9999; })
+WellBox::WellBox(AppContext&)
 {
-    m_well.registerObserver(WellEvent::Type::GAME_OVER, [this](const WellEvent&){
-        gameover = true;
-        gameover_background.restart();
-    });
-
     m_well.setRotationFn(std::make_unique<Rotations::SRS>()); // TODO: make a shared rotation store
 
-    bounding_box.w = 10 * Mino::texture_size_px + border_width * 2;
-    bounding_box.h = 20.3 * Mino::texture_size_px + border_width * 2;
-
-    font_big = app.gcx().loadFont(Paths::data() + "fonts/PTC75F.ttf", 45);
-    tex_gameover = font_big->renderText(tr("GAME OVER"), 0xEEEEEE00_rgba);
+    bounding_box.w = wellWidth() + border_width * 2;
+    bounding_box.h = wellHeight() + border_width * 2;
 
     setPosition(0, 0);
-    gameover_background.stop();
 }
 
 void WellBox::setPosition(int x, int y)
@@ -67,15 +50,6 @@ void WellBox::update(const std::vector<Event>& events, SubStates::SinglePlayer::
     switch (current_state) {
         case StateType::GAME_RUNNING:
             m_well.updateGameplayOnly(input_events);
-            if (gameover) {
-                gameover_background.update(Timing::frame_duration);
-                if (gameover_background.running()) {
-                    RGBAColor color = 0xEEEEEE00_rgba;
-                    if (gameover_background.value() > 0.4)
-                        color.a = std::min<int>(0xFF, (gameover_background.value() - 0.4) * 0x1FF);
-                    tex_gameover = font_big->renderText(tr("GAME OVER"), color);
-                }
-            }
             break;
         default:
             break;
@@ -88,21 +62,9 @@ void WellBox::draw(GraphicsContext& gcx, SubStates::SinglePlayer::StateType curr
 
     using StateType = SubStates::SinglePlayer::StateType;
     switch (current_state) {
+        case StateType::GAME_OVER:
         case StateType::GAME_RUNNING:
             m_well.drawContent(gcx, x() + border_width, y() + border_width);
-            if (gameover) {
-                int box_h = (height() - border_width * 2) * gameover_background.value();
-                gcx.drawFilledRect({
-                    x() + border_width, y() + height() - border_width - box_h,
-                    width() - border_width * 2, box_h
-                }, 0xA0_rgba);
-
-                tex_gameover->drawAt(x() + (width() - static_cast<int>(tex_gameover->width())) / 2,
-                                     y() + (height() - static_cast<int>(tex_gameover->height())) / 2);
-            }
-        case StateType::FINISHED:
-            // TODO
-            break;
         default:
             break;
     }
