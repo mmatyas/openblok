@@ -145,7 +145,7 @@ void GameOver::update(SinglePlayState&, const std::vector<Event>&, AppContext&)
 
 void GameOver::draw(SinglePlayState& parent, GraphicsContext& gcx) const
 {
-    // draw any leftover popup texts of Gameplay
+    // draw the well with contents, and also any leftover popup texts of Gameplay
     assert(parent.states.size() > 1);
     parent.states.front()->draw(parent, gcx);
 
@@ -386,6 +386,7 @@ void Gameplay::registerObservers(SinglePlayState& parent, AppContext& app)
 
 void Gameplay::update(SinglePlayState& parent, const std::vector<Event>& events, AppContext& app)
 {
+    std::vector<InputEvent> input_events;
     for (const auto& event : events) {
         switch (event.type) {
             case EventType::WINDOW:
@@ -400,12 +401,14 @@ void Gameplay::update(SinglePlayState& parent, const std::vector<Event>& events,
                     parent.states.emplace_back(std::make_unique<Pause>(app));
                     return;
                 }
+                input_events.emplace_back(event.input.type(), event.input.down());
                 break;
             default:
                 break;
         }
     }
 
+    parent.ui_well.well().updateGameplayOnly(input_events);
     parent.ui_leftside.update();
 
     if (texts_need_update) {
@@ -434,8 +437,9 @@ void Gameplay::update(SinglePlayState& parent, const std::vector<Event>& events,
     parent.ui_rightside.updateGametime();
 }
 
-void Gameplay::draw(SinglePlayState&, GraphicsContext&) const
+void Gameplay::draw(SinglePlayState& parent, GraphicsContext& gfx) const
 {
+    parent.ui_well.drawContent(gfx);
     for (const auto& popup : textpopups)
         popup->draw();
 }

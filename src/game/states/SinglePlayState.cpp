@@ -27,14 +27,19 @@ void SinglePlayState::updatePositions(GraphicsContext& gcx)
 
 void SinglePlayState::update(const std::vector<Event>& events, AppContext& app)
 {
+    std::vector<InputEvent> input_events;
     for (const auto& event : events) {
-        if (event.type == EventType::WINDOW
-            && event.window == WindowEvent::RESIZED) {
-            updatePositions(app.gcx());
+        switch (event.type) {
+            case EventType::WINDOW:
+                if (event.window == WindowEvent::RESIZED)
+                    updatePositions(app.gcx());
+                break;
+            case EventType::INPUT:
+                input_events.emplace_back(event.input.type(), event.input.down());
+                break;
         }
     }
-
-    ui_well.update(events, states.back()->type());
+    ui_well.well().updateKeystateOnly(input_events);
     states.back()->update(*this, events, app);
 }
 
@@ -48,7 +53,7 @@ void SinglePlayState::drawCommon(GraphicsContext& gcx)
 {
     tex_background->drawScaled({0, 0, gcx.screenWidth(), gcx.screenHeight()});
 
-    ui_well.draw(gcx, states.back()->type());
+    ui_well.drawBase(gcx);
     ui_leftside.draw(gcx);
     ui_rightside.draw(gcx);
 }

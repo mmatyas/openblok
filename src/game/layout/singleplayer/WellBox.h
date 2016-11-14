@@ -4,9 +4,6 @@
 #include "game/components/Well.h"
 #include "game/layout/Box.h"
 
-#include <array>
-#include <vector>
-
 
 class AppContext;
 class Font;
@@ -24,8 +21,8 @@ public:
     WellBox(AppContext&);
 
     void setPosition(int x, int y) override;
-    void update(const std::vector<Event>&, SubStates::SinglePlayer::StateType current_state);
-    void draw(GraphicsContext&, SubStates::SinglePlayer::StateType current_state) const;
+    void drawBase(GraphicsContext&) const;
+    void drawContent(GraphicsContext&) const;
 
     Well& well() { return m_well; }
 

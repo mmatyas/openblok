@@ -1,13 +1,7 @@
 #include "WellBox.h"
 
-#include "game/AppContext.h"
 #include "game/components/rotations/SRS.h"
-#include "game/states/substates/SinglePlayer.h"
-#include "system/AudioContext.h"
-#include "system/Font.h"
-#include "system/Localize.h"
-#include "system/Paths.h"
-#include "system/SoundEffect.h"
+#include "system/GraphicsContext.h"
 
 
 namespace Layout {
@@ -34,46 +28,20 @@ void WellBox::setPosition(int x, int y)
                       width() - border_width * 2, border_width };
 }
 
-
-void WellBox::update(const std::vector<Event>& events, SubStates::SinglePlayer::StateType current_state)
-{
-    // filter the input events only
-    std::vector<InputEvent> input_events;
-    for (const auto& event : events) {
-        if (event.type == EventType::INPUT)
-            input_events.emplace_back(event.input.type(), event.input.down());
-    }
-
-    m_well.updateKeystateOnly(input_events);
-
-    using StateType = SubStates::SinglePlayer::StateType;
-    switch (current_state) {
-        case StateType::GAME_RUNNING:
-            m_well.updateGameplayOnly(input_events);
-            break;
-        default:
-            break;
-    }
-}
-
-void WellBox::draw(GraphicsContext& gcx, SubStates::SinglePlayer::StateType current_state) const
+void WellBox::drawBase(GraphicsContext& gcx) const
 {
     m_well.drawBackground(gcx, x() + border_width, y() + border_width);
-
-    using StateType = SubStates::SinglePlayer::StateType;
-    switch (current_state) {
-        case StateType::GAME_OVER:
-        case StateType::GAME_RUNNING:
-            m_well.drawContent(gcx, x() + border_width, y() + border_width);
-        default:
-            break;
-    }
 
     static const auto boardborder_color = 0x1A3A8A_rgb;
     gcx.drawFilledRect(border_left, boardborder_color);
     gcx.drawFilledRect(border_right, boardborder_color);
     gcx.drawFilledRect(border_top, boardborder_color);
     gcx.drawFilledRect(border_bottom, boardborder_color);
+}
+
+void WellBox::drawContent(GraphicsContext& gcx) const
+{
+    m_well.drawContent(gcx, x() + border_width, y() + border_width);
 }
 
 } // namespace Layout
