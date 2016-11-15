@@ -24,7 +24,6 @@ public:
     int wellCenterY() const { return ui_well.y() + ui_well.height() / 2; };
 
 private:
-    bool gameover;
     std::unique_ptr<Texture> tex_background;
 
     Layout::WellBox ui_well;
