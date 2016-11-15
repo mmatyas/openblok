@@ -21,7 +21,6 @@ A customizable, cross platform, open-source falling block game, packed with a bu
 - [x] Sonic drop and Zangi-move support
 - [x] T-Spin and Mini T-Spin support
 - [ ] Combo support
-- [ ] ARE support
 - [x] Gamepad support
 - [ ] Menu, configuration and stats
 - [ ] Battle mode
@@ -38,7 +37,7 @@ A customizable, cross platform, open-source falling block game, packed with a bu
 Dependencies
 ------------
 
-- CMake 3.1+
+- CMake (at least 2.8, 3.1+ recommended)
 - C++14 supporting compiler (GCC 4.9 or better)
 - SDL2, SDL2_image, SDL2_mixer, SDL2_ttf
 - gcov, lcov (only for generating test coverage report)
