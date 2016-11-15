@@ -68,6 +68,7 @@ private:
 
     std::array<std::shared_ptr<SoundEffect>, 3> sfx_countdown;
     std::array<std::unique_ptr<Texture>, 3> tex_countdown;
+    std::shared_ptr<SoundEffect> requested_sfx;
 };
 
 class Pause : public State {

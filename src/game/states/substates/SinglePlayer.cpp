@@ -59,6 +59,7 @@ Countdown::Countdown(AppContext& app)
             app.audio().loadSound(Paths::data() + "sfx/countdown2.ogg"),
             app.audio().loadSound(Paths::data() + "sfx/countdown1.ogg"),
         }})
+    , requested_sfx(sfx_countdown.at(0))
 {
     auto font_huge = app.gcx().loadFont(Paths::data() + "fonts/helsinki.ttf", 150);
     tex_countdown = {{
@@ -66,8 +67,6 @@ Countdown::Countdown(AppContext& app)
         font_huge->renderText(tr("2"), 0xEEEEEE_rgb),
         font_huge->renderText(tr("1"), 0xEEEEEE_rgb),
     }};
-
-    sfx_countdown.at(current_idx)->playOnce();
 }
 
 void Countdown::update(SinglePlayState& parent, const std::vector<Event>&, AppContext& app)
@@ -81,8 +80,12 @@ void Countdown::update(SinglePlayState& parent, const std::vector<Event>&, AppCo
             return;
         }
         assert(current_idx < 3);
-        sfx_countdown.at(current_idx)->playOnce();
+        requested_sfx = sfx_countdown.at(current_idx);
         this->timer.restart();
+    }
+    if (requested_sfx) {
+        requested_sfx->playOnce();
+        requested_sfx.reset();
     }
 
     timer.update(Timing::frame_duration);
