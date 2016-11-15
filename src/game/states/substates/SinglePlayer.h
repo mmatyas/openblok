@@ -1,5 +1,6 @@
 #pragma once
 
+#include "game/ScoreTable.h"
 #include "game/Transition.h"
 #include "system/Event.h"
 
@@ -100,21 +101,6 @@ public:
     void draw(SinglePlayState&, GraphicsContext&) const final;
 
 private:
-    enum class ScoreType : uint8_t {
-        CLEAR_SINGLE,
-        CLEAR_DOUBLE,
-        CLEAR_TRIPLE,
-        CLEAR_PERFECT,
-        MINI_TSPIN,
-        CLEAR_MINI_TSPIN_SINGLE,
-        TSPIN,
-        CLEAR_TSPIN_SINGLE,
-        CLEAR_TSPIN_DOUBLE,
-        CLEAR_TSPIN_TRIPLE,
-        SOFTDROP,
-        HARDDROP
-    };
-
     std::shared_ptr<Music> music;
     std::shared_ptr<SoundEffect> sfx_onhold;
     std::shared_ptr<SoundEffect> sfx_onlevelup;
@@ -132,8 +118,6 @@ private:
     std::stack<Duration> gravity_levels;
     unsigned current_level;
     unsigned current_score;
-    std::map<ScoreType, unsigned> score_table;
-    std::map<ScoreType, const std::string> score_name;
     ScoreType previous_lineclear_type;
 
     void addNextPiece(SinglePlayState& parent);

@@ -1,5 +1,6 @@
 set(MOD_GAME_SRC
     AppContext.cpp
+    ScoreTable.cpp
 
     components/HoldQueue.cpp
     components/Mino.cpp
@@ -43,6 +44,7 @@ set(MOD_GAME_H
     AppContext.h
     GameState.h
     Matrix.h
+    ScoreTable.h
     Timing.h
     Transition.h
     WellEvent.h
