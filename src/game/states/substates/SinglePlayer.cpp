@@ -125,19 +125,29 @@ void Pause::draw(SinglePlayState& parent, GraphicsContext&) const
 }
 
 
-GameOver::GameOver(AppContext& app)
+GameOver::GameOver(SinglePlayState& parent, AppContext& app)
     : sfx_ongameover(app.audio().loadSound(Paths::data() + "sfx/gameover.ogg"))
     , background_percent(std::chrono::seconds(2),
         [](double t){ return t; },
-        [this](){ sfx_ongameover->playOnce(); })
+        [this](){
+            this->sfx_ongameover->playOnce();
+            this->statistics_delay.restart();
+        })
+    , statistics_delay(std::chrono::seconds(5), [](double){},
+        [&parent, &app](){
+            parent.states.emplace_back(std::make_unique<Statistics>(parent, app));
+        })
 {
     auto font_big = app.gcx().loadFont(Paths::data() + "fonts/PTC75F.ttf", 45);
     tex_gameover = font_big->renderText(tr("GAME OVER"), 0xEEEEEE_rgb);
     tex_gameover->setAlpha(0x0);
+
+    statistics_delay.stop();
 }
 
 void GameOver::update(SinglePlayState&, const std::vector<Event>&, AppContext&)
 {
+    statistics_delay.update(Timing::frame_duration);
     background_percent.update(Timing::frame_duration);
     if (background_percent.value() > 0.4)
         tex_gameover->setAlpha(std::min<int>(0xFF, (background_percent.value() - 0.4) * 0x1FF));
@@ -157,6 +167,136 @@ void GameOver::draw(SinglePlayState& parent, GraphicsContext& gcx) const
 
     tex_gameover->drawAt(parent.wellCenterX() - static_cast<int>(tex_gameover->width()) / 2,
                          parent.wellCenterY() - static_cast<int>(tex_gameover->height()) / 2);
+}
+
+
+Statistics::Statistics(SinglePlayState& parent, AppContext& app)
+    : background_percent(
+        std::chrono::seconds(1),
+        [](double t){ return t; },
+        [this](){ this->title_alpha.restart(); })
+    , title_alpha(
+        std::chrono::milliseconds(700),
+        [](double t){ return t * 0xFF; },
+        [this](){ this->displayed_item_count.restart(); })
+    , displayed_item_count(
+        std::chrono::seconds(5),
+        [this](double t){ return t * this->score_texs.size(); })
+    , column_width(410)
+    , column_padding(45)
+    , title_padding_bottom(40)
+{
+    // NOTE: the magic numbers in this class were found
+    // by trial and error, to look good on all kinds of aspect ratios
+
+    displayed_item_count.stop();
+    title_alpha.stop();
+
+    auto color = 0xEEEEEE_rgb;
+    auto font_huge = app.gcx().loadFont(Paths::data() + "fonts/PTS75F.ttf", 64);
+
+    tex_title = font_huge->renderText(tr("STATISTICS"), color);
+    tex_title->setAlpha(0x0);
+
+    auto font = app.gcx().loadFont(Paths::data() + "fonts/PTN57F.ttf", 28);
+    auto stats = parent.player_stats;
+
+    score_texs.emplace_back(font->renderText(tr("Total Lines"), color),
+                            font->renderText(std::to_string(stats.total_cleared_lines), color));
+    score_texs.emplace_back(font->renderText(tr("Singles"), color),
+                            font->renderText(std::to_string(stats.singles), color));
+    score_texs.emplace_back(font->renderText(tr("Doubles"), color),
+                            font->renderText(std::to_string(stats.doubles), color));
+    score_texs.emplace_back(font->renderText(tr("Triples"), color),
+                            font->renderText(std::to_string(stats.triples), color));
+    score_texs.emplace_back(font->renderText(tr("Perfects"), color),
+                            font->renderText(std::to_string(stats.perfects), color));
+
+    score_texs.emplace_back(font->renderText(tr("Back-to-Back"), color),
+                            font->renderText(std::to_string(stats.back_to_back_count), color));
+    score_texs.emplace_back(font->renderText(tr("Longest Back-to-Back"),
+                            color), font->renderText(std::to_string(stats.back_to_back_longest), color));
+
+    score_texs.emplace_back(font->renderText(tr("T-Spin Minis"), color),
+                            font->renderText(std::to_string(stats.tspin_minis), color));
+    score_texs.emplace_back(font->renderText(tr("T-Spin Mini Singles"), color),
+                            font->renderText(std::to_string(stats.tspin_mini_singles), color));
+    score_texs.emplace_back(font->renderText(tr("T-Spins"), color),
+                            font->renderText(std::to_string(stats.tspins), color));
+    score_texs.emplace_back(font->renderText(tr("T-Spin Singles"), color),
+                            font->renderText(std::to_string(stats.tspin_singles), color));
+    score_texs.emplace_back(font->renderText(tr("T-Spin Doubles"), color),
+                            font->renderText(std::to_string(stats.tspin_doubles), color));
+    score_texs.emplace_back(font->renderText(tr("T-Spin Triples"), color),
+                            font->renderText(std::to_string(stats.tspin_triples), color));
+
+    score_texs.emplace_back(font->renderText(tr("Level"), color),
+                            font->renderText(std::to_string(stats.level), color));
+    score_texs.emplace_back(font->renderText(tr("Final Score"), color),
+                            font->renderText(std::to_string(stats.score), color));
+}
+
+void Statistics::update(SinglePlayState&, const std::vector<Event>&, AppContext&)
+{
+    background_percent.update(Timing::frame_duration);
+    title_alpha.update(Timing::frame_duration);
+    displayed_item_count.update(Timing::frame_duration);
+
+    tex_title->setAlpha(title_alpha.value());
+}
+
+void Statistics::draw(SinglePlayState& parent, GraphicsContext& gcx) const
+{
+    // draw gameover shadow and well content
+    auto it = parent.states.rbegin();
+    it++;
+    assert(it != parent.states.rend());
+    (*it)->draw(parent, gcx);
+
+
+    // draw background rectangle
+    const int height = 10 + parent.ui_well.wellHeight() * background_percent.value();
+    const int width = gcx.screenWidth() * 0.92;
+    const int half_height = height / 2;
+    const int half_width = width / 2;
+    gcx.drawFilledRect({
+        parent.wellCenterX() - half_width,
+        parent.wellCenterY() - half_height,
+        width, height},
+        0x2030FF_rgb);
+
+    // draw title
+    if (!background_percent.running()) {
+        static const int item_height = score_texs.at(0).first->height() * 1.2;
+        static const unsigned row_count_per_column = score_texs.size() / 2;
+
+        int first_row_pos_y = parent.wellCenterY() - (score_texs.size() / 4) * item_height;
+        int row_pos_x = parent.wellCenterX() - column_width;
+
+        tex_title->drawAt(row_pos_x, first_row_pos_y - tex_title->height() - title_padding_bottom);
+
+        // draw items
+        if (!title_alpha.running()) {
+            int row_pos_y = first_row_pos_y;
+            unsigned current_row = 0;
+            unsigned idx = 0;
+            while (idx < displayed_item_count.value()) {
+                score_texs.at(idx).first->drawAt(row_pos_x, row_pos_y);
+                auto& val_tex = score_texs.at(idx).second;
+                val_tex->drawAt(row_pos_x + column_width - column_padding - val_tex->width(), row_pos_y);
+
+                idx++;
+                current_row++;
+                row_pos_y += item_height;
+                if (current_row > row_count_per_column) {
+                    current_row = 0;
+                    row_pos_y = first_row_pos_y;
+                    row_pos_x += column_width + column_padding;
+                }
+            }
+        }
+    }
+
 }
 
 
@@ -321,7 +461,7 @@ void Gameplay::registerObservers(SinglePlayState& parent, AppContext& app)
 
     well.registerObserver(WellEvent::Type::GAME_OVER, [this, &parent, &app](const WellEvent&){
         music->fadeOut(std::chrono::seconds(1));
-        parent.states.emplace_back(std::make_unique<GameOver>(app));
+        parent.states.emplace_back(std::make_unique<GameOver>(parent, app));
     });
 }
 

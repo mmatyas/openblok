@@ -44,6 +44,7 @@ set(MOD_GAME_H
     AppContext.h
     GameState.h
     Matrix.h
+    PlayerStatistics.h
     ScoreTable.h
     Timing.h
     Transition.h

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "game/GameState.h"
+#include "game/PlayerStatistics.h"
 #include "game/layout/singleplayer/LeftSidebarBox.h"
 #include "game/layout/singleplayer/RightSidebarBox.h"
 #include "game/layout/singleplayer/WellBox.h"
@@ -24,6 +25,7 @@ public:
     int wellCenterY() const { return ui_well.y() + ui_well.height() / 2; };
 
 private:
+    PlayerStatistics player_stats;
     std::unique_ptr<Texture> tex_background;
 
     Layout::WellBox ui_well;
@@ -35,4 +37,5 @@ private:
 
     friend class SubStates::SinglePlayer::States::GameOver;
     friend class SubStates::SinglePlayer::States::Gameplay;
+    friend class SubStates::SinglePlayer::States::Statistics;
 };

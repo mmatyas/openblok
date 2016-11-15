@@ -31,6 +31,7 @@ enum class StateType : uint8_t {
     GAME_RUNNING,
     PAUSED,
     GAME_OVER,
+    STATISTICS,
 };
 
 class State {
@@ -82,7 +83,7 @@ private:
 
 class GameOver : public State {
 public:
-    GameOver(AppContext&);
+    GameOver(SinglePlayState&, AppContext&);
     StateType type() const { return StateType::GAME_OVER; }
     void update(SinglePlayState&, const std::vector<Event>&, AppContext&) final;
     void draw(SinglePlayState&, GraphicsContext&) const final;
@@ -91,6 +92,25 @@ private:
     std::unique_ptr<Texture> tex_gameover;
     std::shared_ptr<SoundEffect> sfx_ongameover;
     Transition<double> background_percent;
+    Transition<void> statistics_delay;
+};
+
+class Statistics : public State {
+public:
+    Statistics(SinglePlayState&, AppContext&);
+    StateType type() const { return StateType::STATISTICS; }
+    void update(SinglePlayState&, const std::vector<Event>&, AppContext&) final;
+    void draw(SinglePlayState&, GraphicsContext&) const final;
+
+private:
+    std::unique_ptr<Texture> tex_title;
+    std::vector<std::pair<std::unique_ptr<Texture>, std::unique_ptr<Texture>>> score_texs;
+    Transition<double> background_percent;
+    Transition<uint8_t> title_alpha;
+    Transition<uint8_t> displayed_item_count;
+    const int column_width;
+    const int column_padding;
+    const int title_padding_bottom;
 };
 
 class Gameplay : public State {
