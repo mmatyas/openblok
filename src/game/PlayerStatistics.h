@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ScoreTable.h"
+#include "Timing.h"
 
 
 struct PlayerStatistics {
@@ -10,4 +11,5 @@ struct PlayerStatistics {
     unsigned short back_to_back_count;
     unsigned short back_to_back_longest;
     std::map<ScoreType, unsigned short> event_count;
+    Duration gametime;
 };

@@ -21,7 +21,7 @@ public:
 
     void update();
     void updateScore(unsigned);
-    void updateGametime();
+    void updateGametime(Duration);
 
     void draw(GraphicsContext&) const;
 
@@ -43,7 +43,6 @@ private:
     std::unique_ptr<Texture> tex_score;
     std::unique_ptr<Texture> tex_score_counter;
 
-    Duration gametime;
     std::string gametime_text;
     ::Rectangle rect_time;
     std::unique_ptr<Texture> tex_time_counter;

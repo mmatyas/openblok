@@ -1,6 +1,7 @@
 set(MOD_GAME_SRC
     AppContext.cpp
     ScoreTable.cpp
+    DurationToString.cpp
 
     components/HoldQueue.cpp
     components/Mino.cpp
@@ -42,6 +43,7 @@ set(MOD_GAME_SRC
 
 set(MOD_GAME_H
     AppContext.h
+    DurationToString.h
     GameState.h
     Matrix.h
     PlayerStatistics.h

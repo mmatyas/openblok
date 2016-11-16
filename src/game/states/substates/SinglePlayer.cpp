@@ -1,6 +1,7 @@
 #include "SinglePlayer.h"
 
 #include "game/AppContext.h"
+#include "game/DurationToString.h"
 #include "game/components/Piece.h"
 #include "game/components/animations/TextPopup.h"
 #include "game/states/SinglePlayState.h"
@@ -232,6 +233,8 @@ Statistics::Statistics(SinglePlayState& parent, AppContext& app)
                             font->renderText(std::to_string(stats.event_count[ScoreType::CLEAR_TSPIN_DOUBLE]), color));
     score_texs.emplace_back(font->renderText(tr("T-Spin Triples"), color),
                             font->renderText(std::to_string(stats.event_count[ScoreType::CLEAR_TSPIN_TRIPLE]), color));
+    score_texs.emplace_back(font->renderText(tr("Duration"), color),
+                            font->renderText(Timing::toString(stats.gametime), color));
 
     auto color_highlight = 0xFEC500_rgb;
     auto font_highlight = app.gcx().loadFont(Paths::data() + "fonts/PTS75F.ttf", 26);
@@ -275,7 +278,7 @@ void Statistics::draw(SinglePlayState& parent, GraphicsContext& gcx) const
         static const int item_height = score_texs.at(0).first->height() * 1.2;
         static const unsigned row_count_per_column = score_texs.size() / 2;
 
-        int first_row_pos_y = parent.wellCenterY() - (score_texs.size() / 4) * item_height;
+        int first_row_pos_y = parent.wellCenterY() - ((score_texs.size() / 4) - 1) * item_height;
         int row_pos_x = parent.wellCenterX() - column_width;
 
         tex_title->drawAt(row_pos_x, first_row_pos_y - tex_title->height() - title_padding_bottom);
@@ -293,7 +296,7 @@ void Statistics::draw(SinglePlayState& parent, GraphicsContext& gcx) const
                 idx++;
                 current_row++;
                 row_pos_y += item_height;
-                if (current_row > row_count_per_column) {
+                if (current_row >= row_count_per_column) {
                     current_row = 0;
                     row_pos_y = first_row_pos_y;
                     row_pos_x += column_width + column_padding;
@@ -530,7 +533,8 @@ void Gameplay::update(SinglePlayState& parent, const std::vector<Event>& events,
         popup->update();
     }
 
-    parent.ui_rightside.updateGametime();
+    parent.player_stats.gametime += Timing::frame_duration;
+    parent.ui_rightside.updateGametime(parent.player_stats.gametime);
 }
 
 void Gameplay::draw(SinglePlayState& parent, GraphicsContext& gfx) const

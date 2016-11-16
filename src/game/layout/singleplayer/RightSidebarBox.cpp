@@ -1,6 +1,7 @@
 #include "RightSidebarBox.h"
 
 #include "game/AppContext.h"
+#include "game/DurationToString.h"
 #include "game/components/Mino.h"
 #include "system/Font.h"
 #include "system/Localize.h"
@@ -11,7 +12,6 @@ namespace Layout {
 
 RightSidebarBox::RightSidebarBox(AppContext& app, int height)
     : next_queue(5)
-    , gametime(Duration::zero())
     , gametime_text("00:00")
 {
     bounding_box.w = 5 * Mino::texture_size_px;
@@ -46,22 +46,9 @@ void RightSidebarBox::updateScore(unsigned num)
     tex_score_counter = font_content->renderText(std::to_string(num), 0xEEEEEE_rgb);
 }
 
-void RightSidebarBox::updateGametime()
+void RightSidebarBox::updateGametime(Duration gametime)
 {
-    gametime += Timing::frame_duration;
-
-    unsigned minutes = std::chrono::duration_cast<std::chrono::minutes>(gametime).count();
-    unsigned seconds = std::chrono::duration_cast<std::chrono::seconds>(gametime).count() % 60;
-    std::string newstr;
-    if (minutes < 10)
-        newstr += "0";
-    newstr += std::to_string(minutes);
-    newstr += ":";
-    if (seconds < 10)
-        newstr += "0";
-    newstr += std::to_string(seconds);
-
-    // render text
+    const auto newstr = Timing::toString(gametime);
     if (newstr != gametime_text) {
         gametime_text = newstr;
         tex_time_counter = font_content->renderText(gametime_text, 0xEEEEEE_rgb);
