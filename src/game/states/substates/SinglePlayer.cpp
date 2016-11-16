@@ -185,8 +185,8 @@ Statistics::Statistics(SinglePlayState& parent, AppContext& app)
     , displayed_item_count(
         std::chrono::seconds(5),
         [this](double t){ return t * this->score_texs.size(); })
-    , column_width(410)
-    , column_padding(45)
+    , column_width(420)
+    , column_padding(35)
     , title_padding_bottom(40)
 {
     // NOTE: the magic numbers in this class were found
@@ -201,7 +201,7 @@ Statistics::Statistics(SinglePlayState& parent, AppContext& app)
     tex_title = font_huge->renderText(tr("STATISTICS"), color);
     tex_title->setAlpha(0x0);
 
-    auto font = app.gcx().loadFont(Paths::data() + "fonts/PTN57F.ttf", 28);
+    auto font = app.gcx().loadFont(Paths::data() + "fonts/PTS55F.ttf", 26);
     auto stats = parent.player_stats;
 
     score_texs.emplace_back(font->renderText(tr("Total Lines"), color),
@@ -233,10 +233,12 @@ Statistics::Statistics(SinglePlayState& parent, AppContext& app)
     score_texs.emplace_back(font->renderText(tr("T-Spin Triples"), color),
                             font->renderText(std::to_string(stats.event_count[ScoreType::CLEAR_TSPIN_TRIPLE]), color));
 
-    score_texs.emplace_back(font->renderText(tr("Level"), color),
-                            font->renderText(std::to_string(stats.level), color));
-    score_texs.emplace_back(font->renderText(tr("Final Score"), color),
-                            font->renderText(std::to_string(stats.score), color));
+    auto color_highlight = 0xFEC500_rgb;
+    auto font_highlight = app.gcx().loadFont(Paths::data() + "fonts/PTS75F.ttf", 26);
+    score_texs.emplace_back(font_highlight->renderText(tr("Level"), color_highlight),
+                            font_highlight->renderText(std::to_string(stats.level), color_highlight));
+    score_texs.emplace_back(font_highlight->renderText(tr("Final Score"), color_highlight),
+                            font_highlight->renderText(std::to_string(stats.score), color_highlight));
 }
 
 void Statistics::update(SinglePlayState&, const std::vector<Event>&, AppContext&)
