@@ -104,6 +104,7 @@ public:
     void draw(SinglePlayState&, GraphicsContext&) const final;
 
 private:
+    std::unique_ptr<Transition<uint8_t>> state_transition_alpha;
     std::unique_ptr<Texture> tex_title;
     std::vector<std::pair<std::unique_ptr<Texture>, std::unique_ptr<Texture>>> score_texs;
 

@@ -32,7 +32,7 @@ MainMenuState::MainMenuState(AppContext& app)
         this->state_transition_alpha = std::make_unique<Transition<uint8_t>>(
             duration,
             [](double t){ return t * 0xFF; },
-            [&app](){ app.states().emplace(std::make_unique<SinglePlayState>(app)); }
+            [this, &app](){ this->onFadeoutComplete(app, std::make_unique<SinglePlayState>(app)); }
         );
         music->fadeOut(duration);
     });
@@ -75,6 +75,19 @@ void MainMenuState::updatePositions(GraphicsContext& gcx)
         const auto& prev = buttons.at(i - 1);
         buttons.at(i).setPosition(left_x, prev.y() + prev.height() + 5);
     }
+}
+
+void MainMenuState::onFadeoutComplete(AppContext& app, std::unique_ptr<GameState>&& newstate)
+{
+    // this transition will run when we return to the menu
+    state_transition_alpha = std::make_unique<Transition<uint8_t>>(
+        std::chrono::milliseconds(500),
+        [](double t){ return (1.0 - t) * 0xFF; },
+        [this](){
+            music->playLoop();
+            this->state_transition_alpha.reset();
+        });
+    app.states().emplace(std::move(newstate));
 }
 
 void MainMenuState::update(const std::vector<Event>& events, AppContext& app)

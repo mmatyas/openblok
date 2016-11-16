@@ -32,4 +32,5 @@ private:
     std::unique_ptr<Transition<uint8_t>> state_transition_alpha;
 
     void updatePositions(GraphicsContext&);
+    void onFadeoutComplete(AppContext&, std::unique_ptr<GameState>&&);
 };

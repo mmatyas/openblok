@@ -244,13 +244,32 @@ Statistics::Statistics(SinglePlayState& parent, AppContext& app)
                             font_highlight->renderText(std::to_string(stats.score), color_highlight));
 }
 
-void Statistics::update(SinglePlayState&, const std::vector<Event>&, AppContext&)
+void Statistics::update(SinglePlayState&, const std::vector<Event>& events, AppContext& app)
 {
     background_percent.update(Timing::frame_duration);
     title_alpha.update(Timing::frame_duration);
     displayed_item_count.update(Timing::frame_duration);
 
     tex_title->setAlpha(title_alpha.value());
+
+    if (state_transition_alpha) {
+        state_transition_alpha->update(Timing::frame_duration);
+        return;
+    }
+
+    for (const auto& event : events) {
+        switch (event.type) {
+            case EventType::INPUT:
+                state_transition_alpha = std::make_unique<Transition<uint8_t>>(
+                    std::chrono::milliseconds(500),
+                    [](double t){ return t * 0xFF; },
+                    [&app](){ app.states().pop(); }
+                );
+                break;
+            default:
+                break;
+        }
+    }
 }
 
 void Statistics::draw(SinglePlayState& parent, GraphicsContext& gcx) const
@@ -263,6 +282,12 @@ void Statistics::draw(SinglePlayState& parent, GraphicsContext& gcx) const
 
     drawBackground(parent, gcx);
     drawItems(parent);
+
+    if (state_transition_alpha) {
+        RGBAColor color = 0xFF_rgba;
+        color.a = state_transition_alpha->value();
+        gcx.drawFilledRect({0, 0, gcx.screenWidth(), gcx.screenHeight()}, color);
+    }
 }
 
 void Statistics::drawBackground(SinglePlayState& parent, GraphicsContext& gcx) const
