@@ -137,9 +137,8 @@ private:
     const unsigned lineclears_per_level;
     int lineclears_left;
     std::stack<Duration> gravity_levels;
-    unsigned current_level;
-    unsigned current_score;
     ScoreType previous_lineclear_type;
+    unsigned short back2back_length;
 
     void addNextPiece(SinglePlayState& parent);
     void registerObservers(SinglePlayState& parent, AppContext&);

@@ -207,13 +207,13 @@ Statistics::Statistics(SinglePlayState& parent, AppContext& app)
     score_texs.emplace_back(font->renderText(tr("Total Lines"), color),
                             font->renderText(std::to_string(stats.total_cleared_lines), color));
     score_texs.emplace_back(font->renderText(tr("Singles"), color),
-                            font->renderText(std::to_string(stats.singles), color));
+                            font->renderText(std::to_string(stats.event_count[ScoreType::CLEAR_SINGLE]), color));
     score_texs.emplace_back(font->renderText(tr("Doubles"), color),
-                            font->renderText(std::to_string(stats.doubles), color));
+                            font->renderText(std::to_string(stats.event_count[ScoreType::CLEAR_DOUBLE]), color));
     score_texs.emplace_back(font->renderText(tr("Triples"), color),
-                            font->renderText(std::to_string(stats.triples), color));
+                            font->renderText(std::to_string(stats.event_count[ScoreType::CLEAR_TRIPLE]), color));
     score_texs.emplace_back(font->renderText(tr("Perfects"), color),
-                            font->renderText(std::to_string(stats.perfects), color));
+                            font->renderText(std::to_string(stats.event_count[ScoreType::CLEAR_PERFECT]), color));
 
     score_texs.emplace_back(font->renderText(tr("Back-to-Back"), color),
                             font->renderText(std::to_string(stats.back_to_back_count), color));
@@ -221,17 +221,17 @@ Statistics::Statistics(SinglePlayState& parent, AppContext& app)
                             color), font->renderText(std::to_string(stats.back_to_back_longest), color));
 
     score_texs.emplace_back(font->renderText(tr("T-Spin Minis"), color),
-                            font->renderText(std::to_string(stats.tspin_minis), color));
+                            font->renderText(std::to_string(stats.event_count[ScoreType::MINI_TSPIN]), color));
     score_texs.emplace_back(font->renderText(tr("T-Spin Mini Singles"), color),
-                            font->renderText(std::to_string(stats.tspin_mini_singles), color));
+                            font->renderText(std::to_string(stats.event_count[ScoreType::CLEAR_MINI_TSPIN_SINGLE]), color));
     score_texs.emplace_back(font->renderText(tr("T-Spins"), color),
-                            font->renderText(std::to_string(stats.tspins), color));
+                            font->renderText(std::to_string(stats.event_count[ScoreType::TSPIN]), color));
     score_texs.emplace_back(font->renderText(tr("T-Spin Singles"), color),
-                            font->renderText(std::to_string(stats.tspin_singles), color));
+                            font->renderText(std::to_string(stats.event_count[ScoreType::CLEAR_TSPIN_SINGLE]), color));
     score_texs.emplace_back(font->renderText(tr("T-Spin Doubles"), color),
-                            font->renderText(std::to_string(stats.tspin_doubles), color));
+                            font->renderText(std::to_string(stats.event_count[ScoreType::CLEAR_TSPIN_DOUBLE]), color));
     score_texs.emplace_back(font->renderText(tr("T-Spin Triples"), color),
-                            font->renderText(std::to_string(stats.tspin_triples), color));
+                            font->renderText(std::to_string(stats.event_count[ScoreType::CLEAR_TSPIN_TRIPLE]), color));
 
     score_texs.emplace_back(font->renderText(tr("Level"), color),
                             font->renderText(std::to_string(stats.level), color));
@@ -322,9 +322,8 @@ Gameplay::Gameplay(SinglePlayState& parent, AppContext& app)
         })
     , lineclears_per_level(10)
     , lineclears_left(lineclears_per_level)
-    , current_level(1)
-    , current_score(0)
     , previous_lineclear_type(ScoreType::CLEAR_SINGLE)
+    , back2back_length(0)
 {
     // TODO: consider alternative algorithm
     for (int i = 14; i >= 0; i--) {
@@ -332,6 +331,7 @@ Gameplay::Gameplay(SinglePlayState& parent, AppContext& app)
         gravity_levels.push(std::chrono::duration_cast<Duration>(multiplier * std::chrono::seconds(1)));
     }
     parent.ui_well.well().setGravity(gravity_levels.top());
+    parent.player_stats.level = 1;
 
     pending_levelup_msg.stop();
 
@@ -396,19 +396,26 @@ void Gameplay::registerObservers(SinglePlayState& parent, AppContext& app)
 
         this->texts_need_update = true;
         this->lineclears_left -= event.lineclear.count;
+        parent.player_stats.total_cleared_lines += event.lineclear.count;
 
 
         // increase score
         auto score_type = ScoreTable::lineclearType(event.lineclear);
         unsigned score = ScoreTable::value(score_type);
         std::string popup_text = ScoreTable::name(score_type);
+        parent.player_stats.event_count[score_type]++;
 
         if (ScoreTable::canContinueBackToBack(this->previous_lineclear_type, score_type)) {
             score *= ScoreTable::back2backMultiplier();
             popup_text = ScoreTable::back2backName() + "\n" + popup_text;
+            back2back_length++;
+            parent.player_stats.back_to_back_count++;
+            parent.player_stats.back_to_back_longest = std::max(parent.player_stats.back_to_back_longest, back2back_length);
         }
+        else
+            back2back_length = 0;
 
-        this->current_score += score * this->current_level;
+        parent.player_stats.score += score * parent.player_stats.level;
         this->previous_lineclear_type = score_type;
 
         if (score_type != ScoreType::CLEAR_SINGLE) {
@@ -426,7 +433,8 @@ void Gameplay::registerObservers(SinglePlayState& parent, AppContext& app)
             this->gravity_levels.pop();
             parent.ui_well.well().setGravity(this->gravity_levels.top());
             this->lineclears_left += this->lineclears_per_level;
-            this->current_level++;
+            parent.player_stats.level++;
+
             sfx_onlevelup->playOnce();
             // produce delayed popup if there are other popups already
             pending_levelup_msg.restart();
@@ -435,31 +443,31 @@ void Gameplay::registerObservers(SinglePlayState& parent, AppContext& app)
         }
     });
 
-    well.registerObserver(WellEvent::Type::MINI_TSPIN_DETECTED, [this](const WellEvent&){
+    well.registerObserver(WellEvent::Type::MINI_TSPIN_DETECTED, [this, &parent](const WellEvent&){
         this->texts_need_update = true;
-        this->current_score += ScoreTable::value(ScoreType::MINI_TSPIN);
+        parent.player_stats.score += ScoreTable::value(ScoreType::MINI_TSPIN);
         this->textpopups.emplace_back(std::make_unique<TextPopup>(
             ScoreTable::name(ScoreType::MINI_TSPIN),
             this->font_popuptext));
     });
 
-    well.registerObserver(WellEvent::Type::TSPIN_DETECTED, [this](const WellEvent&){
+    well.registerObserver(WellEvent::Type::TSPIN_DETECTED, [this, &parent](const WellEvent&){
         this->texts_need_update = true;
-        this->current_score += ScoreTable::value(ScoreType::TSPIN);
+        parent.player_stats.score += ScoreTable::value(ScoreType::TSPIN);
         this->textpopups.emplace_back(std::make_unique<TextPopup>(
             ScoreTable::name(ScoreType::TSPIN),
             this->font_popuptext));
     });
 
-    well.registerObserver(WellEvent::Type::HARDDROPPED, [this](const WellEvent& event){
+    well.registerObserver(WellEvent::Type::HARDDROPPED, [this, &parent](const WellEvent& event){
         assert(event.harddrop.count < 22);
         this->texts_need_update = true;
-        this->current_score += event.harddrop.count * ScoreTable::value(ScoreType::HARDDROP);
+        parent.player_stats.score += event.harddrop.count * ScoreTable::value(ScoreType::HARDDROP);
     });
 
-    well.registerObserver(WellEvent::Type::SOFTDROPPED, [this](const WellEvent&){
+    well.registerObserver(WellEvent::Type::SOFTDROPPED, [this, &parent](const WellEvent&){
         this->texts_need_update = true;
-        this->current_score += ScoreTable::value(ScoreType::SOFTDROP);
+        parent.player_stats.score += ScoreTable::value(ScoreType::SOFTDROP);
     });
 
     well.registerObserver(WellEvent::Type::GAME_OVER, [this, &parent, &app](const WellEvent&){
@@ -497,8 +505,8 @@ void Gameplay::update(SinglePlayState& parent, const std::vector<Event>& events,
 
     if (texts_need_update) {
         parent.ui_leftside.updateGoalCounter(lineclears_left);
-        parent.ui_leftside.updateLevelCounter(current_level);
-        parent.ui_rightside.updateScore(current_score);
+        parent.ui_leftside.updateLevelCounter(parent.player_stats.level);
+        parent.ui_rightside.updateScore(parent.player_stats.score);
         texts_need_update = false;
     }
 
