@@ -182,9 +182,8 @@ std::vector<Event> SDLWindow::collectEvents()
             }
             break;
         case SDL_KEYUP:
-            case SDL_SCANCODE_F4:
-                if (SDL_GetModState() & KMOD_ALT)
-                    m_quit_requested = true;
+            if (sdl_event.key.keysym.scancode == SDL_SCANCODE_F4 && SDL_GetModState() & KMOD_ALT)
+                m_quit_requested = true;
             // do NOT break - the code below should run for KEYUP too
         case SDL_KEYDOWN:
             if (!sdl_event.key.repeat) {
