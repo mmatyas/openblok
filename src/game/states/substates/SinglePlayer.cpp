@@ -406,7 +406,6 @@ Gameplay::Gameplay(SinglePlayState& parent, AppContext& app)
         gravity_levels.push(std::chrono::duration_cast<Duration>(multiplier * std::chrono::seconds(1)));
     }
     parent.ui_well.well().setGravity(gravity_levels.top());
-    parent.player_stats.level = 1;
 
     pending_levelup_msg.stop();
 

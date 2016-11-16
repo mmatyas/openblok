@@ -6,8 +6,7 @@
 
 
 SinglePlayState::SinglePlayState(AppContext& app)
-    : player_stats({})
-    , tex_background(app.gcx().loadTexture(Paths::data() + "gamebg.png"))
+    : tex_background(app.gcx().loadTexture(Paths::data() + "gamebg.png"))
     , ui_well(app)
     , ui_leftside(app, ui_well.height())
     , ui_rightside(app, ui_well.height())
