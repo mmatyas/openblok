@@ -587,6 +587,7 @@ void Gameplay::update(SinglePlayState& parent, const std::vector<Event>& events,
                     parent.states.emplace_back(std::make_unique<Pause>(app));
                     return;
                 }
+                break;
             case EventType::INPUT:
                 if (event.input.type() == InputType::GAME_PAUSE && event.input.down()) {
                     parent.states.emplace_back(std::make_unique<Countdown>(app));
