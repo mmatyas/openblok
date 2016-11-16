@@ -2,7 +2,7 @@
 
 #include "Mino.h"
 #include "PieceType.h"
-#include "game/Matrix.h"
+#include "game/util/Matrix.h"
 
 #include <array>
 #include <bitset>

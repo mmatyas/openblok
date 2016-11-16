@@ -1,7 +1,6 @@
 set(MOD_GAME_SRC
     AppContext.cpp
     ScoreTable.cpp
-    DurationToString.cpp
 
     components/HoldQueue.cpp
     components/Mino.cpp
@@ -39,13 +38,13 @@ set(MOD_GAME_SRC
     states/MainMenuState.cpp
     states/SinglePlayState.cpp
     states/substates/SinglePlayer.cpp
+
+    util/DurationToString.cpp
 )
 
 set(MOD_GAME_H
     AppContext.h
-    DurationToString.h
     GameState.h
-    Matrix.h
     PlayerStatistics.h
     ScoreTable.h
     Timing.h
@@ -93,6 +92,9 @@ set(MOD_GAME_H
     states/MainMenuState.h
     states/SinglePlayState.h
     states/substates/SinglePlayer.h
+
+    util/DurationToString.h
+    util/Matrix.h
 )
 
 if(NOT CMAKE_BUILD_TYPE MATCHES Release)

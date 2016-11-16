@@ -1,7 +1,7 @@
 #pragma once
 
-#include "game/Matrix.h"
 #include "game/WellEvent.h"
+#include "game/util/Matrix.h"
 #include "well/AutoRepeat.h"
 #include "well/Input.h"
 #include "well/Gravity.h"

@@ -1,8 +1,8 @@
 #include "RightSidebarBox.h"
 
 #include "game/AppContext.h"
-#include "game/DurationToString.h"
 #include "game/components/Mino.h"
+#include "game/util/DurationToString.h"
 #include "system/Font.h"
 #include "system/Localize.h"
 #include "system/Paths.h"

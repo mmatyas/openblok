@@ -1,10 +1,10 @@
 #include "SinglePlayer.h"
 
 #include "game/AppContext.h"
-#include "game/DurationToString.h"
 #include "game/components/Piece.h"
 #include "game/components/animations/TextPopup.h"
 #include "game/states/SinglePlayState.h"
+#include "game/util/DurationToString.h"
 #include "system/AudioContext.h"
 #include "system/Color.h"
 #include "system/Font.h"
