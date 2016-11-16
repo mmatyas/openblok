@@ -31,6 +31,7 @@ enum class StateType : uint8_t {
     GAME_RUNNING,
     PAUSED,
     GAME_OVER,
+    GAME_COMPLETE,
     STATISTICS,
 };
 
@@ -38,8 +39,9 @@ class State {
 public:
     virtual ~State() {}
     virtual StateType type() const = 0;
+    virtual void updateAnimationsOnly(SinglePlayState&, AppContext&) {}
     virtual void update(SinglePlayState&, const std::vector<Event>&, AppContext&) = 0;
-    virtual void draw(SinglePlayState&, GraphicsContext&) const {};
+    virtual void draw(SinglePlayState&, GraphicsContext&) const {}
 };
 
 namespace States {
@@ -96,6 +98,20 @@ private:
     Transition<void> statistics_delay;
 };
 
+class GameComplete : public State {
+public:
+    GameComplete(SinglePlayState&, AppContext&);
+    StateType type() const { return StateType::GAME_COMPLETE; }
+    void update(SinglePlayState&, const std::vector<Event>&, AppContext&) final;
+    void draw(SinglePlayState&, GraphicsContext&) const final;
+
+private:
+    std::unique_ptr<Texture> tex_finish;
+    std::shared_ptr<SoundEffect> sfx_onfinish;
+    Transition<uint8_t> text_alpha;
+    Transition<void> statistics_delay;
+};
+
 class Statistics : public State {
 public:
     Statistics(SinglePlayState&, AppContext&);
@@ -124,6 +140,7 @@ class Gameplay : public State {
 public:
     Gameplay(SinglePlayState&, AppContext&);
     StateType type() const { return StateType::GAME_RUNNING; }
+    void updateAnimationsOnly(SinglePlayState&, AppContext&) final;
     void update(SinglePlayState&, const std::vector<Event>&, AppContext&) final;
     void draw(SinglePlayState&, GraphicsContext&) const final;
 

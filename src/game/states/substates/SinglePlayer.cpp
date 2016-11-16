@@ -174,6 +174,45 @@ void GameOver::draw(SinglePlayState& parent, GraphicsContext& gcx) const
 }
 
 
+GameComplete::GameComplete(SinglePlayState& parent, AppContext& app)
+    : sfx_onfinish(app.audio().loadSound(Paths::data() + "sfx/finish.ogg"))
+    , text_alpha(std::chrono::seconds(1),
+        [](double t){ return t * 0xFF; },
+        [this](){
+            this->statistics_delay.restart();
+        })
+    , statistics_delay(std::chrono::seconds(4), [](double){},
+        [&parent, &app](){
+            parent.states.emplace_back(std::make_unique<Statistics>(parent, app));
+        })
+{
+    auto font_big = app.gcx().loadFont(Paths::data() + "fonts/PTC75F.ttf", 45);
+    tex_finish = font_big->renderText(tr("FINISH!"), 0xEEEEEE_rgb);
+    tex_finish->setAlpha(0x0);
+
+    statistics_delay.stop();
+    sfx_onfinish->playOnce();
+}
+
+void GameComplete::update(SinglePlayState& parent, const std::vector<Event>&, AppContext& app)
+{
+    parent.states.front()->updateAnimationsOnly(parent, app);
+    statistics_delay.update(Timing::frame_duration);
+    text_alpha.update(Timing::frame_duration);
+    tex_finish->setAlpha(text_alpha.value());
+}
+
+void GameComplete::draw(SinglePlayState& parent, GraphicsContext& gcx) const
+{
+    // draw the well with contents, and also any leftover popup texts of Gameplay
+    assert(parent.states.size() > 1);
+    parent.states.front()->draw(parent, gcx);
+
+    tex_finish->drawAt(parent.wellCenterX() - static_cast<int>(tex_finish->width()) / 2,
+                       parent.wellCenterY() - static_cast<int>(tex_finish->height()) / 2);
+}
+
+
 Statistics::Statistics(SinglePlayState& parent, AppContext& app)
     : background_percent(
         std::chrono::seconds(1),
@@ -396,7 +435,9 @@ void Gameplay::registerObservers(SinglePlayState& parent, AppContext& app)
     });
 
     well.registerObserver(WellEvent::Type::NEXT_REQUESTED, [this, &parent](const WellEvent&){
-        this->addNextPiece(parent);
+        // if the game is still running
+        if (!this->gravity_levels.empty())
+            this->addNextPiece(parent);
     });
 
     well.registerObserver(WellEvent::Type::HOLD_REQUESTED, [this, &parent](const WellEvent&){
@@ -425,7 +466,7 @@ void Gameplay::registerObservers(SinglePlayState& parent, AppContext& app)
         this->sfx_onlineclear.at(event.lineclear.count - 1)->playOnce();
     });
 
-    well.registerObserver(WellEvent::Type::LINE_CLEAR, [this, &parent](const WellEvent& event){
+    well.registerObserver(WellEvent::Type::LINE_CLEAR, [this, &parent, &app](const WellEvent& event){
         assert(event.type == WellEvent::Type::LINE_CLEAR);
         assert(event.lineclear.count > 0);
         assert(event.lineclear.count <= 4);
@@ -462,16 +503,18 @@ void Gameplay::registerObservers(SinglePlayState& parent, AppContext& app)
 
         // increase gravity level
         if (this->lineclears_left <= 0) {
-            if (this->gravity_levels.size() <= 1) {
-               this->lineclears_left = 0;
+            this->gravity_levels.pop();
+            if (this->gravity_levels.empty()) {
+                this->lineclears_left = 0;
+                music->fadeOut(std::chrono::seconds(1));
+                parent.states.emplace_back(std::make_unique<GameComplete>(parent, app));
                 return;
             }
-            this->gravity_levels.pop();
             parent.ui_well.well().setGravity(this->gravity_levels.top());
             this->lineclears_left += this->lineclears_per_level;
             parent.player_stats.level++;
-
             sfx_onlevelup->playOnce();
+
             // produce delayed popup if there are other popups already
             pending_levelup_msg.restart();
             if (textpopups.empty())
@@ -514,6 +557,25 @@ void Gameplay::registerObservers(SinglePlayState& parent, AppContext& app)
     });
 }
 
+void Gameplay::updateAnimationsOnly(SinglePlayState& parent, AppContext&)
+{
+    pending_levelup_msg.update(Timing::frame_duration);
+    // remove old animations
+    textpopups.erase(std::remove_if(textpopups.begin(), textpopups.end(),
+        [](std::unique_ptr<TextPopup>& popup){ return !popup->isActive(); }),
+        textpopups.end());
+
+    // newly created popups don't know theit position,
+    // that's why this is here, and not in SinglePlayState
+    for (auto& popup : textpopups) {
+        popup->setInitialPosition(
+            parent.ui_leftside.x() - 10 + (parent.ui_leftside.width() - static_cast<int>(popup->width())) / 2.0,
+            parent.ui_leftside.y() + parent.ui_leftside.height() * 0.5
+        );
+        popup->update();
+    }
+}
+
 void Gameplay::update(SinglePlayState& parent, const std::vector<Event>& events, AppContext& app)
 {
     std::vector<InputEvent> input_events;
@@ -548,21 +610,9 @@ void Gameplay::update(SinglePlayState& parent, const std::vector<Event>& events,
         texts_need_update = false;
     }
 
-    pending_levelup_msg.update(Timing::frame_duration);
-    // remove old animations
-    textpopups.erase(std::remove_if(textpopups.begin(), textpopups.end(),
-        [](std::unique_ptr<TextPopup>& popup){ return !popup->isActive(); }),
-        textpopups.end());
-
-    // newly created popups don't know theit position,
-    // that's why this is here, and not in SinglePlayState
-    for (auto& popup : textpopups) {
-        popup->setInitialPosition(
-            parent.ui_leftside.x() - 10 + (parent.ui_leftside.width() - static_cast<int>(popup->width())) / 2.0,
-            parent.ui_leftside.y() + parent.ui_leftside.height() * 0.5
-        );
-        popup->update();
-    }
+    // updating the Well may produce popups, initialized at (0;0),
+    // so we update the animations only after that
+    updateAnimationsOnly(parent, app);
 
     parent.player_stats.gametime += Timing::frame_duration;
     parent.ui_rightside.updateGametime(parent.player_stats.gametime);
