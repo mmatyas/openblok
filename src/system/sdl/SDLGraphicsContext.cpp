@@ -165,7 +165,7 @@ void SDLGraphicsContext::saveScreenshotBMP(const SDL2pp::Window& window, const s
     const auto info_format = info_surface.Get()->format;
 
     std::unique_ptr<uint8_t[]> pixels = std::make_unique<uint8_t[]>(
-        info_surface.GetWidth() * info_surface.GetHeight() * info_format->BytesPerPixel);
+        info_surface.GetWidth() * info_surface.GetHeight() * static_cast<size_t>(info_format->BytesPerPixel));
 
     renderer.ReadPixels(
         info_surface.GetClipRect(),
