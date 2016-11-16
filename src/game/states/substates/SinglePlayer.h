@@ -106,12 +106,17 @@ public:
 private:
     std::unique_ptr<Texture> tex_title;
     std::vector<std::pair<std::unique_ptr<Texture>, std::unique_ptr<Texture>>> score_texs;
+
     Transition<double> background_percent;
     Transition<uint8_t> title_alpha;
     Transition<uint8_t> displayed_item_count;
+
     const int column_width;
     const int column_padding;
     const int title_padding_bottom;
+
+    void drawBackground(SinglePlayState&, GraphicsContext&) const;
+    void drawItems(SinglePlayState&) const;
 };
 
 class Gameplay : public State {

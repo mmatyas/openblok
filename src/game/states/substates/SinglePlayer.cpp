@@ -261,8 +261,12 @@ void Statistics::draw(SinglePlayState& parent, GraphicsContext& gcx) const
     assert(it != parent.states.rend());
     (*it)->draw(parent, gcx);
 
+    drawBackground(parent, gcx);
+    drawItems(parent);
+}
 
-    // draw background rectangle
+void Statistics::drawBackground(SinglePlayState& parent, GraphicsContext& gcx) const
+{
     const int height = 10 + parent.ui_well.wellHeight() * background_percent.value();
     const int width = gcx.screenWidth() * 0.92;
     const int half_height = height / 2;
@@ -272,18 +276,21 @@ void Statistics::draw(SinglePlayState& parent, GraphicsContext& gcx) const
         parent.wellCenterY() - half_height,
         width, height},
         0x2030FF_rgb);
+}
 
-    // draw title
+void Statistics::drawItems(SinglePlayState& parent) const
+{
+    static const int item_height = score_texs.at(0).first->height() * 1.2;
+    static const unsigned row_count_per_column = score_texs.size() / 2;
+
     if (!background_percent.running()) {
-        static const int item_height = score_texs.at(0).first->height() * 1.2;
-        static const unsigned row_count_per_column = score_texs.size() / 2;
-
-        int first_row_pos_y = parent.wellCenterY() - ((score_texs.size() / 4) - 1) * item_height;
+        // draw title
         int row_pos_x = parent.wellCenterX() - column_width;
+        int first_row_pos_y = parent.wellCenterY() - ((score_texs.size() / 4) - 1) * item_height;
 
         tex_title->drawAt(row_pos_x, first_row_pos_y - tex_title->height() - title_padding_bottom);
 
-        // draw items
+        // draw statistics items
         if (!title_alpha.running()) {
             int row_pos_y = first_row_pos_y;
             unsigned current_row = 0;
@@ -304,7 +311,6 @@ void Statistics::draw(SinglePlayState& parent, GraphicsContext& gcx) const
             }
         }
     }
-
 }
 
 
