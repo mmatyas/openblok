@@ -57,10 +57,6 @@ set(SDL2PP_WITH_TTF ON)
 add_subdirectory(external/libSDL2pp)
 
 
-# Data files
-add_definitions(-DOPENBLOK_DATADIR="${DATADIR}")
-
-
 include_directories("src")
 add_subdirectory(src)
 

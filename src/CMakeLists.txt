@@ -1,8 +1,6 @@
-set(GAME_SRC
-    main.cpp
-)
+add_definitions(-DOPENBLOK_DATADIR="${DATADIR}")
 
-add_executable(openblok ${GAME_SRC})
+add_executable(openblok main.cpp)
 
 add_subdirectory(system)
 add_subdirectory(game)
