@@ -14,7 +14,8 @@ static const int PIECE_SIDES_PX = PADDING_PX + 4 * Mino::texture_size_px;
 namespace Layout {
 
 PieceRain::PieceRain()
-    : bottom_y(std::chrono::seconds(4),
+    : displayed_piece_count(0)
+    , bottom_y(std::chrono::seconds(4),
                [this](double t) {
                    return this->y() + this->height() + t * PIECE_SIDES_PX; },
                [this](){

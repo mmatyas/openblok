@@ -25,6 +25,8 @@ RightSidebarBox::RightSidebarBox(AppContext& app, int height)
     tex_score = font_label->renderText(tr("SCORE"), 0xEEEEEE_rgb);
     tex_score_counter = font_content->renderText("0", 0xEEEEEE_rgb);
     tex_time_counter = font_content->renderText(gametime_text, 0xEEEEEE_rgb);
+
+    setPosition(0, 0);
 }
 
 void RightSidebarBox::setPosition(int x, int y)
