@@ -448,6 +448,7 @@ void Gameplay::registerObservers(SinglePlayState& parent, AppContext& app)
     well.registerObserver(WellEvent::Type::MINI_TSPIN_DETECTED, [this, &parent](const WellEvent&){
         this->texts_need_update = true;
         parent.player_stats.score += ScoreTable::value(ScoreType::MINI_TSPIN);
+        parent.player_stats.event_count[ScoreType::MINI_TSPIN]++;
         this->textpopups.emplace_back(std::make_unique<TextPopup>(
             ScoreTable::name(ScoreType::MINI_TSPIN),
             this->font_popuptext));
@@ -456,6 +457,7 @@ void Gameplay::registerObservers(SinglePlayState& parent, AppContext& app)
     well.registerObserver(WellEvent::Type::TSPIN_DETECTED, [this, &parent](const WellEvent&){
         this->texts_need_update = true;
         parent.player_stats.score += ScoreTable::value(ScoreType::TSPIN);
+        parent.player_stats.event_count[ScoreType::TSPIN]++;
         this->textpopups.emplace_back(std::make_unique<TextPopup>(
             ScoreTable::name(ScoreType::TSPIN),
             this->font_popuptext));
