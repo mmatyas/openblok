@@ -10,7 +10,7 @@ if(NOT ${CMAKE_BUILD_TYPE} MATCHES Release)
     option(BUILD_TEST_COVERAGE "Build the test coverage report" OFF)
 endif()
 # Intallation locations
-set(SHAREDIR CACHE STRING "${CMAKE_INSTALL_PREFIX}/share")
+set(SHAREDIR "${CMAKE_INSTALL_PREFIX}/share" CACHE STRING "Base directory of installed data files")
 if(UNIX AND NOT APPLE AND NOT CYGWIN)
     option(INSTALL_DESKTOPICON "Install desktop shortcut and icon" ON)
     set(ICONDIR "${SHAREDIR}/pixmaps" CACHE STRING "Install location of the icon file")
