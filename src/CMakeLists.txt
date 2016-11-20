@@ -8,4 +8,4 @@ target_link_libraries(openblok module_game)
 
 
 # Install
-install(TARGETS openblok RUNTIME DESTINATION games)
+install(TARGETS openblok RUNTIME DESTINATION ${EXEDIR})
