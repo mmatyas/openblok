@@ -5,7 +5,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
 
 # Build options
 # Currently unit tests only work only in Debug
-if(NOT ${CMAKE_BUILD_TYPE} MATCHES Release)
+if(NOT "${CMAKE_BUILD_TYPE}" STREQUAL "Release")
     option(BUILD_TESTS "Build the unit tests" ON)
     option(BUILD_TEST_COVERAGE "Build the test coverage report" OFF)
 endif()
@@ -60,9 +60,9 @@ set(SDL2PP_WITH_TTF ON)
 add_subdirectory(external/libSDL2pp)
 
 
-include_directories("src")
+# The main game source
+include_directories(src)
 add_subdirectory(src)
-
 if(BUILD_TESTS)
     add_subdirectory(external/unittest-cpp)
     include_directories(external/unittest-cpp)
