@@ -43,5 +43,5 @@ install:
 
 build_script:
   - cd %APPVEYOR_BUILD_FOLDER%
-  - cmake -DCMAKE_PREFIX_PATH=%BASEDIR% -G "Visual Studio 14 2015" .
+  - cmake -DCMAKE_PREFIX_PATH=%BASEDIR% -DBUILD_TESTS=OFF -G "Visual Studio 14 2015" .
   - cmake --build .
