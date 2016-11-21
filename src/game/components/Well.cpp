@@ -40,10 +40,18 @@ void Well::updateKeystateOnly(const std::vector<InputEvent>& events)
     input.updateKeystate(events);
 }
 
+void Well::updateAnimationsOnly()
+{
+    for (auto& anim : animations)
+        anim->update(Timing::frame_duration);
+
+    animations.remove_if([](std::unique_ptr<WellAnimation>& animptr){
+        return !animptr->isActive();
+    });
+}
+
 void Well::updateGameplayOnly(const std::vector<InputEvent>& events)
 {
-    updateAnimations();
-
     if (gameover)
         return;
 
@@ -73,18 +81,10 @@ void Well::updateGameplayOnly(const std::vector<InputEvent>& events)
 void Well::update(const std::vector<InputEvent>& events)
 {
     updateKeystateOnly(events);
+    updateAnimationsOnly();
     updateGameplayOnly(events);
 }
 #endif
-
-void Well::updateAnimations()
-{
-    for (auto& anim : animations)
-        anim->update(Timing::frame_duration);
-    animations.remove_if([](std::unique_ptr<WellAnimation>& animptr){
-        return !animptr->isActive();
-    });
-}
 
 void Well::addPiece(PieceType type)
 {

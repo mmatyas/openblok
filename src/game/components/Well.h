@@ -43,6 +43,8 @@ public:
     /// is not directly accessible, so it is required to check the input
     /// events every frame. This function does not call any game logic.
     void updateKeystateOnly(const std::vector<InputEvent>&);
+    /// Update the active animations of the well
+    void updateAnimationsOnly();
     /// Update the game logic of the well
     void updateGameplayOnly(const std::vector<InputEvent>&);
 
@@ -126,7 +128,6 @@ private:
     void notify(const WellEvent&);
 
     // animations
-    void updateAnimations();
     std::list<std::unique_ptr<WellAnimation>> animations;
 
     // components

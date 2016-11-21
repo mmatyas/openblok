@@ -149,8 +149,9 @@ GameOver::GameOver(SinglePlayState& parent, AppContext& app)
     statistics_delay.stop();
 }
 
-void GameOver::update(SinglePlayState&, const std::vector<Event>& events, AppContext&)
+void GameOver::update(SinglePlayState& parent, const std::vector<Event>& events, AppContext& app)
 {
+    parent.states.front()->updateAnimationsOnly(parent, app);
     statistics_delay.update(Timing::frame_duration);
     background_percent.update(Timing::frame_duration);
     if (background_percent.value() > 0.4)
@@ -579,6 +580,8 @@ void Gameplay::registerObservers(SinglePlayState& parent, AppContext& app)
 
 void Gameplay::updateAnimationsOnly(SinglePlayState& parent, AppContext&)
 {
+    parent.ui_well.well().updateAnimationsOnly();
+
     pending_levelup_msg.update(Timing::frame_duration);
     // remove old animations
     textpopups.erase(std::remove_if(textpopups.begin(), textpopups.end(),
