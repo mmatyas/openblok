@@ -41,8 +41,8 @@ int main(int argc, const char** argv)
             return 0;
         else if (arg == "--help") {
             Log::info(LOG_HELP) << "Usage:\n";
-            Log::info(LOG_HELP) << "  --help                   Display this help then quit\n";
             Log::info(LOG_HELP) << "  -v, --version            Display the version number then quit\n";
+            Log::info(LOG_HELP) << "  --help                   Display this help then quit\n";
             Log::info(LOG_HELP) << "  --data <dir>             Load game resources from the <dir> directory\n";
             return 0;
         }
