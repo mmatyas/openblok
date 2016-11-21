@@ -52,14 +52,16 @@ Build
 mkdir build && cd build
 cmake ..
 make
-cd .. && ./build/src/openblok
+./src/openblok --data ../data
 ```
 
 **Optional build parameters:**
 
+- `CMAKE_BUILD_TYPE`: By default, the game builds without optimizations or debug symbols. To create an **optimized release build**, set this to `Release`. To create a **debug build**, set this value to `Debug`. Using certain IDEs, eg. Visual Studio, this setting has no effect, as you have to set the build type inside these programs instead. See the CMake documentation for more details.
+- `INSTALL_PORTABLE`: Set this parameter to `ON` to create a portable build. By default, calling the installation step (eg. `make install`) installs the game to your system (eg. to `/usr/local` or `C:\Program Files`), where the game itself and the data files may end up in different directories (eg. `/usr/local/{games,share/openblok}`). The game will load the data files from this install location. On the other hand, a portable build always puts the binary and the data directory next to each other, and the game will load the files from this folder. Default: `OFF`. Recommended: `OFF` on Linux, `ON` on Windows.
+- `CMAKE_INSTALL_PREFIX`: The base directory of the installation step (eg. `make install`). Defaults to `/usr/local` or `C:\Program Files`. See the CMake documentation for more details.
 - `BUILD_TESTS`: Builds the test suite. You can run them by calling `./build/tests/openblok_test`. Debug build only, default: `ON`.
 - `BUILD_COVERAGE`: Allows building the test coverage report. Requires `BUILD_TESTS` and `gcov`/`lcov`. Default: `OFF`.
-- `DATADIR`: Location of the data directory. Defaults to `./data` in debug build, and `<INSTALL LOCATION>/share/openblok` in release.
 
 **Additional build targets**
 
@@ -70,6 +72,10 @@ cd .. && ./build/src/openblok
 
 Notes
 -----
+
+**Runtime arguments**
+
+You can change certain game parameters, eg. the location of the data directory. Run the game with the `--help` flag to see the available options.
 
 **Hardware acceleration on ARM Linux**
 
