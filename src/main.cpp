@@ -22,6 +22,7 @@
 #include "system/Log.h"
 #include "system/Paths.h"
 
+#include <algorithm>
 #include <chrono>
 #include <memory>
 #include <thread>
