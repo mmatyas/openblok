@@ -18,18 +18,6 @@ flatpak info org.freedesktop.Platform || {
     flatpak install gnome org.freedesktop.Sdk 1.4
 }
 
-# rm -rf workdir openblok
-
-# flatpak build-init workdir hu.matyasmustoha.OpenBlok org.freedesktop.Sdk org.freedesktop.Platform 1.4
-# mkdir -p openblok/build
-# cp -r ../../{cmake,data,external,src,CMakeLists.txt,README.md,LICENSE.md} openblok/
-# cd openblok/build
-
-# flatpak build ../../workdir cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=/app
-# flatpak build ../../workdir make
-# flatpak build ../../workdir make install
-# cd ../..
-
 rm -rf app
 flatpak-builder --repo=repo app manifest.json
 flatpak build-update-repo --prune repo
