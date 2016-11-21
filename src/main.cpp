@@ -73,7 +73,7 @@ int main(int argc, const char** argv)
 
 
     auto frame_starttime = std::chrono::steady_clock::now();
-    auto frame_endtime = frame_starttime + Timing::frame_duration;
+    auto frame_planned_endtime = frame_starttime + Timing::frame_duration;
 
     while (!app.window().quitRequested()) {
         try {
@@ -93,9 +93,10 @@ int main(int argc, const char** argv)
         }
 
         // frame rate limiting
-        std::this_thread::sleep_until(frame_endtime);
+        std::this_thread::sleep_until(frame_planned_endtime);
+
         frame_starttime = std::chrono::steady_clock::now();
-        frame_endtime = frame_starttime + Timing::frame_duration;
+        frame_planned_endtime = frame_starttime + Timing::frame_duration;
     }
 
     return 0;
