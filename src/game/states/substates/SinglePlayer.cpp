@@ -149,12 +149,21 @@ GameOver::GameOver(SinglePlayState& parent, AppContext& app)
     statistics_delay.stop();
 }
 
-void GameOver::update(SinglePlayState&, const std::vector<Event>&, AppContext&)
+void GameOver::update(SinglePlayState&, const std::vector<Event>& events, AppContext&)
 {
     statistics_delay.update(Timing::frame_duration);
     background_percent.update(Timing::frame_duration);
     if (background_percent.value() > 0.4)
         tex_gameover->setAlpha(std::min<int>(0xFF, (background_percent.value() - 0.4) * 0x1FF));
+
+    for (const auto& event : events) {
+        if (event.type == EventType::INPUT && event.input.down()) {
+            background_percent.update(background_percent.length());
+            tex_gameover->setAlpha(std::min<int>(0xFF, (background_percent.value() - 0.4) * 0x1FF));
+            statistics_delay.update(statistics_delay.length());
+            return; // stop parsing the rest of the keys
+        }
+    }
 }
 
 void GameOver::draw(SinglePlayState& parent, GraphicsContext& gcx) const
@@ -194,12 +203,21 @@ GameComplete::GameComplete(SinglePlayState& parent, AppContext& app)
     sfx_onfinish->playOnce();
 }
 
-void GameComplete::update(SinglePlayState& parent, const std::vector<Event>&, AppContext& app)
+void GameComplete::update(SinglePlayState& parent, const std::vector<Event>& events, AppContext& app)
 {
     parent.states.front()->updateAnimationsOnly(parent, app);
     statistics_delay.update(Timing::frame_duration);
     text_alpha.update(Timing::frame_duration);
     tex_finish->setAlpha(text_alpha.value());
+
+    for (const auto& event : events) {
+        if (event.type == EventType::INPUT && event.input.down()) {
+            text_alpha.update(text_alpha.length());
+            tex_finish->setAlpha(text_alpha.value());
+            statistics_delay.update(statistics_delay.length());
+            return; // stop parsing the rest of the keys
+        }
+    }
 }
 
 void GameComplete::draw(SinglePlayState& parent, GraphicsContext& gcx) const
