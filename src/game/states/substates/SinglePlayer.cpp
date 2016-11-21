@@ -296,17 +296,20 @@ void Statistics::update(SinglePlayState&, const std::vector<Event>& events, AppC
         return;
     }
 
+
     for (const auto& event : events) {
-        switch (event.type) {
-            case EventType::INPUT:
-                state_transition_alpha = std::make_unique<Transition<uint8_t>>(
-                    std::chrono::milliseconds(500),
-                    [](double t){ return t * 0xFF; },
-                    [&app](){ app.states().pop(); }
-                );
-                break;
-            default:
-                break;
+        if (event.type == EventType::INPUT && event.input.down()) {
+            if (displayed_item_count.value() != score_texs.size()) {
+                background_percent.update(background_percent.length());
+                title_alpha.update(title_alpha.length());
+                displayed_item_count.update(displayed_item_count.length());
+                return; // stop parsing the rest of the keys
+            }
+            state_transition_alpha = std::make_unique<Transition<uint8_t>>(
+                std::chrono::milliseconds(500),
+                [](double t){ return t * 0xFF; },
+                [&app](){ app.states().pop(); }
+            );
         }
     }
 }
