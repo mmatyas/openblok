@@ -74,13 +74,15 @@ int main(int argc, const char** argv)
 
     auto frame_starttime = std::chrono::steady_clock::now();
     auto frame_planned_endtime = frame_starttime + Timing::frame_duration;
+    auto gametime_delay = Timing::frame_duration; // start with an update
 
     while (!app.window().quitRequested()) {
         try {
-            auto events = app.window().collectEvents();
-
-            assert(app.states().size());
-            app.states().top()->update(events, app);
+            while (gametime_delay >= Timing::frame_duration && !app.states().empty()) {
+                auto events = app.window().collectEvents();
+                app.states().top()->update(events, app);
+                gametime_delay -= Timing::frame_duration;
+            }
             if (app.states().empty())
                 break;
 
@@ -92,7 +94,10 @@ int main(int argc, const char** argv)
             return 1;
         }
 
-        // frame rate limiting
+        auto lag = std::max(std::chrono::steady_clock::now() - frame_planned_endtime, Duration::zero());
+        gametime_delay += Timing::frame_duration + lag;
+
+        // max frame rate limiting
         std::this_thread::sleep_until(frame_planned_endtime);
 
         frame_starttime = std::chrono::steady_clock::now();
