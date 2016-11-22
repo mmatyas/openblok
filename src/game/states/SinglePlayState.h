@@ -5,10 +5,18 @@
 #include "game/layout/singleplayer/LeftSidebarBox.h"
 #include "game/layout/singleplayer/RightSidebarBox.h"
 #include "game/layout/singleplayer/WellBox.h"
-#include "substates/SinglePlayer.h"
 
 #include <list>
 #include <memory>
+
+namespace SubStates { namespace SinglePlayer {
+    class State;
+    namespace States {
+        class GameOver;
+        class Gameplay;
+        class Statistics;
+    }
+} }
 
 
 class SinglePlayState: public GameState {

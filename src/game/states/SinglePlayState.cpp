@@ -3,6 +3,7 @@
 #include "game/AppContext.h"
 #include "system/Paths.h"
 #include "system/Texture.h"
+#include "substates/singleplayer/MinorStates.h"
 
 
 SinglePlayState::SinglePlayState(AppContext& app)
