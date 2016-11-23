@@ -57,7 +57,7 @@ void Options::draw(MainMenuState& parent, GraphicsContext& gcx) const
 {
     parent.states.front()->draw(parent, gcx);
 
-    RGBAColor color = 0x0000FFFF_rgba;
+    RGBAColor color = 0xAA1F78FF_rgba;
     color.a = fade_alpha->value();
     gcx.drawFilledRect(border_rect, color);
     color = 0x2030FFFF_rgba;
