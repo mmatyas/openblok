@@ -1,11 +1,13 @@
 #pragma once
 
-#include "game/GameState.h"
 #include "system/ConfigManager.h"
 #include "system/Window.h"
 
 #include <memory>
 #include <stack>
+
+class AudioContext;
+class GameState;
 
 
 class AppContext {

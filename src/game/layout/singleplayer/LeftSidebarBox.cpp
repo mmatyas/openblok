@@ -3,6 +3,7 @@
 #include "game/AppContext.h"
 #include "game/components/Mino.h"
 #include "system/Font.h"
+#include "system/GraphicsContext.h"
 #include "system/Localize.h"
 #include "system/Paths.h"
 

@@ -4,6 +4,7 @@
 #include "game/components/Mino.h"
 #include "game/util/DurationToString.h"
 #include "system/Font.h"
+#include "system/GraphicsContext.h"
 #include "system/Localize.h"
 #include "system/Paths.h"
 
