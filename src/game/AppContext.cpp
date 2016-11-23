@@ -2,6 +2,9 @@
 
 #include "system/Log.h"
 
+#include <cstdlib>
+#include <ctime>
+
 
 bool AppContext::init()
 {
@@ -10,7 +13,7 @@ bool AppContext::init()
         Log::info(log_tag) << "Initializing video...\n";
         m_window = Window::create();
 
-        srand(time(nullptr));
+        std::srand(std::time(nullptr));
     }
     catch (const std::exception& err) {
         Window::showErrorMessage(err.what());

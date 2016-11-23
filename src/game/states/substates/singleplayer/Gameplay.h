@@ -4,6 +4,7 @@
 #include "game/Transition.h"
 #include "game/states/substates/SinglePlayer.h"
 
+#include <array>
 #include <memory>
 #include <stack>
 
