@@ -24,9 +24,11 @@ public:
     ~Base();
     void updateAnimationsOnly(MainMenuState&, AppContext&) final;
     void update(MainMenuState&, const std::vector<Event>&, AppContext&) final;
+    void updatePositions(GraphicsContext&) final;
     void draw(MainMenuState&, GraphicsContext&) const final;
 
 private:
+    ::Rectangle screen_rect;
     std::unique_ptr<Texture> tex_background;
     Layout::Logo logo;
     std::array<Layout::PieceRain, 2> rains;
@@ -37,7 +39,6 @@ private:
     std::shared_ptr<Music> music;
     std::unique_ptr<Transition<uint8_t>> state_transition_alpha;
 
-    void updatePositions(GraphicsContext&);
     void onFadeoutComplete(AppContext&, std::unique_ptr<GameState>&&);
 };
 

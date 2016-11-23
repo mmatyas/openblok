@@ -57,6 +57,8 @@ Base::~Base() = default;
 
 void Base::updatePositions(GraphicsContext& gcx)
 {
+    screen_rect = {0, 0, gcx.screenWidth(), gcx.screenHeight()};
+
     const int center_y = gcx.screenHeight() / 2;
     const int left_x = 20 + gcx.screenWidth() * 0.1;
     const int right_x = gcx.screenWidth() - left_x + 32; // move 1 mino left, TODO: Fix magic numbers
@@ -98,13 +100,6 @@ void Base::updateAnimationsOnly(MainMenuState&, AppContext&)
 
 void Base::update(MainMenuState& parent, const std::vector<Event>& events, AppContext& app)
 {
-    for (const auto& event : events) {
-        if (event.type == EventType::WINDOW
-            && event.window == WindowEvent::RESIZED) {
-            updatePositions(app.gcx());
-        }
-    }
-
     updateAnimationsOnly(parent, app);
 
     if (state_transition_alpha) {
@@ -155,8 +150,7 @@ void Base::update(MainMenuState& parent, const std::vector<Event>& events, AppCo
 
 void Base::draw(MainMenuState&, GraphicsContext& gcx) const
 {
-    const ::Rectangle full_window = {0, 0, gcx.screenWidth(), gcx.screenHeight()};
-    tex_background->drawScaled(full_window);
+    tex_background->drawScaled(screen_rect);
 
     for (const auto& rain : rains)
         rain.draw();
@@ -168,7 +162,7 @@ void Base::draw(MainMenuState&, GraphicsContext& gcx) const
     if (state_transition_alpha) {
         RGBAColor color = 0xFF_rgba;
         color.a = state_transition_alpha->value();
-        gcx.drawFilledRect(full_window, color);
+        gcx.drawFilledRect(screen_rect, color);
     }
 }
 

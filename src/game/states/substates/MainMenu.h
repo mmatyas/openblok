@@ -17,6 +17,7 @@ public:
     virtual ~State() {}
     virtual void updateAnimationsOnly(MainMenuState&, AppContext&) {}
     virtual void update(MainMenuState&, const std::vector<Event>&, AppContext&) = 0;
+    virtual void updatePositions(GraphicsContext&) {};
     virtual void draw(MainMenuState&, GraphicsContext&) const {}
 };
 
