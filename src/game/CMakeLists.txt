@@ -37,6 +37,7 @@ set(MOD_GAME_SRC
     states/InitState.cpp
     states/MainMenuState.cpp
     states/SinglePlayState.cpp
+    states/substates/mainmenu/Base.cpp
     states/substates/singleplayer/Gameplay.cpp
     states/substates/singleplayer/MinorStates.cpp
     states/substates/singleplayer/Statistics.cpp
@@ -94,10 +95,13 @@ set(MOD_GAME_H
     states/MainMenuState.h
     states/SinglePlayState.h
     states/substates/SinglePlayer.h
+    states/substates/MainMenu.h
+    states/substates/mainmenu/Base.h
     states/substates/singleplayer/Gameplay.h
     states/substates/singleplayer/MinorStates.h
     states/substates/singleplayer/Statistics.h
 
+    util/CircularModulo.h
     util/DurationToString.h
     util/Matrix.h
 )

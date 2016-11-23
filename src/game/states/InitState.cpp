@@ -6,6 +6,8 @@
 #include "system/Log.h"
 #include "system/Paths.h"
 
+#include <assert.h>
+
 
 InitState::InitState(AppContext& app)
 {

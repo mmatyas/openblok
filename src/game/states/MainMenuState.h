@@ -1,16 +1,11 @@
 #pragma once
 
 #include "game/GameState.h"
-#include "game/layout/menu/Logo.h"
-#include "game/layout/menu/MainMenuBtn.h"
-#include "game/layout/menu/PieceRain.h"
 
-#include <array>
+#include <list>
+#include <memory>
 
-
-class Texture;
-class Music;
-class SoundEffect;
+namespace SubStates { namespace MainMenu { class State; } }
 
 
 class MainMenuState: public GameState {
@@ -20,17 +15,5 @@ public:
     void update(const std::vector<Event>&, AppContext&) final;
     void draw(GraphicsContext&) final;
 
-private:
-    std::unique_ptr<Texture> tex_background;
-    Layout::Logo logo;
-    std::array<Layout::PieceRain, 2> rains;
-
-    std::vector<Layout::MainMenuButton> buttons;
-    unsigned current_button_index;
-
-    std::shared_ptr<Music> music;
-    std::unique_ptr<Transition<uint8_t>> state_transition_alpha;
-
-    void updatePositions(GraphicsContext&);
-    void onFadeoutComplete(AppContext&, std::unique_ptr<GameState>&&);
+    std::list<std::unique_ptr<SubStates::MainMenu::State>> states;
 };
