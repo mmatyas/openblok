@@ -1,9 +1,10 @@
 #include "Base.h"
 
-// #include "OptionsState.h"
+#include "Options.h"
 #include "game/AppContext.h"
 #include "game/components/PieceFactory.h"
 #include "game/components/rotations/SRS.h"
+#include "game/states/MainMenuState.h"
 #include "game/states/SinglePlayState.h"
 #include "game/util/CircularModulo.h"
 #include "system/AudioContext.h"
@@ -17,7 +18,7 @@
 namespace SubStates {
 namespace MainMenu {
 
-Base::Base(MainMenuState&, AppContext& app)
+Base::Base(MainMenuState& parent, AppContext& app)
     : tex_background(app.gcx().loadTexture(Paths::data() + "gamebg.png"))
     , logo(app.gcx(), 150)
     , current_button_index(0)
@@ -35,8 +36,8 @@ Base::Base(MainMenuState&, AppContext& app)
         music->fadeOut(duration);
     });
     buttons.emplace_back(app, tr("BATTLE"), [](){});
-    buttons.emplace_back(app, tr("OPTIONS"), [&app](){
-        //app.states().emplace(std::make_unique<OptionsState>(app));
+    buttons.emplace_back(app, tr("OPTIONS"), [&app, &parent](){
+        parent.states.emplace_back(std::make_unique<SubStates::MainMenu::Options>(parent, app));
     });
     buttons.emplace_back(app, tr("EXIT"), [&app](){
         app.states().pop();

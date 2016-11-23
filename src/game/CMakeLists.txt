@@ -38,6 +38,7 @@ set(MOD_GAME_SRC
     states/MainMenuState.cpp
     states/SinglePlayState.cpp
     states/substates/mainmenu/Base.cpp
+    states/substates/mainmenu/Options.cpp
     states/substates/singleplayer/Gameplay.cpp
     states/substates/singleplayer/MinorStates.cpp
     states/substates/singleplayer/Statistics.cpp
@@ -97,6 +98,7 @@ set(MOD_GAME_H
     states/substates/SinglePlayer.h
     states/substates/MainMenu.h
     states/substates/mainmenu/Base.h
+    states/substates/mainmenu/Options.h
     states/substates/singleplayer/Gameplay.h
     states/substates/singleplayer/MinorStates.h
     states/substates/singleplayer/Statistics.h
