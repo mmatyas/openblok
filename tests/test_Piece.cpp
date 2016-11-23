@@ -16,10 +16,10 @@ struct PieceFixture {
     const std::array<std::bitset<16>, 4> grid;
 
     PieceFixture()
-        : grid({std::bitset<16>("1111111111111111"),
-                std::bitset<16>("0000000000010000"),
-                std::bitset<16>("0000000100000000"),
-                std::bitset<16>("0001000000000000")})
+        : grid({{std::bitset<16>("1111111111111111"),
+                 std::bitset<16>("0000000000010000"),
+                 std::bitset<16>("0000000100000000"),
+                 std::bitset<16>("0001000000000000")}})
     {
         MinoStorage::loadDummyMinos();
         p = std::make_unique<Piece>(PieceType::I, grid);
