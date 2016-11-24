@@ -27,6 +27,7 @@ Options::Options(MainMenuState&, AppContext& app)
 
     std::vector<std::unique_ptr<Layout::Options::OptionsItem>> system_options;
     system_options.emplace_back(std::make_unique<ToggleButton>(false, app, tr("Fullscreen mode"), [](){}));
+    system_options.back()->setMarginBottom(40);
     system_options.emplace_back(std::make_unique<ToggleButton>(true, app, tr("Sound effects"), [](){}));
     system_options.emplace_back(std::make_unique<ToggleButton>(true, app, tr("Background music"), [](){}));
     subitem_panels.push_back(std::move(system_options));
