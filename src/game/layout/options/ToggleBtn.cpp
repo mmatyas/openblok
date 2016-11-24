@@ -11,7 +11,7 @@
 namespace Layout {
 namespace Options {
 
-ToggleButton::ToggleButton(bool initial_state, std::string&& text, AppContext& app)
+ToggleButton::ToggleButton(AppContext& app, bool initial_state, std::string&& text)
     : OptionsItem(app, std::forward<std::string>(text))
     , switch_state(initial_state)
 {
