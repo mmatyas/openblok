@@ -1,6 +1,5 @@
 #pragma once
 
-#include "game/Transition.h"
 #include "game/states/substates/MainMenu.h"
 #include "system/Rectangle.h"
 
@@ -18,9 +17,8 @@ public:
     void draw(MainMenuState&, GraphicsContext&) const final;
 
 private:
+    ::Rectangle screen_rect;
     ::Rectangle container_rect;
-    ::Rectangle border_rect;
-    std::unique_ptr<Transition<uint8_t>> fade_alpha;
 
     void updatePositions(GraphicsContext&);
 };
