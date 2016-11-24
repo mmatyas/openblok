@@ -1,6 +1,6 @@
 #pragma once
 
-#include "game/layout/Box.h"
+#include "Box.h"
 
 #include <functional>
 #include <string>

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "game/layout/menu/OptionsCategory.h"
+#include "game/layout/options/CategoryBtn.h"
 #include "game/states/substates/MainMenu.h"
 #include "system/Rectangle.h"
 

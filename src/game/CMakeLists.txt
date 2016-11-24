@@ -29,8 +29,8 @@ set(MOD_GAME_SRC
 
     layout/menu/Logo.cpp
     layout/menu/MainMenuBtn.cpp
-    layout/menu/OptionsCategory.cpp
     layout/menu/PieceRain.cpp
+    layout/options/CategoryBtn.cpp
     layout/singleplayer/LeftSidebarBox.cpp
     layout/singleplayer/RightSidebarBox.cpp
     layout/singleplayer/WellBox.cpp
@@ -85,11 +85,11 @@ set(MOD_GAME_H
     components/well/Render.h
 
     layout/Box.h
-    layout/menu/Button.h
+    layout/Button.h
     layout/menu/Logo.h
     layout/menu/MainMenuBtn.h
-    layout/menu/OptionsCategory.h
     layout/menu/PieceRain.h
+    layout/options/CategoryBtn.h
     layout/singleplayer/LeftSidebarBox.h
     layout/singleplayer/RightSidebarBox.h
     layout/singleplayer/WellBox.h
