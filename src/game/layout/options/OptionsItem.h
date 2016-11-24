@@ -1,6 +1,6 @@
 #pragma once
 
-#include "game/layout/Button.h"
+#include "game/layout/MenuItem.h"
 
 #include <memory>
 
@@ -11,12 +11,10 @@ class Texture;
 namespace Layout {
 namespace Options {
 
-class OptionsItem : public Layout::Button {
+class OptionsItem : public Layout::MenuItem {
 public:
-    OptionsItem(AppContext&, std::string&& label, std::function<void()>&& on_press = [](){});
+    OptionsItem(AppContext&, std::string&& label);
     virtual ~OptionsItem();
-
-    void update() override {}
 
     virtual void setWidth(int w) { bounding_box.w = w; }
 

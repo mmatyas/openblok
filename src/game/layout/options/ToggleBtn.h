@@ -14,7 +14,7 @@ namespace Options {
 
 class ToggleButton : public OptionsItem {
 public:
-    ToggleButton(bool initial_state, AppContext&, std::string&& label, std::function<void()>&& on_press = [](){});
+    ToggleButton(bool initial_state, std::string&& label, AppContext&);
 
     void setPosition(int x, int y) override;
     void draw(GraphicsContext&) const override;

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "game/layout/Button.h"
+#include "Button.h"
 
 #include <memory>
 

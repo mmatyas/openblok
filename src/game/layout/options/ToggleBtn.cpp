@@ -11,8 +11,8 @@
 namespace Layout {
 namespace Options {
 
-ToggleButton::ToggleButton(bool initial_state, AppContext& app, std::string&& text, std::function<void()>&& on_press)
-    : OptionsItem(app, std::forward<std::string>(text), std::forward<std::function<void()>>(on_press))
+ToggleButton::ToggleButton(bool initial_state, std::string&& text, AppContext& app)
+    : OptionsItem(app, std::forward<std::string>(text))
     , switch_state(initial_state)
 {
     bounding_box.w = 750;

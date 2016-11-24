@@ -87,7 +87,8 @@ set(MOD_GAME_H
     components/well/Render.h
 
     layout/Box.h
-    layout/Button.h
+    layout/MenuItem.h
+    layout/menu/Button.h
     layout/menu/Logo.h
     layout/menu/MainMenuBtn.h
     layout/menu/PieceRain.h

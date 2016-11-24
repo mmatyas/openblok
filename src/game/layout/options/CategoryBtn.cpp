@@ -11,17 +11,13 @@ namespace Layout {
 namespace Options {
 
 CategoryButton::CategoryButton(AppContext& app, std::string&& text, std::function<void()>&& on_press)
-    : Layout::Button(std::forward<std::string>(text), std::forward<std::function<void()>>(on_press))
+    : Layout::MenuItem(std::forward<std::string>(text))
 {
     auto font = app.gcx().loadFont(Paths::data() + "fonts/PTS75F.ttf", 30);
     tex_label = font->renderText(btn_label_text, 0xEEEEEE_rgb);
 
     bounding_box.w = 270;
     bounding_box.h = 90;
-}
-
-void CategoryButton::update()
-{
 }
 
 void CategoryButton::draw(GraphicsContext& gcx) const

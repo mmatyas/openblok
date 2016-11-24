@@ -27,10 +27,10 @@ Options::Options(MainMenuState& parent, AppContext& app)
     using ToggleButton = Layout::Options::ToggleButton;
 
     std::vector<std::unique_ptr<Layout::Options::OptionsItem>> system_options;
-    system_options.emplace_back(std::make_unique<ToggleButton>(false, app, tr("Fullscreen mode")));
+    system_options.emplace_back(std::make_unique<ToggleButton>(false, tr("Fullscreen mode"), app));
     system_options.back()->setMarginBottom(40);
-    system_options.emplace_back(std::make_unique<ToggleButton>(true, app, tr("Sound effects")));
-    system_options.emplace_back(std::make_unique<ToggleButton>(true, app, tr("Background music")));
+    system_options.emplace_back(std::make_unique<ToggleButton>(true, tr("Sound effects"), app));
+    system_options.emplace_back(std::make_unique<ToggleButton>(true, tr("Background music"), app));
     subitem_panels.push_back(std::move(system_options));
 
     updatePositions(app.gcx());
@@ -64,9 +64,6 @@ Options::Options(MainMenuState& parent, AppContext& app)
     fn_settings_input = [this](InputType input){
         auto& panel = subitem_panels.at(current_category_idx);
         switch (input) {
-            case InputType::MENU_OK:
-                panel.at(current_setting_idx)->onPress();
-                break;
             case InputType::MENU_CANCEL:
                 panel.at(current_setting_idx)->onHoverLeave();
                 current_setting_idx = 0;

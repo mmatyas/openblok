@@ -1,6 +1,6 @@
 #pragma once
 
-#include "game/layout/Button.h"
+#include "game/layout/MenuItem.h"
 
 #include <memory>
 
@@ -11,11 +11,10 @@ class Texture;
 namespace Layout {
 namespace Options {
 
-class CategoryButton : public Button {
+class CategoryButton : public Layout::MenuItem {
 public:
     CategoryButton(AppContext&, std::string&& label, std::function<void()>&& on_press = [](){});
 
-    void update() override;
     void draw(GraphicsContext&) const override;
 
 private:
