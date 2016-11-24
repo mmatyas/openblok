@@ -29,6 +29,7 @@ set(MOD_GAME_SRC
 
     layout/menu/Logo.cpp
     layout/menu/MainMenuBtn.cpp
+    layout/menu/OptionsCategory.cpp
     layout/menu/PieceRain.cpp
     layout/singleplayer/LeftSidebarBox.cpp
     layout/singleplayer/RightSidebarBox.cpp
@@ -87,6 +88,7 @@ set(MOD_GAME_H
     layout/menu/Button.h
     layout/menu/Logo.h
     layout/menu/MainMenuBtn.h
+    layout/menu/OptionsCategory.h
     layout/menu/PieceRain.h
     layout/singleplayer/LeftSidebarBox.h
     layout/singleplayer/RightSidebarBox.h

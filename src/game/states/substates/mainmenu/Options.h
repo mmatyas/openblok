@@ -1,5 +1,6 @@
 #pragma once
 
+#include "game/layout/menu/OptionsCategory.h"
 #include "game/states/substates/MainMenu.h"
 #include "system/Rectangle.h"
 
@@ -19,6 +20,9 @@ public:
 private:
     ::Rectangle screen_rect;
     ::Rectangle container_rect;
+
+    std::vector<Layout::OptionsCategoryButton> category_buttons;
+    unsigned category_btn_idx;
 
     void updatePositions(GraphicsContext&);
 };
