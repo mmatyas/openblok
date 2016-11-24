@@ -21,6 +21,9 @@ public:
     int marginBottom() const { return margin_bottom; }
     void setMarginBottom(int px) { margin_bottom = px; }
 
+    virtual void onLeftPress() = 0;
+    virtual void onRightPress() = 0;
+
 protected:
     std::unique_ptr<Texture> tex_label;
 

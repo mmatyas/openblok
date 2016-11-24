@@ -11,9 +11,13 @@
 namespace Layout {
 namespace Options {
 
-ToggleButton::ToggleButton(AppContext& app, bool initial_state, std::string&& text)
+ToggleButton::ToggleButton(AppContext& app,
+                           bool initial_state,
+                           std::string&& text,
+                           std::function<void(bool)>&& on_toggle)
     : OptionsItem(app, std::forward<std::string>(text))
     , switch_state(initial_state)
+    , callback(on_toggle)
 {
     bounding_box.w = 750;
     bounding_box.h = 60;
@@ -21,14 +25,30 @@ ToggleButton::ToggleButton(AppContext& app, bool initial_state, std::string&& te
     padding = (height() - tex_label->height()) / 2;
 
     auto font = app.gcx().loadFont(Paths::data() + "fonts/PTS55F.ttf", 28);
-    tex_onoff.at(0) = font->renderText(tr("ON"), 0xEEEEEE_rgb);
-    tex_onoff.at(1) = font->renderText(tr("OFF"), 0xEEEEEE_rgb);
+    tex_onoff.at(0) = font->renderText(tr("OFF"), 0xEEEEEE_rgb);
+    tex_onoff.at(1) = font->renderText(tr("ON"), 0xEEEEEE_rgb);
 }
 
 void ToggleButton::setPosition(int x, int y)
 {
     bounding_box.x = x;
     bounding_box.y = y;
+}
+
+void ToggleButton::onLeftPress()
+{
+    if (switch_state) {
+        switch_state = false;
+        callback(switch_state);
+    }
+}
+
+void ToggleButton::onRightPress()
+{
+    if (!switch_state) {
+        switch_state = true;
+        callback(switch_state);
+    }
 }
 
 void ToggleButton::draw(GraphicsContext& gcx) const
@@ -48,9 +68,9 @@ void ToggleButton::draw(GraphicsContext& gcx) const
     const int leftswitch_centerx = rightswitch_centerx - 110;
 
     if (switch_state)
-        gcx.drawFilledRect({leftswitch_centerx - 50, y() + 5, 100, 50}, 0xCE8000_rgb);
-    else
         gcx.drawFilledRect({rightswitch_centerx - 50, y() + 5, 100, 50}, 0xCE8000_rgb);
+    else
+        gcx.drawFilledRect({leftswitch_centerx - 50, y() + 5, 100, 50}, 0xCE8000_rgb);
 
     tex_onoff.at(0)->drawAt(leftswitch_centerx - tex_onoff.at(0)->width() / 2, y() + padding);
     tex_onoff.at(1)->drawAt(rightswitch_centerx - tex_onoff.at(1)->width() / 2, y() + padding);

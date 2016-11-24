@@ -81,6 +81,12 @@ Options::Options(MainMenuState& parent, AppContext& app)
                     static_cast<int>(current_setting_idx) + 1, category_buttons.size());
                 panel.at(current_setting_idx)->onHoverEnter();
                 break;
+            case InputType::MENU_LEFT:
+                panel.at(current_setting_idx)->onLeftPress();
+                break;
+            case InputType::MENU_RIGHT:
+                panel.at(current_setting_idx)->onRightPress();
+                break;
             default:
                 break;
         }
