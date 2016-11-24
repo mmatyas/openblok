@@ -1,4 +1,5 @@
 set(MOD_SYSTEM_SRC
+    Color.cpp
     ConfigManager.cpp
     Event.cpp
     Log.cpp
