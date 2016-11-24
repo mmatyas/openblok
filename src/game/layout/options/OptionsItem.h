@@ -17,7 +17,6 @@ public:
     virtual ~OptionsItem();
 
     void update() override {}
-    void setPosition(int x, int y) override;
 
     virtual void setWidth(int w) { bounding_box.w = w; }
 

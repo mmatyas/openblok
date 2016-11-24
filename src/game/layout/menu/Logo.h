@@ -13,7 +13,6 @@ namespace Layout {
 class Logo : public Box {
 public:
     Logo(GraphicsContext&, int height_px);
-    void setPosition(int x, int y) final;
     void draw() const;
 
 private:

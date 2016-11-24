@@ -20,12 +20,6 @@ MainMenuButton::MainMenuButton(AppContext& app, std::string&& text, std::functio
     bounding_box.h = tex_label_on->height() + 10;
 }
 
-void MainMenuButton::setPosition(int x, int y)
-{
-    bounding_box.x = x;
-    bounding_box.y = y;
-}
-
 void MainMenuButton::update()
 {
 

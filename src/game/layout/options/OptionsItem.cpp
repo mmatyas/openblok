@@ -19,11 +19,5 @@ OptionsItem::OptionsItem(AppContext& app, std::string&& label, std::function<voi
 
 OptionsItem::~OptionsItem() = default;
 
-void OptionsItem::setPosition(int x, int y)
-{
-    bounding_box.x = x;
-    bounding_box.y = y;
-}
-
 } // namespace Options
 } // namespace Layout

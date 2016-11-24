@@ -15,7 +15,6 @@ class PieceRain : public Box {
 public:
     PieceRain();
 
-    void setPosition(int x, int y) override;
     void setHeight(unsigned);
 
     void update();

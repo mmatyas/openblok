@@ -26,12 +26,6 @@ PieceRain::PieceRain()
     bounding_box = {0, 0, PIECE_SIDES_PX, PIECE_SIDES_PX};
 }
 
-void PieceRain::setPosition(int x, int y)
-{
-    bounding_box.x = x;
-    bounding_box.y = y;
-}
-
 void PieceRain::setHeight(unsigned height_px)
 {
     bounding_box.h = height_px;

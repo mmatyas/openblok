@@ -20,12 +20,6 @@ CategoryButton::CategoryButton(AppContext& app, std::string&& text, std::functio
     bounding_box.h = 90;
 }
 
-void CategoryButton::setPosition(int x, int y)
-{
-    bounding_box.x = x;
-    bounding_box.y = y;
-}
-
 void CategoryButton::update()
 {
 }
