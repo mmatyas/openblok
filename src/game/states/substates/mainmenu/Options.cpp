@@ -53,13 +53,16 @@ void Options::updatePositions(GraphicsContext& gcx)
         category_buttons.at(i).setPosition(inner_x, prev.y() + prev.height() + 6);
     }
 
-    const int subpanel_right_x = container_rect.x + container_rect.w - 30;
+    const int category_column_width = category_buttons.at(0).width() + 12;
+    const int subpanel_x = container_rect.x + category_column_width + 30;
+    const int subpanel_item_width = container_rect.w - category_column_width - 30 * 2;
     for (auto& subpanel : subitem_panels) {
-        const int subpanel_x = subpanel_right_x - subpanel.at(0)->width();
         subpanel.at(0)->setPosition(subpanel_x, container_rect.y + 30);
+        subpanel.at(0)->setWidth(subpanel_item_width);
         for (unsigned i = 1; i < subpanel.size(); i++) {
             const auto& prev = subpanel.at(i - 1);
-            subpanel.at(i)->setPosition(subpanel_x, prev->y() + prev->height() + 6);
+            subpanel.at(i)->setPosition(subpanel_x, prev->y() + prev->height() + prev->marginBottom());
+            subpanel.at(i)->setWidth(subpanel_item_width);
         }
     }
 }

@@ -11,7 +11,7 @@ namespace Options {
 
 OptionsItem::OptionsItem(AppContext& app, std::string&& label, std::function<void()>&& on_press)
     : Layout::Button(std::forward<std::string>(label), std::forward<std::function<void()>>(on_press))
-    , margin_bottom(0)
+    , margin_bottom(6)
 {
     auto font = app.gcx().loadFont(Paths::data() + "fonts/PTS55F.ttf", 30);
     tex_label = font->renderText(btn_label_text, 0xEEEEEE_rgb);
