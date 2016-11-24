@@ -13,7 +13,7 @@ namespace Options {
 
 class CategoryButton : public Button {
 public:
-    CategoryButton(AppContext&, std::string&& label, std::function<void()>&& on_press);
+    CategoryButton(AppContext&, std::string&& label, std::function<void()>&& on_press = [](){});
 
     void setPosition(int x, int y) override;
 

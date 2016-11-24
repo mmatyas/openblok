@@ -15,24 +15,80 @@
 namespace SubStates {
 namespace MainMenu {
 
-Options::Options(MainMenuState&, AppContext& app)
-    : category_btn_idx(0)
+Options::Options(MainMenuState& parent, AppContext& app)
+    : current_category_idx(0)
+    , current_setting_idx(0)
 {
-    category_buttons.emplace_back(app, tr("SYSTEM"), [](){});
-    category_buttons.emplace_back(app, tr("FINE TUNING"), [](){});
-    category_buttons.emplace_back(app, tr("INPUT"), [](){});
-    category_buttons.at(category_btn_idx).onHoverEnter();
+    category_buttons.emplace_back(app, tr("SYSTEM"));
+    category_buttons.emplace_back(app, tr("FINE TUNING"));
+    category_buttons.emplace_back(app, tr("INPUT"));
+    category_buttons.at(current_category_idx).onHoverEnter();
 
     using ToggleButton = Layout::Options::ToggleButton;
 
     std::vector<std::unique_ptr<Layout::Options::OptionsItem>> system_options;
-    system_options.emplace_back(std::make_unique<ToggleButton>(false, app, tr("Fullscreen mode"), [](){}));
+    system_options.emplace_back(std::make_unique<ToggleButton>(false, app, tr("Fullscreen mode")));
     system_options.back()->setMarginBottom(40);
-    system_options.emplace_back(std::make_unique<ToggleButton>(true, app, tr("Sound effects"), [](){}));
-    system_options.emplace_back(std::make_unique<ToggleButton>(true, app, tr("Background music"), [](){}));
+    system_options.emplace_back(std::make_unique<ToggleButton>(true, app, tr("Sound effects")));
+    system_options.emplace_back(std::make_unique<ToggleButton>(true, app, tr("Background music")));
     subitem_panels.push_back(std::move(system_options));
 
     updatePositions(app.gcx());
+
+    fn_category_input = [this, &parent](InputType input){
+        switch (input) {
+            case InputType::MENU_OK:
+                current_input_handler = &fn_settings_input;
+                subitem_panels.at(current_category_idx).at(current_setting_idx)->onHoverEnter();
+                break;
+            case InputType::MENU_CANCEL:
+                assert(parent.states.size() > 1);
+                parent.states.pop_back();
+                break;
+            case InputType::MENU_UP:
+                category_buttons.at(current_category_idx).onHoverLeave();
+                current_category_idx = circularModulo(
+                    static_cast<int>(current_category_idx) - 1, category_buttons.size());
+                category_buttons.at(current_category_idx).onHoverEnter();
+                break;
+            case InputType::MENU_DOWN:
+                category_buttons.at(current_category_idx).onHoverLeave();
+                current_category_idx = circularModulo(
+                    static_cast<int>(current_category_idx) + 1, category_buttons.size());
+                category_buttons.at(current_category_idx).onHoverEnter();
+                break;
+            default:
+                break;
+        }
+    };
+    fn_settings_input = [this](InputType input){
+        auto& panel = subitem_panels.at(current_category_idx);
+        switch (input) {
+            case InputType::MENU_OK:
+                panel.at(current_setting_idx)->onPress();
+                break;
+            case InputType::MENU_CANCEL:
+                panel.at(current_setting_idx)->onHoverLeave();
+                current_setting_idx = 0;
+                current_input_handler = &fn_category_input;
+                break;
+            case InputType::MENU_UP:
+                panel.at(current_setting_idx)->onHoverLeave();
+                current_setting_idx = circularModulo(
+                    static_cast<int>(current_setting_idx) - 1, category_buttons.size());
+                panel.at(current_setting_idx)->onHoverEnter();
+                break;
+            case InputType::MENU_DOWN:
+                panel.at(current_setting_idx)->onHoverLeave();
+                current_setting_idx = circularModulo(
+                    static_cast<int>(current_setting_idx) + 1, category_buttons.size());
+                panel.at(current_setting_idx)->onHoverEnter();
+                break;
+            default:
+                break;
+        }
+    };
+    current_input_handler = &fn_category_input;
 }
 
 Options::~Options() = default;
@@ -77,29 +133,7 @@ void Options::update(MainMenuState& parent, const std::vector<Event>& events, Ap
             case EventType::INPUT:
                 if (!event.input.down())
                     continue;
-                switch (event.input.type()) {
-                    case InputType::MENU_OK:
-                        category_buttons.at(category_btn_idx).onPress();
-                        break;
-                    case InputType::MENU_CANCEL:
-                        assert(parent.states.size() > 1);
-                        parent.states.pop_back();
-                        break;
-                    case InputType::MENU_UP:
-                        category_buttons.at(category_btn_idx).onHoverLeave();
-                        category_btn_idx = circularModulo(static_cast<int>(category_btn_idx) - 1,
-                                                          category_buttons.size());
-                        category_buttons.at(category_btn_idx).onHoverEnter();
-                        break;
-                    case InputType::MENU_DOWN:
-                        category_buttons.at(category_btn_idx).onHoverLeave();
-                        category_btn_idx++;
-                        category_btn_idx %= category_buttons.size();
-                        category_buttons.at(category_btn_idx).onHoverEnter();
-                        break;
-                    default:
-                        break;
-                }
+                (*current_input_handler)(event.input.type());
                 break;
             default:
                 break;
@@ -119,8 +153,8 @@ void Options::draw(MainMenuState& parent, GraphicsContext& gcx) const
     for (const auto& btn : category_buttons)
         btn.draw(gcx);
 
-    assert(category_btn_idx < subitem_panels.size());
-    for (const auto& btn : subitem_panels.at(category_btn_idx))
+    assert(current_category_idx < subitem_panels.size());
+    for (const auto& btn : subitem_panels.at(current_category_idx))
         btn->draw(gcx);
 }
 

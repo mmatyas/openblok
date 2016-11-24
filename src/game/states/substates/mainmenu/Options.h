@@ -25,7 +25,12 @@ private:
 
     std::vector<Layout::Options::CategoryButton> category_buttons;
     std::vector<std::vector<std::unique_ptr<Layout::Options::OptionsItem>>> subitem_panels;
-    unsigned category_btn_idx;
+    unsigned current_category_idx;
+    unsigned current_setting_idx;
+
+    std::function<void(InputType)> fn_category_input;
+    std::function<void(InputType)> fn_settings_input;
+    std::function<void(InputType)>* current_input_handler;
 
     void updatePositions(GraphicsContext&);
 };
