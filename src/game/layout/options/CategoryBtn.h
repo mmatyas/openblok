@@ -4,15 +4,16 @@
 
 #include <memory>
 
-
 class AppContext;
 class Texture;
 
 
 namespace Layout {
-class OptionsCategoryButton : public Button {
+namespace Options {
+
+class CategoryButton : public Button {
 public:
-    OptionsCategoryButton(AppContext&, std::string&& label, std::function<void()>&& on_press);
+    CategoryButton(AppContext&, std::string&& label, std::function<void()>&& on_press);
 
     void setPosition(int x, int y) override;
 
@@ -22,4 +23,6 @@ public:
 private:
     std::unique_ptr<Texture> tex_label;
 };
+
+} // namespace Options
 } // namespace Layout

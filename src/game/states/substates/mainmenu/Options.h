@@ -21,7 +21,7 @@ private:
     ::Rectangle screen_rect;
     ::Rectangle container_rect;
 
-    std::vector<Layout::OptionsCategoryButton> category_buttons;
+    std::vector<Layout::Options::CategoryButton> category_buttons;
     unsigned category_btn_idx;
 
     void updatePositions(GraphicsContext&);

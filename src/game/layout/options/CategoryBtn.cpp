@@ -8,9 +8,10 @@
 
 
 namespace Layout {
+namespace Options {
 
-OptionsCategoryButton::OptionsCategoryButton(AppContext& app, std::string&& text, std::function<void()>&& on_press)
-    : Button(std::forward<std::string>(text), std::forward<std::function<void()>>(on_press))
+CategoryButton::CategoryButton(AppContext& app, std::string&& text, std::function<void()>&& on_press)
+    : Layout::Button(std::forward<std::string>(text), std::forward<std::function<void()>>(on_press))
 {
     auto font = app.gcx().loadFont(Paths::data() + "fonts/PTS75F.ttf", 30);
     tex_label = font->renderText(btn_label_text, 0xEEEEEE_rgb);
@@ -19,17 +20,17 @@ OptionsCategoryButton::OptionsCategoryButton(AppContext& app, std::string&& text
     bounding_box.h = 90;
 }
 
-void OptionsCategoryButton::setPosition(int x, int y)
+void CategoryButton::setPosition(int x, int y)
 {
     bounding_box.x = x;
     bounding_box.y = y;
 }
 
-void OptionsCategoryButton::update()
+void CategoryButton::update()
 {
 }
 
-void OptionsCategoryButton::draw(GraphicsContext& gcx) const
+void CategoryButton::draw(GraphicsContext& gcx) const
 {
     const int category_btn_padding = (height() - tex_label->height()) / 2;
     if (is_active) {
@@ -43,4 +44,5 @@ void OptionsCategoryButton::draw(GraphicsContext& gcx) const
     }
 }
 
+} // namespace Options
 } // namespace Layout
