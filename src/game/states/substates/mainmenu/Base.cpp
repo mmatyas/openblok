@@ -109,18 +109,6 @@ void Base::update(MainMenuState& parent, const std::vector<Event>& events, AppCo
 
     for (const auto& event : events) {
         switch (event.type) {
-            case EventType::WINDOW:
-                switch (event.window) {
-                    case WindowEvent::FOCUS_LOST:
-                        app.audio().pauseAll();
-                        break;
-                    case WindowEvent::FOCUS_GAINED:
-                        app.audio().resumeAll();
-                        break;
-                    default:
-                        break;
-                }
-            break;
             case EventType::INPUT:
                 if (!event.input.down())
                     continue;
@@ -143,7 +131,9 @@ void Base::update(MainMenuState& parent, const std::vector<Event>& events, AppCo
                     default:
                         break;
                 }
-            break;
+                break;
+            default:
+                break;
         }
     }
 }
