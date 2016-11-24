@@ -1,6 +1,8 @@
 #include "Options.h"
 
 #include "game/AppContext.h"
+#include "game/layout/options/OptionsItem.h"
+#include "game/layout/options/ToggleBtn.h"
 #include "game/states/MainMenuState.h"
 #include "game/util/CircularModulo.h"
 #include "system/GraphicsContext.h"
@@ -21,11 +23,13 @@ Options::Options(MainMenuState&, AppContext& app)
     category_buttons.emplace_back(app, tr("INPUT"), [](){});
     category_buttons.at(category_btn_idx).onHoverEnter();
 
-    std::vector<Layout::Options::ToggleButton> system_settings;
-    system_settings.emplace_back(app, tr("Fullscreen mode"), [](){});
-    system_settings.emplace_back(app, tr("Sound effects"), [](){});
-    system_settings.emplace_back(app, tr("Background music"), [](){});
-    subsettings_buttons.push_back(std::move(system_settings));
+    using ToggleButton = Layout::Options::ToggleButton;
+
+    std::vector<std::unique_ptr<Layout::Options::OptionsItem>> system_options;
+    system_options.emplace_back(std::make_unique<ToggleButton>(app, tr("Fullscreen mode"), [](){}));
+    system_options.emplace_back(std::make_unique<ToggleButton>(app, tr("Sound effects"), [](){}));
+    system_options.emplace_back(std::make_unique<ToggleButton>(app, tr("Background music"), [](){}));
+    subitem_panels.push_back(std::move(system_options));
 
     updatePositions(app.gcx());
 }
@@ -50,12 +54,12 @@ void Options::updatePositions(GraphicsContext& gcx)
     }
 
     const int subpanel_right_x = container_rect.x + container_rect.w - 30;
-    for (auto& subpanel : subsettings_buttons) {
-        const int subpanel_x = subpanel_right_x - subpanel.at(0).width();
-        subpanel.at(0).setPosition(subpanel_x, container_rect.y + 30);
+    for (auto& subpanel : subitem_panels) {
+        const int subpanel_x = subpanel_right_x - subpanel.at(0)->width();
+        subpanel.at(0)->setPosition(subpanel_x, container_rect.y + 30);
         for (unsigned i = 1; i < subpanel.size(); i++) {
             const auto& prev = subpanel.at(i - 1);
-            subpanel.at(i).setPosition(subpanel_x, prev.y() + prev.height() + 6);
+            subpanel.at(i)->setPosition(subpanel_x, prev->y() + prev->height() + 6);
         }
     }
 }
@@ -111,9 +115,9 @@ void Options::draw(MainMenuState& parent, GraphicsContext& gcx) const
     for (const auto& btn : category_buttons)
         btn.draw(gcx);
 
-    assert(category_btn_idx < subsettings_buttons.size());
-    for (const auto& btn : subsettings_buttons.at(category_btn_idx))
-        btn.draw(gcx);
+    assert(category_btn_idx < subitem_panels.size());
+    for (const auto& btn : subitem_panels.at(category_btn_idx))
+        btn->draw(gcx);
 }
 
 } // namespace MainMenu
