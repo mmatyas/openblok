@@ -1,6 +1,7 @@
 #pragma once
 
 #include "game/layout/options/CategoryBtn.h"
+#include "game/layout/options/ToggleBtn.h"
 #include "game/states/substates/MainMenu.h"
 #include "system/Rectangle.h"
 
@@ -22,6 +23,7 @@ private:
     ::Rectangle container_rect;
 
     std::vector<Layout::Options::CategoryButton> category_buttons;
+    std::vector<std::vector<Layout::Options::ToggleButton>> subsettings_buttons;
     unsigned category_btn_idx;
 
     void updatePositions(GraphicsContext&);

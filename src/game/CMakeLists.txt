@@ -31,6 +31,7 @@ set(MOD_GAME_SRC
     layout/menu/MainMenuBtn.cpp
     layout/menu/PieceRain.cpp
     layout/options/CategoryBtn.cpp
+    layout/options/ToggleBtn.cpp
     layout/singleplayer/LeftSidebarBox.cpp
     layout/singleplayer/RightSidebarBox.cpp
     layout/singleplayer/WellBox.cpp
@@ -90,6 +91,7 @@ set(MOD_GAME_H
     layout/menu/MainMenuBtn.h
     layout/menu/PieceRain.h
     layout/options/CategoryBtn.h
+    layout/options/ToggleBtn.h
     layout/singleplayer/LeftSidebarBox.h
     layout/singleplayer/RightSidebarBox.h
     layout/singleplayer/WellBox.h
