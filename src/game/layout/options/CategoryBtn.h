@@ -13,7 +13,7 @@ namespace Options {
 
 class CategoryButton : public Layout::MenuItem {
 public:
-    CategoryButton(AppContext&, std::string&& label, std::function<void()>&& on_press = [](){});
+    CategoryButton(AppContext&, std::string&& label);
 
     void draw(GraphicsContext&) const override;
 

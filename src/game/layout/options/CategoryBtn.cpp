@@ -10,7 +10,7 @@
 namespace Layout {
 namespace Options {
 
-CategoryButton::CategoryButton(AppContext& app, std::string&& text, std::function<void()>&& on_press)
+CategoryButton::CategoryButton(AppContext& app, std::string&& text)
     : Layout::MenuItem(std::forward<std::string>(text))
 {
     auto font = app.gcx().loadFont(Paths::data() + "fonts/PTS75F.ttf", 30);
