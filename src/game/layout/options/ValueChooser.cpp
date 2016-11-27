@@ -21,10 +21,10 @@ ValueChooser::ValueChooser(AppContext& app,
     , current_idx(start_index)
     , callback(on_change)
 {
-    bounding_box.h = 60;
+    bounding_box.h = 40;
     setWidth(750);
 
-    auto font = app.gcx().loadFont(Paths::data() + "fonts/PTS55F.ttf", 28);
+    auto font = app.gcx().loadFont(Paths::data() + "fonts/PTS55F.ttf", 24);
 
     assert(values.size() > 1);
     assert(current_idx < values.size());

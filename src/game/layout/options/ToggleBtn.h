@@ -30,7 +30,9 @@ private:
 
     int leftswitch_centerx, rightswitch_centerx;
     int padding_ver;
-    static constexpr int padding_hor = 20;
+    static constexpr int padding_left = 20;
+    static constexpr int padding_right = 10;
+    static constexpr int switch_half_width = 40;
 
     bool switch_state;
     std::function<void(bool)> callback;

@@ -20,12 +20,12 @@ ToggleButton::ToggleButton(AppContext& app,
     , switch_state(initial_state)
     , callback(on_toggle)
 {
-    bounding_box.h = 60;
+    bounding_box.h = 40;
     setWidth(750);
 
     padding_ver = (height() - tex_label->height()) / 2;
 
-    auto font = app.gcx().loadFont(Paths::data() + "fonts/PTS55F.ttf", 28);
+    auto font = app.gcx().loadFont(Paths::data() + "fonts/PTS55F.ttf", 24);
     tex_onoff.at(0) = font->renderText(tr("OFF"), 0xEEEEEE_rgb);
     tex_onoff.at(1) = font->renderText(tr("ON"), 0xEEEEEE_rgb);
 }
@@ -33,8 +33,8 @@ ToggleButton::ToggleButton(AppContext& app,
 void ToggleButton::setWidth(int w)
 {
     OptionsItem::setWidth(w);
-    rightswitch_centerx = x() + width() - padding_hor - 50;
-    leftswitch_centerx = rightswitch_centerx - 110;
+    rightswitch_centerx = x() + width() - padding_right - switch_half_width;
+    leftswitch_centerx = rightswitch_centerx - switch_half_width * 2 - 10;
 }
 
 void ToggleButton::onLeftPress()
@@ -58,18 +58,17 @@ void ToggleButton::draw(GraphicsContext& gcx) const
     if (is_active) {
         gcx.drawFilledRect(bounding_box, 0x0060BF_rgb);
         gcx.drawFilledRect({x(), y(), 6, height()}, 0xCE8000_rgb);
-        tex_label->drawAt(x() + padding_hor, y() + padding_ver);
+        tex_label->drawAt(x() + padding_left, y() + padding_ver);
     }
     else {
         gcx.drawFilledRect(bounding_box, 0x002687_rgb);
-        tex_label->drawAt(x() + padding_hor, y() + padding_ver);
+        tex_label->drawAt(x() + padding_left, y() + padding_ver);
     }
 
-    if (switch_state)
-        gcx.drawFilledRect({rightswitch_centerx - 50, y() + 5, 100, 50}, 0xCE8000_rgb);
-    else
-        gcx.drawFilledRect({leftswitch_centerx - 50, y() + 5, 100, 50}, 0xCE8000_rgb);
-
+    int switch_rect_centerx = switch_state ? rightswitch_centerx : leftswitch_centerx;
+    gcx.drawFilledRect({
+        switch_rect_centerx - switch_half_width, y() + 5,
+        switch_half_width * 2, height() - 10}, 0xCE8000_rgb);
     tex_onoff.at(0)->drawAt(leftswitch_centerx - tex_onoff.at(0)->width() / 2, y() + padding_ver);
     tex_onoff.at(1)->drawAt(rightswitch_centerx - tex_onoff.at(1)->width() / 2, y() + padding_ver);
 }
