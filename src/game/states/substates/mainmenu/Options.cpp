@@ -11,6 +11,7 @@
 #include "system/Texture.h"
 
 #include <assert.h>
+#include <algorithm>
 
 
 namespace SubStates {
@@ -41,8 +42,46 @@ Options::Options(MainMenuState& parent, AppContext& app)
     subitem_panels.push_back(std::move(system_options));
 
     std::vector<std::unique_ptr<Layout::Options::OptionsItem>> tuning_options;
-    tuning_options.emplace_back(std::make_unique<ValueChooser>(app,
-        std::vector<std::string>({"SRS", "TGM", "Classic"}), 0, tr("Rotation style")));
+    {
+        tuning_options.emplace_back(std::make_unique<ValueChooser>(app,
+            std::vector<std::string>({"SRS", "TGM", "Classic"}), 0, tr("Rotation style"),
+            std::string(tr("SRS: The rotation style used by most commercial falling block games.\n")) +
+            tr("TGM: A popular style common in far eastern games and arcade machines.\n") +
+            tr("Classic: The rotation style of old console games; it does not allow wall kicking.")));
+        std::vector<std::string> das_values(20);
+
+        int k = 0;
+        std::generate(das_values.begin(), das_values.end(), [&k]{ return std::to_string(++k) + "/60 s"; });
+        auto das_repeat_values = das_values;
+        tuning_options.emplace_back(std::make_unique<ValueChooser>(app,
+            std::move(das_values), 13, tr("DAS initial delay"),
+            tr("The time it takes to turn on horizontal movement autorepeat.")));
+        tuning_options.emplace_back(std::make_unique<ValueChooser>(app,
+            std::move(das_repeat_values), 3, tr("DAS repeat delay"),
+            tr("Horizontal movement delay during autorepeat.")));
+
+        tuning_options.emplace_back(std::make_unique<ToggleButton>(app, false, tr("Sonic drop"),
+            tr("If set to 'ON', hard drop does not lock the piece instantly.")));
+        tuning_options.emplace_back(std::make_unique<ValueChooser>(app,
+            std::vector<std::string>({"Instant", "Extended", "Infinite"}), 1, tr("Piece lock style"),
+            std::string(tr("Instant: The piece locks instantly when it reaches the ground.\n")) +
+            tr("Extended: You can move or rotate the piece 10 times before it locks.\n") +
+            tr("Infinite: You can move or rotate the piece an infinite number of times.")));
+
+        k = 0;
+        std::vector<std::string> lockdelay_values(60);
+        std::generate(lockdelay_values.begin(), lockdelay_values.end(), [&k]{ return std::to_string(++k) + "/60 s"; });
+        tuning_options.emplace_back(std::make_unique<ValueChooser>(app,
+            std::move(lockdelay_values), 29, tr("Lock delay"),
+            tr("The time while you can still move the piece after it reaches the ground. See 'Piece lock style'.")));
+
+        tuning_options.emplace_back(std::make_unique<ToggleButton>(app, true, tr("Enable T-Spins"),
+            tr("Allow T-Spin detection and scoring. Works best with SRS rotation.")));
+        tuning_options.emplace_back(std::make_unique<ToggleButton>(app, true, tr("Detect T-Spins at the walls"),
+            tr("Allow detecting T-Spins even when a corner of the T-Slot is outside of the Well.\nRequires the 'Enable T-Spins' option.")));
+        tuning_options.emplace_back(std::make_unique<ToggleButton>(app, true, tr("Allow T-Spins by wallkick"),
+            tr("Allow detecting T-Spins created by wall kicking.\nRequires the 'Enable T-Spins' option.")));
+    }
     subitem_panels.push_back(std::move(tuning_options));
 
 
