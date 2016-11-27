@@ -44,7 +44,7 @@ Options::Options(MainMenuState& parent, AppContext& app)
     std::vector<std::unique_ptr<Layout::Options::OptionsItem>> tuning_options;
     {
         tuning_options.emplace_back(std::make_unique<ValueChooser>(app,
-            std::vector<std::string>({"SRS", "TGM", "Classic"}), 0, tr("Rotation style"),
+            std::vector<std::string>({tr("SRS"), tr("TGM"), tr("Classic")}), 0, tr("Rotation style"),
             std::string(tr("SRS: The rotation style used by most commercial falling block games.\n")) +
             tr("TGM: A popular style common in far eastern games and arcade machines.\n") +
             tr("Classic: The rotation style of old console games; it does not allow wall kicking.")));
@@ -63,7 +63,7 @@ Options::Options(MainMenuState& parent, AppContext& app)
         tuning_options.emplace_back(std::make_unique<ToggleButton>(app, false, tr("Sonic drop"),
             tr("If set to 'ON', hard drop does not lock the piece instantly.")));
         tuning_options.emplace_back(std::make_unique<ValueChooser>(app,
-            std::vector<std::string>({"Instant", "Extended", "Infinite"}), 1, tr("Piece lock style"),
+            std::vector<std::string>({tr("Instant"), tr("Extended"), tr("Infinite")}), 1, tr("Piece lock style"),
             std::string(tr("Instant: The piece locks instantly when it reaches the ground.\n")) +
             tr("Extended: You can move or rotate the piece 10 times before it locks.\n") +
             tr("Infinite: You can move or rotate the piece an infinite number of times.")));
