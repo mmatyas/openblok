@@ -3,6 +3,7 @@
 #include "game/AppContext.h"
 #include "game/layout/options/OptionsItem.h"
 #include "game/layout/options/ToggleBtn.h"
+#include "game/layout/options/ValueChooser.h"
 #include "game/states/MainMenuState.h"
 #include "game/util/CircularModulo.h"
 #include "system/GraphicsContext.h"
@@ -25,6 +26,7 @@ Options::Options(MainMenuState& parent, AppContext& app)
     category_buttons.at(current_category_idx).onHoverEnter();
 
     using ToggleButton = Layout::Options::ToggleButton;
+    using ValueChooser = Layout::Options::ValueChooser;
 
     std::vector<std::unique_ptr<Layout::Options::OptionsItem>> system_options;
     system_options.emplace_back(std::make_unique<ToggleButton>(
@@ -37,6 +39,12 @@ Options::Options(MainMenuState& parent, AppContext& app)
     system_options.emplace_back(std::make_unique<ToggleButton>(app, true, tr("Sound effects")));
     system_options.emplace_back(std::make_unique<ToggleButton>(app, true, tr("Background music")));
     subitem_panels.push_back(std::move(system_options));
+
+    std::vector<std::unique_ptr<Layout::Options::OptionsItem>> tuning_options;
+    tuning_options.emplace_back(std::make_unique<ValueChooser>(app,
+        std::vector<std::string>({"SRS", "TGM", "Classic"}), 0, tr("Rotation style")));
+    subitem_panels.push_back(std::move(tuning_options));
+
 
     updatePositions(app.gcx());
 

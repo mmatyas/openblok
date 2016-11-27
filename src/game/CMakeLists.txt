@@ -33,6 +33,7 @@ set(MOD_GAME_SRC
     layout/options/CategoryBtn.cpp
     layout/options/OptionsItem.cpp
     layout/options/ToggleBtn.cpp
+    layout/options/ValueChooser.cpp
     layout/singleplayer/LeftSidebarBox.cpp
     layout/singleplayer/RightSidebarBox.cpp
     layout/singleplayer/WellBox.cpp
@@ -95,6 +96,7 @@ set(MOD_GAME_H
     layout/options/CategoryBtn.h
     layout/options/OptionsItem.h
     layout/options/ToggleBtn.h
+    layout/options/ValueChooser.h
     layout/singleplayer/LeftSidebarBox.h
     layout/singleplayer/RightSidebarBox.h
     layout/singleplayer/WellBox.h

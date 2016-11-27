@@ -2,9 +2,9 @@
 
 #include "game/layout/options/OptionsItem.h"
 
-#include <array>
 #include <functional>
 #include <memory>
+#include <vector>
 
 class AppContext;
 class Texture;
@@ -13,11 +13,12 @@ class Texture;
 namespace Layout {
 namespace Options {
 
-class ToggleButton : public OptionsItem {
+class ValueChooser : public OptionsItem {
 public:
-    ToggleButton(AppContext&, bool initial_state,
+    ValueChooser(AppContext&,
+                 std::vector<std::string>&& possible_values, size_t start_index,
                  std::string&& label, std::string&& description = " ",
-                 std::function<void(bool)>&& on_toggle = [](bool){});
+                 std::function<void(const std::string)>&& on_change = [](const std::string){});
 
     void draw(GraphicsContext&) const override;
 
@@ -26,15 +27,18 @@ public:
     void onRightPress() override;
 
 private:
-    std::array<std::unique_ptr<Texture>, 2> tex_onoff;
+    const std::vector<std::string> values;
+    std::vector<std::unique_ptr<Texture>> tex_actives;
+    std::vector<std::unique_ptr<Texture>> tex_inactives;
+    size_t current_idx;
 
-    int leftswitch_centerx, rightswitch_centerx;
+    int right_x;
     int padding_ver;
     static constexpr int padding_hor = 20;
 
-    bool switch_state;
-    std::function<void(bool)> callback;
+    std::function<void(const std::string)> callback;
 };
 
 } // namespace Options
 } // namespace Layout
+

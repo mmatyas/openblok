@@ -30,12 +30,6 @@ ToggleButton::ToggleButton(AppContext& app,
     tex_onoff.at(1) = font->renderText(tr("ON"), 0xEEEEEE_rgb);
 }
 
-void ToggleButton::setPosition(int x, int y)
-{
-    bounding_box.x = x;
-    bounding_box.y = y;
-}
-
 void ToggleButton::setWidth(int w)
 {
     OptionsItem::setWidth(w);
