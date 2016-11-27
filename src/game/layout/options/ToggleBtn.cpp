@@ -14,8 +14,9 @@ namespace Options {
 ToggleButton::ToggleButton(AppContext& app,
                            bool initial_state,
                            std::string&& text,
+                           std::string&& description,
                            std::function<void(bool)>&& on_toggle)
-    : OptionsItem(app, std::forward<std::string>(text))
+    : OptionsItem(app, std::forward<std::string>(text), std::forward<std::string>(description))
     , switch_state(initial_state)
     , callback(on_toggle)
 {

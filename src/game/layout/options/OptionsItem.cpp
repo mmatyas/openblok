@@ -9,12 +9,15 @@
 namespace Layout {
 namespace Options {
 
-OptionsItem::OptionsItem(AppContext& app, std::string&& label)
+OptionsItem::OptionsItem(AppContext& app, std::string&& label, std::string&& description)
     : Layout::MenuItem(std::forward<std::string>(label))
     , margin_bottom(6)
 {
     auto font = app.gcx().loadFont(Paths::data() + "fonts/PTS55F.ttf", 30);
     tex_label = font->renderText(btn_label_text, 0xEEEEEE_rgb);
+
+    font = app.gcx().loadFont(Paths::data() + "fonts/PTS55F.ttf", 22);
+    tex_description = font->renderText(description, 0xEEEEEE_rgb);
 }
 
 OptionsItem::~OptionsItem() = default;

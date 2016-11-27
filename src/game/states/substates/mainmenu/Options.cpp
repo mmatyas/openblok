@@ -19,7 +19,7 @@ Options::Options(MainMenuState& parent, AppContext& app)
     : current_category_idx(0)
     , current_setting_idx(0)
 {
-    category_buttons.emplace_back(app, tr("SYSTEM"));
+    category_buttons.emplace_back(app, tr("GENERAL"));
     category_buttons.emplace_back(app, tr("FINE TUNING"));
     category_buttons.emplace_back(app, tr("INPUT"));
     category_buttons.at(current_category_idx).onHoverEnter();
@@ -29,6 +29,7 @@ Options::Options(MainMenuState& parent, AppContext& app)
     std::vector<std::unique_ptr<Layout::Options::OptionsItem>> system_options;
     system_options.emplace_back(std::make_unique<ToggleButton>(
         app, false, tr("Fullscreen mode"),
+        tr("Toggle fullscreen mode. On certain (embedded) devices, this setting may have no effect."),
         [&app](bool){
             app.window().toggleFullscreen();
         }));
@@ -163,6 +164,15 @@ void Options::draw(MainMenuState& parent, GraphicsContext& gcx) const
     assert(current_category_idx < subitem_panels.size());
     for (const auto& btn : subitem_panels.at(current_category_idx))
         btn->draw(gcx);
+
+    if (current_input_handler == &fn_settings_input) {
+        auto& description_tex = subitem_panels.at(current_category_idx).at(current_setting_idx)->descriptionTex();
+        auto bgrect = container_rect;
+        bgrect.h = description_tex->height() + 10;
+        bgrect.y += container_rect.h - bgrect.h;
+        gcx.drawFilledRect(bgrect, black);
+        description_tex->drawAt(bgrect.x + 20, bgrect.y + 5);
+    }
 }
 
 } // namespace MainMenu
