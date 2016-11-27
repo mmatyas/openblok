@@ -85,13 +85,13 @@ Options::Options(MainMenuState& parent, AppContext& app)
             case InputType::MENU_UP:
                 panel.at(current_setting_idx)->onHoverLeave();
                 current_setting_idx = circularModulo(
-                    static_cast<int>(current_setting_idx) - 1, category_buttons.size());
+                    static_cast<int>(current_setting_idx) - 1, panel.size());
                 panel.at(current_setting_idx)->onHoverEnter();
                 break;
             case InputType::MENU_DOWN:
                 panel.at(current_setting_idx)->onHoverLeave();
                 current_setting_idx = circularModulo(
-                    static_cast<int>(current_setting_idx) + 1, category_buttons.size());
+                    static_cast<int>(current_setting_idx) + 1, panel.size());
                 panel.at(current_setting_idx)->onHoverEnter();
                 break;
             case InputType::MENU_LEFT:
