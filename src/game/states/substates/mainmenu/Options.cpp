@@ -31,58 +31,125 @@ Options::Options(MainMenuState& parent, AppContext& app)
     using ToggleButton = Layout::Options::ToggleButton;
     using ValueChooser = Layout::Options::ValueChooser;
 
+    /* Note: the following structures aren't too complex,
+     * it's just that they need a lot of ctor parameters,
+     * like long strings, arrays and lambda callbacks */
+
     std::vector<std::unique_ptr<Layout::Options::OptionsItem>> system_options;
     system_options.emplace_back(std::make_unique<ToggleButton>(
-        app, false, tr("Fullscreen mode"),
+        app, app.sysconfig().fullscreen, tr("Fullscreen mode"),
         tr("Toggle fullscreen mode. On certain (embedded) devices, this setting may have no effect."),
-        [&app](bool){
+        [&app](bool val){
             app.window().toggleFullscreen();
+            app.sysconfig().fullscreen = val;
         }));
     system_options.back()->setMarginBottom(40);
-    system_options.emplace_back(std::make_unique<ToggleButton>(app, true, tr("Sound effects")));
-    system_options.emplace_back(std::make_unique<ToggleButton>(app, true, tr("Background music")));
+    system_options.emplace_back(std::make_unique<ToggleButton>(
+        app, app.sysconfig().sfx, tr("Sound effects"),
+        tr("Enable or disable sound effects."),
+        [&app](bool val){
+            app.sysconfig().sfx = val;
+            // TODO
+        }));
+    system_options.emplace_back(std::make_unique<ToggleButton>(
+        app, app.sysconfig().music, tr("Background music"),
+        tr("Enable or disable the background music."),
+        [&app](bool val){
+            app.sysconfig().music = val;
+            // TODO
+        }));
     subitem_panels.push_back(std::move(system_options));
 
     std::vector<std::unique_ptr<Layout::Options::OptionsItem>> tuning_options;
     {
         tuning_options.emplace_back(std::make_unique<ValueChooser>(app,
-            std::vector<std::string>({tr("SRS"), tr("TGM"), tr("Classic")}), 0, tr("Rotation style"),
+            std::vector<std::string>({tr("SRS"), tr("TGM"), tr("Classic")}),
+            app.wellconfig().rotation_style == RotationStyle::SRS ?
+                0 : (app.wellconfig().rotation_style == RotationStyle::TGM ? 1 : 2),
+            tr("Rotation style"),
             std::string(tr("SRS: The rotation style used by most commercial falling block games.\n")) +
-            tr("TGM: A popular style common in far eastern games and arcade machines.\n") +
-            tr("Classic: The rotation style of old console games; it does not allow wall kicking.")));
-        std::vector<std::string> das_values(20);
+                tr("TGM: A popular style common in far eastern games and arcade machines.\n") +
+                tr("Classic: The rotation style of old console games; it does not allow wall kicking."),
+            [&app](const std::string& val){
+                static const std::unordered_map<std::string, RotationStyle> map = {
+                    {tr("SRS"), RotationStyle::SRS},
+                    {tr("TGM"), RotationStyle::TGM},
+                    {tr("Classic"), RotationStyle::CLASSIC},
+                };
+                app.wellconfig().rotation_style = map.at(val);
+            }));
 
+        std::vector<std::string> das_values(20);
         int k = 0;
         std::generate(das_values.begin(), das_values.end(), [&k]{ return std::to_string(++k) + "/60 s"; });
         auto das_repeat_values = das_values;
-        tuning_options.emplace_back(std::make_unique<ValueChooser>(app,
-            std::move(das_values), 13, tr("DAS initial delay"),
-            tr("The time it takes to turn on horizontal movement autorepeat.")));
-        tuning_options.emplace_back(std::make_unique<ValueChooser>(app,
-            std::move(das_repeat_values), 3, tr("DAS repeat delay"),
-            tr("Horizontal movement delay during autorepeat.")));
+        tuning_options.emplace_back(std::make_unique<ValueChooser>(app, std::move(das_values),
+            app.wellconfig().shift_normal - 1, // num to offset
+            tr("DAS initial delay"),
+            tr("The time it takes to turn on horizontal movement autorepeat."),
+            [&app](const std::string& val){
+                // this must not throw error
+                app.wellconfig().shift_normal = std::stoul(val.substr(0, val.find("/") - 1));
+            }));
+        tuning_options.emplace_back(std::make_unique<ValueChooser>(app, std::move(das_repeat_values),
+            app.wellconfig().shift_turbo - 1, // num to offset
+            tr("DAS repeat delay"),
+            tr("Horizontal movement delay during autorepeat."),
+            [&app](const std::string& val){
+                // this must not throw error
+                app.wellconfig().shift_turbo = std::stoul(val.substr(0, val.find("/") - 1));
+            }));
 
-        tuning_options.emplace_back(std::make_unique<ToggleButton>(app, false, tr("Sonic drop"),
-            tr("If set to 'ON', hard drop does not lock the piece instantly.")));
+        tuning_options.emplace_back(std::make_unique<ToggleButton>(app,
+            !app.wellconfig().instant_harddrop, // sonic drop == not instant hard drop
+            tr("Sonic drop"),
+            tr("If set to 'ON', hard drop does not lock the piece instantly."),
+            [&app](bool val){ app.wellconfig().instant_harddrop = !val; }));
         tuning_options.emplace_back(std::make_unique<ValueChooser>(app,
-            std::vector<std::string>({tr("Instant"), tr("Extended"), tr("Infinite")}), 1, tr("Piece lock style"),
+            std::vector<std::string>({tr("Instant"), tr("Extended"), tr("Infinite")}),
+            app.wellconfig().lock_delay_type == LockDelayType::CLASSIC ?
+                0 : (app.wellconfig().lock_delay_type == LockDelayType::EXTENDED ? 1 : 2),
+            tr("Piece lock style"),
             std::string(tr("Instant: The piece locks instantly when it reaches the ground.\n")) +
-            tr("Extended: You can move or rotate the piece 10 times before it locks.\n") +
-            tr("Infinite: You can move or rotate the piece an infinite number of times.")));
+                tr("Extended: You can move or rotate the piece 10 times before it locks.\n") +
+                tr("Infinite: You can move or rotate the piece an infinite number of times."),
+            [&app](const std::string& val){
+                static const std::unordered_map<std::string, LockDelayType> map = {
+                    {tr("Instant"), LockDelayType::CLASSIC},
+                    {tr("Extended"), LockDelayType::EXTENDED},
+                    {tr("Infinite"), LockDelayType::INFINITE},
+                };
+                app.wellconfig().lock_delay_type = map.at(val);
+            }));
 
         k = 0;
         std::vector<std::string> lockdelay_values(60);
         std::generate(lockdelay_values.begin(), lockdelay_values.end(), [&k]{ return std::to_string(++k) + "/60 s"; });
         tuning_options.emplace_back(std::make_unique<ValueChooser>(app,
-            std::move(lockdelay_values), 29, tr("Lock delay"),
-            tr("The time while you can still move the piece after it reaches the ground. See 'Piece lock style'.")));
+            std::move(lockdelay_values),
+            app.wellconfig().lock_delay - 1, // num to offset
+            tr("Lock delay"),
+            tr("The time while you can still move the piece after it reaches the ground. See 'Piece lock style'."),
+            [&app](const std::string& val){
+                // this must not throw error
+                app.wellconfig().shift_normal = std::stoul(val.substr(0, val.find("/") - 1));
+            }));
 
-        tuning_options.emplace_back(std::make_unique<ToggleButton>(app, true, tr("Enable T-Spins"),
-            tr("Allow T-Spin detection and scoring. Works best with SRS rotation.")));
-        tuning_options.emplace_back(std::make_unique<ToggleButton>(app, true, tr("Detect T-Spins at the walls"),
-            tr("Allow detecting T-Spins even when a corner of the T-Slot is outside of the Well.\nRequires the 'Enable T-Spins' option.")));
-        tuning_options.emplace_back(std::make_unique<ToggleButton>(app, true, tr("Allow T-Spins by wallkick"),
-            tr("Allow detecting T-Spins created by wall kicking.\nRequires the 'Enable T-Spins' option.")));
+        tuning_options.emplace_back(std::make_unique<ToggleButton>(app,
+            app.wellconfig().tspin_enabled,
+            tr("Enable T-Spins"),
+            tr("Allow T-Spin detection and scoring. Works best with SRS rotation."),
+            [&app](bool val){ app.wellconfig().tspin_enabled = val; }));
+        tuning_options.emplace_back(std::make_unique<ToggleButton>(app,
+            app.wellconfig().tspin_allow_wallblock,
+            tr("Detect T-Spins at the walls"),
+            tr("Allow detecting T-Spins even when a corner of the T-Slot is outside of the Well.\nRequires the 'Enable T-Spins' option."),
+            [&app](bool val){ app.wellconfig().tspin_allow_wallblock = val; }));
+        tuning_options.emplace_back(std::make_unique<ToggleButton>(app,
+            app.wellconfig().tspin_allow_wallkick,
+            tr("Allow T-Spins by wallkick"),
+            tr("Allow detecting T-Spins created by wall kicking.\nRequires the 'Enable T-Spins' option."),
+            [&app](bool val){ app.wellconfig().tspin_allow_wallkick = val; }));
     }
     subitem_panels.push_back(std::move(tuning_options));
 
