@@ -16,10 +16,9 @@ InitState::InitState(AppContext& app)
     app.config().saveInputMapping(mappings, Paths::config() + "input.cfg");
     app.window().setInputMapping(mappings.at("keyboard"));
 
-    SysConfig sys;
-    WellConfig well;
-    GameConfigFile::save(sys, well, Paths::config() + "game.cfg");
-    GameConfigFile::load(Paths::config() + "game.cfg");
+    auto config = GameConfigFile::load(Paths::config() + "game.cfg");
+    app.sysconfig() = std::get<0>(config);
+    app.wellconfig() = std::get<1>(config);
 
     Log::info("init") << "Loading resources from '" << Paths::data() << "'\n";
 

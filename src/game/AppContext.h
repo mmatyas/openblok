@@ -1,5 +1,7 @@
 #pragma once
 
+#include "SysConfig.h"
+#include "WellConfig.h"
 #include "system/ConfigManager.h"
 #include "system/Window.h"
 
@@ -18,10 +20,14 @@ public:
     GraphicsContext& gcx() { return m_window->graphicsContext(); }
     AudioContext& audio() { return m_window->audioContext(); }
     ConfigManager& config() { return m_config; }
+    SysConfig& sysconfig() { return m_sysconfig; }
+    WellConfig& wellconfig() { return m_wellconfig; }
     std::stack<std::unique_ptr<GameState>>& states() { return m_states; }
 
 private:
     std::unique_ptr<Window> m_window;
     ConfigManager m_config;
+    SysConfig m_sysconfig;
+    WellConfig m_wellconfig;
     std::stack<std::unique_ptr<GameState>> m_states;
 };
