@@ -1,5 +1,6 @@
 set(MOD_GAME_SRC
     AppContext.cpp
+    GameConfigFile.cpp
     ScoreTable.cpp
 
     components/HoldQueue.cpp
@@ -52,11 +53,14 @@ set(MOD_GAME_SRC
 
 set(MOD_GAME_H
     AppContext.h
+    GameConfigFile.h
     GameState.h
     PlayerStatistics.h
     ScoreTable.h
+    SysConfig.h
     Timing.h
     Transition.h
+    WellConfig.h
     WellEvent.h
 
     components/HoldQueue.h
@@ -67,7 +71,6 @@ set(MOD_GAME_H
     components/PieceFactory.h
     components/PieceType.h
     components/Well.h
-    components/WellConfig.h
 
     components/animations/WellAnimation.h
     components/animations/CellLockAnim.h

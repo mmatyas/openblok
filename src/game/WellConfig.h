@@ -1,7 +1,7 @@
 #pragma once
 
-#include "LockDelayType.h"
-#include "rotations/SRS.h"
+#include "components/LockDelayType.h"
+#include "components/rotations/SRS.h"
 
 #include <memory>
 

@@ -2,11 +2,11 @@
 
 #include "Piece.h"
 #include "PieceFactory.h"
-#include "WellConfig.h"
 #include "animations/CellLockAnim.h"
 #include "animations/HalfHeightLineClearAnim.h"
 #include "animations/LineClearAnim.h"
 #include "game/Timing.h"
+#include "game/WellConfig.h"
 #include "game/WellEvent.h"
 
 #include <algorithm>

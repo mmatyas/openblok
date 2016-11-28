@@ -1,6 +1,7 @@
 #include "InitState.h"
 
 #include "game/AppContext.h"
+#include "game/GameConfigFile.h"
 #include "game/components/MinoStorage.h"
 #include "game/states/MainMenuState.h"
 #include "system/Log.h"
@@ -14,6 +15,11 @@ InitState::InitState(AppContext& app)
     auto mappings = app.config().loadInputMappings(Paths::config() + "input.cfg");
     app.config().saveInputMapping(mappings, Paths::config() + "input.cfg");
     app.window().setInputMapping(mappings.at("keyboard"));
+
+    SysConfig sys;
+    WellConfig well;
+    GameConfigFile::save(sys, well, Paths::config() + "game.cfg");
+    GameConfigFile::load(Paths::config() + "game.cfg");
 
     Log::info("init") << "Loading resources from '" << Paths::data() << "'\n";
 

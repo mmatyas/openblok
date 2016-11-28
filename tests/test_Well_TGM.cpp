@@ -1,9 +1,9 @@
 #include "UnitTest++/UnitTest++.h"
 
+#include "game/WellConfig.h"
 #include "game/components/MinoStorage.h"
 #include "game/components/PieceFactory.h"
 #include "game/components/Well.h"
-#include "game/components/WellConfig.h"
 #include "game/components/rotations/TGM.h"
 
 
