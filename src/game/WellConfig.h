@@ -1,7 +1,7 @@
 #pragma once
 
 #include "components/LockDelayType.h"
-#include "components/rotations/SRS.h"
+#include "components/rotations/RotationStyle.h"
 
 #include <memory>
 
@@ -17,7 +17,7 @@ struct WellConfig {
     bool tspin_enabled;
     bool tspin_allow_wallblock;
     bool tspin_allow_wallkick;
-    std::unique_ptr<RotationFn> rotation_fn;
+    RotationStyle rotation_style;
 
     WellConfig() {
         starting_gravity = 64,
@@ -29,6 +29,6 @@ struct WellConfig {
         tspin_enabled = true,
         tspin_allow_wallblock = true,
         tspin_allow_wallkick = true,
-        rotation_fn = std::make_unique<Rotations::SRS>();
+        rotation_style = RotationStyle::SRS;
     };
 };

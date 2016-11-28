@@ -5,6 +5,7 @@
 #include "animations/CellLockAnim.h"
 #include "animations/HalfHeightLineClearAnim.h"
 #include "animations/LineClearAnim.h"
+#include "rotations/RotationFactory.h"
 #include "game/Timing.h"
 #include "game/WellConfig.h"
 #include "game/WellEvent.h"
@@ -22,7 +23,6 @@ Well::Well(WellConfig&& config)
     , active_piece_y(0)
     , ghost_piece_y(0)
     , softdrop_timer(Duration::zero())
-    , rotation_fn(std::move(config.rotation_fn))
     , last_lineclear_type(LineClearType::NORMAL)
     , das(Timing::frame_duration_60Hz * config.shift_normal,
           Timing::frame_duration_60Hz * config.shift_turbo)
@@ -31,6 +31,7 @@ Well::Well(WellConfig&& config)
     , tspin(config.tspin_enabled, config.tspin_allow_wallblock, config.tspin_allow_wallkick)
 {
     setGravity(Timing::frame_duration_60Hz * config.starting_gravity);
+    rotation_fn = RotationFactory::make(config.rotation_style);
 }
 
 Well::~Well() = default;

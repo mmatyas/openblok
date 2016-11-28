@@ -5,6 +5,7 @@
 #include "game/components/PieceType.h"
 #include "game/components/PieceFactory.h"
 #include "game/components/Well.h"
+#include "game/components/rotations/SRS.h"
 
 
 SUITE(Well) {

@@ -18,6 +18,7 @@ set(MOD_GAME_SRC
     components/animations/TextPopup.cpp
 
     components/rotations/Classic.cpp
+    components/rotations/RotationFactory.cpp
     components/rotations/SRS.cpp
     components/rotations/TGM.cpp
 
@@ -79,7 +80,9 @@ set(MOD_GAME_H
     components/animations/TextPopup.h
 
     components/rotations/Classic.h
+    components/rotations/RotationFactory.h
     components/rotations/RotationFn.h
+    components/rotations/RotationStyle.h
     components/rotations/SRS.h
     components/rotations/TGM.h
 
