@@ -4,6 +4,7 @@
 #include "game/states/substates/MainMenu.h"
 #include "system/Rectangle.h"
 
+#include <functional>
 #include <memory>
 
 namespace Layout { namespace Options { class OptionsItem; } }

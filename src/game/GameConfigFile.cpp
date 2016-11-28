@@ -2,6 +2,7 @@
 
 #include "system/Log.h"
 
+#include <map>
 #include <fstream>
 #include <functional>
 #include <regex>
