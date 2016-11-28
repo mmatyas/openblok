@@ -39,11 +39,15 @@ std::unordered_map<std::string, unsigned short*> createNumericBind(WellConfig& w
 }
 
 const std::set<std::string> accepted_wellenum_keys = {"lock_type", "rotation"};
-
 const std::unordered_map<std::string, LockDelayType> str_to_locktype {
     {"\"instant\"", LockDelayType::CLASSIC},
     {"\"extended\"", LockDelayType::EXTENDED},
     {"\"infinite\"", LockDelayType::INFINITE},
+};
+const std::unordered_map<std::string, RotationStyle> str_to_rotation {
+    {"\"srs\"", RotationStyle::SRS},
+    {"\"tgm\"", RotationStyle::TGM},
+    {"\"classic\"", RotationStyle::CLASSIC},
 };
 
 void writeBool(std::ofstream& ofs, const std::string& key, bool value)
@@ -93,7 +97,13 @@ void GameConfigFile::save(SysConfig& sys, WellConfig& well, const std::string& p
         for (const auto& pair : str_to_locktype)
             locktype_to_str.emplace(pair.second, pair.first);
         assert(locktype_to_str.count(well.lock_delay_type));
-        out << "lock_type = " << locktype_to_str.at(well.lock_delay_type);
+        out << "lock_type = " << locktype_to_str.at(well.lock_delay_type) << "\n";
+
+        std::map<RotationStyle, const std::string> rotation_to_str;
+        for (const auto& pair : str_to_rotation)
+            rotation_to_str.emplace(pair.second, pair.first);
+        assert(rotation_to_str.count(well.rotation_style));
+        out << "rotation = " << rotation_to_str.at(well.rotation_style) << "\n";
     }
 }
 
@@ -176,6 +186,14 @@ std::tuple<SysConfig, WellConfig> GameConfigFile::load(const std::string& path)
                     else {
                         Log::warning(LOG_TAG) << path << ":" << linenum
                         << ": Invalid lock type value '" << str_val << "', ignored\n";
+                    }
+                }
+                else if (key == "rotation") {
+                    if (str_to_rotation.count(str_val))
+                        well.rotation_style = str_to_rotation.at(str_val);
+                    else {
+                        Log::warning(LOG_TAG) << path << ":" << linenum
+                        << ": Invalid rotation style value '" << str_val << "', ignored\n";
                     }
                 }
             }
