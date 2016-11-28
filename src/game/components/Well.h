@@ -36,7 +36,7 @@ class Well {
 public:
     /// Create a new well
     Well();
-    Well(WellConfig&&);
+    Well(const WellConfig&);
     ~Well();
 
     /// Update the keystate of the well: Currently the system keystate

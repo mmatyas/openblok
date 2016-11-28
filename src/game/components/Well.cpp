@@ -16,7 +16,7 @@
 
 Well::Well() : Well(WellConfig()) {}
 
-Well::Well(WellConfig&& config)
+Well::Well(const WellConfig& config)
     : gameover(false)
     , temporal_disable_timer(Duration::zero())
     , active_piece_x(0)

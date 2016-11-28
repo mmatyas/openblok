@@ -1,15 +1,15 @@
 #include "WellBox.h"
 
-#include "game/components/rotations/SRS.h"
+#include "game/AppContext.h"
+#include "game/components/rotations/RotationFactory.h"
 #include "system/GraphicsContext.h"
 
 
 namespace Layout {
 
-WellBox::WellBox(AppContext&)
+WellBox::WellBox(AppContext& app)
+    : m_well(app.wellconfig())
 {
-    m_well.setRotationFn(std::make_unique<Rotations::SRS>()); // TODO: make a shared rotation store
-
     bounding_box.w = wellWidth() + border_width * 2;
     bounding_box.h = wellHeight() + border_width * 2;
 
