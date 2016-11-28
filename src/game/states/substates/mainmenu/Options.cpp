@@ -1,6 +1,7 @@
 #include "Options.h"
 
 #include "game/AppContext.h"
+#include "game/GameConfigFile.h"
 #include "game/layout/options/OptionsItem.h"
 #include "game/layout/options/ToggleBtn.h"
 #include "game/layout/options/ValueChooser.h"
@@ -8,6 +9,7 @@
 #include "game/util/CircularModulo.h"
 #include "system/GraphicsContext.h"
 #include "system/Localize.h"
+#include "system/Paths.h"
 #include "system/Texture.h"
 
 #include <assert.h>
@@ -87,13 +89,14 @@ Options::Options(MainMenuState& parent, AppContext& app)
 
     updatePositions(app.gcx());
 
-    fn_category_input = [this, &parent](InputType input){
+    fn_category_input = [this, &parent, &app](InputType input){
         switch (input) {
             case InputType::MENU_OK:
                 current_input_handler = &fn_settings_input;
                 subitem_panels.at(current_category_idx).at(current_setting_idx)->onHoverEnter();
                 break;
             case InputType::MENU_CANCEL:
+                GameConfigFile::save(app.sysconfig(), app.wellconfig(), Paths::config() + "game.cfg");
                 assert(parent.states.size() > 1);
                 parent.states.pop_back();
                 break;
