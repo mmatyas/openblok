@@ -19,6 +19,12 @@ InitState::InitState(AppContext& app)
     auto config = GameConfigFile::load(Paths::config() + "game.cfg");
     app.sysconfig() = std::get<0>(config);
     app.wellconfig() = std::get<1>(config);
+    if (app.sysconfig().fullscreen)
+        app.window().toggleFullscreen();
+    if (!app.sysconfig().sfx)
+        {} // TODO
+    if (!app.sysconfig().music)
+        {} // TODO
 
     Log::info("init") << "Loading resources from '" << Paths::data() << "'\n";
 
