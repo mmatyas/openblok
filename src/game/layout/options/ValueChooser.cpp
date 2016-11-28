@@ -15,7 +15,7 @@ namespace Options {
 ValueChooser::ValueChooser(AppContext& app,
                            std::vector<std::string>&& possible_values, size_t start_index,
                            std::string&& text, std::string&& description,
-                           std::function<void(const std::string)>&& on_change)
+                           std::function<void(const std::string&)>&& on_change)
     : OptionsItem(app, std::forward<std::string>(text), std::forward<std::string>(description))
     , values(possible_values)
     , current_idx(start_index)
