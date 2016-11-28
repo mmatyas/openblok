@@ -25,7 +25,7 @@ Options::Options(MainMenuState& parent, AppContext& app)
 {
     category_buttons.emplace_back(app, tr("GENERAL"));
     category_buttons.emplace_back(app, tr("FINE TUNING"));
-    category_buttons.emplace_back(app, tr("INPUT"));
+    // category_buttons.emplace_back(app, tr("INPUT"));
     category_buttons.at(current_category_idx).onHoverEnter();
 
     using ToggleButton = Layout::Options::ToggleButton;
