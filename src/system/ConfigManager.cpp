@@ -51,7 +51,7 @@ DeviceMappings ConfigManager::loadInputMappings(const std::string& path)
         {InputType::MENU_UP, {SDL_SCANCODE_UP}},
         {InputType::MENU_DOWN, {SDL_SCANCODE_DOWN}},
         {InputType::MENU_OK, {SDL_SCANCODE_RETURN, SDL_SCANCODE_SPACE, SDL_SCANCODE_Z}},
-        {InputType::MENU_CANCEL, {SDL_SCANCODE_ESCAPE, SDL_SCANCODE_X}},
+        {InputType::MENU_CANCEL, {SDL_SCANCODE_BACKSPACE, SDL_SCANCODE_ESCAPE, SDL_SCANCODE_X}},
     };
     DeviceMappings out = default_map;
 
