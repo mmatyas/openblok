@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 2.8)
 project(openblok C CXX)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
+include(ProjectVersion)
 
 # Build options
 option(INSTALL_PORTABLE "The installation step should put the runtime and the data directory next to each other" OFF)
@@ -82,7 +83,7 @@ endif()
 
 
 # Package
-include(cmake/CPackConfig.cmake)
+include(CPackConfig)
 include(CPack)
 
 

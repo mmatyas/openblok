@@ -1,0 +1,4 @@
+#pragma once
+
+static constexpr auto game_version =
+    "v@OPENBLOK_VERSION_MAJOR@.@OPENBLOK_VERSION_MINOR@.@OPENBLOK_VERSION_PATCH@@OPENBLOK_VERSION_EXTRA@";
