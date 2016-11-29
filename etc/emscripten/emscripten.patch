@@ -1,21 +1,8 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index e404c5a..1520a3f 100644
+index c52afa6..a0dad08 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -16,11 +16,7 @@ if(UNIX AND NOT APPLE AND NOT CYGWIN)
-     set(ICONDIR "${SHAREDIR}/pixmaps" CACHE STRING "Install location of the icon file")
-     set(DESKTOPDIR "${SHAREDIR}/applications" CACHE STRING "Install location of the desktop shortcut")
- endif()
--if(CMAKE_BUILD_TYPE MATCHES Release)
--    set(DATADIR "${SHAREDIR}/openblok" CACHE STRING "Install location of the data files (release)")
--else()
--    set(DATADIR "data" CACHE STRING "Install location of the data files (debug)")
--endif()
-+set(DATADIR "data" CACHE STRING "Install location of the data files (debug)")
- 
- 
- # Global compiler settings
-@@ -45,6 +41,25 @@ if(BUILD_TEST_COVERAGE)
+@@ -56,6 +56,25 @@ if(BUILD_TEST_COVERAGE)
  endif()
  
  
@@ -130,14 +117,12 @@ index 0eb187d..dfc067b 100644
  #include <SDL2pp/SDLTTF.hh>
  #include <SDL2pp/Exception.hh>
 diff --git a/src/main.cpp b/src/main.cpp
-index bc5b424..319cfdf 100644
+index d601e9f..0986bf3 100644
 --- a/src/main.cpp
 +++ b/src/main.cpp
-@@ -22,15 +22,17 @@
- #include "system/Log.h"
- #include "system/Paths.h"
- 
--#include <chrono>
+@@ -26,13 +26,16 @@
+ #include <algorithm>
+ #include <chrono>
  #include <memory>
 -#include <thread>
  #include <assert.h>
@@ -152,8 +137,8 @@ index bc5b424..319cfdf 100644
 +
  int main(int argc, const char** argv)
  {
-     Log::info(LOG_MAIN) << "OpenBlok v0.1.0 by Mátyás Mustoha\n";
-@@ -60,7 +62,6 @@ int main(int argc, const char** argv)
+     Log::info(LOG_MAIN) << "OpenBlok, created by Mátyás Mustoha, " << game_version << "\n";
+@@ -62,7 +65,6 @@ int main(int argc, const char** argv)
      }
  
  
@@ -161,57 +146,70 @@ index bc5b424..319cfdf 100644
      if (!app.init())
          return 1;
  
-@@ -72,31 +73,24 @@ int main(int argc, const char** argv)
+@@ -74,37 +76,34 @@ int main(int argc, const char** argv)
      }
  
  
--    auto frame_starttime = std::chrono::steady_clock::now();
--    auto frame_endtime = frame_starttime + Timing::frame_duration;
++    emscripten_set_main_loop(runNextFrame, 0, 1);
++
++    return 0;
++}
++
++void runNextFrame()
++{
++    static auto gametime_delay = Timing::frame_duration; // start with an update
++
+     auto frame_starttime = std::chrono::steady_clock::now();
+     auto frame_planned_endtime = frame_starttime + Timing::frame_duration;
+-    auto gametime_delay = Timing::frame_duration; // start with an update
 -
 -    while (!app.window().quitRequested()) {
 -        try {
--            auto events = app.window().collectEvents();
-+    emscripten_set_main_loop(runNextFrame, 0, 1);
- 
--            assert(app.states().size());
--            app.states().top()->update(events, app);
+-            while (gametime_delay >= Timing::frame_duration && !app.states().empty()) {
+-                auto events = app.window().collectEvents();
+-                app.states().top()->update(events, app);
+-                gametime_delay -= Timing::frame_duration;
+-            }
 -            if (app.states().empty())
 -                break;
--
+ 
 -            app.states().top()->draw(app.gcx());
 -            app.gcx().render();
 -        }
 -        catch (const std::exception& err) {
 -            app.window().showErrorMessage(err.what());
 -            return 1;
--        }
-+    return 0;
-+}
- 
--        // frame rate limiting
--        std::this_thread::sleep_until(frame_endtime);
--        frame_starttime = std::chrono::steady_clock::now();
--        frame_endtime = frame_starttime + Timing::frame_duration;
-+void runNextFrame()
-+{
 +    try {
-+        auto events = app.window().collectEvents();
-+        assert(app.states().size());
-+        app.states().top()->update(events, app);
++        while (gametime_delay >= Timing::frame_duration && !app.states().empty()) {
++            auto events = app.window().collectEvents();
++            app.states().top()->update(events, app);
++            gametime_delay -= Timing::frame_duration;
+         }
 +        if (app.states().empty())
 +            return;
-+
+ 
+-        auto lag = std::max(std::chrono::steady_clock::now() - frame_planned_endtime, Duration::zero());
+-        gametime_delay += Timing::frame_duration + lag;
+-
+-        // max frame rate limiting
+-        std::this_thread::sleep_until(frame_planned_endtime);
+-
+-        frame_starttime = std::chrono::steady_clock::now();
+-        frame_planned_endtime = frame_starttime + Timing::frame_duration;
 +        app.states().top()->draw(app.gcx());
 +        app.gcx().render();
 +    }
 +    catch (const std::exception& err) {
 +        app.window().showErrorMessage(err.what());
      }
--
+ 
 -    return 0;
- }
+-}
++    auto lag = std::max(std::chrono::steady_clock::now() - frame_planned_endtime, Duration::zero());
++        gametime_delay += Timing::frame_duration + lag;
++ }
 diff --git a/src/system/sdl/SDLGraphicsContext.cpp b/src/system/sdl/SDLGraphicsContext.cpp
-index 64821fd..9cdbe97 100644
+index 0f4dbf7..4dcfe16 100644
 --- a/src/system/sdl/SDLGraphicsContext.cpp
 +++ b/src/system/sdl/SDLGraphicsContext.cpp
 @@ -51,7 +51,7 @@ void SDLGraphicsContext::render()
