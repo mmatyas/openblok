@@ -15,6 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+#include "version.h"
 #include "game/AppContext.h"
 #include "game/GameState.h"
 #include "game/Timing.h"
@@ -34,7 +35,7 @@ const std::string LOG_HELP = "help";
 
 int main(int argc, const char** argv)
 {
-    Log::info(LOG_MAIN) << "OpenBlok v0.3.0 by Mátyás Mustoha\n";
+    Log::info(LOG_MAIN) << "OpenBlok, created by Mátyás Mustoha, " << game_version << "\n";
 
     for (int arg_i = 1; arg_i < argc; arg_i++) {
         std::string arg = argv[arg_i];

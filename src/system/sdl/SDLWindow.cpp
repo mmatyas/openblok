@@ -1,5 +1,6 @@
 #include "SDLWindow.h"
 
+#include "version.h"
 #include "SDLGraphicsContext.h"
 #include "system/Log.h"
 #include "system/Paths.h"
@@ -9,7 +10,7 @@ const std::string LOG_INPUT_TAG = "input";
 
 SDLWindow::SDLWindow()
     : sdl(SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER)
-    , window("OpenBlok",
+    , window(std::string("OpenBlok ") + game_version,
         SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
         960, 540,
         SDL_WINDOW_RESIZABLE)
