@@ -213,7 +213,7 @@ std::vector<Event> SDLWindow::collectEvents()
                 auto& device_map = device_maps.at(sdl_event.jhat.which);
                 uint16_t button = sdl_event.jhat.value;
                 // turn off all hat keys - there can be only one direction active at a time
-                static constexpr auto all_hats = {SDL_HAT_UP, SDL_HAT_DOWN, SDL_HAT_LEFT, SDL_HAT_RIGHT};
+                static const auto all_hats = {SDL_HAT_UP, SDL_HAT_DOWN, SDL_HAT_LEFT, SDL_HAT_RIGHT};
                 for (const auto& hat : all_hats) {
                     for (const auto& event : device_map[hat])
                         output.emplace_back(InputEvent(event, false));
