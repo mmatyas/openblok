@@ -28,6 +28,7 @@ private:
     std::vector<std::vector<std::unique_ptr<Layout::Options::OptionsItem>>> subitem_panels;
     unsigned current_category_idx;
     unsigned current_setting_idx;
+    Layout::Options::OptionsItem* current_subitem;
 
     std::function<void(InputType)> fn_category_input;
     std::function<void(InputType)> fn_settings_input;

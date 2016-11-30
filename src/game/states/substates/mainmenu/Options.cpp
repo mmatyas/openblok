@@ -22,6 +22,7 @@ namespace MainMenu {
 Options::Options(MainMenuState& parent, AppContext& app)
     : current_category_idx(0)
     , current_setting_idx(0)
+    , current_subitem(nullptr)
 {
     category_buttons.emplace_back(app, tr("GENERAL"));
     category_buttons.emplace_back(app, tr("FINE TUNING"));
@@ -157,10 +158,12 @@ Options::Options(MainMenuState& parent, AppContext& app)
     updatePositions(app.gcx());
 
     fn_category_input = [this, &parent, &app](InputType input){
+        assert(!current_subitem);
         switch (input) {
             case InputType::MENU_OK:
                 current_input_handler = &fn_settings_input;
-                subitem_panels.at(current_category_idx).at(current_setting_idx)->onHoverEnter();
+                current_subitem = subitem_panels.at(current_category_idx).front().get();
+                current_subitem->onHoverEnter();
                 break;
             case InputType::MENU_CANCEL:
                 GameConfigFile::save(app.sysconfig(), app.wellconfig(), Paths::config() + "game.cfg");
@@ -184,30 +187,34 @@ Options::Options(MainMenuState& parent, AppContext& app)
         }
     };
     fn_settings_input = [this](InputType input){
+        assert(current_subitem);
         auto& panel = subitem_panels.at(current_category_idx);
         switch (input) {
             case InputType::MENU_CANCEL:
-                panel.at(current_setting_idx)->onHoverLeave();
+                current_subitem->onHoverLeave();
+                current_subitem = nullptr;
                 current_setting_idx = 0;
                 current_input_handler = &fn_category_input;
                 break;
             case InputType::MENU_UP:
-                panel.at(current_setting_idx)->onHoverLeave();
+                current_subitem->onHoverLeave();
                 current_setting_idx = circularModulo(
                     static_cast<int>(current_setting_idx) - 1, panel.size());
-                panel.at(current_setting_idx)->onHoverEnter();
+                current_subitem = panel.at(current_setting_idx).get();
+                current_subitem->onHoverEnter();
                 break;
             case InputType::MENU_DOWN:
-                panel.at(current_setting_idx)->onHoverLeave();
+                current_subitem->onHoverLeave();
                 current_setting_idx = circularModulo(
                     static_cast<int>(current_setting_idx) + 1, panel.size());
-                panel.at(current_setting_idx)->onHoverEnter();
+                current_subitem = panel.at(current_setting_idx).get();
+                current_subitem->onHoverEnter();
                 break;
             case InputType::MENU_LEFT:
-                panel.at(current_setting_idx)->onLeftPress();
+                current_subitem->onLeftPress();
                 break;
             case InputType::MENU_RIGHT:
-                panel.at(current_setting_idx)->onRightPress();
+                current_subitem->onRightPress();
                 break;
             default:
                 break;
@@ -282,8 +289,8 @@ void Options::draw(MainMenuState& parent, GraphicsContext& gcx) const
     for (const auto& btn : subitem_panels.at(current_category_idx))
         btn->draw(gcx);
 
-    if (current_input_handler == &fn_settings_input) {
-        auto& description_tex = subitem_panels.at(current_category_idx).at(current_setting_idx)->descriptionTex();
+    if (current_subitem) {
+        auto& description_tex = current_subitem->descriptionTex();
         auto bgrect = container_rect;
         bgrect.h = description_tex->height() + 10;
         bgrect.y += container_rect.h - bgrect.h;
