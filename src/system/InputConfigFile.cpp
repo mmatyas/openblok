@@ -5,6 +5,7 @@
 
 #include <assert.h>
 #include <regex>
+#include <sstream>
 
 
 const std::string LOG_TAG("config");
