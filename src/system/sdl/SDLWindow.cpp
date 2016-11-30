@@ -5,6 +5,8 @@
 #include "system/Log.h"
 #include "system/Paths.h"
 
+#include <assert.h>
+
 
 const std::string LOG_INPUT_TAG = "input";
 
@@ -15,44 +17,41 @@ SDLWindow::SDLWindow()
         960, 540,
         SDL_WINDOW_RESIZABLE)
     , gcx(window)
-    , m_quit_requested(false)
-{
-    window.SetIcon(SDL2pp::Surface(Paths::data() + "icon.png"));
-    SDL_GameControllerAddMappingsFromFile((Paths::data() + "gamecontrollerdb").c_str());
-
-    // TODO: add per-device setting and loading from file
-    gamepad_mapping = {
-        {SDL_CONTROLLER_BUTTON_DPAD_UP, {InputType::GAME_HARDDROP, InputType::MENU_UP}},
-        {SDL_CONTROLLER_BUTTON_DPAD_DOWN, {InputType::GAME_SOFTDROP, InputType::MENU_DOWN}},
-        {SDL_CONTROLLER_BUTTON_DPAD_LEFT, {InputType::GAME_MOVE_LEFT, InputType::MENU_LEFT}},
-        {SDL_CONTROLLER_BUTTON_DPAD_RIGHT, {InputType::GAME_MOVE_RIGHT, InputType::MENU_RIGHT}},
-        {SDL_CONTROLLER_BUTTON_A, {InputType::GAME_ROTATE_LEFT, InputType::MENU_OK}},
-        {SDL_CONTROLLER_BUTTON_B, {InputType::GAME_ROTATE_RIGHT, InputType::MENU_CANCEL}},
-        {SDL_CONTROLLER_BUTTON_LEFTSHOULDER, {InputType::GAME_HOLD}},
-        {SDL_CONTROLLER_BUTTON_RIGHTSHOULDER, {InputType::GAME_HOLD}},
-        {SDL_CONTROLLER_BUTTON_BACK, {InputType::GAME_PAUSE}},
-        {SDL_CONTROLLER_BUTTON_GUIDE, {InputType::GAME_PAUSE}},
-        {SDL_CONTROLLER_BUTTON_START, {InputType::GAME_PAUSE}},
-    };
-
+    , default_gamepad_mapping({
+            {SDL_CONTROLLER_BUTTON_DPAD_UP, {InputType::GAME_HARDDROP, InputType::MENU_UP}},
+            {SDL_CONTROLLER_BUTTON_DPAD_DOWN, {InputType::GAME_SOFTDROP, InputType::MENU_DOWN}},
+            {SDL_CONTROLLER_BUTTON_DPAD_LEFT, {InputType::GAME_MOVE_LEFT, InputType::MENU_LEFT}},
+            {SDL_CONTROLLER_BUTTON_DPAD_RIGHT, {InputType::GAME_MOVE_RIGHT, InputType::MENU_RIGHT}},
+            {SDL_CONTROLLER_BUTTON_A, {InputType::GAME_ROTATE_LEFT, InputType::MENU_OK}},
+            {SDL_CONTROLLER_BUTTON_B, {InputType::GAME_ROTATE_RIGHT, InputType::MENU_CANCEL}},
+            {SDL_CONTROLLER_BUTTON_LEFTSHOULDER, {InputType::GAME_HOLD}},
+            {SDL_CONTROLLER_BUTTON_RIGHTSHOULDER, {InputType::GAME_HOLD}},
+            {SDL_CONTROLLER_BUTTON_BACK, {InputType::GAME_PAUSE}},
+            {SDL_CONTROLLER_BUTTON_GUIDE, {InputType::GAME_PAUSE}},
+            {SDL_CONTROLLER_BUTTON_START, {InputType::GAME_PAUSE}},
+        })
     // In SDL, the legacy joystick API uses 1 byte for button indices,
     // and also 1 byte for hats, both starting from 0. Here we store
     // them in the same map using 2 bytes, buttons in the upper byte
     // with 0xFF below, and hats in the lower byte.
-    joystick_mapping = {
-        {SDL_HAT_UP, {InputType::GAME_HARDDROP, InputType::MENU_UP}},
-        {SDL_HAT_DOWN, {InputType::GAME_SOFTDROP, InputType::MENU_DOWN}},
-        {SDL_HAT_LEFT, {InputType::GAME_MOVE_LEFT, InputType::MENU_LEFT}},
-        {SDL_HAT_RIGHT, {InputType::GAME_MOVE_RIGHT, InputType::MENU_RIGHT}},
-        {0 + 0xFF, {InputType::GAME_ROTATE_LEFT}},
-        {(1 << 8) + 0xFF, {InputType::GAME_ROTATE_LEFT}},
-        {(2 << 8) + 0xFF, {InputType::GAME_ROTATE_RIGHT}},
-        {(3 << 8) + 0xFF, {InputType::GAME_ROTATE_RIGHT}},
-        {(4 << 8) + 0xFF, {InputType::GAME_HOLD}},
-        {(5 << 8) + 0xFF, {InputType::GAME_HOLD}},
-        {(8 << 8) + 0xFF, {InputType::GAME_PAUSE}},
-        {(9 << 8) + 0xFF, {InputType::GAME_PAUSE}},
-    };
+    , default_joystick_mapping({
+            {SDL_HAT_UP, {InputType::GAME_HARDDROP, InputType::MENU_UP}},
+            {SDL_HAT_DOWN, {InputType::GAME_SOFTDROP, InputType::MENU_DOWN}},
+            {SDL_HAT_LEFT, {InputType::GAME_MOVE_LEFT, InputType::MENU_LEFT}},
+            {SDL_HAT_RIGHT, {InputType::GAME_MOVE_RIGHT, InputType::MENU_RIGHT}},
+            {0 + 0xFF, {InputType::GAME_ROTATE_LEFT}},
+            {(1 << 8) + 0xFF, {InputType::GAME_ROTATE_LEFT}},
+            {(2 << 8) + 0xFF, {InputType::GAME_ROTATE_RIGHT}},
+            {(3 << 8) + 0xFF, {InputType::GAME_ROTATE_RIGHT}},
+            {(4 << 8) + 0xFF, {InputType::GAME_HOLD}},
+            {(5 << 8) + 0xFF, {InputType::GAME_HOLD}},
+            {(8 << 8) + 0xFF, {InputType::GAME_PAUSE}},
+            {(9 << 8) + 0xFF, {InputType::GAME_PAUSE}},
+        })
+    , m_quit_requested(false)
+{
+    window.SetIcon(SDL2pp::Surface(Paths::data() + "icon.png"));
+    SDL_GameControllerAddMappingsFromFile((Paths::data() + "gamecontrollerdb").c_str());
 }
 
 void SDLWindow::toggleFullscreen()
@@ -65,27 +64,36 @@ void SDLWindow::requestScreenshot(const std::string& path)
     gcx.requestScreenshot(window, path);
 }
 
-void SDLWindow::setInputMapping(const Devices& devices)
+void SDLWindow::setInputMapping(const DeviceMaps& devices)
 {
-    for (const auto& device : devices) {
-        const auto& device_type = device.second.first;
-        const auto& button_map = device.second.second;
+    known_mappings = devices;
+    device_maps[-1] = mapForDeviceName("keyboard");
+    assert(device_maps.at(-1).size() > 0);
+}
 
-        switch (device_type) {
-            case DeviceType::KEYBOARD:
-                for (const auto& buttons_of_event : button_map) {
-                    for (const auto& scancode : buttons_of_event.second)
-                        keyboard_mapping[scancode].emplace(buttons_of_event.first);
-                }
-                break;
-            default:
-                break;
-        }
+ButtonToEventsMap SDLWindow::mapForDeviceName(const std::string& device_name)
+{
+    ButtonToEventsMap button_map;
+    if (!known_mappings.count(device_name))
+        return button_map;
+
+    // Convert EventsToButtonsMap to ButtonsToEventsMap
+    const EventToButtonsMap& event_maps = known_mappings.at(device_name).second;
+    for (const auto& curr_event : event_maps) { // pair <event, [buttons]>
+        for (const auto& button : curr_event.second)
+            button_map[button].emplace_back(curr_event.first);
     }
+    return button_map;
 }
 
 std::vector<Event> SDLWindow::collectEvents()
 {
+    /* Note: because the SDL2 GameController API builds on top the SDL Joystick API,
+     * game controllers can also receive joaystick events.
+     * There are `if (joysticks.count(..))` checks at the switch, to avoid running
+     * the input handling code for both APIs.
+     */
+
     std::vector<Event> output;
 
     SDL_Event sdl_event;
@@ -124,9 +132,14 @@ std::vector<Event> SDLWindow::collectEvents()
                     auto joystick = SDL_GameControllerGetJoystick(gamepad.get());
                     auto iid = SDL_JoystickInstanceID(joystick); // returns negative on error
                     if (iid >= 0) {
+                        const std::string name = SDL_GameControllerName(gamepad.get());
                         gamepads[iid] = std::move(gamepad);
-                        Log::info(LOG_INPUT_TAG) << "Gamepad connected: "
-                                                 << SDL_GameControllerName(gamepads[iid].get()) << "\n";
+                        auto& device_map = device_maps[iid];
+                        if (device_map.empty())
+                            device_map = mapForDeviceName(name);
+                        if (device_map.empty())
+                            device_map = default_gamepad_mapping;
+                        Log::info(LOG_INPUT_TAG) << "Gamepad connected: " <<  name << "\n";
                     }
                 }
             }
@@ -134,14 +147,16 @@ std::vector<Event> SDLWindow::collectEvents()
         case SDL_CONTROLLERDEVICEREMOVED:
             if (gamepads.count(sdl_event.cdevice.which)) {
                 Log::info(LOG_INPUT_TAG) << "Gamepad disconnected: "
-                                         << SDL_GameControllerName(gamepads[sdl_event.cdevice.which].get()) << "\n";
+                                         << SDL_GameControllerName(gamepads.at(sdl_event.cdevice.which).get()) << "\n";
                 gamepads.erase(sdl_event.cdevice.which);
             }
             break;
         case SDL_CONTROLLERBUTTONUP:
-        case SDL_CONTROLLERBUTTONDOWN:
-            if (gamepad_mapping.count(sdl_event.cbutton.button)) {
-                for (const auto& input_event : gamepad_mapping.at(sdl_event.cbutton.button))
+        case SDL_CONTROLLERBUTTONDOWN: {
+                assert(gamepads.count(sdl_event.cbutton.which));
+                assert(device_maps.count(sdl_event.cbutton.which));
+                auto& device_map = device_maps.at(sdl_event.cbutton.which);
+                for (const auto& input_event : device_map[sdl_event.cbutton.button])
                     output.emplace_back(InputEvent(input_event, sdl_event.type == SDL_CONTROLLERBUTTONDOWN));
             }
             break;
@@ -155,9 +170,14 @@ std::vector<Event> SDLWindow::collectEvents()
                 if (joy) {
                     auto iid = SDL_JoystickInstanceID(joy.get()); // returns negative on error
                     if (iid >= 0) {
+                        const std::string name = SDL_JoystickName(joy.get());
                         joysticks[iid] = std::move(joy);
-                        Log::info(LOG_INPUT_TAG) << "Joystick connected: "
-                                                 << SDL_JoystickName(joysticks[iid].get()) << "\n";
+                        auto& device_map = device_maps[iid];
+                        if (device_map.empty())
+                            device_map = mapForDeviceName(name);
+                        if (device_map.empty())
+                            device_map = default_joystick_mapping;
+                        Log::info(LOG_INPUT_TAG) << "Joystick connected: " << name << "\n";
                     }
                 }
             }
@@ -165,32 +185,35 @@ std::vector<Event> SDLWindow::collectEvents()
         case SDL_JOYDEVICEREMOVED:
             if (joysticks.count(sdl_event.jdevice.which)) {
                 Log::info(LOG_INPUT_TAG) << "Joystick disconnected: "
-                                         << SDL_JoystickName(joysticks[sdl_event.jdevice.which].get()) << "\n";
+                                         << SDL_JoystickName(joysticks.at(sdl_event.jdevice.which).get()) << "\n";
                 joysticks.erase(sdl_event.jdevice.which);
             }
             break;
         case SDL_JOYHATMOTION:
             if (joysticks.count(sdl_event.jhat.which)) {
-                if (joysticks.count(sdl_event.jhat.which)) {
-                    uint16_t button = sdl_event.jhat.value;
-                    // turn off all hat keys - there can be only one direction active at a time
-                    for (const auto& hat : {SDL_HAT_UP, SDL_HAT_DOWN, SDL_HAT_LEFT, SDL_HAT_RIGHT}) {
-                        for (const auto& event : joystick_mapping.at(hat))
-                            output.emplace_back(InputEvent(event, false));
-                    }
-                    // turn on only the current one
-                    for (const auto& event : joystick_mapping.at(button))
-                        output.emplace_back(InputEvent(event, true));
+                assert(device_maps.count(sdl_event.jhat.which));
+                auto& device_map = device_maps.at(sdl_event.jhat.which);
+                uint16_t button = sdl_event.jhat.value;
+                // turn off all hat keys - there can be only one direction active at a time
+                static constexpr auto all_hats = {SDL_HAT_UP, SDL_HAT_DOWN, SDL_HAT_LEFT, SDL_HAT_RIGHT};
+                for (const auto& hat : all_hats) {
+                    for (const auto& event : device_map[hat])
+                        output.emplace_back(InputEvent(event, false));
                 }
+                // turn on only the current one
+                for (const auto& event : device_map[button])
+                    output.emplace_back(InputEvent(event, true));
             }
             break;
         case SDL_JOYBUTTONUP:
         case SDL_JOYBUTTONDOWN:
             if (joysticks.count(sdl_event.jbutton.which)) {
+                assert(device_maps.count(sdl_event.jbutton.which));
+                auto& device_map = device_maps.at(sdl_event.jbutton.which);
                 // reminder: buttons are stored on the upper byte
                 uint16_t button = (sdl_event.jbutton.button << 8) + 0xFF;
-                for (const auto& event : joystick_mapping.at(button))
-                    output.emplace_back(InputEvent(event, false));
+                for (const auto& input_event : device_map[button])
+                    output.emplace_back(InputEvent(input_event, sdl_event.type == SDL_JOYBUTTONDOWN));
             }
             break;
         case SDL_KEYUP:
@@ -199,9 +222,11 @@ std::vector<Event> SDLWindow::collectEvents()
             // do NOT break - the code below should run for KEYUP too
         case SDL_KEYDOWN:
             if (!sdl_event.key.repeat) {
+                assert(device_maps.count(-1));
+                auto& device_map = device_maps.at(-1);
                 uint16_t scancode = sdl_event.key.keysym.scancode;
-                if (keyboard_mapping.count(scancode)) {
-                    for (const auto& input_event : keyboard_mapping.at(scancode))
+                if (device_map.count(scancode)) {
+                    for (const auto& input_event : device_map.at(scancode))
                         output.emplace_back(InputEvent(input_event, sdl_event.type == SDL_KEYDOWN));
                 }
             }

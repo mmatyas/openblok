@@ -22,7 +22,7 @@ public:
     AudioContext& audioContext() final { return audio; };
 
     std::vector<Event> collectEvents() final;
-    void setInputMapping(const Devices&) final;
+    void setInputMapping(const DeviceMaps&) final;
     bool quitRequested() final { return m_quit_requested; }
 
     static void showErrorMessage(const std::string& title, const std::string& content);
@@ -37,9 +37,13 @@ private:
     std::unordered_map<SDL_JoystickID,
         std::unique_ptr<SDL_GameController, std::function<void(SDL_GameController*)>>> gamepads;
 
-    std::unordered_map<uint16_t, std::set<InputType>> keyboard_mapping;
-    std::unordered_map<uint8_t, std::set<InputType>> gamepad_mapping;
-    std::unordered_map<uint16_t, std::set<InputType>> joystick_mapping;
+    DeviceMaps known_mappings; ///< names -> [event, [buttons]]
+    ButtonToEventsMap mapForDeviceName(const std::string&);
+
+    std::unordered_map<SDL_JoystickID, ButtonToEventsMap> device_maps;
+    const ButtonToEventsMap default_keyboard_mapping;
+    const ButtonToEventsMap default_gamepad_mapping;
+    const ButtonToEventsMap default_joystick_mapping;
 
     bool m_quit_requested;
 };

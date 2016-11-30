@@ -30,10 +30,10 @@ const std::map<const std::string, InputType> name_to_key = {
 };
 
 
-Devices ConfigManager::loadInputMappings(const std::string& path)
+DeviceMaps ConfigManager::loadInputMappings(const std::string& path)
 {
-    Devices default_map;
-    default_map["keyboard"] = std::make_pair<DeviceType, ButtonMap>(DeviceType::KEYBOARD, {
+    DeviceMaps default_map;
+    default_map["keyboard"] = std::make_pair<DeviceType, EventToButtonsMap>(DeviceType::KEYBOARD, {
         {InputType::GAME_PAUSE, {SDL_SCANCODE_P}},
         {InputType::GAME_HOLD, {SDL_SCANCODE_C, SDL_SCANCODE_LSHIFT, SDL_SCANCODE_RSHIFT}},
         {InputType::GAME_HARDDROP, {SDL_SCANCODE_UP, SDL_SCANCODE_SPACE}},
@@ -49,7 +49,7 @@ Devices ConfigManager::loadInputMappings(const std::string& path)
         {InputType::MENU_OK, {SDL_SCANCODE_RETURN, SDL_SCANCODE_SPACE, SDL_SCANCODE_Z}},
         {InputType::MENU_CANCEL, {SDL_SCANCODE_BACKSPACE, SDL_SCANCODE_ESCAPE, SDL_SCANCODE_X}},
     });
-    Devices out = default_map;
+    DeviceMaps out = default_map;
 
     std::string line;
     std::string current_head_name;
@@ -129,7 +129,7 @@ Devices ConfigManager::loadInputMappings(const std::string& path)
     return out;
 }
 
-void ConfigManager::saveInputMapping(const Devices& mappings, const std::string& path)
+void ConfigManager::saveInputMapping(const DeviceMaps& mappings, const std::string& path)
 {
     std::ofstream out(path);
     if (!out.is_open()) {

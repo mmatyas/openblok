@@ -5,6 +5,6 @@
 
 class ConfigManager {
 public:
-    Devices loadInputMappings(const std::string& path);
-    void saveInputMapping(const Devices&, const std::string& path);
+    DeviceMaps loadInputMappings(const std::string& path);
+    void saveInputMapping(const DeviceMaps&, const std::string& path);
 };
