@@ -12,8 +12,8 @@
 
 InitState::InitState(AppContext& app)
 {
-    auto mappings = app.config().loadInputMappings(Paths::config() + "input.cfg");
-    app.config().saveInputMapping(mappings, Paths::config() + "input.cfg");
+    auto mappings = app.inputconfig().load(Paths::config() + "input.cfg");
+    app.inputconfig().save(mappings, Paths::config() + "input.cfg");
     app.window().setInputMapping(mappings);
 
     auto config = GameConfigFile::load(Paths::config() + "game.cfg");
