@@ -13,7 +13,7 @@ ConfigFile::Data ConfigFile::load(const std::string& path)
 {
     std::ifstream infile(path);
     if (!infile.is_open())
-        return {};
+        return Data();
 
     const std::regex valid_head(R"(\[[a-zA-Z0-9\.-_,: ]+\])");
     const std::regex valid_data(R"([a-z_]+\s*=\s*[a-z0-9_, ]+)");
@@ -37,7 +37,7 @@ ConfigFile::Data ConfigFile::load(const std::string& path)
             if (current_head.empty()) {
                 Log::warning(LOG_TAG) << path << ":" << linenum << ": No block header defined before this line\n";
                 Log::warning(LOG_TAG) << "Using default settings\n";
-                return {};
+                return Data();
             }
             line = std::regex_replace(line, whitespace, "");
             const auto split_pos = line.find("=");
@@ -48,7 +48,7 @@ ConfigFile::Data ConfigFile::load(const std::string& path)
         else {
             Log::warning(LOG_TAG) << path << ":" << linenum << ": Syntax error\n";
             Log::warning(LOG_TAG) << "Using default settings\n";
-            return {};
+            return Data();
         }
     }
     return output;
