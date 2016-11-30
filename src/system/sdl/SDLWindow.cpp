@@ -65,11 +65,22 @@ void SDLWindow::requestScreenshot(const std::string& path)
     gcx.requestScreenshot(window, path);
 }
 
-void SDLWindow::setInputMapping(std::map<InputType, std::vector<uint16_t>> mapping)
+void SDLWindow::setInputMapping(const Devices& devices)
 {
-    for (const auto& elem : mapping) {
-        for (const auto& scancode : elem.second)
-            keyboard_mapping[scancode].emplace(elem.first);
+    for (const auto& device : devices) {
+        const auto& device_type = device.second.first;
+        const auto& button_map = device.second.second;
+
+        switch (device_type) {
+            case DeviceType::KEYBOARD:
+                for (const auto& buttons_of_event : button_map) {
+                    for (const auto& scancode : buttons_of_event.second)
+                        keyboard_mapping[scancode].emplace(buttons_of_event.first);
+                }
+                break;
+            default:
+                break;
+        }
     }
 }
 

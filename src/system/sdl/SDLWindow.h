@@ -22,7 +22,7 @@ public:
     AudioContext& audioContext() final { return audio; };
 
     std::vector<Event> collectEvents() final;
-    void setInputMapping(std::map<InputType, std::vector<uint16_t>>) final;
+    void setInputMapping(const Devices&) final;
     bool quitRequested() final { return m_quit_requested; }
 
     static void showErrorMessage(const std::string& title, const std::string& content);

@@ -10,10 +10,6 @@
 #include <assert.h>
 
 
-using DeviceID = ConfigManager::DeviceID;
-using ButtonMap = ConfigManager::ButtonMap;
-using DeviceMappings = ConfigManager::DeviceMappings;
-
 const std::string LOG_TAG("config");
 
 const std::map<const std::string, InputType> name_to_key = {
@@ -34,10 +30,10 @@ const std::map<const std::string, InputType> name_to_key = {
 };
 
 
-DeviceMappings ConfigManager::loadInputMappings(const std::string& path)
+Devices ConfigManager::loadInputMappings(const std::string& path)
 {
-    DeviceMappings default_map;
-    default_map["keyboard"] = {
+    Devices default_map;
+    default_map["keyboard"] = std::make_pair<DeviceType, ButtonMap>(DeviceType::KEYBOARD, {
         {InputType::GAME_PAUSE, {SDL_SCANCODE_P}},
         {InputType::GAME_HOLD, {SDL_SCANCODE_C, SDL_SCANCODE_LSHIFT, SDL_SCANCODE_RSHIFT}},
         {InputType::GAME_HARDDROP, {SDL_SCANCODE_UP, SDL_SCANCODE_SPACE}},
@@ -52,14 +48,16 @@ DeviceMappings ConfigManager::loadInputMappings(const std::string& path)
         {InputType::MENU_DOWN, {SDL_SCANCODE_DOWN}},
         {InputType::MENU_OK, {SDL_SCANCODE_RETURN, SDL_SCANCODE_SPACE, SDL_SCANCODE_Z}},
         {InputType::MENU_CANCEL, {SDL_SCANCODE_BACKSPACE, SDL_SCANCODE_ESCAPE, SDL_SCANCODE_X}},
-    };
-    DeviceMappings out = default_map;
+    });
+    Devices out = default_map;
 
     std::string line;
-    std::string current_head;
-    std::regex valid_head(R"(\[[a-zA-Z0-9\.-_]+\])");
-    std::regex valid_data(R"([a-z_]+\s*=\s*[0-9]{1,3}(,\s*[0-9]{1,3})*)");
-    std::regex whitespace(R"(\s+)");
+    std::string current_head_name;
+    DeviceType current_head_type;
+    const std::regex valid_head_keyboard(R"(\[[a-zA-Z0-9\.-_]+\])");
+    const std::regex valid_head_gamejoy(R"(\[([GJ]:)?[a-zA-Z0-9\.-_]+\])");
+    const std::regex valid_data(R"([a-z_]+\s*=\s*[0-9]{1,3}(,\s*[0-9]{1,3})*)");
+    const std::regex whitespace(R"(\s+)");
 
     std::ifstream infile(path);
     unsigned linenum = 0;
@@ -67,12 +65,19 @@ DeviceMappings ConfigManager::loadInputMappings(const std::string& path)
         if (line.empty() || line.front() == '#')
             continue;
 
-        if (std::regex_match(line, valid_head)) {
-            current_head = line.substr(1, line.length() - 2);
-            assert(!current_head.empty()); // the regex requires at least one char
+        if (std::regex_match(line, valid_head_keyboard)) {
+            current_head_name = line.substr(1, line.length() - 2);
+            current_head_type = DeviceType::KEYBOARD;
+            assert(!current_head_name.empty()); // the regex requires at least one char
+        }
+        else if (std::regex_match(line, valid_head_gamejoy)) {
+            current_head_name = line.substr(3, line.length() - 4);
+            assert(!current_head_name.empty()); // the regex requires at least one char
+            assert(line.at(1) == 'G' || line.at(1) == 'J'); // again, see the regex
+            current_head_type = line.at(1) == 'G' ? DeviceType::GAMEPAD : DeviceType::LEGACY_JOYSTICK;
         }
         else if (std::regex_match(line, valid_data)) {
-            if (current_head.empty()) {
+            if (current_head_name.empty()) {
                 Log::warning(LOG_TAG) << path << ":" << linenum << ": No device defined before this line\n";
                 Log::warning(LOG_TAG) << "Using default settings\n";
                 return default_map;
@@ -90,8 +95,9 @@ DeviceMappings ConfigManager::loadInputMappings(const std::string& path)
                 std::stringstream str_values(line.substr(split_pos + 1));
                 std::string str_item;
 
-                auto& device = out[current_head];
-                auto& codelist = device[name_to_key.at(key)];
+                auto& device = out[current_head_name];
+                device.first = current_head_type;
+                auto& codelist = device.second[name_to_key.at(key)];
                 codelist.clear();
                 while (std::getline(str_values, str_item, ',')) {
                     try {
@@ -123,7 +129,7 @@ DeviceMappings ConfigManager::loadInputMappings(const std::string& path)
     return out;
 }
 
-void ConfigManager::saveInputMapping(const DeviceMappings& mappings, const std::string& path)
+void ConfigManager::saveInputMapping(const Devices& mappings, const std::string& path)
 {
     std::ofstream out(path);
     if (!out.is_open()) {
@@ -137,8 +143,18 @@ void ConfigManager::saveInputMapping(const DeviceMappings& mappings, const std::
 
 
     for (const auto& device : mappings) {
-        out << "[" << device.first << "]\n";
-        for (const auto& elem : device.second) {
+        const auto& device_type = device.second.first;
+        const auto& button_map = device.second.second;
+
+        out << "[";
+        switch (device_type) {
+            case DeviceType::GAMEPAD: out << "G:"; break;
+            case DeviceType::LEGACY_JOYSTICK: out << "J:"; break;
+            default: break;
+        }
+        out << device.first << "]\n";
+
+        for (const auto& elem : button_map) {
             assert(key_to_name.count(elem.first));
 
             out << key_to_name.at(elem.first) << " = ";

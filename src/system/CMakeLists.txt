@@ -23,6 +23,7 @@ set(MOD_SYSTEM_H
     Event.h
     Font.h
     GraphicsContext.h
+    InputMap.h
     Localize.h
     Log.h
     Music.h

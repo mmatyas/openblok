@@ -14,7 +14,7 @@ InitState::InitState(AppContext& app)
 {
     auto mappings = app.config().loadInputMappings(Paths::config() + "input.cfg");
     app.config().saveInputMapping(mappings, Paths::config() + "input.cfg");
-    app.window().setInputMapping(mappings.at("keyboard"));
+    app.window().setInputMapping(mappings);
 
     auto config = GameConfigFile::load(Paths::config() + "game.cfg");
     app.sysconfig() = std::get<0>(config);
