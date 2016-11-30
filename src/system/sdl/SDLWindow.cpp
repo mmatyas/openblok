@@ -17,6 +17,22 @@ SDLWindow::SDLWindow()
         960, 540,
         SDL_WINDOW_RESIZABLE)
     , gcx(window)
+    , default_keyboard_mapping({
+            {SDL_SCANCODE_P, {InputType::GAME_PAUSE}},
+            {SDL_SCANCODE_C, {InputType::GAME_HOLD}},
+            {SDL_SCANCODE_LSHIFT, {InputType::GAME_HARDDROP}},
+            {SDL_SCANCODE_RSHIFT, {InputType::GAME_HARDDROP}},
+            {SDL_SCANCODE_SPACE, {InputType::GAME_HARDDROP, InputType::MENU_OK}},
+            {SDL_SCANCODE_UP, {InputType::GAME_HARDDROP, InputType::MENU_UP}},
+            {SDL_SCANCODE_DOWN, {InputType::GAME_SOFTDROP, InputType::MENU_DOWN}},
+            {SDL_SCANCODE_LEFT, {InputType::GAME_MOVE_LEFT, InputType::MENU_LEFT}},
+            {SDL_SCANCODE_RIGHT, {InputType::GAME_MOVE_RIGHT, InputType::MENU_RIGHT}},
+            {SDL_SCANCODE_Z, {InputType::GAME_ROTATE_LEFT, InputType::MENU_OK}},
+            {SDL_SCANCODE_X, {InputType::GAME_ROTATE_RIGHT, InputType::MENU_CANCEL}},
+            {SDL_SCANCODE_RETURN, {InputType::MENU_OK}},
+            {SDL_SCANCODE_BACKSPACE, {InputType::MENU_CANCEL}},
+            {SDL_SCANCODE_ESCAPE, {InputType::MENU_CANCEL}},
+        })
     , default_gamepad_mapping({
             {SDL_CONTROLLER_BUTTON_DPAD_UP, {InputType::GAME_HARDDROP, InputType::MENU_UP}},
             {SDL_CONTROLLER_BUTTON_DPAD_DOWN, {InputType::GAME_SOFTDROP, InputType::MENU_DOWN}},
@@ -67,8 +83,10 @@ void SDLWindow::requestScreenshot(const std::string& path)
 void SDLWindow::setInputMapping(const DeviceMaps& devices)
 {
     known_mappings = devices;
-    device_maps[-1] = mapForDeviceName("keyboard");
-    assert(device_maps.at(-1).size() > 0);
+    auto& device_map = device_maps[-1];
+    device_map = mapForDeviceName("keyboard");
+    if (device_map.empty())
+        device_map = default_keyboard_mapping;
 }
 
 ButtonToEventsMap SDLWindow::mapForDeviceName(const std::string& device_name)

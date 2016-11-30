@@ -2,7 +2,6 @@
 
 #include "system/Log.h"
 
-#include "SDL2/SDL_scancode.h" // TODO: fix this
 #include <algorithm>
 #include <fstream>
 #include <regex>
@@ -33,22 +32,6 @@ const std::map<const std::string, InputType> name_to_key = {
 DeviceMaps ConfigManager::loadInputMappings(const std::string& path)
 {
     DeviceMaps default_map;
-    default_map["keyboard"] = std::make_pair<DeviceType, EventToButtonsMap>(DeviceType::KEYBOARD, {
-        {InputType::GAME_PAUSE, {SDL_SCANCODE_P}},
-        {InputType::GAME_HOLD, {SDL_SCANCODE_C, SDL_SCANCODE_LSHIFT, SDL_SCANCODE_RSHIFT}},
-        {InputType::GAME_HARDDROP, {SDL_SCANCODE_UP, SDL_SCANCODE_SPACE}},
-        {InputType::GAME_SOFTDROP, {SDL_SCANCODE_DOWN}},
-        {InputType::GAME_MOVE_LEFT, {SDL_SCANCODE_LEFT}},
-        {InputType::GAME_MOVE_RIGHT, {SDL_SCANCODE_RIGHT}},
-        {InputType::GAME_ROTATE_LEFT, {SDL_SCANCODE_Z}},
-        {InputType::GAME_ROTATE_RIGHT, {SDL_SCANCODE_X}},
-        {InputType::MENU_LEFT, {SDL_SCANCODE_LEFT}},
-        {InputType::MENU_RIGHT, {SDL_SCANCODE_RIGHT}},
-        {InputType::MENU_UP, {SDL_SCANCODE_UP}},
-        {InputType::MENU_DOWN, {SDL_SCANCODE_DOWN}},
-        {InputType::MENU_OK, {SDL_SCANCODE_RETURN, SDL_SCANCODE_SPACE, SDL_SCANCODE_Z}},
-        {InputType::MENU_CANCEL, {SDL_SCANCODE_BACKSPACE, SDL_SCANCODE_ESCAPE, SDL_SCANCODE_X}},
-    });
     DeviceMaps out = default_map;
 
     std::string line;
