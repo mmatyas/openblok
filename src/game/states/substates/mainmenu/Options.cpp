@@ -37,28 +37,30 @@ Options::Options(MainMenuState& parent, AppContext& app)
      * like long strings, arrays and lambda callbacks */
 
     std::vector<std::unique_ptr<Layout::Options::OptionsItem>> system_options;
-    system_options.emplace_back(std::make_unique<ToggleButton>(
-        app, app.sysconfig().fullscreen, tr("Fullscreen mode"),
-        tr("Toggle fullscreen mode. On certain (embedded) devices, this setting may have no effect."),
-        [&app](bool val){
-            app.window().toggleFullscreen();
-            app.sysconfig().fullscreen = val;
-        }));
-    system_options.back()->setMarginBottom(40);
-    system_options.emplace_back(std::make_unique<ToggleButton>(
-        app, app.sysconfig().sfx, tr("Sound effects"),
-        tr("Enable or disable sound effects."),
-        [&app](bool val){
-            app.sysconfig().sfx = val;
-            // TODO
-        }));
-    system_options.emplace_back(std::make_unique<ToggleButton>(
-        app, app.sysconfig().music, tr("Background music"),
-        tr("Enable or disable the background music."),
-        [&app](bool val){
-            app.sysconfig().music = val;
-            // TODO
-        }));
+    {
+        system_options.emplace_back(std::make_unique<ToggleButton>(
+            app, app.sysconfig().fullscreen, tr("Fullscreen mode"),
+            tr("Toggle fullscreen mode. On certain (embedded) devices, this setting may have no effect."),
+            [&app](bool val){
+                app.window().toggleFullscreen();
+                app.sysconfig().fullscreen = val;
+            }));
+        system_options.back()->setMarginBottom(40);
+        system_options.emplace_back(std::make_unique<ToggleButton>(
+            app, app.sysconfig().sfx, tr("Sound effects"),
+            tr("Enable or disable sound effects."),
+            [&app](bool val){
+                app.sysconfig().sfx = val;
+                // TODO
+            }));
+        system_options.emplace_back(std::make_unique<ToggleButton>(
+            app, app.sysconfig().music, tr("Background music"),
+            tr("Enable or disable the background music."),
+            [&app](bool val){
+                app.sysconfig().music = val;
+                // TODO
+            }));
+    }
     subitem_panels.push_back(std::move(system_options));
 
     std::vector<std::unique_ptr<Layout::Options::OptionsItem>> tuning_options;
