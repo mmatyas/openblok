@@ -43,10 +43,10 @@ DeviceMap InputConfigFile::load(const std::string& path)
     DeviceType current_device_type;
 
     for (const auto& block : config) {
-        const auto device_name = block.first;
+        const auto& device_name = block.first;
         if (std::regex_match(device_name, valid_head_keyboard))
             current_device_type = DeviceType::KEYBOARD;
-        if (std::regex_match(device_name, valid_head_gamepad))
+        else if (std::regex_match(device_name, valid_head_gamepad))
             current_device_type = DeviceType::GAMEPAD;
         else if (std::regex_match(device_name, valid_head_joystick))
             current_device_type = DeviceType::LEGACY_JOYSTICK;

@@ -15,7 +15,7 @@ ConfigFile::Data ConfigFile::load(const std::string& path)
     if (!infile.is_open())
         return Data();
 
-    const std::regex valid_head(R"(\[[a-zA-Z0-9\.-_,: ]+\])");
+    const std::regex valid_head(R"(\[[a-zA-Z0-9\.-_,: \(\)]+\])");
     const std::regex valid_data(R"([a-z_]+\s*=\s*[a-z0-9_, ]+)");
     const std::regex whitespace(R"(\s+)");
 
