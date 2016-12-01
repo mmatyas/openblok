@@ -83,10 +83,31 @@ void SDLWindow::requestScreenshot(const std::string& path)
 void SDLWindow::setInputMapping(const DeviceMap& devices)
 {
     known_mappings = devices;
+    device_names[-1] = "keyboard";
+    device_types[-1] = DeviceType::KEYBOARD;
     auto& device_map = device_maps[-1];
-    device_map = mapForDeviceName("keyboard");
+    device_map = mapForDeviceName(device_names.at(-1));
     if (device_map.empty())
         device_map = default_keyboard_mapping;
+}
+
+DeviceMap SDLWindow::inputMappings() const
+{
+    DeviceMap output = known_mappings;
+    for (const auto& device : device_maps) {
+        DeviceData device_data;
+        device_data.type = device_types.at(device.first);
+
+        // Convert ButtonsToEventsMap to EventsToButtonsMap
+        for (const auto& buttonmap : device.second) { // pair <button, [events]>
+            for (const auto& event : buttonmap.second)
+                device_data.eventmap[event].emplace_back(buttonmap.first);
+        }
+
+        const auto& device_name = device_names.at(device.first);
+        output[device_name] = device_data;
+    }
+    return output;
 }
 
 ButtonToEventsMap SDLWindow::mapForDeviceName(const std::string& device_name)
@@ -157,6 +178,8 @@ std::vector<Event> SDLWindow::collectEvents()
                             device_map = mapForDeviceName(name);
                         if (device_map.empty())
                             device_map = default_gamepad_mapping;
+                        device_names[iid] = name;
+                        device_types[iid] = DeviceType::GAMEPAD;
                         Log::info(LOG_INPUT_TAG) << "Gamepad connected: " <<  name << "\n";
                     }
                 }
@@ -195,6 +218,8 @@ std::vector<Event> SDLWindow::collectEvents()
                             device_map = mapForDeviceName(name);
                         if (device_map.empty())
                             device_map = default_joystick_mapping;
+                        device_names[iid] = name;
+                        device_types[iid] = DeviceType::LEGACY_JOYSTICK;
                         Log::info(LOG_INPUT_TAG) << "Joystick connected: " << name << "\n";
                     }
                 }

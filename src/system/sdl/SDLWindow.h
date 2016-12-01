@@ -23,6 +23,7 @@ public:
 
     std::vector<Event> collectEvents() final;
     void setInputMapping(const DeviceMap&) final;
+    DeviceMap inputMappings() const final;
     bool quitRequested() final { return m_quit_requested; }
 
     static void showErrorMessage(const std::string& title, const std::string& content);
@@ -41,6 +42,8 @@ private:
     ButtonToEventsMap mapForDeviceName(const std::string&);
 
     std::unordered_map<SDL_JoystickID, ButtonToEventsMap> device_maps;
+    std::unordered_map<SDL_JoystickID, DeviceName> device_names;
+    std::unordered_map<SDL_JoystickID, DeviceType> device_types;
     const ButtonToEventsMap default_keyboard_mapping;
     const ButtonToEventsMap default_gamepad_mapping;
     const ButtonToEventsMap default_joystick_mapping;

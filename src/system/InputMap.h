@@ -9,7 +9,7 @@
 #include <vector>
 
 
-using DeviceName = const std::string;
+using DeviceName = std::string;
 using EventToButtonsMap = std::unordered_map<InputType, std::vector<uint16_t>, InputTypeHash>;
 using ButtonToEventsMap = std::unordered_map<uint16_t, std::vector<InputType>>;
 

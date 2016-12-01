@@ -6,17 +6,18 @@
 #include "game/states/MainMenuState.h"
 #include "system/Log.h"
 #include "system/Paths.h"
+#include "system/Window.h"
 
 #include <assert.h>
 
 
 InitState::InitState(AppContext& app)
 {
-    auto mappings = app.inputconfig().load(Paths::config() + "input.cfg");
+    const auto mappings = app.inputconfig().load(Paths::config() + "input.cfg");
     app.inputconfig().save(mappings, Paths::config() + "input.cfg");
     app.window().setInputMapping(mappings);
 
-    auto config = GameConfigFile::load(Paths::config() + "game.cfg");
+    const auto config = GameConfigFile::load(Paths::config() + "game.cfg");
     app.sysconfig() = std::get<0>(config);
     app.wellconfig() = std::get<1>(config);
     if (app.sysconfig().fullscreen)
@@ -37,6 +38,9 @@ InitState::InitState(AppContext& app)
 
 void InitState::update(const std::vector<Event>&, AppContext& app)
 {
+    const auto mappings = app.window().inputMappings();
+    app.inputconfig().save(mappings, Paths::config() + "input.cfg");
+
     app.states().pop();
 }
 
