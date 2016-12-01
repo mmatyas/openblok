@@ -3,9 +3,10 @@
 #include "ConfigFile.h"
 #include "Log.h"
 
-#include <assert.h>
+#include <algorithm>
 #include <regex>
 #include <sstream>
+#include <assert.h>
 
 
 const std::string LOG_TAG("config");
@@ -120,10 +121,14 @@ void InputConfigFile::save(const DeviceMap& device_maps, const std::string& path
 
         ConfigFile::KeyValPairs entries;
         for (const auto& elem : event_map) {
+            auto sorted_values = elem.second;
+            std::sort(sorted_values.begin(), sorted_values.end());
+            sorted_values.erase(std::unique(sorted_values.begin(), sorted_values.end()), sorted_values.end());
+
             // this puts commas between the numbers only
             std::ostringstream ss;
-            std::copy(elem.second.begin(), elem.second.end() - 1, std::ostream_iterator<int>(ss, ", "));
-            ss << elem.second.back();
+            std::copy(sorted_values.begin(), sorted_values.end() - 1, std::ostream_iterator<int>(ss, ", "));
+            ss << sorted_values.back();
 
             assert(key_to_name.count(elem.first));
             entries.emplace(key_to_name.at(elem.first), ss.str());
