@@ -2,7 +2,7 @@
 
 #include "system/GraphicsContext.h"
 
-#include "SDL2pp/SDL2pp.hh"
+#include <SDL2pp/SDL2pp.hh>
 
 
 /// A graphics context implementation, based on SDL2

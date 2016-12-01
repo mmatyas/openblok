@@ -2,7 +2,7 @@
 
 #include "system/Texture.h"
 
-#include "SDL2pp/SDL2pp.hh"
+#include <SDL2pp/SDL2pp.hh>
 
 
 class SDLTexture : public Texture {

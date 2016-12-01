@@ -4,7 +4,7 @@
 #include "SDLGraphicsContext.h"
 #include "system/Window.h"
 
-#include "SDL2pp/SDL2pp.hh"
+#include <SDL2pp/SDL2pp.hh>
 #include <memory>
 #include <set>
 #include <string>

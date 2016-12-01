@@ -4,7 +4,7 @@
 #include "SDLSoundEffect.h"
 #include "system/Log.h"
 
-#include "SDL2pp/SDL2pp.hh"
+#include <SDL2pp/SDL2pp.hh>
 #include <exception>
 #include <map>
 

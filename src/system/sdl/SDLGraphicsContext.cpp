@@ -4,7 +4,7 @@
 #include "SDLTexture.h"
 #include "system/Log.h"
 
-#include "SDL2pp/SDL2pp.hh"
+#include <SDL2pp/SDL2pp.hh>
 #include <cmath>
 #include <exception>
 #include <map>

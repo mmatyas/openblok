@@ -2,7 +2,7 @@
 
 #include "system/SoundEffect.h"
 
-#include "SDL2pp/SDL2pp.hh"
+#include <SDL2pp/SDL2pp.hh>
 
 
 class SDLSoundEffect : public SoundEffect {

@@ -2,7 +2,7 @@
 
 #include "system/Font.h"
 
-#include "SDL2pp/SDL2pp.hh"
+#include <SDL2pp/SDL2pp.hh>
 
 
 class SDLFont : public Font {

@@ -2,7 +2,7 @@
 
 #include "system/Music.h"
 
-#include "SDL2pp/SDL2pp.hh"
+#include <SDL2pp/SDL2pp.hh>
 
 class SDLMusic : public Music {
 public:
