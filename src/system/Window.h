@@ -39,7 +39,7 @@ public:
     /// `quit_requested()` should return true.
     virtual std::vector<Event> collectEvents() = 0;
     /// Set the input mapping between game events and input device buttons
-    virtual void setInputMapping(const DeviceMaps&) = 0;
+    virtual void setInputMapping(const DeviceMap&) = 0;
     /// Return `true` if the user wants to quit the program, eg. by closing the game
     /// window or pressing certain key combinations (Alt-F4, Ctrl-Q, ...).
     virtual bool quitRequested() = 0;

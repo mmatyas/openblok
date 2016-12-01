@@ -5,7 +5,7 @@
 
 class InputConfigFile {
 public:
-    DeviceMaps load(const std::string& path);
-    void save(const DeviceMaps&, const std::string& path);
+    DeviceMap load(const std::string& path);
+    void save(const DeviceMap&, const std::string& path);
 };
 

@@ -80,7 +80,7 @@ void SDLWindow::requestScreenshot(const std::string& path)
     gcx.requestScreenshot(window, path);
 }
 
-void SDLWindow::setInputMapping(const DeviceMaps& devices)
+void SDLWindow::setInputMapping(const DeviceMap& devices)
 {
     known_mappings = devices;
     auto& device_map = device_maps[-1];
@@ -96,8 +96,8 @@ ButtonToEventsMap SDLWindow::mapForDeviceName(const std::string& device_name)
         return button_map;
 
     // Convert EventsToButtonsMap to ButtonsToEventsMap
-    const EventToButtonsMap& event_maps = known_mappings.at(device_name).second;
-    for (const auto& curr_event : event_maps) { // pair <event, [buttons]>
+    const EventToButtonsMap& event_map = known_mappings.at(device_name).eventmap;
+    for (const auto& curr_event : event_map) { // pair <event, [buttons]>
         for (const auto& button : curr_event.second)
             button_map[button].emplace_back(curr_event.first);
     }

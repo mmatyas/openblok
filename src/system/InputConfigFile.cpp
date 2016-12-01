@@ -27,13 +27,13 @@ const std::map<const std::string, InputType> name_to_key = {
     {"menu_cancel", InputType::MENU_CANCEL},
 };
 
-DeviceMaps InputConfigFile::load(const std::string& path)
+DeviceMap InputConfigFile::load(const std::string& path)
 {
     const auto& config = ConfigFile::load(path);
     if (config.empty())
         return {};
 
-    DeviceMaps output;
+    DeviceMap output;
 
     const std::regex valid_head_keyboard(R"(^keyboard$)");
     const std::regex valid_head_gamepad(R"(^G:)");
@@ -56,7 +56,7 @@ DeviceMaps InputConfigFile::load(const std::string& path)
         }
 
         auto& device = output[device_name];
-        device.first = current_device_type;
+        device.type = current_device_type;
 
         for (const auto& keyval : block.second) {
             const auto& key_str = keyval.first;
@@ -68,7 +68,7 @@ DeviceMaps InputConfigFile::load(const std::string& path)
                 continue;
             }
 
-            auto& codelist = device.second[name_to_key.at(key_str)];
+            auto& codelist = device.eventmap[name_to_key.at(key_str)];
             codelist.clear();
 
             std::stringstream val_sstream(val_str);
@@ -94,7 +94,7 @@ DeviceMaps InputConfigFile::load(const std::string& path)
     return output;
 }
 
-void InputConfigFile::save(const DeviceMaps& device_maps, const std::string& path)
+void InputConfigFile::save(const DeviceMap& device_maps, const std::string& path)
 {
     std::map<InputType, const std::string> key_to_name;
     for (const auto& pair : name_to_key)
@@ -103,8 +103,8 @@ void InputConfigFile::save(const DeviceMaps& device_maps, const std::string& pat
     ConfigFile::Data config;
 
     for (const auto& device : device_maps) {
-        const auto& device_type = device.second.first;
-        const auto& button_map = device.second.second;
+        const auto& device_type = device.second.type;
+        const auto& event_map = device.second.eventmap;
 
         ConfigFile::BlockName device_name = device.first;
         switch (device_type) {
@@ -119,7 +119,7 @@ void InputConfigFile::save(const DeviceMaps& device_maps, const std::string& pat
         }
 
         ConfigFile::KeyValPairs entries;
-        for (const auto& elem : button_map) {
+        for (const auto& elem : event_map) {
             // this puts commas between the numbers only
             std::ostringstream ss;
             std::copy(elem.second.begin(), elem.second.end() - 1, std::ostream_iterator<int>(ss, ", "));
