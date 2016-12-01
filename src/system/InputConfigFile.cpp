@@ -36,21 +36,25 @@ DeviceMap InputConfigFile::load(const std::string& path)
 
     DeviceMap output;
 
-    const std::regex valid_head_keyboard(R"(^keyboard$)");
-    const std::regex valid_head_gamepad(R"(^G:)");
-    const std::regex valid_head_joystick(R"(^J:)");
+    const std::regex valid_head_keyboard(R"(keyboard)");
+    const std::regex valid_head_gamepad(R"(G:.*)");
+    const std::regex valid_head_joystick(R"(J:.*)");
     const std::regex valid_button_list(R"([0-9]{1,3}(,[0-9]{1,3})*)");
 
     DeviceType current_device_type;
 
     for (const auto& block : config) {
-        const auto& device_name = block.first;
+        auto device_name = block.first;
         if (std::regex_match(device_name, valid_head_keyboard))
             current_device_type = DeviceType::KEYBOARD;
-        else if (std::regex_match(device_name, valid_head_gamepad))
+        else if (std::regex_match(device_name, valid_head_gamepad)) {
             current_device_type = DeviceType::GAMEPAD;
-        else if (std::regex_match(device_name, valid_head_joystick))
+            device_name = device_name.substr(2);
+        }
+        else if (std::regex_match(device_name, valid_head_joystick)) {
             current_device_type = DeviceType::LEGACY_JOYSTICK;
+            device_name = device_name.substr(2);
+        }
         else {
             Log::warning(LOG_TAG) << path << ": Unknown device '" << device_name << "', skipped\n";
             continue;
