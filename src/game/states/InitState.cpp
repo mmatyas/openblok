@@ -38,9 +38,6 @@ InitState::InitState(AppContext& app)
 
 void InitState::update(const std::vector<Event>&, AppContext& app)
 {
-    const auto mappings = app.window().inputMappings();
-    app.inputconfig().save(mappings, Paths::config() + "input.cfg");
-
     app.states().pop();
 }
 

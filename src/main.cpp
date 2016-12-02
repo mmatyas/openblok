@@ -106,5 +106,9 @@ int main(int argc, const char** argv)
         frame_planned_endtime = frame_starttime + Timing::frame_duration;
     }
 
+    // save input config on exit
+    const auto mappings = app.window().inputMappings();
+    app.inputconfig().save(mappings, Paths::config() + "input.cfg");
+
     return 0;
 }
