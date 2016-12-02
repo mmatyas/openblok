@@ -161,9 +161,30 @@ std::vector<Event> SDLWindow::collectEvents()
             }
             break;
         case SDL_CONTROLLERDEVICEADDED:
-            {
+            // Note: It seems this event doesn't always trigger,
+            // so the code was moved to SDL_JOYDEVICEADDED, which happens
+            // for both GameControllers and Joysticks.
+            break;
+        case SDL_CONTROLLERDEVICEREMOVED:
+            if (gamepads.count(sdl_event.cdevice.which)) {
+                Log::info(LOG_INPUT_TAG) << "Gamepad disconnected: "
+                                         << SDL_GameControllerName(gamepads.at(sdl_event.cdevice.which).get()) << "\n";
+                gamepads.erase(sdl_event.cdevice.which);
+            }
+            break;
+        case SDL_CONTROLLERBUTTONUP:
+        case SDL_CONTROLLERBUTTONDOWN: {
+                assert(gamepads.count(sdl_event.cbutton.which));
+                assert(device_maps.count(sdl_event.cbutton.which));
+                auto& device_map = device_maps.at(sdl_event.cbutton.which);
+                for (const auto& input_event : device_map[sdl_event.cbutton.button])
+                    output.emplace_back(InputEvent(input_event, sdl_event.type == SDL_CONTROLLERBUTTONDOWN));
+            }
+            break;
+        case SDL_JOYDEVICEADDED:
+            if (SDL_IsGameController(sdl_event.jdevice.which)) {
                 auto gamepad = std::unique_ptr<SDL_GameController, std::function<void(SDL_GameController*)>>(
-                    SDL_GameControllerOpen(sdl_event.cdevice.which),
+                    SDL_GameControllerOpen(sdl_event.jdevice.which),
                     [](SDL_GameController* ptr){
                         if (SDL_GameControllerGetAttached(ptr)) SDL_GameControllerClose(ptr); });
 
@@ -184,25 +205,7 @@ std::vector<Event> SDLWindow::collectEvents()
                     }
                 }
             }
-            break;
-        case SDL_CONTROLLERDEVICEREMOVED:
-            if (gamepads.count(sdl_event.cdevice.which)) {
-                Log::info(LOG_INPUT_TAG) << "Gamepad disconnected: "
-                                         << SDL_GameControllerName(gamepads.at(sdl_event.cdevice.which).get()) << "\n";
-                gamepads.erase(sdl_event.cdevice.which);
-            }
-            break;
-        case SDL_CONTROLLERBUTTONUP:
-        case SDL_CONTROLLERBUTTONDOWN: {
-                assert(gamepads.count(sdl_event.cbutton.which));
-                assert(device_maps.count(sdl_event.cbutton.which));
-                auto& device_map = device_maps.at(sdl_event.cbutton.which);
-                for (const auto& input_event : device_map[sdl_event.cbutton.button])
-                    output.emplace_back(InputEvent(input_event, sdl_event.type == SDL_CONTROLLERBUTTONDOWN));
-            }
-            break;
-        case SDL_JOYDEVICEADDED:
-            if (!SDL_IsGameController(sdl_event.jdevice.which)) {
+            else {
                 auto joy = std::unique_ptr<SDL_Joystick, std::function<void(SDL_Joystick*)>>(
                     SDL_JoystickOpen(sdl_event.jdevice.which),
                     [](SDL_Joystick* ptr){
