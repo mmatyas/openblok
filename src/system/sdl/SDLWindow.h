@@ -22,7 +22,7 @@ public:
     AudioContext& audioContext() final { return audio; };
 
     std::vector<Event> collectEvents() final;
-    void setInputMapping(const DeviceMap&) final;
+    void setKnownInputMappings(const DeviceMap&) final;
     DeviceMap inputMappings() const final;
     bool quitRequested() final { return m_quit_requested; }
 

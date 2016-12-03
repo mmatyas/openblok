@@ -15,7 +15,7 @@ InitState::InitState(AppContext& app)
 {
     const auto mappings = app.inputconfig().load(Paths::config() + "input.cfg");
     app.inputconfig().save(mappings, Paths::config() + "input.cfg");
-    app.window().setInputMapping(mappings);
+    app.window().setKnownInputMappings(mappings);
 
     const auto config = GameConfigFile::load(Paths::config() + "game.cfg");
     app.sysconfig() = std::get<0>(config);

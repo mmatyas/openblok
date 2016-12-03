@@ -68,6 +68,9 @@ SDLWindow::SDLWindow()
 {
     window.SetIcon(SDL2pp::Surface(Paths::data() + "icon.png"));
     SDL_GameControllerAddMappingsFromFile((Paths::data() + "gamecontrollerdb").c_str());
+    device_names[-1] = "keyboard";
+    device_types[-1] = DeviceType::KEYBOARD;
+    device_maps[-1] = default_keyboard_mapping;
 }
 
 void SDLWindow::toggleFullscreen()
@@ -80,11 +83,9 @@ void SDLWindow::requestScreenshot(const std::string& path)
     gcx.requestScreenshot(window, path);
 }
 
-void SDLWindow::setInputMapping(const DeviceMap& devices)
+void SDLWindow::setKnownInputMappings(const DeviceMap& devices)
 {
     known_mappings = devices;
-    device_names[-1] = "keyboard";
-    device_types[-1] = DeviceType::KEYBOARD;
     auto& device_map = device_maps[-1];
     device_map = mapForDeviceName(device_names.at(-1));
     if (device_map.empty())
