@@ -3,6 +3,7 @@ set(MOD_SYSTEM_SRC
     ConfigFile.cpp
     Event.cpp
     InputConfigFile.cpp
+    InputMap.cpp
     Log.cpp
     Paths.cpp
     Window.cpp

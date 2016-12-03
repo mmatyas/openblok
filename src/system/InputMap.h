@@ -13,6 +13,9 @@ using DeviceName = std::string;
 using EventToButtonsMap = std::unordered_map<InputType, std::vector<uint16_t>, InputTypeHash>;
 using ButtonToEventsMap = std::unordered_map<uint16_t, std::vector<InputType>>;
 
+EventToButtonsMap toEventMap(const ButtonToEventsMap&);
+ButtonToEventsMap toButtonMap(const EventToButtonsMap&);
+
 enum class DeviceType : uint8_t {
     KEYBOARD,
     GAMEPAD,

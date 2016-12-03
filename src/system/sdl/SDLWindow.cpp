@@ -98,12 +98,7 @@ DeviceMap SDLWindow::inputMappings() const
     for (const auto& device : device_maps) {
         DeviceData device_data;
         device_data.type = device_types.at(device.first);
-
-        // Convert ButtonsToEventsMap to EventsToButtonsMap
-        for (const auto& buttonmap : device.second) { // pair <button, [events]>
-            for (const auto& event : buttonmap.second)
-                device_data.eventmap[event].emplace_back(buttonmap.first);
-        }
+        device_data.eventmap = toEventMap(device.second);
 
         const auto& device_name = device_names.at(device.first);
         output[device_name] = device_data;
@@ -113,17 +108,9 @@ DeviceMap SDLWindow::inputMappings() const
 
 ButtonToEventsMap SDLWindow::mapForDeviceName(const std::string& device_name)
 {
-    ButtonToEventsMap button_map;
     if (!known_mappings.count(device_name))
-        return button_map;
-
-    // Convert EventsToButtonsMap to ButtonsToEventsMap
-    const EventToButtonsMap& event_map = known_mappings.at(device_name).eventmap;
-    for (const auto& curr_event : event_map) { // pair <event, [buttons]>
-        for (const auto& button : curr_event.second)
-            button_map[button].emplace_back(curr_event.first);
-    }
-    return button_map;
+        return ButtonToEventsMap();
+    return toButtonMap(known_mappings.at(device_name).eventmap);
 }
 
 std::vector<Event> SDLWindow::collectEvents()
