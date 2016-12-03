@@ -93,7 +93,7 @@ Options::Options(MainMenuState& parent, AppContext& app)
             tr("The time it takes to turn on horizontal movement autorepeat."),
             [&app](const std::string& val){
                 // this must not throw error
-                app.wellconfig().shift_normal = std::stoul(val.substr(0, val.find("/") - 1));
+                app.wellconfig().shift_normal = std::stoul(val.substr(0, val.find("/")));
             }));
         tuning_options.emplace_back(std::make_unique<ValueChooser>(app, std::move(das_repeat_values),
             app.wellconfig().shift_turbo - 1, // num to offset
@@ -101,7 +101,7 @@ Options::Options(MainMenuState& parent, AppContext& app)
             tr("Horizontal movement delay during autorepeat."),
             [&app](const std::string& val){
                 // this must not throw error
-                app.wellconfig().shift_turbo = std::stoul(val.substr(0, val.find("/") - 1));
+                app.wellconfig().shift_turbo = std::stoul(val.substr(0, val.find("/")));
             }));
 
         tuning_options.emplace_back(std::make_unique<ToggleButton>(app,
@@ -136,7 +136,7 @@ Options::Options(MainMenuState& parent, AppContext& app)
             tr("The time while you can still move the piece after it reaches the ground. See 'Piece lock style'."),
             [&app](const std::string& val){
                 // this must not throw error
-                app.wellconfig().shift_normal = std::stoul(val.substr(0, val.find("/") - 1));
+                app.wellconfig().shift_normal = std::stoul(val.substr(0, val.find("/")));
             }));
 
         tuning_options.emplace_back(std::make_unique<ToggleButton>(app,
