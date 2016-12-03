@@ -1,8 +1,9 @@
 #include "Event.h"
 
-InputEvent::InputEvent(InputType type, bool pressed)
+InputEvent::InputEvent(InputType type, bool pressed, DeviceID source)
     : m_type(type)
     , m_down(pressed)
+    , m_src_device_id(source)
 {}
 
 Event::Event(InputEvent&& inputev)

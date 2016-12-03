@@ -36,7 +36,7 @@ void SinglePlayState::update(const std::vector<Event>& events, AppContext& app)
                     updatePositions(app.gcx());
                 break;
             case EventType::INPUT:
-                input_events.emplace_back(event.input.type(), event.input.down());
+                input_events.emplace_back(event.input.type(), event.input.down(), event.input.srcDeviceID());
                 break;
         }
     }

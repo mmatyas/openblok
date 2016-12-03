@@ -179,7 +179,9 @@ std::vector<Event> SDLWindow::collectEvents()
                 assert(device_maps.count(sdl_event.cbutton.which));
                 auto& device_map = device_maps.at(sdl_event.cbutton.which);
                 for (const auto& input_event : device_map[sdl_event.cbutton.button])
-                    output.emplace_back(InputEvent(input_event, sdl_event.type == SDL_CONTROLLERBUTTONDOWN));
+                    output.emplace_back(InputEvent(input_event,
+                                                   sdl_event.type == SDL_CONTROLLERBUTTONDOWN,
+                                                   sdl_event.cbutton.which));
             }
             break;
         case SDL_JOYDEVICEADDED:
@@ -245,11 +247,11 @@ std::vector<Event> SDLWindow::collectEvents()
                 static const auto all_hats = {SDL_HAT_UP, SDL_HAT_DOWN, SDL_HAT_LEFT, SDL_HAT_RIGHT};
                 for (const auto& hat : all_hats) {
                     for (const auto& event : device_map[hat])
-                        output.emplace_back(InputEvent(event, false));
+                        output.emplace_back(InputEvent(event, false, sdl_event.jhat.which));
                 }
                 // turn on only the current one
                 for (const auto& event : device_map[button])
-                    output.emplace_back(InputEvent(event, true));
+                    output.emplace_back(InputEvent(event, true, sdl_event.jhat.which));
             }
             break;
         case SDL_JOYBUTTONUP:
@@ -260,7 +262,9 @@ std::vector<Event> SDLWindow::collectEvents()
                 // reminder: buttons are stored on the upper byte
                 uint16_t button = (sdl_event.jbutton.button << 8) + 0xFF;
                 for (const auto& input_event : device_map[button])
-                    output.emplace_back(InputEvent(input_event, sdl_event.type == SDL_JOYBUTTONDOWN));
+                    output.emplace_back(InputEvent(input_event,
+                                                   sdl_event.type == SDL_JOYBUTTONDOWN,
+                                                   sdl_event.jbutton.which));
             }
             break;
         case SDL_KEYUP:
@@ -274,7 +278,7 @@ std::vector<Event> SDLWindow::collectEvents()
                 uint16_t scancode = sdl_event.key.keysym.scancode;
                 if (device_map.count(scancode)) {
                     for (const auto& input_event : device_map.at(scancode))
-                        output.emplace_back(InputEvent(input_event, sdl_event.type == SDL_KEYDOWN));
+                        output.emplace_back(InputEvent(input_event, sdl_event.type == SDL_KEYDOWN, -1));
                 }
             }
             break;

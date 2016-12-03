@@ -28,15 +28,23 @@ struct InputTypeHash {
     }
 };
 
+typedef int8_t DeviceID;
+
 class InputEvent {
 public:
-    explicit InputEvent(InputType type, bool pressed);
+#ifndef NDEBUG
+    explicit InputEvent(InputType type, bool pressed, DeviceID source = -1);
+#else
+    explicit InputEvent(InputType type, bool pressed, DeviceID source);
+#endif
     InputType type() const { return m_type; }
     bool down() const { return m_down; }
+    DeviceID srcDeviceID() const { return m_src_device_id; }
 
 private:
     InputType m_type;
     bool m_down;
+    DeviceID m_src_device_id;
 };
 
 enum class WindowEvent : uint8_t {

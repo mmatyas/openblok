@@ -238,7 +238,7 @@ void Gameplay::update(SinglePlayState& parent, const std::vector<Event>& events,
                     parent.states.emplace_back(std::make_unique<Pause>(app));
                     return;
                 }
-                input_events.emplace_back(event.input.type(), event.input.down());
+                input_events.emplace_back(event.input.type(), event.input.down(), event.input.srcDeviceID());
                 break;
             default:
                 break;
