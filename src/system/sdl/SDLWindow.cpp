@@ -158,17 +158,20 @@ std::vector<Event> SDLWindow::collectEvents()
                 Log::info(LOG_INPUT_TAG) << "Gamepad disconnected: "
                                          << SDL_GameControllerName(gamepads.at(sdl_event.cdevice.which).get()) << "\n";
                 gamepads.erase(sdl_event.cdevice.which);
+                output.emplace_back(DeviceEvent(DeviceEventType::DISCONNECTED, sdl_event.cdevice.which));
             }
             break;
         case SDL_CONTROLLERBUTTONUP:
         case SDL_CONTROLLERBUTTONDOWN: {
                 assert(gamepads.count(sdl_event.cbutton.which));
                 assert(device_maps.count(sdl_event.cbutton.which));
+
+                const bool is_down = (sdl_event.type == SDL_CONTROLLERBUTTONDOWN);
                 auto& device_map = device_maps.at(sdl_event.cbutton.which);
                 for (const auto& input_event : device_map[sdl_event.cbutton.button])
-                    output.emplace_back(InputEvent(input_event,
-                                                   sdl_event.type == SDL_CONTROLLERBUTTONDOWN,
-                                                   sdl_event.cbutton.which));
+                    output.emplace_back(InputEvent(input_event, is_down, sdl_event.cbutton.which));
+
+                output.emplace_back(RawInputEvent(sdl_event.cdevice.which, sdl_event.cbutton.button, is_down));
             }
             break;
         case SDL_JOYDEVICEADDED:
@@ -217,12 +220,14 @@ std::vector<Event> SDLWindow::collectEvents()
                     }
                 }
             }
+            output.emplace_back(DeviceEvent(DeviceEventType::CONNECTED, sdl_event.jdevice.which));
             break;
         case SDL_JOYDEVICEREMOVED:
             if (joysticks.count(sdl_event.jdevice.which)) {
                 Log::info(LOG_INPUT_TAG) << "Joystick disconnected: "
                                          << SDL_JoystickName(joysticks.at(sdl_event.jdevice.which).get()) << "\n";
                 joysticks.erase(sdl_event.jdevice.which);
+                output.emplace_back(DeviceEvent(DeviceEventType::DISCONNECTED, sdl_event.jdevice.which));
             }
             break;
         case SDL_JOYHATMOTION:
@@ -235,10 +240,14 @@ std::vector<Event> SDLWindow::collectEvents()
                 for (const auto& hat : all_hats) {
                     for (const auto& event : device_map[hat])
                         output.emplace_back(InputEvent(event, false, sdl_event.jhat.which));
+
+                    output.emplace_back(RawInputEvent(sdl_event.jhat.which, button, false));
                 }
                 // turn on only the current one
                 for (const auto& event : device_map[button])
                     output.emplace_back(InputEvent(event, true, sdl_event.jhat.which));
+
+                output.emplace_back(RawInputEvent(sdl_event.jhat.which, button, true));
             }
             break;
         case SDL_JOYBUTTONUP:
@@ -246,12 +255,14 @@ std::vector<Event> SDLWindow::collectEvents()
             if (joysticks.count(sdl_event.jbutton.which)) {
                 assert(device_maps.count(sdl_event.jbutton.which));
                 auto& device_map = device_maps.at(sdl_event.jbutton.which);
+
                 // reminder: buttons are stored on the upper byte
-                uint16_t button = (sdl_event.jbutton.button << 8) + 0xFF;
+                const uint16_t button = (sdl_event.jbutton.button << 8) + 0xFF;
+                const bool is_down = (sdl_event.type == SDL_JOYBUTTONDOWN);
                 for (const auto& input_event : device_map[button])
-                    output.emplace_back(InputEvent(input_event,
-                                                   sdl_event.type == SDL_JOYBUTTONDOWN,
-                                                   sdl_event.jbutton.which));
+                    output.emplace_back(InputEvent(input_event, is_down, sdl_event.jbutton.which));
+
+                output.emplace_back(RawInputEvent(sdl_event.jbutton.which, button, is_down));
             }
             break;
         case SDL_KEYUP:
@@ -262,11 +273,13 @@ std::vector<Event> SDLWindow::collectEvents()
             if (!sdl_event.key.repeat) {
                 assert(device_maps.count(-1));
                 auto& device_map = device_maps.at(-1);
-                uint16_t scancode = sdl_event.key.keysym.scancode;
+                const uint16_t scancode = sdl_event.key.keysym.scancode;
+                const bool is_down = (sdl_event.type == SDL_KEYDOWN);
                 if (device_map.count(scancode)) {
                     for (const auto& input_event : device_map.at(scancode))
-                        output.emplace_back(InputEvent(input_event, sdl_event.type == SDL_KEYDOWN, -1));
+                        output.emplace_back(InputEvent(input_event, is_down, -1));
                 }
+                output.emplace_back(RawInputEvent(-1, scancode, is_down));
             }
             break;
         default:
