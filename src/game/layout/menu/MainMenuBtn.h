@@ -14,7 +14,6 @@ class MainMenuButton : public Button {
 public:
     MainMenuButton(AppContext&, std::string&& label, std::function<void()>&& on_press);
 
-    void update() override;
     void draw(GraphicsContext&) const override;
 
 private:

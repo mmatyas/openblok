@@ -18,7 +18,6 @@ public:
     virtual void onHoverEnter() { is_active = true; }
     virtual void onHoverLeave() { is_active = false; }
 
-    virtual void update() {}
     virtual void draw(GraphicsContext&) const = 0;
 
 protected:
