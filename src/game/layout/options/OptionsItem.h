@@ -16,6 +16,9 @@ public:
     OptionsItem(AppContext&, std::string&& label, std::string&& description);
     virtual ~OptionsItem();
 
+    /// The option item is waiting for input, and its parent should not move the focus away.
+    virtual bool isLocked() const { return false; }
+
     virtual void setWidth(int w) { bounding_box.w = w; }
 
     int marginBottom() const { return margin_bottom; }

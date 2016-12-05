@@ -191,6 +191,10 @@ Options::Options(MainMenuState& parent, AppContext& app)
     };
     fn_settings_input = [this](InputType input){
         assert(current_subitem);
+        if (current_subitem->isLocked()) {
+            current_subitem->onPress(app, input);
+            return;
+        }
         auto& panel = subitem_panels.at(current_category_idx);
         switch (input) {
             case InputType::MENU_CANCEL:
