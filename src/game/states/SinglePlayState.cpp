@@ -38,6 +38,9 @@ void SinglePlayState::update(const std::vector<Event>& events, AppContext& app)
             case EventType::INPUT:
                 input_events.emplace_back(event.input.type(), event.input.down(), event.input.srcDeviceID());
                 break;
+            default:
+                // TODO ?
+                break;
         }
     }
     ui_well.well().updateKeystateOnly(input_events);
