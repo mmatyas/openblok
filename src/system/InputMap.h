@@ -23,8 +23,11 @@ enum class DeviceType : uint8_t {
 };
 
 struct DeviceData {
+    DeviceID id;
+    DeviceName name;
     DeviceType type;
+    ButtonToEventsMap buttonmap;
     EventToButtonsMap eventmap;
 };
 
-using DeviceMap = std::map<DeviceName, DeviceData>;
+using DeviceMap = std::map<DeviceID, DeviceData>;

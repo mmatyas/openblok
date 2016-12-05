@@ -107,7 +107,7 @@ int main(int argc, const char** argv)
     }
 
     // save input config on exit
-    const auto mappings = app.window().inputMappings();
+    const auto mappings = app.window().createInputConfig();
     app.inputconfig().save(mappings, Paths::config() + "input.cfg");
 
     return 0;

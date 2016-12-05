@@ -28,13 +28,13 @@ const std::map<const std::string, InputType> name_to_key = {
     {"menu_cancel", InputType::MENU_CANCEL},
 };
 
-DeviceMap InputConfigFile::load(const std::string& path)
+std::map<DeviceName, DeviceData> InputConfigFile::load(const std::string& path)
 {
     const auto& config = ConfigFile::load(path);
     if (config.empty())
         return {};
 
-    DeviceMap output;
+    std::map<DeviceName, DeviceData> output;
 
     const std::regex valid_head_keyboard(R"(keyboard)");
     const std::regex valid_head_gamepad(R"(G:.*)");
@@ -61,6 +61,8 @@ DeviceMap InputConfigFile::load(const std::string& path)
         }
 
         auto& device = output[device_name];
+        device.id = 0x0;
+        device.name = device_name;
         device.type = current_device_type;
 
         for (const auto& keyval : block.second) {
@@ -73,8 +75,8 @@ DeviceMap InputConfigFile::load(const std::string& path)
                 continue;
             }
 
-            auto& codelist = device.eventmap[name_to_key.at(key_str)];
-            codelist.clear();
+            auto& buttons = device.eventmap[name_to_key.at(key_str)];
+            buttons.clear();
 
             std::stringstream val_sstream(val_str);
             std::string number_str;
@@ -83,7 +85,7 @@ DeviceMap InputConfigFile::load(const std::string& path)
                     uint16_t value = std::stoul(number_str);
                     if (value > 0x200) // there can be 512 keys at most on a device
                         throw std::out_of_range("");
-                    codelist.emplace_back(value);
+                    buttons.emplace_back(value);
                 }
                 catch (...) {
                     Log::warning(LOG_TAG) << path << ": Invalid value '" << number_str
@@ -92,14 +94,16 @@ DeviceMap InputConfigFile::load(const std::string& path)
                 }
             }
             // remove duplicates and sort
-            std::sort(codelist.begin(), codelist.end());
-            codelist.erase(std::unique(codelist.begin(), codelist.end()), codelist.end());
+            std::sort(buttons.begin(), buttons.end());
+            buttons.erase(std::unique(buttons.begin(), buttons.end()), buttons.end());
         }
+
+        device.buttonmap = toButtonMap(device.eventmap);
     }
     return output;
 }
 
-void InputConfigFile::save(const DeviceMap& device_maps, const std::string& path)
+void InputConfigFile::save(const std::map<DeviceName, DeviceData>& device_maps, const std::string& path)
 {
     std::map<InputType, const std::string> key_to_name;
     for (const auto& pair : name_to_key)

@@ -68,9 +68,11 @@ SDLWindow::SDLWindow()
 {
     window.SetIcon(SDL2pp::Surface(Paths::data() + "icon.png"));
     SDL_GameControllerAddMappingsFromFile((Paths::data() + "gamecontrollerdb").c_str());
-    device_names[-1] = "keyboard";
-    device_types[-1] = DeviceType::KEYBOARD;
-    device_maps[-1] = default_keyboard_mapping;
+    device_maps[-1].id = -1;
+    device_maps.at(-1).name = "keyboard";
+    device_maps.at(-1).type = DeviceType::KEYBOARD;
+    device_maps.at(-1).buttonmap = default_keyboard_mapping;
+    device_maps.at(-1).eventmap = toEventMap(device_maps.at(-1).buttonmap);
 }
 
 void SDLWindow::toggleFullscreen()
@@ -83,34 +85,28 @@ void SDLWindow::requestScreenshot(const std::string& path)
     gcx.requestScreenshot(window, path);
 }
 
-void SDLWindow::setKnownInputMappings(const DeviceMap& devices)
+void SDLWindow::setInputConfig(const std::map<DeviceName, DeviceData>& known)
 {
-    known_mappings = devices;
-    auto& device_map = device_maps[-1];
-    device_map = mapForDeviceName(device_names.at(-1));
-    if (device_map.empty())
-        device_map = default_keyboard_mapping;
+    known_mappings = known;
+    auto& kb_buttonmap = device_maps.at(-1).buttonmap;
+    kb_buttonmap = knownButtonmapForDeviceName(device_maps.at(-1).name);
+    if (kb_buttonmap.empty())
+        kb_buttonmap = default_keyboard_mapping;
 }
 
-DeviceMap SDLWindow::inputMappings() const
+std::map<DeviceName, DeviceData> SDLWindow::createInputConfig() const
 {
-    DeviceMap output = known_mappings;
-    for (const auto& device : device_maps) {
-        DeviceData device_data;
-        device_data.type = device_types.at(device.first);
-        device_data.eventmap = toEventMap(device.second);
-
-        const auto& device_name = device_names.at(device.first);
-        output[device_name] = device_data;
-    }
+    std::map<DeviceName, DeviceData> output = known_mappings;
+    for (const auto& device : device_maps)
+        output[device.second.name] = device.second;
     return output;
 }
 
-ButtonToEventsMap SDLWindow::mapForDeviceName(const std::string& device_name)
+ButtonToEventsMap SDLWindow::knownButtonmapForDeviceName(const std::string& device_name)
 {
     if (!known_mappings.count(device_name))
         return ButtonToEventsMap();
-    return toButtonMap(known_mappings.at(device_name).eventmap);
+    return known_mappings.at(device_name).buttonmap;
 }
 
 std::vector<Event> SDLWindow::collectEvents()
@@ -165,12 +161,10 @@ std::vector<Event> SDLWindow::collectEvents()
         case SDL_CONTROLLERBUTTONDOWN: {
                 assert(gamepads.count(sdl_event.cbutton.which));
                 assert(device_maps.count(sdl_event.cbutton.which));
-
                 const bool is_down = (sdl_event.type == SDL_CONTROLLERBUTTONDOWN);
-                auto& device_map = device_maps.at(sdl_event.cbutton.which);
-                for (const auto& input_event : device_map[sdl_event.cbutton.button])
+                auto& buttonmap = device_maps.at(sdl_event.cbutton.which).buttonmap;
+                for (const auto& input_event : buttonmap[sdl_event.cbutton.button])
                     output.emplace_back(InputEvent(input_event, is_down, sdl_event.cbutton.which));
-
                 output.emplace_back(RawInputEvent(sdl_event.cdevice.which, sdl_event.cbutton.button, is_down));
             }
             break;
@@ -187,13 +181,16 @@ std::vector<Event> SDLWindow::collectEvents()
                     if (iid >= 0) {
                         const std::string name = SDL_GameControllerName(gamepad.get());
                         gamepads[iid] = std::move(gamepad);
-                        auto& device_map = device_maps[iid];
-                        if (device_map.empty())
-                            device_map = mapForDeviceName(name);
-                        if (device_map.empty())
-                            device_map = default_gamepad_mapping;
-                        device_names[iid] = name;
-                        device_types[iid] = DeviceType::GAMEPAD;
+                        auto& device = device_maps[iid];
+                        auto& buttonmap = device.buttonmap;
+                        if (buttonmap.empty())
+                            buttonmap = knownButtonmapForDeviceName(name);
+                        if (buttonmap.empty())
+                            buttonmap = default_gamepad_mapping;
+                        device.id = iid;
+                        device.name = name;
+                        device.type = DeviceType::GAMEPAD;
+                        device.eventmap = toEventMap(buttonmap);
                         Log::info(LOG_INPUT_TAG) << "Gamepad connected: " <<  name << "\n";
                     }
                 }
@@ -209,13 +206,16 @@ std::vector<Event> SDLWindow::collectEvents()
                     if (iid >= 0) {
                         const std::string name = SDL_JoystickName(joy.get());
                         joysticks[iid] = std::move(joy);
-                        auto& device_map = device_maps[iid];
-                        if (device_map.empty())
-                            device_map = mapForDeviceName(name);
-                        if (device_map.empty())
-                            device_map = default_joystick_mapping;
-                        device_names[iid] = name;
-                        device_types[iid] = DeviceType::LEGACY_JOYSTICK;
+                        auto& device = device_maps[iid];
+                        auto& buttonmap = device.buttonmap;
+                        if (buttonmap.empty())
+                            buttonmap = knownButtonmapForDeviceName(name);
+                        if (buttonmap.empty())
+                            buttonmap = default_joystick_mapping;
+                        device.id = iid;
+                        device.name = name;
+                        device.type = DeviceType::LEGACY_JOYSTICK;
+                        device.eventmap = toEventMap(buttonmap);
                         Log::info(LOG_INPUT_TAG) << "Joystick connected: " << name << "\n";
                     }
                 }
@@ -233,20 +233,19 @@ std::vector<Event> SDLWindow::collectEvents()
         case SDL_JOYHATMOTION:
             if (joysticks.count(sdl_event.jhat.which)) {
                 assert(device_maps.count(sdl_event.jhat.which));
-                auto& device_map = device_maps.at(sdl_event.jhat.which);
+                auto& buttonmap = device_maps.at(sdl_event.jhat.which).buttonmap;
                 uint16_t button = sdl_event.jhat.value;
                 // turn off all hat keys - there can be only one direction active at a time
                 static const auto all_hats = {SDL_HAT_UP, SDL_HAT_DOWN, SDL_HAT_LEFT, SDL_HAT_RIGHT};
                 for (const auto& hat : all_hats) {
-                    for (const auto& event : device_map[hat])
+                    for (const auto& event : buttonmap[hat])
                         output.emplace_back(InputEvent(event, false, sdl_event.jhat.which));
 
                     output.emplace_back(RawInputEvent(sdl_event.jhat.which, button, false));
                 }
                 // turn on only the current one
-                for (const auto& event : device_map[button])
+                for (const auto& event : buttonmap[button])
                     output.emplace_back(InputEvent(event, true, sdl_event.jhat.which));
-
                 output.emplace_back(RawInputEvent(sdl_event.jhat.which, button, true));
             }
             break;
@@ -254,14 +253,12 @@ std::vector<Event> SDLWindow::collectEvents()
         case SDL_JOYBUTTONDOWN:
             if (joysticks.count(sdl_event.jbutton.which)) {
                 assert(device_maps.count(sdl_event.jbutton.which));
-                auto& device_map = device_maps.at(sdl_event.jbutton.which);
-
                 // reminder: buttons are stored on the upper byte
                 const uint16_t button = (sdl_event.jbutton.button << 8) + 0xFF;
                 const bool is_down = (sdl_event.type == SDL_JOYBUTTONDOWN);
-                for (const auto& input_event : device_map[button])
+                auto& buttonmap = device_maps.at(sdl_event.jbutton.which).buttonmap;
+                for (const auto& input_event : buttonmap[button])
                     output.emplace_back(InputEvent(input_event, is_down, sdl_event.jbutton.which));
-
                 output.emplace_back(RawInputEvent(sdl_event.jbutton.which, button, is_down));
             }
             break;
@@ -272,13 +269,11 @@ std::vector<Event> SDLWindow::collectEvents()
         case SDL_KEYDOWN:
             if (!sdl_event.key.repeat) {
                 assert(device_maps.count(-1));
-                auto& device_map = device_maps.at(-1);
                 const uint16_t scancode = sdl_event.key.keysym.scancode;
                 const bool is_down = (sdl_event.type == SDL_KEYDOWN);
-                if (device_map.count(scancode)) {
-                    for (const auto& input_event : device_map.at(scancode))
-                        output.emplace_back(InputEvent(input_event, is_down, -1));
-                }
+                auto& buttonmap = device_maps.at(-1).buttonmap;
+                for (const auto& input_event : buttonmap[scancode])
+                    output.emplace_back(InputEvent(input_event, is_down, -1));
                 output.emplace_back(RawInputEvent(-1, scancode, is_down));
             }
             break;

@@ -38,13 +38,14 @@ public:
     /// If the user wants to quit the game by a native event, then after this call
     /// `quit_requested()` should return true.
     virtual std::vector<Event> collectEvents() = 0;
-    /// Set the known input mappings between game events and input device buttons.
-    virtual void setKnownInputMappings(const DeviceMap&) = 0;
-    /// Get all the input mappings the window has knowledge of.
-    virtual DeviceMap inputMappings() const = 0;
     /// Return `true` if the user wants to quit the program, eg. by closing the game
     /// window or pressing certain key combinations (Alt-F4, Ctrl-Q, ...).
     virtual bool quitRequested() = 0;
+    /// Set the known input mappings previously read from a config file.
+    virtual void setInputConfig(const std::map<DeviceName, DeviceData>&) = 0;
+    /// Get all the input mappings the window has knowledge of in a
+    /// format similar to config files.
+    virtual std::map<DeviceName, DeviceData> createInputConfig() const = 0;
 
     /// If possible, show an error message box with the title "Error" and the
     /// provided content text. This operation should work even without a Window object.
