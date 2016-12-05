@@ -16,8 +16,10 @@ OptionsItem::OptionsItem(AppContext& app, std::string&& label, std::string&& des
     auto font = app.gcx().loadFont(Paths::data() + "fonts/PTS55F.ttf", 24);
     tex_label = font->renderText(btn_label_text, 0xEEEEEE_rgb);
 
-    font = app.gcx().loadFont(Paths::data() + "fonts/PTS55F.ttf", 20);
-    tex_description = font->renderText(description, 0xEEEEEE_rgb);
+    if (!description.empty()) {
+        font = app.gcx().loadFont(Paths::data() + "fonts/PTS55F.ttf", 20);
+        tex_description = font->renderText(description, 0xEEEEEE_rgb);
+    }
 }
 
 OptionsItem::~OptionsItem() = default;

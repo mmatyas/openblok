@@ -17,7 +17,7 @@ class ValueChooser : public OptionsItem {
 public:
     ValueChooser(AppContext&,
                  std::vector<std::string>&& possible_values, size_t start_index,
-                 std::string&& label, std::string&& description = " ",
+                 std::string&& label, std::string&& description = "",
                  std::function<void(const std::string&)>&& on_change = [](const std::string&){});
 
     void draw(GraphicsContext&) const override;

@@ -294,11 +294,13 @@ void Options::draw(MainMenuState& parent, GraphicsContext& gcx) const
 
     if (current_subitem) {
         auto& description_tex = current_subitem->descriptionTex();
-        auto bgrect = container_rect;
-        bgrect.h = description_tex->height() + 10;
-        bgrect.y += container_rect.h - bgrect.h;
-        gcx.drawFilledRect(bgrect, black);
-        description_tex->drawAt(bgrect.x + 20, bgrect.y + 5);
+        if (description_tex) {
+            auto bgrect = container_rect;
+            bgrect.h = description_tex->height() + 10;
+            bgrect.y += container_rect.h - bgrect.h;
+            gcx.drawFilledRect(bgrect, black);
+            description_tex->drawAt(bgrect.x + 20, bgrect.y + 5);
+        }
     }
 }
 
