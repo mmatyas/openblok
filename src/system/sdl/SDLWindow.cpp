@@ -102,6 +102,11 @@ std::map<DeviceName, DeviceData> SDLWindow::createInputConfig() const
     return output;
 }
 
+const DeviceMap& SDLWindow::connectedDevices() const
+{
+    return device_maps;
+}
+
 ButtonToEventsMap SDLWindow::knownButtonmapForDeviceName(const std::string& device_name)
 {
     if (!known_mappings.count(device_name))

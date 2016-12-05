@@ -46,6 +46,8 @@ public:
     /// Get all the input mappings the window has knowledge of in a
     /// format similar to config files.
     virtual std::map<DeviceName, DeviceData> createInputConfig() const = 0;
+    /// Get all currently connected devices.
+    virtual const DeviceMap& connectedDevices() const = 0;
 
     /// If possible, show an error message box with the title "Error" and the
     /// provided content text. This operation should work even without a Window object.
