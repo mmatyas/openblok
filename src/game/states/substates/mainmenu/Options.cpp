@@ -189,7 +189,7 @@ Options::Options(MainMenuState& parent, AppContext& app)
                 break;
         }
     };
-    fn_settings_input = [this](InputType input){
+    fn_settings_input = [this, &app](InputType input){
         assert(current_subitem);
         if (current_subitem->isLocked()) {
             current_subitem->onPress(app, input);
@@ -217,13 +217,8 @@ Options::Options(MainMenuState& parent, AppContext& app)
                 current_subitem = panel.at(current_setting_idx).get();
                 current_subitem->onHoverEnter();
                 break;
-            case InputType::MENU_LEFT:
-                current_subitem->onLeftPress();
-                break;
-            case InputType::MENU_RIGHT:
-                current_subitem->onRightPress();
-                break;
             default:
+                current_subitem->onPress(app, input);
                 break;
         }
     };

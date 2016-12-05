@@ -4,10 +4,6 @@
 
 #include <array>
 #include <functional>
-#include <memory>
-
-class AppContext;
-class Texture;
 
 
 namespace Layout {
@@ -19,11 +15,10 @@ public:
                  std::string&& label, std::string&& description = "",
                  std::function<void(bool)>&& on_toggle = [](bool){});
 
+    void onPress(AppContext&, InputType) override;
     void draw(GraphicsContext&) const override;
 
     void setWidth(int) override;
-    void onLeftPress() override;
-    void onRightPress() override;
 
 private:
     std::array<std::unique_ptr<Texture>, 2> tex_onoff;
@@ -35,6 +30,8 @@ private:
     static constexpr int switch_half_width = 40;
 
     bool switch_state;
+    void onLeftPress();
+    void onRightPress();
     std::function<void(bool)> callback;
 };
 

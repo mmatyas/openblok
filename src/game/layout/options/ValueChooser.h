@@ -3,11 +3,7 @@
 #include "game/layout/options/OptionsItem.h"
 
 #include <functional>
-#include <memory>
 #include <vector>
-
-class AppContext;
-class Texture;
 
 
 namespace Layout {
@@ -20,11 +16,10 @@ public:
                  std::string&& label, std::string&& description = "",
                  std::function<void(const std::string&)>&& on_change = [](const std::string&){});
 
+    void onPress(AppContext&, InputType) override;
     void draw(GraphicsContext&) const override;
 
     void setWidth(int) override;
-    void onLeftPress() override;
-    void onRightPress() override;
 
 private:
     const std::vector<std::string> values;
@@ -36,6 +31,8 @@ private:
     int padding_ver;
     static constexpr int padding_hor = 20;
 
+    void onLeftPress();
+    void onRightPress();
     std::function<void(const std::string)> callback;
 };
 

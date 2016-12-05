@@ -37,6 +37,15 @@ void ToggleButton::setWidth(int w)
     leftswitch_centerx = rightswitch_centerx - switch_half_width * 2 - 10;
 }
 
+void ToggleButton::onPress(AppContext&, InputType input)
+{
+    switch (input) {
+        case InputType::MENU_LEFT: onLeftPress(); break;
+        case InputType::MENU_RIGHT: onRightPress(); break;
+        default: break;
+    }
+}
+
 void ToggleButton::onLeftPress()
 {
     if (switch_state) {

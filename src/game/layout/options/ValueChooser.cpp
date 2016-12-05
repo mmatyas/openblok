@@ -46,6 +46,15 @@ void ValueChooser::setWidth(int w)
     right_x = x() + width() - padding_hor;
 }
 
+void ValueChooser::onPress(AppContext&, InputType input)
+{
+    switch (input) {
+        case InputType::MENU_LEFT: onLeftPress(); break;
+        case InputType::MENU_RIGHT: onRightPress(); break;
+        default: break;
+    }
+}
+
 void ValueChooser::onLeftPress()
 {
     if (current_idx > 0) {
