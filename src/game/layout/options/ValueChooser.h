@@ -15,6 +15,7 @@ public:
                  std::vector<std::string>&& possible_values, size_t start_index,
                  std::string&& label, std::string&& description = "",
                  std::function<void(const std::string&)>&& on_change = [](const std::string&){});
+    ~ValueChooser();
 
     void onPress(AppContext&, InputType) override;
     void draw(GraphicsContext&) const override;

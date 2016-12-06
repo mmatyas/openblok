@@ -43,6 +43,8 @@ ValueChooser::ValueChooser(AppContext& app,
     }
 }
 
+ValueChooser::~ValueChooser() = default;
+
 void ValueChooser::setWidth(int w)
 {
     OptionsItem::setWidth(w);

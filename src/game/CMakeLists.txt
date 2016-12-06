@@ -33,6 +33,7 @@ set(MOD_GAME_SRC
     layout/menu/MainMenuBtn.cpp
     layout/menu/PieceRain.cpp
     layout/options/CategoryBtn.cpp
+    layout/options/DeviceChooser.cpp
     layout/options/InputField.cpp
     layout/options/OptionsItem.cpp
     layout/options/ToggleBtn.cpp
@@ -101,6 +102,7 @@ set(MOD_GAME_H
     layout/menu/MainMenuBtn.h
     layout/menu/PieceRain.h
     layout/options/CategoryBtn.h
+    layout/options/DeviceChooser.h
     layout/options/InputField.h
     layout/options/OptionsItem.h
     layout/options/ToggleBtn.h
