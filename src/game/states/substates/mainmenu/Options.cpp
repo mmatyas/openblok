@@ -37,9 +37,9 @@ Options::Options(MainMenuState& parent, AppContext& app)
      * it's just that they need a lot of ctor parameters,
      * like long strings, arrays and lambda callbacks */
 
-    std::vector<std::unique_ptr<Layout::Options::OptionsItem>> system_options;
+    std::vector<std::shared_ptr<Layout::Options::OptionsItem>> system_options;
     {
-        system_options.emplace_back(std::make_unique<ToggleButton>(
+        system_options.emplace_back(std::make_shared<ToggleButton>(
             app, app.sysconfig().fullscreen, tr("Fullscreen mode"),
             tr("Toggle fullscreen mode. On certain (embedded) devices, this setting may have no effect."),
             [&app](bool val){
@@ -47,14 +47,14 @@ Options::Options(MainMenuState& parent, AppContext& app)
                 app.sysconfig().fullscreen = val;
             }));
         system_options.back()->setMarginBottom(40);
-        system_options.emplace_back(std::make_unique<ToggleButton>(
+        system_options.emplace_back(std::make_shared<ToggleButton>(
             app, app.sysconfig().sfx, tr("Sound effects"),
             tr("Enable or disable sound effects."),
             [&app](bool val){
                 app.sysconfig().sfx = val;
                 // TODO
             }));
-        system_options.emplace_back(std::make_unique<ToggleButton>(
+        system_options.emplace_back(std::make_shared<ToggleButton>(
             app, app.sysconfig().music, tr("Background music"),
             tr("Enable or disable the background music."),
             [&app](bool val){
@@ -64,9 +64,9 @@ Options::Options(MainMenuState& parent, AppContext& app)
     }
     subitem_panels.push_back(std::move(system_options));
 
-    std::vector<std::unique_ptr<Layout::Options::OptionsItem>> tuning_options;
+    std::vector<std::shared_ptr<Layout::Options::OptionsItem>> tuning_options;
     {
-        tuning_options.emplace_back(std::make_unique<ValueChooser>(app,
+        tuning_options.emplace_back(std::make_shared<ValueChooser>(app,
             std::vector<std::string>({tr("SRS"), tr("TGM"), tr("Classic")}),
             app.wellconfig().rotation_style == RotationStyle::SRS ?
                 0 : (app.wellconfig().rotation_style == RotationStyle::TGM ? 1 : 2),
@@ -87,7 +87,7 @@ Options::Options(MainMenuState& parent, AppContext& app)
         int k = 0;
         std::generate(das_values.begin(), das_values.end(), [&k]{ return std::to_string(++k) + "/60 s"; });
         auto das_repeat_values = das_values;
-        tuning_options.emplace_back(std::make_unique<ValueChooser>(app, std::move(das_values),
+        tuning_options.emplace_back(std::make_shared<ValueChooser>(app, std::move(das_values),
             app.wellconfig().shift_normal - 1, // num to offset
             tr("DAS initial delay"),
             tr("The time it takes to turn on horizontal movement autorepeat."),
@@ -95,7 +95,7 @@ Options::Options(MainMenuState& parent, AppContext& app)
                 // this must not throw error
                 app.wellconfig().shift_normal = std::stoul(val.substr(0, val.find("/")));
             }));
-        tuning_options.emplace_back(std::make_unique<ValueChooser>(app, std::move(das_repeat_values),
+        tuning_options.emplace_back(std::make_shared<ValueChooser>(app, std::move(das_repeat_values),
             app.wellconfig().shift_turbo - 1, // num to offset
             tr("DAS repeat delay"),
             tr("Horizontal movement delay during autorepeat."),
@@ -104,7 +104,7 @@ Options::Options(MainMenuState& parent, AppContext& app)
                 app.wellconfig().shift_turbo = std::stoul(val.substr(0, val.find("/")));
             }));
 
-        tuning_options.emplace_back(std::make_unique<ToggleButton>(app,
+        tuning_options.emplace_back(std::make_shared<ToggleButton>(app,
             !app.wellconfig().instant_harddrop, // sonic drop == not instant hard drop
             tr("Sonic drop"),
             tr("If set to 'ON', hard drop does not lock the piece instantly."),
@@ -129,7 +129,7 @@ Options::Options(MainMenuState& parent, AppContext& app)
         k = 0;
         std::vector<std::string> lockdelay_values(60);
         std::generate(lockdelay_values.begin(), lockdelay_values.end(), [&k]{ return std::to_string(++k) + "/60 s"; });
-        tuning_options.emplace_back(std::make_unique<ValueChooser>(app,
+        tuning_options.emplace_back(std::make_shared<ValueChooser>(app,
             std::move(lockdelay_values),
             app.wellconfig().lock_delay - 1, // num to offset
             tr("Lock delay"),
@@ -139,7 +139,7 @@ Options::Options(MainMenuState& parent, AppContext& app)
                 app.wellconfig().shift_normal = std::stoul(val.substr(0, val.find("/")));
             }));
 
-        tuning_options.emplace_back(std::make_unique<ToggleButton>(app,
+        tuning_options.emplace_back(std::make_shared<ToggleButton>(app,
             app.wellconfig().tspin_enabled,
             tr("Enable T-Spins"),
             tr("Allow T-Spin detection and scoring. Works best with SRS rotation."),

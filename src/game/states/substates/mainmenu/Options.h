@@ -25,7 +25,7 @@ private:
     ::Rectangle container_rect;
 
     std::vector<Layout::Options::CategoryButton> category_buttons;
-    std::vector<std::vector<std::unique_ptr<Layout::Options::OptionsItem>>> subitem_panels;
+    std::vector<std::vector<std::shared_ptr<Layout::Options::OptionsItem>>> subitem_panels;
     unsigned current_category_idx;
     unsigned current_setting_idx;
     Layout::Options::OptionsItem* current_subitem;
