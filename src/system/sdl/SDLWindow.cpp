@@ -68,6 +68,7 @@ SDLWindow::SDLWindow()
 {
     window.SetIcon(SDL2pp::Surface(Paths::data() + "icon.png"));
     SDL_GameControllerAddMappingsFromFile((Paths::data() + "gamecontrollerdb").c_str());
+
     device_maps[-1].id = -1;
     device_maps.at(-1).name = "keyboard";
     device_maps.at(-1).type = DeviceType::KEYBOARD;
@@ -92,6 +93,7 @@ void SDLWindow::setInputConfig(const std::map<DeviceName, DeviceData>& known)
     kb_buttonmap = knownButtonmapForDeviceName(device_maps.at(-1).name);
     if (kb_buttonmap.empty())
         kb_buttonmap = default_keyboard_mapping;
+    device_maps.at(-1).eventmap = toEventMap(kb_buttonmap);
 }
 
 std::map<DeviceName, DeviceData> SDLWindow::createInputConfig() const
