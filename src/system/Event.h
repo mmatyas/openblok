@@ -28,7 +28,7 @@ struct InputTypeHash {
     }
 };
 
-typedef int8_t DeviceID;
+using DeviceID = int8_t;
 
 class InputEvent {
 public:

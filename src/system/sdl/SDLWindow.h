@@ -27,6 +27,7 @@ public:
     void setInputConfig(const std::map<DeviceName, DeviceData>&) final;
     std::map<DeviceName, DeviceData> createInputConfig() const final;
     const DeviceMap& connectedDevices() const final;
+    std::string buttonName(DeviceID, uint16_t) const final;
 
     static void showErrorMessage(const std::string& title, const std::string& content);
 

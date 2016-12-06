@@ -41,6 +41,7 @@ public:
     /// Return `true` if the user wants to quit the program, eg. by closing the game
     /// window or pressing certain key combinations (Alt-F4, Ctrl-Q, ...).
     virtual bool quitRequested() = 0;
+
     /// Set the known input mappings previously read from a config file.
     virtual void setInputConfig(const std::map<DeviceName, DeviceData>&) = 0;
     /// Get all the input mappings the window has knowledge of in a
@@ -48,6 +49,8 @@ public:
     virtual std::map<DeviceName, DeviceData> createInputConfig() const = 0;
     /// Get all currently connected devices.
     virtual const DeviceMap& connectedDevices() const = 0;
+    /// Get the name of a raw button on a device, or an empty string.
+    virtual std::string buttonName(DeviceID, uint16_t raw_key) const = 0;
 
     /// If possible, show an error message box with the title "Error" and the
     /// provided content text. This operation should work even without a Window object.

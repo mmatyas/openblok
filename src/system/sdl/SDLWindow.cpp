@@ -107,6 +107,25 @@ const DeviceMap& SDLWindow::connectedDevices() const
     return device_maps;
 }
 
+std::string SDLWindow::buttonName(DeviceID device_id, uint16_t raw_key) const
+{
+    if (!device_maps.count(device_id))
+        return "";
+    const auto& device = device_maps.at(device_id);
+    switch (device.type) {
+        case DeviceType::KEYBOARD: {
+            const auto key = SDL_GetKeyFromScancode(static_cast<SDL_Scancode>(raw_key));
+            return SDL_GetKeyName(key);
+        }
+        case DeviceType::GAMEPAD: {
+            const auto name = SDL_GameControllerGetStringForButton(static_cast<SDL_GameControllerButton>(raw_key));
+            return name ? name : "";
+        }
+        case DeviceType::LEGACY_JOYSTICK:
+            return "Button " + std::to_string(raw_key);
+    }
+}
+
 ButtonToEventsMap SDLWindow::knownButtonmapForDeviceName(const std::string& device_name)
 {
     if (!known_mappings.count(device_name))
