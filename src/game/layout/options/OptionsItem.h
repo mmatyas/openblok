@@ -19,6 +19,8 @@ public:
 
     /// Call for recognized key presses.
     virtual void onPress(AppContext&, InputType) {}
+    /// Call for raw, possibly unknown key presses.
+    virtual void onRawPress(AppContext&, uint16_t) {}
 
     /// The option item is waiting for input, and its parent should not move the focus away.
     virtual bool isLocked() const { return false; }
