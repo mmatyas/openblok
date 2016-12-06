@@ -5,6 +5,7 @@
 #include "system/Rectangle.h"
 
 #include <functional>
+#include <map>
 #include <memory>
 
 namespace Layout { namespace Options { class OptionsItem; } }
@@ -26,6 +27,7 @@ private:
 
     std::vector<Layout::Options::CategoryButton> category_buttons;
     std::vector<std::vector<std::shared_ptr<Layout::Options::OptionsItem>>> subitem_panels;
+    std::map<DeviceID, std::vector<std::shared_ptr<Layout::Options::OptionsItem>>> input_device_panels;
     unsigned current_category_idx;
     unsigned current_setting_idx;
     Layout::Options::OptionsItem* current_subitem;

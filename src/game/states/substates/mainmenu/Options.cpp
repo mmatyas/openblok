@@ -2,6 +2,8 @@
 
 #include "game/AppContext.h"
 #include "game/GameConfigFile.h"
+#include "game/layout/options/DeviceChooser.h"
+#include "game/layout/options/InputField.h"
 #include "game/layout/options/OptionsItem.h"
 #include "game/layout/options/ToggleBtn.h"
 #include "game/layout/options/ValueChooser.h"
@@ -27,9 +29,11 @@ Options::Options(MainMenuState& parent, AppContext& app)
 {
     category_buttons.emplace_back(app, tr("GENERAL"));
     category_buttons.emplace_back(app, tr("FINE TUNING"));
-    // category_buttons.emplace_back(app, tr("INPUT"));
+    category_buttons.emplace_back(app, tr("INPUT"));
     category_buttons.at(current_category_idx).onHoverEnter();
 
+    using DeviceChooser = Layout::Options::DeviceChooser;
+    using InputField = Layout::Options::InputField;
     using ToggleButton = Layout::Options::ToggleButton;
     using ValueChooser = Layout::Options::ValueChooser;
 
@@ -156,6 +160,50 @@ Options::Options(MainMenuState& parent, AppContext& app)
             [&app](bool val){ app.wellconfig().tspin_allow_wallkick = val; }));
     }
     subitem_panels.push_back(std::move(tuning_options));
+
+    std::vector<std::shared_ptr<Layout::Options::OptionsItem>> input_options;
+    {
+        input_options.emplace_back(std::make_shared<DeviceChooser>(app,
+            tr("Device"),
+            [this, &app](DeviceID device_id){
+                assert(input_device_panels.count(device_id));
+                auto& panel = subitem_panels.at(2); // TODO: fix magic numbers
+                panel.erase(panel.begin() + 1, panel.end());
+                for (const auto& item : input_device_panels.at(device_id))
+                    panel.push_back(item);
+                updatePositions(app.gcx());
+            }));
+        input_options.back()->setMarginBottom(30);
+
+        const auto& devices = app.window().connectedDevices();
+        for (const auto& device : devices) {
+            static const std::vector<std::pair<std::string, InputType>> menu_eventnames = {
+                {"Up", InputType::MENU_UP},
+                {"Down", InputType::MENU_DOWN},
+                {"Left", InputType::MENU_LEFT},
+                {"Right", InputType::MENU_RIGHT},
+                {"OK", InputType::MENU_OK},
+                {"Cancel/Back", InputType::MENU_CANCEL},
+            };
+
+            std::vector<std::shared_ptr<Layout::Options::OptionsItem>> curr_device_fields;
+            for (const auto& eventname : menu_eventnames) {
+                // TODO: Fix these!
+                assert(device.second.eventmap.count(eventname.second));
+                assert(!device.second.eventmap.at(eventname.second).empty());
+                curr_device_fields.emplace_back(std::make_shared<InputField>(app,
+                    std::string(eventname.first),
+                    device.second.id, device.second.eventmap.at(eventname.second).front(),
+                    [](uint16_t raw_key){  }
+                ));
+            }
+            input_device_panels.emplace(device.second.id, std::move(curr_device_fields));
+        }
+
+        for (const auto& item : input_device_panels.at(-1))
+            input_options.push_back(item);
+    }
+    subitem_panels.push_back(std::move(input_options));
 
 
     updatePositions(app.gcx());
