@@ -262,12 +262,21 @@ void Options::update(MainMenuState& parent, const std::vector<Event>& events, Ap
 {
     parent.states.front()->updateAnimationsOnly(parent, app);
 
+    /* Note: When you press a button, a raw input event is also generated.
+     * When you press OK to activate (lock) an item, the raw events shouldn't be parsed
+     * in that frame, as the input field would record it as the requested key immediately. */
+    const bool current_item_was_locked = current_subitem ? current_subitem->isLocked() : false;
+
     for (const auto& event : events) {
         switch (event.type) {
             case EventType::INPUT:
-                if (!event.input.down())
-                    continue;
-                (*current_input_handler)(event.input.type());
+                if (event.input.down())
+                    (*current_input_handler)(event.input.type());
+                break;
+            case EventType::INPUT_RAW:
+                if (event.raw_input.is_down && current_subitem
+                    && current_subitem->isLocked() && current_item_was_locked)
+                    current_subitem->onRawPress(app, event.raw_input.button);
                 break;
             default:
                 break;
