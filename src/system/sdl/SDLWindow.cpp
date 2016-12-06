@@ -128,6 +128,14 @@ std::string SDLWindow::buttonName(DeviceID device_id, uint16_t raw_key) const
     }
 }
 
+void SDLWindow::setKeyBinding(DeviceID device_id, InputType inputevent, uint16_t raw_device_key)
+{
+    assert(device_maps.count(device_id));
+    auto& device = device_maps.at(device_id);
+    device.eventmap[inputevent] = {raw_device_key};
+    device.buttonmap = toButtonMap(device.eventmap);
+}
+
 ButtonToEventsMap SDLWindow::knownButtonmapForDeviceName(const std::string& device_name)
 {
     if (!known_mappings.count(device_name))

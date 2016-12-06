@@ -44,6 +44,8 @@ public:
 
     /// Set the known input mappings previously read from a config file.
     virtual void setInputConfig(const std::map<DeviceName, DeviceData>&) = 0;
+    /// Set the key binding of an input event to a raw key on a device.
+    virtual void setKeyBinding(DeviceID, InputType, uint16_t raw_key) = 0;
     /// Get all the input mappings the window has knowledge of in a
     /// format similar to config files.
     virtual std::map<DeviceName, DeviceData> createInputConfig() const = 0;

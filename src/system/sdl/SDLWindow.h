@@ -25,6 +25,7 @@ public:
     bool quitRequested() final { return m_quit_requested; }
 
     void setInputConfig(const std::map<DeviceName, DeviceData>&) final;
+    void setKeyBinding(DeviceID, InputType, uint16_t) final;
     std::map<DeviceName, DeviceData> createInputConfig() const final;
     const DeviceMap& connectedDevices() const final;
     std::string buttonName(DeviceID, uint16_t) const final;
