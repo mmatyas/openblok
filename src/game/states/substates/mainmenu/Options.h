@@ -27,6 +27,7 @@ private:
 
     std::vector<Layout::Options::CategoryButton> category_buttons;
     std::vector<std::vector<std::shared_ptr<Layout::Options::OptionsItem>>> subitem_panels;
+    DeviceID current_device_id; ///< device id of the currently active input panel
     std::map<DeviceID, std::vector<std::shared_ptr<Layout::Options::OptionsItem>>> input_device_panels;
     unsigned current_category_idx;
     unsigned current_setting_idx;

@@ -166,6 +166,7 @@ Options::Options(MainMenuState& parent, AppContext& app)
         input_options.emplace_back(std::make_shared<DeviceChooser>(app,
             tr("Device"),
             [this, &app](DeviceID device_id){
+                current_device_id = device_id;
                 assert(input_device_panels.count(device_id));
                 auto& panel = subitem_panels.at(2); // TODO: fix magic numbers
                 panel.erase(panel.begin() + 1, panel.end());
@@ -194,12 +195,15 @@ Options::Options(MainMenuState& parent, AppContext& app)
                 curr_device_fields.emplace_back(std::make_shared<InputField>(app,
                     std::string(eventname.first),
                     device.second.id, device.second.eventmap.at(eventname.second).front(),
-                    [](uint16_t raw_key){  }
+                    [this, &app, eventname](uint16_t raw_key) {
+                        app.window().setKeyBinding(current_device_id, eventname.second, raw_key);
+                    }
                 ));
             }
             input_device_panels.emplace(device.second.id, std::move(curr_device_fields));
         }
 
+        current_device_id = -1;
         for (const auto& item : input_device_panels.at(-1))
             input_options.push_back(item);
     }
