@@ -23,21 +23,24 @@ ValueChooser::ValueChooser(AppContext& app,
 {
     bounding_box.h = 40;
     setWidth(750);
+    padding_ver = (height() - tex_label->height()) / 2;
 
     auto font = app.gcx().loadFont(Paths::data() + "fonts/PTS55F.ttf", 24);
 
-    assert(values.size() > 1);
+    assert(!values.empty());
     assert(current_idx < values.size());
     for (const auto& val : values)
         tex_inactives.emplace_back(font->renderText(val, 0xEEEEEE_rgb));
 
-    // put a '<' or '>' around the text when the item is selected
-    tex_actives.emplace_back(font->renderText(values.front() + " \u203A", 0xEEEEEE_rgb));
-    for (unsigned i = 1; i < values.size() - 1; i++)
-        tex_actives.emplace_back(font->renderText("\u2039 " + values.at(i) + " \u203A", 0xEEEEEE_rgb));
-    tex_actives.emplace_back(font->renderText("\u2039 " + values.back(), 0xEEEEEE_rgb));
-
-    padding_ver = (height() - tex_label->height()) / 2;
+    if (values.size() == 1)
+        tex_actives.emplace_back(font->renderText(values.at(0), 0xEEEEEE_rgb));
+    else {
+        // put a '<' or '>' around the text when the item is selected
+        tex_actives.emplace_back(font->renderText(values.front() + " \u203A", 0xEEEEEE_rgb));
+        for (unsigned i = 1; i < values.size() - 1; i++)
+            tex_actives.emplace_back(font->renderText("\u2039 " + values.at(i) + " \u203A", 0xEEEEEE_rgb));
+        tex_actives.emplace_back(font->renderText("\u2039 " + values.back(), 0xEEEEEE_rgb));
+    }
 }
 
 void ValueChooser::setWidth(int w)
@@ -91,4 +94,3 @@ void ValueChooser::draw(GraphicsContext& gcx) const
 
 } // namespace Options
 } // namespace Layout
-
