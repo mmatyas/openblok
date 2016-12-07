@@ -236,9 +236,7 @@ Options::Options(MainMenuState& parent, AppContext& app)
                 current_subitem->onHoverEnter();
                 break;
             case InputType::MENU_CANCEL:
-                GameConfigFile::save(app.sysconfig(), app.wellconfig(), Paths::config() + "game.cfg");
-                assert(parent.states.size() > 1);
-                parent.states.pop_back();
+                current_input_handler = nullptr;
                 break;
             case InputType::MENU_UP:
                 category_buttons.at(current_category_idx).onHoverLeave();
@@ -366,15 +364,20 @@ void Options::update(MainMenuState& parent, const std::vector<Event>& events, Ap
         }
     }
     for (const auto& event : events) {
+        assert(current_input_handler);
         switch (event.type) {
             case EventType::INPUT:
-                if (event.input.down()) {
-                    assert(current_input_handler);
+                if (event.input.down())
                     (*current_input_handler)(event.input.type());
-                }
                 break;
             default:
                 break;
+        }
+        if (!current_input_handler) {
+            GameConfigFile::save(app.sysconfig(), app.wellconfig(), Paths::config() + "game.cfg");
+            assert(parent.states.size() > 1);
+            parent.states.pop_back();
+            return;
         }
     }
 }
