@@ -191,22 +191,22 @@ Options::Options(MainMenuState& parent, AppContext& app)
         const auto& devices = app.window().connectedDevices();
         for (const auto& device : devices) {
             static const std::vector<std::pair<std::string, InputType>> menu_eventnames = {
-                {"Up", InputType::MENU_UP},
-                {"Down", InputType::MENU_DOWN},
-                {"Left", InputType::MENU_LEFT},
-                {"Right", InputType::MENU_RIGHT},
-                {"OK", InputType::MENU_OK},
-                {"Cancel/Back", InputType::MENU_CANCEL},
+                {tr("Up"), InputType::MENU_UP},
+                {tr("Down"), InputType::MENU_DOWN},
+                {tr("Left"), InputType::MENU_LEFT},
+                {tr("Right"), InputType::MENU_RIGHT},
+                {tr("OK"), InputType::MENU_OK},
+                {tr("Cancel/Back"), InputType::MENU_CANCEL},
             };
             static const std::vector<std::pair<std::string, InputType>> game_eventnames = {
-                {"Move left", InputType::GAME_MOVE_LEFT},
-                {"Move right", InputType::GAME_MOVE_RIGHT},
-                {"Rotate clockwise", InputType::GAME_ROTATE_RIGHT},
-                {"Rotate counter-clockwise", InputType::GAME_ROTATE_LEFT},
-                {"Soft drop", InputType::GAME_SOFTDROP},
-                {"Hard drop", InputType::GAME_HARDDROP},
-                {"Hold", InputType::GAME_HOLD},
-                {"Pause", InputType::GAME_PAUSE},
+                {tr("Move left"), InputType::GAME_MOVE_LEFT},
+                {tr("Move right"), InputType::GAME_MOVE_RIGHT},
+                {tr("Rotate clockwise"), InputType::GAME_ROTATE_RIGHT},
+                {tr("Rotate counter-clockwise"), InputType::GAME_ROTATE_LEFT},
+                {tr("Soft drop"), InputType::GAME_SOFTDROP},
+                {tr("Hard drop"), InputType::GAME_HARDDROP},
+                {tr("Hold"), InputType::GAME_HOLD},
+                {tr("Pause"), InputType::GAME_PAUSE},
             };
 
             auto& panel = input_device_panels[device.second.id];
