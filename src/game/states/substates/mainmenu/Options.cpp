@@ -23,9 +23,11 @@ namespace SubStates {
 namespace MainMenu {
 
 Options::Options(MainMenuState& parent, AppContext& app)
-    : current_category_idx(0)
+    : current_device_id(-1) // keyboard
+    , current_category_idx(0)
     , current_setting_idx(0)
     , current_subitem(nullptr)
+    , current_input_handler(nullptr)
 {
     category_buttons.emplace_back(app, tr("GENERAL"));
     category_buttons.emplace_back(app, tr("FINE TUNING"));
@@ -203,8 +205,7 @@ Options::Options(MainMenuState& parent, AppContext& app)
             input_device_panels.emplace(device.second.id, std::move(curr_device_fields));
         }
 
-        current_device_id = -1;
-        for (const auto& item : input_device_panels.at(-1))
+        for (const auto& item : input_device_panels.at(current_device_id))
             input_options.push_back(item);
     }
     subitem_panels.push_back(std::move(input_options));
@@ -218,6 +219,7 @@ Options::Options(MainMenuState& parent, AppContext& app)
             case InputType::MENU_OK:
                 current_input_handler = &fn_settings_input;
                 current_subitem = subitem_panels.at(current_category_idx).front().get();
+                current_setting_idx = 0;
                 current_subitem->onHoverEnter();
                 break;
             case InputType::MENU_CANCEL:
@@ -322,8 +324,10 @@ void Options::update(MainMenuState& parent, const std::vector<Event>& events, Ap
     for (const auto& event : events) {
         switch (event.type) {
             case EventType::INPUT:
-                if (event.input.down())
+                if (event.input.down()) {
+                    assert(current_input_handler);
                     (*current_input_handler)(event.input.type());
+                }
                 break;
             case EventType::INPUT_RAW:
                 if (event.raw_input.is_down && current_subitem
