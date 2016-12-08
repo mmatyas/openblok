@@ -23,7 +23,7 @@ A customizable, cross platform, open-source falling block game, packed with a bu
 - [x] T-Spin and Mini T-Spin support
 - [ ] Combo support
 - [x] Gamepad support
-- [ ] Menu, configuration and stats
+- [x] Menu, configuration and stats
 - [ ] Battle mode
 - [x] Music and sound effects
 - [x] Big screen support
