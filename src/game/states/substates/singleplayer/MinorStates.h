@@ -60,7 +60,9 @@ public:
     void draw(SinglePlayState&, GraphicsContext&) const final;
 
 private:
-    std::unique_ptr<Texture> tex;
+    std::unique_ptr<Texture> tex_pause;
+    std::vector<std::array<std::unique_ptr<Texture>, 2>> tex_menuitems;
+    size_t current_menuitem;
 };
 
 class GameOver : public State {
