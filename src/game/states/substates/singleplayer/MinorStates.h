@@ -25,6 +25,17 @@ private:
     Transition<uint8_t> alpha;
 };
 
+class FadeOut : public State {
+public:
+    FadeOut(AppContext&);
+    StateType type() const { return StateType::FADE_OUT; }
+    void update(SinglePlayState&, const std::vector<Event>&, AppContext&) final;
+    void draw(SinglePlayState&, GraphicsContext&) const final;
+
+private:
+    Transition<uint8_t> alpha;
+};
+
 class Countdown : public State {
 public:
     Countdown(AppContext& app);

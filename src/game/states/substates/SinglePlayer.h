@@ -14,6 +14,7 @@ namespace SinglePlayer {
 
 enum class StateType : uint8_t {
     FADE_IN,
+    FADE_OUT,
     COUNTDOWN,
     GAME_RUNNING,
     PAUSED,

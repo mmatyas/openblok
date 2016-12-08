@@ -49,6 +49,25 @@ void FadeIn::draw(SinglePlayState&, GraphicsContext& gcx) const
 }
 
 
+FadeOut::FadeOut(AppContext& app)
+    : alpha(std::chrono::milliseconds(500),
+            [](double t){ return t * 0xFF; },
+            [&app](){ app.states().pop(); })
+{}
+
+void FadeOut::update(SinglePlayState&, const std::vector<Event>&, AppContext&)
+{
+    alpha.update(Timing::frame_duration);
+}
+
+void FadeOut::draw(SinglePlayState&, GraphicsContext& gcx) const
+{
+    RGBAColor color = 0x00_rgba;
+    color.a = alpha.value();
+    gcx.drawFilledRect({0, 0, gcx.screenWidth(), gcx.screenHeight()}, color);
+}
+
+
 Countdown::Countdown(AppContext& app)
     : current_idx(0)
     , timer(std::chrono::milliseconds(800), [](double){})
