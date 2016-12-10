@@ -219,9 +219,7 @@ void GameOver::update(SinglePlayState& parent, const std::vector<Event>& events,
         tex_gameover->setAlpha(std::min<int>(0xFF, (background_percent.value() - 0.4) * 0x1FF));
 
     for (const auto& event : events) {
-        if (event.type == EventType::INPUT && event.input.down()) {
-            background_percent.update(background_percent.length());
-            tex_gameover->setAlpha(std::min<int>(0xFF, (background_percent.value() - 0.4) * 0x1FF));
+        if (event.type == EventType::INPUT && event.input.down() && statistics_delay.running()) {
             statistics_delay.update(statistics_delay.length());
             return; // stop parsing the rest of the keys
         }
@@ -273,9 +271,7 @@ void GameComplete::update(SinglePlayState& parent, const std::vector<Event>& eve
     tex_finish->setAlpha(text_alpha.value());
 
     for (const auto& event : events) {
-        if (event.type == EventType::INPUT && event.input.down()) {
-            text_alpha.update(text_alpha.length());
-            tex_finish->setAlpha(text_alpha.value());
+        if (event.type == EventType::INPUT && event.input.down() && statistics_delay.running()) {
             statistics_delay.update(statistics_delay.length());
             return; // stop parsing the rest of the keys
         }
