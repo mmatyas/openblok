@@ -117,6 +117,14 @@ void Base::openSubcolumn(ButtonColumn* subcolumn)
 
 void Base::onFadeoutComplete(AppContext& app, std::unique_ptr<GameState>&& newstate)
 {
+    // reset the main menu to the primary button column
+    current_column->buttons.at(current_column->selected_index).onHoverLeave();
+    current_column = &primary_buttons;
+    primary_buttons.buttons.at(primary_buttons.selected_index).onHoverEnter();
+    updatePositions(app.gcx());
+    for (auto& btn : primary_buttons.buttons)
+        btn.setAlpha(0xFF);
+
     // this transition will run when we return to the menu
     state_transition_alpha = std::make_unique<Transition<uint8_t>>(
         std::chrono::milliseconds(500),
