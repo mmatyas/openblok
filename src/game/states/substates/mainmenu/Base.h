@@ -33,8 +33,23 @@ private:
     Layout::Logo logo;
     std::array<Layout::PieceRain, 2> rains;
 
-    std::vector<Layout::MainMenuButton> buttons;
-    unsigned current_button_index;
+    struct ButtonColumn {
+        std::vector<Layout::MainMenuButton> buttons;
+        size_t selected_index;
+
+        ButtonColumn();
+        void selectNext();
+        void selectPrev();
+        void activate();
+    };
+    ButtonColumn primary_buttons;
+    ButtonColumn singleplayer_buttons;
+    ButtonColumn multiplayer_buttons;
+    ButtonColumn* current_column;
+    Transition<float> column_slide_anim;
+
+    void setColumnPosition(std::vector<Layout::MainMenuButton>&, int left_x, int center_y);
+    void openSubcolumn(ButtonColumn*);
 
     std::shared_ptr<Music> music;
     std::unique_ptr<Transition<uint8_t>> state_transition_alpha;

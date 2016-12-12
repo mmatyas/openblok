@@ -20,6 +20,12 @@ MainMenuButton::MainMenuButton(AppContext& app, std::string&& text, std::functio
     bounding_box.h = tex_label_on->height() + 10;
 }
 
+void MainMenuButton::setAlpha(uint8_t alpha)
+{
+    tex_label_on->setAlpha(alpha);
+    tex_label_off->setAlpha(alpha);
+}
+
 void MainMenuButton::draw(GraphicsContext& gcx) const
 {
     if (is_active) {

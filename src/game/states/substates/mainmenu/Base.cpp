@@ -21,29 +21,48 @@ namespace MainMenu {
 Base::Base(MainMenuState& parent, AppContext& app)
     : tex_background(app.gcx().loadTexture(Paths::data() + "gamebg.png"))
     , logo(app.gcx(), 150)
-    , current_button_index(0)
+    , current_column(&primary_buttons)
+    , column_slide_anim(std::chrono::milliseconds(350),
+                        [](double t){ return t; },
+                        [this](){  })
     , music(app.audio().loadMusic(Paths::data() + "music/menu.ogg"))
 {
     PieceFactory::changeInitialPositions(Rotations::SRS().initialPositions());
+    column_slide_anim.stop();
 
-    buttons.emplace_back(app, tr("MARATHON"), [this, &app](){
-        const auto duration = std::chrono::milliseconds(500);
-        this->state_transition_alpha = std::make_unique<Transition<uint8_t>>(
-            duration,
-            [](double t){ return t * 0xFF; },
-            [this, &app](){ this->onFadeoutComplete(app, std::make_unique<SinglePlayState>(app)); }
-        );
-        music->fadeOut(duration);
+    primary_buttons.buttons.emplace_back(app, tr("SINGLEPLAYER"), [this](){
+        openSubcolumn(&singleplayer_buttons);
     });
-    buttons.emplace_back(app, tr("BATTLE"), [](){});
-    buttons.emplace_back(app, tr("OPTIONS"), [&app, &parent](){
+    {
+        singleplayer_buttons.buttons.emplace_back(app, tr("MARATHON"), [this, &app](){
+            const auto duration = std::chrono::milliseconds(500);
+            this->state_transition_alpha = std::make_unique<Transition<uint8_t>>(
+                duration,
+                [](double t){ return t * 0xFF; },
+                [this, &app](){ this->onFadeoutComplete(app, std::make_unique<SinglePlayState>(app)); }
+            );
+            music->fadeOut(duration);
+        });
+    }
+    primary_buttons.buttons.emplace_back(app, tr("MULTIPLAYER"), [this](){
+        openSubcolumn(&multiplayer_buttons);
+    });
+    {
+        multiplayer_buttons.buttons.emplace_back(app, tr("BATTLE"), [](){});
+        multiplayer_buttons.buttons.emplace_back(app, tr("MARATHON"), [](){});
+    }
+    primary_buttons.buttons.emplace_back(app, tr("OPTIONS"), [&app, &parent](){
         parent.states.emplace_back(std::make_unique<SubStates::MainMenu::Options>(parent, app));
     });
-    buttons.emplace_back(app, tr("EXIT"), [&app](){
+    primary_buttons.buttons.emplace_back(app, tr("EXIT"), [&app](){
         app.states().pop();
     });
 
-    buttons.at(current_button_index).onHoverEnter();
+    primary_buttons.buttons.at(primary_buttons.selected_index).onHoverEnter();
+    for (auto& btn : singleplayer_buttons.buttons)
+        btn.setAlpha(0x0);
+    for (auto& btn : multiplayer_buttons.buttons)
+        btn.setAlpha(0x0);
 
     // move one of the rains lower
     auto& rain = rains.at(0);
@@ -73,11 +92,27 @@ void Base::updatePositions(GraphicsContext& gcx)
         rain.setHeight(gcx.screenHeight());
     }
 
+    setColumnPosition(primary_buttons.buttons, left_x, center_y);
+    setColumnPosition(singleplayer_buttons.buttons, left_x, center_y);
+    setColumnPosition(multiplayer_buttons.buttons, left_x, center_y);
+}
+
+void Base::setColumnPosition(std::vector<Layout::MainMenuButton>& buttons, int left_x, int center_y)
+{
     buttons.at(0).setPosition(left_x, center_y);
     for (unsigned i = 1; i < buttons.size(); i++) {
         const auto& prev = buttons.at(i - 1);
         buttons.at(i).setPosition(left_x, prev.y() + prev.height() + 5);
     }
+}
+
+void Base::openSubcolumn(ButtonColumn* subcolumn)
+{
+    assert(subcolumn != &primary_buttons);
+    primary_buttons.buttons.at(primary_buttons.selected_index).onHoverLeave();
+    current_column = subcolumn;
+    current_column->buttons.at(0).onHoverEnter();
+    column_slide_anim.restart();
 }
 
 void Base::onFadeoutComplete(AppContext& app, std::unique_ptr<GameState>&& newstate)
@@ -95,8 +130,35 @@ void Base::onFadeoutComplete(AppContext& app, std::unique_ptr<GameState>&& newst
 
 void Base::updateAnimationsOnly(MainMenuState&, AppContext&)
 {
+    column_slide_anim.update(Timing::frame_duration);
+
     for (auto& rain : rains)
         rain.update();
+}
+
+Base::ButtonColumn::ButtonColumn()
+    : selected_index(0)
+{
+}
+
+void Base::ButtonColumn::selectNext()
+{
+    buttons.at(selected_index).onHoverLeave();
+    selected_index++;
+    selected_index %= buttons.size();
+    buttons.at(selected_index).onHoverEnter();
+}
+
+void Base::ButtonColumn::selectPrev()
+{
+    buttons.at(selected_index).onHoverLeave();
+    selected_index = circularModulo(static_cast<int>(selected_index) - 1, buttons.size());
+    buttons.at(selected_index).onHoverEnter();
+}
+
+void Base::ButtonColumn::activate()
+{
+    buttons.at(selected_index).onPress();
 }
 
 void Base::update(MainMenuState& parent, const std::vector<Event>& events, AppContext& app)
@@ -108,33 +170,54 @@ void Base::update(MainMenuState& parent, const std::vector<Event>& events, AppCo
         return;
     }
 
-    for (const auto& event : events) {
-        switch (event.type) {
-            case EventType::INPUT:
-                if (!event.input.down())
-                    continue;
+    if (!column_slide_anim.running()) {
+        for (const auto& event : events) {
+            if (event.type == EventType::INPUT && event.input.down()) {
                 switch (event.input.type()) {
                     case InputType::MENU_UP:
-                        buttons.at(current_button_index).onHoverLeave();
-                        current_button_index = circularModulo(static_cast<int>(current_button_index) - 1,
-                                                              buttons.size());
-                        buttons.at(current_button_index).onHoverEnter();
+                        current_column->selectPrev();
                         break;
                     case InputType::MENU_DOWN:
-                        buttons.at(current_button_index).onHoverLeave();
-                        current_button_index++;
-                        current_button_index %= buttons.size();
-                        buttons.at(current_button_index).onHoverEnter();
+                        current_column->selectNext();
                         break;
                     case InputType::MENU_OK:
-                        buttons.at(current_button_index).onPress();
+                        current_column->activate();
+                        break;
+                    case InputType::MENU_CANCEL:
+                        if (current_column != &primary_buttons) {
+                            current_column->buttons.at(current_column->selected_index).onHoverLeave();
+                            current_column = &primary_buttons;
+                            primary_buttons.buttons.at(primary_buttons.selected_index).onHoverEnter();
+                            column_slide_anim.restart();
+                        }
                         break;
                     default:
                         break;
                 }
-                break;
-            default:
-                break;
+            }
+        }
+    }
+
+    if (column_slide_anim.running()) {
+        const int center_y = app.gcx().screenHeight() / 2;
+        const int left_x = 20 + app.gcx().screenWidth() * 0.1;
+
+        int slide_distance = -250; // main slides out left
+        if (current_column == &primary_buttons)
+            slide_distance = 250; // main slides in from left
+
+        setColumnPosition(primary_buttons.buttons, left_x + slide_distance * column_slide_anim.value(), center_y);
+        setColumnPosition(current_column->buttons, left_x - slide_distance * (1.f - column_slide_anim.value()), center_y);
+
+        uint8_t alpha = column_slide_anim.value() * 0xFF;
+        if (current_column != &primary_buttons)
+            alpha = 0xFF - alpha;
+
+        for (auto& btn : primary_buttons.buttons)
+            btn.setAlpha(alpha);
+        if (current_column != &primary_buttons) {
+            for (auto& btn : current_column->buttons)
+                btn.setAlpha(0xFF - alpha);
         }
     }
 }
@@ -147,8 +230,13 @@ void Base::draw(MainMenuState&, GraphicsContext& gcx) const
         rain.draw();
 
     logo.draw();
-    for (const auto& btn : buttons)
+
+    for (const auto& btn : primary_buttons.buttons)
         btn.draw(gcx);
+    if (current_column != &primary_buttons) {
+        for (const auto& btn : current_column->buttons)
+            btn.draw(gcx);
+    }
 
     if (state_transition_alpha) {
         RGBAColor color = 0xFF_rgba;
