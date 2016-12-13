@@ -44,9 +44,11 @@ set(MOD_GAME_SRC
 
     states/InitState.cpp
     states/MainMenuState.cpp
+    states/MultiplayerState.cpp
     states/SinglePlayState.cpp
     states/substates/mainmenu/Base.cpp
     states/substates/mainmenu/Options.cpp
+    states/substates/multiplayer/PlayerSelect.cpp
     states/substates/singleplayer/Gameplay.cpp
     states/substates/singleplayer/MinorStates.cpp
     states/substates/singleplayer/Statistics.cpp
@@ -113,11 +115,14 @@ set(MOD_GAME_H
 
     states/InitState.h
     states/MainMenuState.h
+    states/MultiplayerState.h
     states/SinglePlayState.h
+    states/substates/Multiplayer.h
     states/substates/SinglePlayer.h
     states/substates/MainMenu.h
     states/substates/mainmenu/Base.h
     states/substates/mainmenu/Options.h
+    states/substates/multiplayer/PlayerSelect.h
     states/substates/singleplayer/Gameplay.h
     states/substates/singleplayer/MinorStates.h
     states/substates/singleplayer/Statistics.h

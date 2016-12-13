@@ -5,6 +5,7 @@
 #include "game/components/PieceFactory.h"
 #include "game/components/rotations/SRS.h"
 #include "game/states/MainMenuState.h"
+#include "game/states/MultiplayerState.h"
 #include "game/states/SinglePlayState.h"
 #include "game/util/CircularModulo.h"
 #include "system/AudioContext.h"
@@ -48,7 +49,15 @@ Base::Base(MainMenuState& parent, AppContext& app)
         openSubcolumn(&multiplayer_buttons);
     });
     {
-        multiplayer_buttons.buttons.emplace_back(app, tr("BATTLE"), [](){});
+        multiplayer_buttons.buttons.emplace_back(app, tr("BATTLE"), [this, &app](){
+            const auto duration = std::chrono::milliseconds(500);
+            this->state_transition_alpha = std::make_unique<Transition<uint8_t>>(
+                duration,
+                [](double t){ return t * 0xFF; },
+                [this, &app](){ this->onFadeoutComplete(app, std::make_unique<MultiplayerState>(app)); }
+            );
+            music->fadeOut(duration);
+        });
         multiplayer_buttons.buttons.emplace_back(app, tr("MARATHON"), [](){});
     }
     primary_buttons.buttons.emplace_back(app, tr("OPTIONS"), [&app, &parent](){
