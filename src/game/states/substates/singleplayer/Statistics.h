@@ -15,7 +15,6 @@ namespace States {
 class Statistics : public State {
 public:
     Statistics(SinglePlayState&, AppContext&);
-    StateType type() const { return StateType::STATISTICS; }
     void update(SinglePlayState&, const std::vector<Event>&, AppContext&) final;
     void draw(SinglePlayState&, GraphicsContext&) const final;
 

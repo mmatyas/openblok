@@ -17,7 +17,6 @@ namespace States {
 class FadeIn : public State {
 public:
     FadeIn();
-    StateType type() const { return StateType::FADE_IN; }
     void update(SinglePlayState&, const std::vector<Event>&, AppContext&) final;
     void draw(SinglePlayState&, GraphicsContext&) const final;
 
@@ -28,7 +27,6 @@ private:
 class FadeOut : public State {
 public:
     FadeOut(AppContext&);
-    StateType type() const { return StateType::FADE_OUT; }
     void update(SinglePlayState&, const std::vector<Event>&, AppContext&) final;
     void draw(SinglePlayState&, GraphicsContext&) const final;
 
@@ -39,7 +37,6 @@ private:
 class Countdown : public State {
 public:
     Countdown(AppContext& app);
-    StateType type() const { return StateType::COUNTDOWN; }
     void update(SinglePlayState&, const std::vector<Event>&, AppContext&) final;
     void draw(SinglePlayState&, GraphicsContext&) const final;
 
@@ -55,7 +52,6 @@ private:
 class Pause : public State {
 public:
     Pause(AppContext&);
-    StateType type() const { return StateType::PAUSED; }
     void update(SinglePlayState&, const std::vector<Event>&, AppContext&) final;
     void draw(SinglePlayState&, GraphicsContext&) const final;
 
@@ -68,7 +64,6 @@ private:
 class GameOver : public State {
 public:
     GameOver(SinglePlayState&, AppContext&);
-    StateType type() const { return StateType::GAME_OVER; }
     void update(SinglePlayState&, const std::vector<Event>&, AppContext&) final;
     void draw(SinglePlayState&, GraphicsContext&) const final;
 
@@ -82,7 +77,6 @@ private:
 class GameComplete : public State {
 public:
     GameComplete(SinglePlayState&, AppContext&);
-    StateType type() const { return StateType::GAME_COMPLETE; }
     void update(SinglePlayState&, const std::vector<Event>&, AppContext&) final;
     void draw(SinglePlayState&, GraphicsContext&) const final;
 

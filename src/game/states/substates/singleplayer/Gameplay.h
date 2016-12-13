@@ -23,7 +23,6 @@ class Gameplay : public State {
 public:
     Gameplay(SinglePlayState&, AppContext&);
     ~Gameplay();
-    StateType type() const { return StateType::GAME_RUNNING; }
     void updateAnimationsOnly(SinglePlayState&, AppContext&) final;
     void update(SinglePlayState&, const std::vector<Event>&, AppContext&) final;
     void draw(SinglePlayState&, GraphicsContext&) const final;
