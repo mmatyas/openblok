@@ -4,15 +4,7 @@
 #include "game/components/Well.h"
 #include "game/layout/Box.h"
 
-
 class AppContext;
-class Font;
-class SoundEffect;
-class Texture;
-
-namespace SubStates { namespace SinglePlayer {
-enum class StateType : uint8_t;
-} }
 
 
 namespace Layout {
