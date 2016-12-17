@@ -109,7 +109,7 @@ void PlayerSelect::update(MultiplayerState&, const std::vector<Event>& events, A
 void PlayerSelect::draw(MultiplayerState&, GraphicsContext& gcx) const
 {
     static const int well_full_width = well_width + 2 * well_padding_x;
-    const int well_count = std::min<int>(devices.size() + 1, 2);
+    const int well_count = std::min<int>(devices.size() + 1, 4);
 
     int well_x = (gcx.screenWidth() - well_full_width * well_count) / 2;
     const int well_y = (gcx.screenHeight() - well_height) / 2;
@@ -118,7 +118,7 @@ void PlayerSelect::draw(MultiplayerState&, GraphicsContext& gcx) const
         drawJoinedWell(gcx, well_x, well_y, player_id);
         well_x += well_full_width;
     }
-    if (devices.size() < 2)
+    if (devices.size() < 4)
         drawPendingWell(gcx, well_x, well_y);
 }
 
