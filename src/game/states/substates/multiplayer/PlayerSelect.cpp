@@ -20,7 +20,7 @@ namespace States {
 
 static const int well_width = 10 * Mino::texture_size_px;
 static const int well_height = 20 * Mino::texture_size_px;
-static const int well_padding_x = Mino::texture_size_px;
+static const int well_padding_x = Mino::texture_size_px / 2;
 
 PlayerSelect::PlayerSelect(AppContext& app)
 {
