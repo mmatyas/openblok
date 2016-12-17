@@ -35,39 +35,68 @@ PlayerSelect::PlayerSelect(AppContext& app)
     tex_pending = font_smaller->renderText(tr("PRESS START\nTO JOIN"), 0xEEEEEE_rgb);
 }
 
+void PlayerSelect::onPlayerJoin(DeviceID device_id)
+{
+    assert(devices.size() < 4);
+    assert(devices.size() == player_ids.size());
+    // store the joining player's device id
+    devices.push_back(device_id);
+    // find the next available "name" (color) for the joining player
+    for (uint8_t new_player_id = 0; new_player_id < 4; new_player_id++) {
+        const bool player_id_exists = player_ids.end()
+            != std::find(player_ids.begin(), player_ids.end(), new_player_id);
+        if (!player_id_exists) {
+            player_ids.push_back(new_player_id);
+            break;
+        }
+    }
+    assert(devices.size() == player_ids.size());
+}
+
+void PlayerSelect::onPlayerLeave(DeviceID device_id)
+{
+    assert(devices.size() == player_ids.size());
+    for (size_t idx = 0; idx < devices.size(); idx++) {
+        if (devices.at(idx) == device_id) {
+            // disconnect the player
+            devices.erase(devices.begin() + idx);
+            // make the leaving player's color available again
+            player_ids.erase(player_ids.begin() + idx);
+            break;
+        }
+    }
+    assert(devices.size() == player_ids.size());
+}
+
 void PlayerSelect::update(MultiplayerState&, const std::vector<Event>& events, AppContext& app)
 {
     for (const auto& event : events) {
         switch (event.type) {
         case EventType::DEVICE:
-            if (event.device.type == DeviceEventType::DISCONNECTED) {
-                devices.erase(std::remove(
-                    devices.begin(), devices.end(), event.device.device_id), devices.end());
-            }
+            if (event.device.type == DeviceEventType::DISCONNECTED)
+                onPlayerLeave(event.device.device_id);
             break;
         case EventType::INPUT:
             if (event.input.down()) {
                 switch (event.input.type()) {
-                case InputType::MENU_OK: {
-                    const bool device_exists = std::find(
-                        devices.begin(), devices.end(), event.input.srcDeviceID()) != devices.end();
-                    if (devices.size() < 4 && !device_exists) {
-                        devices.push_back(event.input.srcDeviceID());
+                case InputType::MENU_OK:
+                    if (devices.size() < 4) {
+                        const bool device_exists = devices.end()
+                            != std::find(devices.begin(), devices.end(), event.input.srcDeviceID());
+                        if (!device_exists)
+                            onPlayerJoin(event.input.srcDeviceID());
                     }
-                }
-                break;
-                case InputType::MENU_CANCEL: {
+                    break;
+                case InputType::MENU_CANCEL:
                     if (devices.empty()) {
                         //parent.states.emplace_back(std::make_unique<FadeOut>(app));
                         app.states().pop();
                         return;
                     }
-                    const auto it = std::remove(devices.begin(), devices.end(), event.input.srcDeviceID());
-                    devices.erase(it, devices.end());
-                }
-                break;
+                    onPlayerLeave(event.input.srcDeviceID());
+                    break;
                 default:
-                break;
+                    break;
                 }
             }
             break;
@@ -84,11 +113,10 @@ void PlayerSelect::draw(MultiplayerState&, GraphicsContext& gcx) const
 
     int well_x = (gcx.screenWidth() - well_full_width * well_count) / 2;
     const int well_y = (gcx.screenHeight() - well_height) / 2;
-    uint8_t player_id = 0;
-    for (const auto& device_id : devices) {
+
+    for (const auto& player_id : player_ids) {
         drawJoinedWell(gcx, well_x, well_y, player_id);
         well_x += well_full_width;
-        player_id++;
     }
     if (devices.size() < 2)
         drawPendingWell(gcx, well_x, well_y);
