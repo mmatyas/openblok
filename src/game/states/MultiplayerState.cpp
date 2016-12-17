@@ -11,7 +11,7 @@ MultiplayerState::MultiplayerState(AppContext& app)
     : tex_background(app.gcx().loadTexture(Paths::data() + "gamebg.png"))
 {
     updatePositions(app.gcx());
-    states.emplace_back(std::make_unique<SubStates::Multiplayer::States::PlayerSelect>());
+    states.emplace_back(std::make_unique<SubStates::Multiplayer::States::PlayerSelect>(app));
 }
 
 MultiplayerState::~MultiplayerState() = default;
