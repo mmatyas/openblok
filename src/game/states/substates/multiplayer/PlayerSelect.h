@@ -24,6 +24,7 @@ private:
     std::array<std::unique_ptr<Texture>, 4> tex_player;
     std::unique_ptr<Texture> tex_ok;
     std::unique_ptr<Texture> tex_pending;
+    std::unique_ptr<Texture> tex_begin;
 
     void onPlayerJoin(DeviceID);
     void onPlayerLeave(DeviceID);

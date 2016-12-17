@@ -33,6 +33,7 @@ PlayerSelect::PlayerSelect(AppContext& app)
     tex_player.at(2) = font_player->renderText(tr("PLAYER C"), 0x00B7EB_rgb);
     tex_player.at(3) = font_player->renderText(tr("PLAYER D"), 0xEEEE10_rgb);
     tex_pending = font_smaller->renderText(tr("PRESS START\nTO JOIN"), 0xEEEEEE_rgb);
+    tex_begin = font_smaller->renderText(tr("PRESS START\nTO BEGIN!"), 0xEEEEEE_rgb);
 }
 
 void PlayerSelect::onPlayerJoin(DeviceID device_id)
@@ -111,7 +112,8 @@ void PlayerSelect::draw(MultiplayerState&, GraphicsContext& gcx) const
     static const int well_full_width = well_width + 2 * well_padding_x;
     const int well_count = std::min<int>(devices.size() + 1, 4);
 
-    int well_x = (gcx.screenWidth() - well_full_width * well_count) / 2;
+    const int first_well_x = (gcx.screenWidth() - well_full_width * well_count) / 2;
+    int well_x = first_well_x;
     const int well_y = (gcx.screenHeight() - well_height) / 2;
 
     for (const auto& player_id : player_ids) {
@@ -120,6 +122,10 @@ void PlayerSelect::draw(MultiplayerState&, GraphicsContext& gcx) const
     }
     if (devices.size() < 4)
         drawPendingWell(gcx, well_x, well_y);
+    if (devices.size() > 1) {
+        tex_begin->drawAt(first_well_x + well_padding_x + 16,
+                          well_y + well_height - 10 - tex_begin->height());
+    }
 }
 
 void PlayerSelect::drawWellBackground(GraphicsContext& gcx, int x, int y) const
