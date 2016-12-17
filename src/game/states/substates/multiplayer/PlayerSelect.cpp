@@ -1,6 +1,7 @@
 #include "PlayerSelect.h"
 
 #include "FadeInOut.h"
+#include "Gameplay.h"
 #include "game/AppContext.h"
 #include "game/components/Mino.h"
 #include "game/components/MinoStorage.h"
@@ -87,6 +88,18 @@ void PlayerSelect::update(MultiplayerState& parent, const std::vector<Event>& ev
                             != std::find(devices.begin(), devices.end(), event.input.srcDeviceID());
                         if (!device_exists)
                             onPlayerJoin(event.input.srcDeviceID());
+                        else if (event.input.srcDeviceID() == devices.front() && devices.size() > 1) {
+                            assert(devices.size() > 1);
+                            parent.states.emplace_back(std::make_unique<FadeOut>([this, &parent, &app](){
+                                parent.states.emplace_back(std::make_unique<Gameplay>(parent, app, devices));
+                                parent.states.emplace_back(std::make_unique<FadeIn>([&parent, &app](){
+                                    parent.states.pop_back();
+                                }));
+                                parent.states.pop_front(); // pop playerselect
+                                parent.states.pop_front(); // pop fadeout
+                            }));
+                            return;
+                        }
                     }
                     break;
                 case InputType::MENU_CANCEL:
