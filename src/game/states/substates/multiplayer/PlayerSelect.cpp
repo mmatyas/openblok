@@ -30,7 +30,7 @@ PlayerSelect::PlayerSelect(AppContext& app)
     tex_ok = font_ready->renderText(tr("READY!"), 0xEEEEEE_rgb);
     tex_player.at(0) = font_player->renderText(tr("PLAYER A"), 0xEE1010_rgb);
     tex_player.at(1) = font_player->renderText(tr("PLAYER B"), 0x10EE10_rgb);
-    tex_player.at(2) = font_player->renderText(tr("PLAYER C"), 0x1010EE_rgb);
+    tex_player.at(2) = font_player->renderText(tr("PLAYER C"), 0x00B7EB_rgb);
     tex_player.at(3) = font_player->renderText(tr("PLAYER D"), 0xEEEE10_rgb);
     tex_pending = font_smaller->renderText(tr("PRESS START\nTO JOIN"), 0xEEEEEE_rgb);
 }
