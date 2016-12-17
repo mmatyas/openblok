@@ -64,7 +64,7 @@ class DeviceEvent {
 public:
     explicit DeviceEvent(DeviceEventType, int device_id);
     const DeviceEventType type;
-    const int device_id;
+    const DeviceID device_id;
 };
 
 
