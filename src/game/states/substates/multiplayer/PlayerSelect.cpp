@@ -1,5 +1,6 @@
 #include "PlayerSelect.h"
 
+#include "FadeInOut.h"
 #include "game/AppContext.h"
 #include "game/components/Mino.h"
 #include "game/components/MinoStorage.h"
@@ -69,7 +70,7 @@ void PlayerSelect::onPlayerLeave(DeviceID device_id)
     assert(devices.size() == player_ids.size());
 }
 
-void PlayerSelect::update(MultiplayerState&, const std::vector<Event>& events, AppContext& app)
+void PlayerSelect::update(MultiplayerState& parent, const std::vector<Event>& events, AppContext& app)
 {
     for (const auto& event : events) {
         switch (event.type) {
@@ -90,8 +91,9 @@ void PlayerSelect::update(MultiplayerState&, const std::vector<Event>& events, A
                     break;
                 case InputType::MENU_CANCEL:
                     if (devices.empty()) {
-                        //parent.states.emplace_back(std::make_unique<FadeOut>(app));
-                        app.states().pop();
+                        parent.states.emplace_back(std::make_unique<FadeOut>([&app](){
+                            app.states().pop();
+                        }));
                         return;
                     }
                     onPlayerLeave(event.input.srcDeviceID());
@@ -128,7 +130,7 @@ void PlayerSelect::draw(MultiplayerState&, GraphicsContext& gcx) const
     }
 }
 
-void PlayerSelect::drawWellBackground(GraphicsContext& gcx, int x, int y) const
+void PlayerSelect::drawWellBackground(GraphicsContext&, int x, int y) const
 {
     const auto& cell = MinoStorage::getMatrixCell();
     for (unsigned row = 0; row < 20; row++) {

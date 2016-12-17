@@ -48,6 +48,7 @@ set(MOD_GAME_SRC
     states/SinglePlayState.cpp
     states/substates/mainmenu/Base.cpp
     states/substates/mainmenu/Options.cpp
+    states/substates/multiplayer/FadeInOut.cpp
     states/substates/multiplayer/PlayerSelect.cpp
     states/substates/singleplayer/Gameplay.cpp
     states/substates/singleplayer/MinorStates.cpp
@@ -122,6 +123,7 @@ set(MOD_GAME_H
     states/substates/MainMenu.h
     states/substates/mainmenu/Base.h
     states/substates/mainmenu/Options.h
+    states/substates/multiplayer/FadeInOut.h
     states/substates/multiplayer/PlayerSelect.h
     states/substates/singleplayer/Gameplay.h
     states/substates/singleplayer/MinorStates.h

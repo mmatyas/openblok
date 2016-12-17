@@ -2,6 +2,7 @@
 
 #include "game/AppContext.h"
 #include "substates/Multiplayer.h"
+#include "substates/multiplayer/FadeInOut.h"
 #include "substates/multiplayer/PlayerSelect.h"
 #include "system/Paths.h"
 #include "system/Texture.h"
@@ -12,6 +13,9 @@ MultiplayerState::MultiplayerState(AppContext& app)
 {
     updatePositions(app.gcx());
     states.emplace_back(std::make_unique<SubStates::Multiplayer::States::PlayerSelect>(app));
+    states.emplace_back(std::make_unique<SubStates::Multiplayer::States::FadeIn>([this](){
+        states.pop_back();
+    }));
 }
 
 MultiplayerState::~MultiplayerState() = default;
