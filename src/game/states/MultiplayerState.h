@@ -1,8 +1,9 @@
 #pragma once
 
 #include "game/GameState.h"
-#include "game/layout/singleplayer/WellBox.h"
+#include "game/layout/multiplayer/BottomBarBox.h"
 #include "game/layout/multiplayer/TopBarBox.h"
+#include "game/layout/singleplayer/WellBox.h"
 
 #include <list>
 #include <memory>
@@ -26,6 +27,7 @@ public:
     std::list<std::unique_ptr<SubStates::Multiplayer::State>> states;
     std::unordered_map<DeviceID, Layout::WellBox> ui_wells;
     std::unordered_map<DeviceID, Layout::TopBarBox> ui_topbars;
+    std::unordered_map<DeviceID, Layout::BottomBarBox> ui_bottombars;
 
 private:
     std::unique_ptr<Texture> tex_background;

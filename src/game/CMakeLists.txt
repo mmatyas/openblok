@@ -38,6 +38,7 @@ set(MOD_GAME_SRC
     layout/options/OptionsItem.cpp
     layout/options/ToggleBtn.cpp
     layout/options/ValueChooser.cpp
+    layout/multiplayer/BottomBarBox.cpp
     layout/multiplayer/TopBarBox.cpp
     layout/singleplayer/LeftSidebarBox.cpp
     layout/singleplayer/RightSidebarBox.cpp
@@ -112,6 +113,7 @@ set(MOD_GAME_H
     layout/options/OptionsItem.h
     layout/options/ToggleBtn.h
     layout/options/ValueChooser.h
+    layout/multiplayer/BottomBarBox.h
     layout/multiplayer/TopBarBox.h
     layout/singleplayer/LeftSidebarBox.h
     layout/singleplayer/RightSidebarBox.h

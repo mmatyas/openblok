@@ -31,17 +31,22 @@ void MultiplayerState::updatePositions(GraphicsContext& gcx)
         return;
     assert(ui_wells.size() > 1);
 
-    const float scale = 0.70;
+    const float scale = 0.8;
     const float inverse_scale = 1.f / scale;
 
     const int well_full_width = well_width + 2 * well_padding_x;
-    int well_x = (gcx.screenWidth() * inverse_scale - well_full_width * ui_wells.size()) / 2;
-    const int well_y = (gcx.screenHeight() * inverse_scale - well_height) / 2;
+    int well_x = well_padding_x + (gcx.screenWidth() * inverse_scale - well_full_width * ui_wells.size()) / 2;
+    const int well_y = 40 + (gcx.screenHeight() * inverse_scale - well_height) / 2;
 
     assert(ui_wells.size() == ui_topbars.size());
     for (auto& ui_well : ui_wells) {
+        auto& topbar = ui_topbars.at(ui_well.first);
+        topbar.setPosition(well_x, well_y - 10 - topbar.height());
+
+        auto& bottombar = ui_bottombars.at(ui_well.first);
+        bottombar.setPosition(well_x, well_y + well_height + 10);
+
         ui_well.second.setPosition(well_x, well_y);
-        ui_topbars.at(ui_well.first).setPosition(well_x, well_y - 10 - 4 * Mino::texture_size_px);
         well_x += well_full_width;
     }
 }
