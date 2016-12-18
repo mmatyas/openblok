@@ -22,6 +22,7 @@ namespace States {
 class Gameplay : public State {
 public:
     Gameplay(MultiplayerState&, AppContext&, const std::vector<DeviceID>&);
+    void updateAnimationsOnly(MultiplayerState&, AppContext&) final;
     void update(MultiplayerState&, const std::vector<Event>&, AppContext&) final;
     void draw(MultiplayerState&, GraphicsContext&) const final;
 
@@ -42,8 +43,8 @@ private:
     std::unordered_map<DeviceID, ScoreType> previous_lineclear_type;
     std::unordered_map<DeviceID, unsigned short> back2back_length;
 
-    void addNextPiece(MultiplayerState& parent);
-    void registerObservers(MultiplayerState& parent, AppContext&);
+    void addNextPiece(MultiplayerState&, DeviceID);
+    void registerObservers(MultiplayerState&, AppContext&);
 };
 
 } // namespace States

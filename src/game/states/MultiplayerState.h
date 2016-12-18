@@ -1,6 +1,7 @@
 #pragma once
 
 #include "game/GameState.h"
+#include "game/PlayerStatistics.h"
 #include "game/layout/multiplayer/BottomBarBox.h"
 #include "game/layout/multiplayer/TopBarBox.h"
 #include "game/layout/singleplayer/WellBox.h"
@@ -29,6 +30,7 @@ public:
     std::unordered_map<DeviceID, Layout::WellBox> ui_wells;
     std::unordered_map<DeviceID, Layout::TopBarBox> ui_topbars;
     std::unordered_map<DeviceID, Layout::BottomBarBox> ui_bottombars;
+    std::unordered_map<DeviceID, PlayerStatistics> player_stats;
 
 private:
     std::unique_ptr<Texture> tex_background;

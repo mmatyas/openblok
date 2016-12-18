@@ -1,12 +1,15 @@
 #include "Gameplay.h"
 
 #include "game/AppContext.h"
+#include "game/components/Piece.h"
 #include "game/states/MultiplayerState.h"
 #include "system/AudioContext.h"
 #include "system/Music.h"
 #include "system/Paths.h"
+#include "system/SoundEffect.h"
 
 #include <cmath>
+
 
 namespace SubStates {
 namespace Multiplayer {
@@ -55,12 +58,158 @@ Gameplay::Gameplay(MultiplayerState& parent, AppContext& app, const std::vector<
             std::forward_as_tuple(device_id), std::forward_as_tuple(app));
         parent.ui_bottombars.emplace(std::piecewise_construct,
             std::forward_as_tuple(device_id), std::forward_as_tuple(app));
+        parent.player_stats.emplace(std::piecewise_construct,
+            std::forward_as_tuple(device_id), std::forward_as_tuple());
     }
     assert(parent.ui_wells.size() > 1);
     parent.updatePositions(app.gcx());
 
     music->playLoop();
     app.audio().pauseAll();
+
+    registerObservers(parent, app);
+}
+
+void Gameplay::addNextPiece(MultiplayerState& parent, DeviceID device_id)
+{
+    parent.ui_wells.at(device_id).well().addPiece(parent.ui_topbars.at(device_id).nextQueue().next());
+    parent.ui_topbars.at(device_id).holdQueue().onNextTurn();
+}
+
+void Gameplay::registerObservers(MultiplayerState& parent, AppContext& app)
+{
+    for (const DeviceID device_id : player_devices) {
+        auto& well = parent.ui_wells.at(device_id).well();
+
+        well.registerObserver(WellEvent::Type::PIECE_LOCKED, [this](const WellEvent&){
+            sfx_onlock->playOnce();
+        });
+
+        well.registerObserver(WellEvent::Type::PIECE_ROTATED, [this](const WellEvent&){
+            sfx_onrotate->playOnce();
+        });
+
+        well.registerObserver(WellEvent::Type::NEXT_REQUESTED, [this, &parent, device_id](const WellEvent&){
+            // if the game is still running
+            if (!gravity_levels.empty())
+                addNextPiece(parent, device_id);
+        });
+
+        well.registerObserver(WellEvent::Type::HOLD_REQUESTED, [this, &parent, device_id](const WellEvent&){
+            auto& well = parent.ui_wells.at(device_id).well();
+            auto& hold_queue = parent.ui_topbars.at(device_id).holdQueue();
+
+            hold_queue.onSwapRequested();
+            if (hold_queue.swapAllowed()) {
+                auto type = well.activePiece()->type();
+                well.deletePiece();
+                if (hold_queue.isEmpty()) {
+                    hold_queue.swapWithEmpty(type);
+                    addNextPiece(parent, device_id);
+                }
+                else
+                    well.addPiece(hold_queue.swapWith(type));
+
+                sfx_onhold->playOnce();
+            }
+        });
+
+        well.registerObserver(WellEvent::Type::LINE_CLEAR_ANIMATION_START, [this](const WellEvent& event){
+            assert(event.type == WellEvent::Type::LINE_CLEAR_ANIMATION_START);
+            assert(event.lineclear.count > 0);
+            assert(event.lineclear.count <= 4);
+            sfx_onlineclear.at(event.lineclear.count - 1)->playOnce();
+        });
+
+        well.registerObserver(WellEvent::Type::LINE_CLEAR, [this, &parent, &app, device_id](const WellEvent& event){
+            assert(event.type == WellEvent::Type::LINE_CLEAR);
+            assert(event.lineclear.count > 0);
+            assert(event.lineclear.count <= 4);
+
+            auto& player_stats = parent.player_stats.at(device_id);
+
+            texts_need_update = true;
+            lineclears_left.at(device_id) -= event.lineclear.count;
+            player_stats.total_cleared_lines += event.lineclear.count;
+
+
+            // increase score
+            auto score_type = ScoreTable::lineclearType(event.lineclear);
+            unsigned score = ScoreTable::value(score_type);
+            std::string popup_text = ScoreTable::name(score_type);
+            player_stats.event_count[score_type]++;
+
+            if (ScoreTable::canContinueBackToBack(previous_lineclear_type.at(device_id), score_type)) {
+                score *= ScoreTable::back2backMultiplier();
+                popup_text = ScoreTable::back2backName() + "\n" + popup_text;
+                back2back_length.at(device_id)++;
+                player_stats.back_to_back_count++;
+                player_stats.back_to_back_longest = std::max(player_stats.back_to_back_longest,
+                                                            back2back_length.at(device_id));
+            }
+            else
+                back2back_length.at(device_id) = 0;
+
+            player_stats.score += score * player_stats.level;
+            previous_lineclear_type.at(device_id) = score_type;
+
+
+            // increase gravity level
+            auto& lines_left = lineclears_left.at(device_id);
+            if (lines_left <= 0) {
+                auto& gravity_stack = gravity_levels.at(device_id);
+                gravity_stack.pop();
+                if (gravity_stack.empty()) {
+                    lines_left = 0;
+                    // music->fadeOut(std::chrono::seconds(1));
+                    // parent.states.emplace_back(std::make_unique<GameComplete>(parent, app));
+                    return;
+                }
+                parent.ui_wells.at(device_id).well().setGravity(gravity_stack.top());
+                lines_left += lineclears_per_level;
+                player_stats.level++;
+                sfx_onlevelup->playOnce();
+            }
+        });
+
+        well.registerObserver(WellEvent::Type::MINI_TSPIN_DETECTED, [this, &parent, device_id](const WellEvent&){
+            this->texts_need_update = true;
+            auto& player_stats = parent.player_stats.at(device_id);
+            player_stats.score += ScoreTable::value(ScoreType::MINI_TSPIN);
+            player_stats.event_count[ScoreType::MINI_TSPIN]++;
+        });
+
+        well.registerObserver(WellEvent::Type::TSPIN_DETECTED, [this, &parent, device_id](const WellEvent&){
+            this->texts_need_update = true;
+            auto& player_stats = parent.player_stats.at(device_id);
+            player_stats.score += ScoreTable::value(ScoreType::TSPIN);
+            player_stats.event_count[ScoreType::TSPIN]++;
+        });
+
+        well.registerObserver(WellEvent::Type::HARDDROPPED, [this, &parent, device_id](const WellEvent& event){
+            assert(event.harddrop.count < 22);
+            this->texts_need_update = true;
+            auto& player_stats = parent.player_stats.at(device_id);
+            player_stats.score += event.harddrop.count * ScoreTable::value(ScoreType::HARDDROP);
+        });
+
+        well.registerObserver(WellEvent::Type::SOFTDROPPED, [this, &parent, device_id](const WellEvent&){
+            this->texts_need_update = true;
+            auto& player_stats = parent.player_stats.at(device_id);
+            player_stats.score += ScoreTable::value(ScoreType::SOFTDROP);
+        });
+
+        well.registerObserver(WellEvent::Type::GAME_OVER, [this, &parent, &app](const WellEvent&){
+            music->fadeOut(std::chrono::seconds(1));
+            // parent.states.emplace_back(std::make_unique<GameOver>(parent, app));
+        });
+    } // end of `for`
+}
+
+void Gameplay::updateAnimationsOnly(MultiplayerState& parent, AppContext&)
+{
+    for (auto& ui_well : parent.ui_wells)
+        ui_well.second.well().updateAnimationsOnly();
 }
 
 void Gameplay::update(MultiplayerState& parent, const std::vector<Event>& events, AppContext& app)
