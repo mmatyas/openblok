@@ -53,7 +53,7 @@ void MultiplayerState::updatePositions(GraphicsContext& gcx)
 
 void MultiplayerState::update(const std::vector<Event>& events, AppContext& app)
 {
-    std::vector<InputEvent> input_events;
+    std::map<DeviceID, std::vector<InputEvent>> input_events;
     for (const auto& event : events) {
         switch (event.type) {
             case EventType::WINDOW:
@@ -61,7 +61,7 @@ void MultiplayerState::update(const std::vector<Event>& events, AppContext& app)
                     updatePositions(app.gcx());
                 break;
             case EventType::INPUT:
-                input_events.emplace_back(event.input.type(), event.input.down(), event.input.srcDeviceID());
+                input_events[event.input.srcDeviceID()].emplace_back(event.input);
                 break;
             default:
                 // TODO ?
@@ -69,7 +69,7 @@ void MultiplayerState::update(const std::vector<Event>& events, AppContext& app)
         }
     }
     for (auto& ui_well : ui_wells)
-        ui_well.second.well().updateKeystateOnly(input_events);
+        ui_well.second.well().updateKeystateOnly(input_events[ui_well.first]);
 
     states.back()->update(*this, events, app);
 }
