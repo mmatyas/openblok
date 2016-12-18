@@ -89,6 +89,7 @@ void PlayerSelect::update(MultiplayerState& parent, const std::vector<Event>& ev
                         if (!device_exists)
                             onPlayerJoin(event.input.srcDeviceID());
                         else if (event.input.srcDeviceID() == devices.front() && devices.size() > 1) {
+                            parent.device_order = devices;
                             assert(devices.size() > 1);
                             parent.states.emplace_back(std::make_unique<FadeOut>([this, &parent, &app](){
                                 parent.states.emplace_back(std::make_unique<Gameplay>(parent, app, devices));

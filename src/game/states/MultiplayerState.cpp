@@ -39,14 +39,14 @@ void MultiplayerState::updatePositions(GraphicsContext& gcx)
     const int well_y = 40 + (gcx.screenHeight() * inverse_scale - well_height) / 2;
 
     assert(ui_wells.size() == ui_topbars.size());
-    for (auto& ui_well : ui_wells) {
-        auto& topbar = ui_topbars.at(ui_well.first);
+    for (const DeviceID device_id : device_order) {
+        auto& topbar = ui_topbars.at(device_id);
         topbar.setPosition(well_x, well_y - 10 - topbar.height());
 
-        auto& bottombar = ui_bottombars.at(ui_well.first);
+        auto& bottombar = ui_bottombars.at(device_id);
         bottombar.setPosition(well_x, well_y + well_height + 10);
 
-        ui_well.second.setPosition(well_x, well_y);
+        ui_wells.at(device_id).setPosition(well_x, well_y);
         well_x += well_full_width;
     }
 }

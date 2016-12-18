@@ -25,6 +25,7 @@ public:
     void updatePositions(GraphicsContext&);
 
     std::list<std::unique_ptr<SubStates::Multiplayer::State>> states;
+    std::vector<DeviceID> device_order;
     std::unordered_map<DeviceID, Layout::WellBox> ui_wells;
     std::unordered_map<DeviceID, Layout::TopBarBox> ui_topbars;
     std::unordered_map<DeviceID, Layout::BottomBarBox> ui_bottombars;
