@@ -49,9 +49,10 @@ Gameplay::Gameplay(MultiplayerState& parent, AppContext& app, const std::vector<
         back2back_length[device_id] = 0;
 
         parent.ui_wells.emplace(std::piecewise_construct,
-                                std::forward_as_tuple(device_id),
-                                std::forward_as_tuple(app));
+            std::forward_as_tuple(device_id), std::forward_as_tuple(app));
         parent.ui_wells.at(device_id).well().setGravity(gravity_levels.at(device_id).top());
+        parent.ui_topbars.emplace(std::piecewise_construct,
+            std::forward_as_tuple(device_id), std::forward_as_tuple(app));
     }
     assert(parent.ui_wells.size() > 1);
     parent.updatePositions(app.gcx());
@@ -112,10 +113,12 @@ void Gameplay::draw(MultiplayerState& parent, GraphicsContext& gcx) const
     const auto original_scale = gcx.getDrawScale();
     gcx.modifyDrawScale(original_scale * scale);
 
-    for (auto& ui_well : parent.ui_wells) {
+    for (const auto& ui_well : parent.ui_wells) {
         ui_well.second.drawBase(gcx);
         ui_well.second.drawContent(gcx);
     }
+    for (const auto& ui_topbar : parent.ui_topbars)
+        ui_topbar.second.draw(gcx);
 
     gcx.modifyDrawScale(original_scale);
 }

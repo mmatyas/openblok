@@ -124,7 +124,7 @@ void PlayerSelect::update(MultiplayerState& parent, const std::vector<Event>& ev
 
 void PlayerSelect::draw(MultiplayerState&, GraphicsContext& gcx) const
 {
-    const float scale = 0.75;
+    const float scale = 0.8;
     const float inverse_scale = 1.f / scale;
     const auto original_scale = gcx.getDrawScale();
     gcx.modifyDrawScale(original_scale * scale);
