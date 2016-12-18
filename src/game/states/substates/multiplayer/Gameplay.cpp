@@ -107,10 +107,17 @@ void Gameplay::update(MultiplayerState& parent, const std::vector<Event>& events
 
 void Gameplay::draw(MultiplayerState& parent, GraphicsContext& gcx) const
 {
+    const float scale = 0.75;
+    const float inverse_scale = 1.f / scale;
+    const auto original_scale = gcx.getDrawScale();
+    gcx.modifyDrawScale(original_scale * scale);
+
     for (auto& ui_well : parent.ui_wells) {
         ui_well.second.drawBase(gcx);
         ui_well.second.drawContent(gcx);
     }
+
+    gcx.modifyDrawScale(original_scale);
 }
 
 } // namespace States

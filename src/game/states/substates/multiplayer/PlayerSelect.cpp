@@ -22,7 +22,7 @@ namespace States {
 
 static const int well_width = 10 * Mino::texture_size_px;
 static const int well_height = 20 * Mino::texture_size_px;
-static const int well_padding_x = Mino::texture_size_px / 2;
+static const int well_padding_x = 5 + Mino::texture_size_px;
 
 PlayerSelect::PlayerSelect(AppContext& app)
 {
@@ -124,12 +124,17 @@ void PlayerSelect::update(MultiplayerState& parent, const std::vector<Event>& ev
 
 void PlayerSelect::draw(MultiplayerState&, GraphicsContext& gcx) const
 {
-    static const int well_full_width = well_width + 2 * well_padding_x;
+    const float scale = 0.75;
+    const float inverse_scale = 1.f / scale;
+    const auto original_scale = gcx.getDrawScale();
+    gcx.modifyDrawScale(original_scale * scale);
+
+    static const int well_full_width = (well_width + 2 * well_padding_x);
     const int well_count = std::min<int>(devices.size() + 1, 4);
 
-    const int first_well_x = (gcx.screenWidth() - well_full_width * well_count) / 2;
+    const int first_well_x = ((gcx.screenWidth() * inverse_scale - well_full_width * well_count) / 2);
     int well_x = first_well_x;
-    const int well_y = (gcx.screenHeight() - well_height) / 2;
+    const int well_y = ((gcx.screenHeight() * inverse_scale - well_height) / 2);
 
     for (const auto& player_id : player_ids) {
         drawJoinedWell(gcx, well_x, well_y, player_id);
@@ -141,6 +146,8 @@ void PlayerSelect::draw(MultiplayerState&, GraphicsContext& gcx) const
         tex_begin->drawAt(first_well_x + well_padding_x + 16,
                           well_y + well_height - 10 - tex_begin->height());
     }
+
+    gcx.modifyDrawScale(original_scale);
 }
 
 void PlayerSelect::drawWellBackground(GraphicsContext&, int x, int y) const
