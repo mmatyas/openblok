@@ -239,17 +239,16 @@ void Gameplay::update(MultiplayerState& parent, const std::vector<Event>& events
 
     for (const DeviceID device_id : player_devices) {
         parent.ui_wells.at(device_id).well().updateGameplayOnly(input_events[device_id]);
-        //parent.ui_leftside.update();
-
-        //parent.player_stats.at(i).gametime += Timing::frame_duration;
-        // parent.ui_rightside.updateGametime(parent.player_stats.gametime);
+        parent.ui_topbars.at(device_id).update();
+        // parent.player_stats.at(device_id).gametime += Timing::frame_duration;
     }
 
     if (texts_need_update) {
         for (const DeviceID device_id : player_devices) {
-            //parent.ui_leftside.updateGoalCounter(lineclears_left);
-            //parent.ui_leftside.updateLevelCounter(parent.player_stats.level);
-            //parent.ui_rightside.updateScore(parent.player_stats.score);
+            const auto& stats = parent.player_stats.at(device_id);
+            auto& ui = parent.ui_bottombars.at(device_id);
+            ui.updateLevelCounter(stats.level);
+            ui.updateScore(stats.score);
         }
         texts_need_update = false;
     }
