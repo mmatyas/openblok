@@ -256,23 +256,20 @@ void Gameplay::update(MultiplayerState& parent, const std::vector<Event>& events
     updateAnimationsOnly(parent, app);
 }
 
-void Gameplay::draw(MultiplayerState& parent, GraphicsContext& gcx) const
+void Gameplay::drawPassive(MultiplayerState& parent, GraphicsContext& gcx) const
 {
-    const float scale = 0.8;
-    const float inverse_scale = 1.f / scale;
-    const auto original_scale = gcx.getDrawScale();
-    gcx.modifyDrawScale(original_scale * scale);
-
-    for (const auto& ui_well : parent.ui_wells) {
+    for (const auto& ui_well : parent.ui_wells)
         ui_well.second.drawBase(gcx);
-        ui_well.second.drawContent(gcx);
-    }
     for (const auto& ui_topbar : parent.ui_topbars)
         ui_topbar.second.draw(gcx);
     for (const auto& ui_bottombar : parent.ui_bottombars)
         ui_bottombar.second.draw(gcx);
+}
 
-    gcx.modifyDrawScale(original_scale);
+void Gameplay::drawActive(MultiplayerState& parent, GraphicsContext& gcx) const
+{
+   for (const auto& ui_well : parent.ui_wells)
+        ui_well.second.drawContent(gcx);
 }
 
 } // namespace States

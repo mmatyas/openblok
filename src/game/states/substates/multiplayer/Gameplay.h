@@ -24,7 +24,8 @@ public:
     Gameplay(MultiplayerState&, AppContext&, const std::vector<DeviceID>&);
     void updateAnimationsOnly(MultiplayerState&, AppContext&) final;
     void update(MultiplayerState&, const std::vector<Event>&, AppContext&) final;
-    void draw(MultiplayerState&, GraphicsContext&) const final;
+    void drawPassive(MultiplayerState&, GraphicsContext&) const final;
+    void drawActive(MultiplayerState&, GraphicsContext&) const final;
 
 private:
     const std::vector<DeviceID> player_devices;

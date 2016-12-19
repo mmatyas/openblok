@@ -18,16 +18,18 @@ void FadeIn::update(MultiplayerState&, const std::vector<Event>&, AppContext&)
     alpha.update(Timing::frame_duration);
 }
 
-void FadeIn::draw(MultiplayerState& parent, GraphicsContext& gcx) const
+void FadeIn::drawActive(MultiplayerState&, GraphicsContext& gcx) const
 {
-    auto it = parent.states.begin();
-    auto it_end = --parent.states.end();
-    for (; it != it_end; ++it)
-        (*it)->draw(parent, gcx);
+    const float scale = 0.8;
+    const float inverse_scale = 1.f / scale;
 
     RGBAColor color = 0x00_rgba;
     color.a = alpha.value();
-    gcx.drawFilledRect({0, 0, gcx.screenWidth(), gcx.screenHeight()}, color);
+    gcx.drawFilledRect({
+        0, 0,
+        static_cast<int>(gcx.screenWidth() * inverse_scale),
+        static_cast<int>(gcx.screenHeight() * inverse_scale)},
+        color);
 }
 
 FadeOut::FadeOut(std::function<void()>&& on_end)
@@ -41,16 +43,18 @@ void FadeOut::update(MultiplayerState&, const std::vector<Event>&, AppContext&)
     alpha.update(Timing::frame_duration);
 }
 
-void FadeOut::draw(MultiplayerState& parent, GraphicsContext& gcx) const
+void FadeOut::drawActive(MultiplayerState&, GraphicsContext& gcx) const
 {
-    auto it = parent.states.begin();
-    auto it_end = --parent.states.end();
-    for (; it != it_end; ++it)
-        (*it)->draw(parent, gcx);
+    const float scale = 0.8;
+    const float inverse_scale = 1.f / scale;
 
     RGBAColor color = 0x00_rgba;
     color.a = alpha.value();
-    gcx.drawFilledRect({0, 0, gcx.screenWidth(), gcx.screenHeight()}, color);
+    gcx.drawFilledRect({
+        0, 0,
+        static_cast<int>(gcx.screenWidth() * inverse_scale),
+        static_cast<int>(gcx.screenHeight() * inverse_scale)},
+        color);
 }
 
 } // namespace States

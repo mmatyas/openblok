@@ -16,7 +16,7 @@ class PlayerSelect : public State {
 public:
     PlayerSelect(AppContext&);
     void update(MultiplayerState&, const std::vector<Event>&, AppContext&) final;
-    void draw(MultiplayerState&, GraphicsContext&) const final;
+    void drawPassive(MultiplayerState&, GraphicsContext&) const final;
 
 private:
     std::vector<DeviceID> devices;

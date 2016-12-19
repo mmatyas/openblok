@@ -17,7 +17,8 @@ public:
     virtual ~State() {}
     virtual void updateAnimationsOnly(MultiplayerState&, AppContext&) {}
     virtual void update(MultiplayerState&, const std::vector<Event>&, AppContext&) = 0;
-    virtual void draw(MultiplayerState&, GraphicsContext&) const {}
+    virtual void drawPassive(MultiplayerState&, GraphicsContext&) const {}
+    virtual void drawActive(MultiplayerState&, GraphicsContext&) const {}
 };
 
 } // namespace Multiplayer

@@ -123,12 +123,10 @@ void PlayerSelect::update(MultiplayerState& parent, const std::vector<Event>& ev
     }
 }
 
-void PlayerSelect::draw(MultiplayerState&, GraphicsContext& gcx) const
+void PlayerSelect::drawPassive(MultiplayerState&, GraphicsContext& gcx) const
 {
     const float scale = 0.8;
     const float inverse_scale = 1.f / scale;
-    const auto original_scale = gcx.getDrawScale();
-    gcx.modifyDrawScale(original_scale * scale);
 
     static const int well_full_width = (well_width + 2 * well_padding_x);
     const int well_count = std::min<int>(devices.size() + 1, 4);
@@ -147,8 +145,6 @@ void PlayerSelect::draw(MultiplayerState&, GraphicsContext& gcx) const
         tex_begin->drawAt(first_well_x + well_padding_x + 16,
                           well_y + well_height - 10 - tex_begin->height());
     }
-
-    gcx.modifyDrawScale(original_scale);
 }
 
 void PlayerSelect::drawWellBackground(GraphicsContext&, int x, int y) const

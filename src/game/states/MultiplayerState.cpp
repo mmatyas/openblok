@@ -77,7 +77,16 @@ void MultiplayerState::update(const std::vector<Event>& events, AppContext& app)
 void MultiplayerState::draw(GraphicsContext& gcx)
 {
     drawCommon(gcx);
-    states.back()->draw(*this, gcx);
+
+    const float scale = 0.8;
+    const auto original_scale = gcx.getDrawScale();
+    gcx.modifyDrawScale(original_scale * scale);
+
+    for(const auto& state : states)
+        state->drawPassive(*this, gcx);
+    states.back()->drawActive(*this, gcx);
+
+    gcx.modifyDrawScale(original_scale);
 }
 
 void MultiplayerState::drawCommon(GraphicsContext& gcx)
