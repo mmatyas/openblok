@@ -53,6 +53,7 @@ set(MOD_GAME_SRC
     states/substates/multiplayer/Countdown.cpp
     states/substates/multiplayer/FadeInOut.cpp
     states/substates/multiplayer/Gameplay.cpp
+    states/substates/multiplayer/Pause.cpp
     states/substates/multiplayer/PlayerSelect.cpp
     states/substates/singleplayer/Gameplay.cpp
     states/substates/singleplayer/MinorStates.cpp
@@ -132,6 +133,7 @@ set(MOD_GAME_H
     states/substates/multiplayer/Countdown.h
     states/substates/multiplayer/FadeInOut.h
     states/substates/multiplayer/Gameplay.h
+    states/substates/multiplayer/Pause.h
     states/substates/multiplayer/PlayerSelect.h
     states/substates/singleplayer/Gameplay.h
     states/substates/singleplayer/MinorStates.h
