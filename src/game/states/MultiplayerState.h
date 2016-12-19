@@ -14,10 +14,14 @@ namespace SubStates { namespace Multiplayer {
     class State;
 } }
 
+enum class MultiplayerMode : uint8_t {
+    MARATHON,
+    BATTLE,
+};
 
 class MultiplayerState: public GameState {
 public:
-    MultiplayerState(AppContext&);
+    MultiplayerState(AppContext&, MultiplayerMode);
     ~MultiplayerState();
 
     void update(const std::vector<Event>&, AppContext&) final;
@@ -25,6 +29,7 @@ public:
 
     void updatePositions(GraphicsContext&);
 
+    const MultiplayerMode gamemode;
     std::list<std::unique_ptr<SubStates::Multiplayer::State>> states;
     std::vector<DeviceID> device_order;
     std::unordered_map<DeviceID, Layout::WellBox> ui_wells;

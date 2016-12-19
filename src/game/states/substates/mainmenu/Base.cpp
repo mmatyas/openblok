@@ -49,16 +49,30 @@ Base::Base(MainMenuState& parent, AppContext& app)
         openSubcolumn(&multiplayer_buttons);
     });
     {
+        multiplayer_buttons.buttons.emplace_back(app, tr("MARATHON"), [this, &app](){
+            const auto duration = std::chrono::milliseconds(500);
+            this->state_transition_alpha = std::make_unique<Transition<uint8_t>>(
+                duration,
+                [](double t){ return t * 0xFF; },
+                [this, &app](){
+                    this->onFadeoutComplete(app,
+                        std::make_unique<MultiplayerState>(app, MultiplayerMode::MARATHON));
+                }
+            );
+            music->fadeOut(duration);
+        });
         multiplayer_buttons.buttons.emplace_back(app, tr("BATTLE"), [this, &app](){
             const auto duration = std::chrono::milliseconds(500);
             this->state_transition_alpha = std::make_unique<Transition<uint8_t>>(
                 duration,
                 [](double t){ return t * 0xFF; },
-                [this, &app](){ this->onFadeoutComplete(app, std::make_unique<MultiplayerState>(app)); }
+                [this, &app](){
+                    this->onFadeoutComplete(app,
+                        std::make_unique<MultiplayerState>(app, MultiplayerMode::BATTLE));
+                }
             );
             music->fadeOut(duration);
         });
-        multiplayer_buttons.buttons.emplace_back(app, tr("MARATHON"), [](){});
     }
     primary_buttons.buttons.emplace_back(app, tr("OPTIONS"), [&app, &parent](){
         parent.states.emplace_back(std::make_unique<SubStates::MainMenu::Options>(parent, app));

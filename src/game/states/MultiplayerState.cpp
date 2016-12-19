@@ -13,8 +13,9 @@ static const int well_height = 20.3 * Mino::texture_size_px + 10;
 static const int well_padding_x = 5 + Mino::texture_size_px;
 
 
-MultiplayerState::MultiplayerState(AppContext& app)
-    : tex_background(app.gcx().loadTexture(Paths::data() + "gamebg.png"))
+MultiplayerState::MultiplayerState(AppContext& app, MultiplayerMode gamemode)
+    : gamemode(gamemode)
+    , tex_background(app.gcx().loadTexture(Paths::data() + "gamebg.png"))
 {
     updatePositions(app.gcx());
     states.emplace_back(std::make_unique<SubStates::Multiplayer::States::PlayerSelect>(app));

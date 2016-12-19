@@ -194,6 +194,7 @@ void Gameplay::registerObservers(MultiplayerState& parent, AppContext& app)
                 if (gravity_stack.empty()) {
                     lines_left = 0;
                     // IF MARATHON
+                    if (parent.gamemode == MultiplayerMode::MARATHON) {
                         player_status.at(device_id) = PlayerStatus::FINISHED;
                         gameend_anim_timers.at(device_id).restart();
                         sfx_onfinish->playOnce();
@@ -203,6 +204,7 @@ void Gameplay::registerObservers(MultiplayerState& parent, AppContext& app)
                         const auto playing_players = playingPlayers();
                         if (playing_players.empty())
                             music->fadeOut(std::chrono::seconds(1));
+                    }
                     // IF BATTLE
                         // wait until someone gets game over
                     return;
@@ -246,23 +248,27 @@ void Gameplay::registerObservers(MultiplayerState& parent, AppContext& app)
             player_status.at(device_id) = PlayerStatus::GAME_OVER;
             gameend_anim_timers.at(device_id).restart();
 
+            // find out who else is still playing
+            auto playing_players = playingPlayers();
+
             // IF MARATHON
                 // wait until all players finish the game
             // IF BATTLE
-            {
-                // find out who else is still playing
-                const auto playing_players = playingPlayers();
-                assert(!playing_players.empty());
-
+            if (parent.gamemode == MultiplayerMode::BATTLE) {
                 // if there's only one player left, s/he is the winner
                 if (playing_players.size() == 1) {
                     const DeviceID pdevid = playing_players.front();
                     player_status.at(pdevid) = PlayerStatus::FINISHED;
                     gameend_anim_timers.at(pdevid).restart();
                     sfx_onfinish->playOnce();
-                    gameend_statistics_delay.restart();
-                    music->fadeOut(std::chrono::seconds(1));
+                    playing_players.clear();
                 }
+            }
+
+            // if everyone got KO'd, or someone won the battle, end the game
+            if (playing_players.empty()) {
+                gameend_statistics_delay.restart();
+                music->fadeOut(std::chrono::seconds(1));
             }
         });
     } // end of `for`
