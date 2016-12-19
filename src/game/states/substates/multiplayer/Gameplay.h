@@ -38,12 +38,26 @@ private:
     std::shared_ptr<SoundEffect> sfx_onrotate;
     bool texts_need_update;
 
+    std::shared_ptr<SoundEffect> sfx_ongameover;
+    std::shared_ptr<SoundEffect> sfx_onfinish;
+    std::unique_ptr<Texture> tex_finish;
+
     const int lineclears_per_level;
     std::unordered_map<DeviceID, int> lineclears_left;
     std::unordered_map<DeviceID, std::stack<Duration>> gravity_levels;
     std::unordered_map<DeviceID, ScoreType> previous_lineclear_type;
     std::unordered_map<DeviceID, unsigned short> back2back_length;
+    std::unordered_map<DeviceID, Transition<double>> gameend_anim_timers;
 
+
+    enum class PlayerStatus : uint8_t {
+        PLAYING,
+        GAME_OVER,
+        FINISHED,
+    };
+    std::unordered_map<DeviceID, PlayerStatus> player_status;
+
+    std::vector<DeviceID> playingPlayers();
     void addNextPiece(MultiplayerState&, DeviceID);
     void registerObservers(MultiplayerState&, AppContext&);
 };

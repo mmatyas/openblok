@@ -6,10 +6,13 @@
 #include "game/components/Piece.h"
 #include "game/states/MultiplayerState.h"
 #include "system/AudioContext.h"
+#include "system/Font.h"
+#include "system/Localize.h"
 #include "system/Music.h"
 #include "system/Paths.h"
 #include "system/SoundEffect.h"
 
+#include <algorithm>
 #include <cmath>
 
 
@@ -30,6 +33,9 @@ Gameplay::Gameplay(MultiplayerState& parent, AppContext& app, const std::vector<
         }})
     , sfx_onlock(app.audio().loadSound(Paths::data() + "sfx/lock.ogg"))
     , sfx_onrotate(app.audio().loadSound(Paths::data() + "sfx/rotate.ogg"))
+    , texts_need_update(true)
+    , sfx_ongameover(app.audio().loadSound(Paths::data() + "sfx/gameover.ogg"))
+    , sfx_onfinish(app.audio().loadSound(Paths::data() + "sfx/finish.ogg"))
     , lineclears_per_level(10)
 {
     assert(player_devices.size() > 1);
@@ -52,6 +58,11 @@ Gameplay::Gameplay(MultiplayerState& parent, AppContext& app, const std::vector<
         lineclears_left[device_id] = lineclears_per_level;
         previous_lineclear_type[device_id] = ScoreType::CLEAR_SINGLE;
         back2back_length[device_id] = 0;
+        player_status[device_id] = PlayerStatus::PLAYING;
+        gameend_anim_timers.emplace(std::piecewise_construct,
+            std::forward_as_tuple(device_id),
+            std::forward_as_tuple(std::chrono::seconds(2), [](double t){ return t; }));
+        gameend_anim_timers.at(device_id).stop();
 
         parent.ui_wells.emplace(std::piecewise_construct,
             std::forward_as_tuple(device_id), std::forward_as_tuple(app));
@@ -66,6 +77,9 @@ Gameplay::Gameplay(MultiplayerState& parent, AppContext& app, const std::vector<
     assert(parent.ui_wells.size() > 1);
     parent.updatePositions(app.gcx());
 
+    auto font_big = app.gcx().loadFont(Paths::data() + "fonts/PTC75F.ttf", 45);
+    tex_finish = font_big->renderText(tr("YOU WIN!"), 0xEEEEEE_rgb);
+
     music->playLoop();
     app.audio().pauseAll();
 
@@ -76,6 +90,16 @@ void Gameplay::addNextPiece(MultiplayerState& parent, DeviceID device_id)
 {
     parent.ui_wells.at(device_id).well().addPiece(parent.ui_topbars.at(device_id).nextQueue().next());
     parent.ui_topbars.at(device_id).holdQueue().onNextTurn();
+}
+
+std::vector<DeviceID> Gameplay::playingPlayers()
+{
+    std::vector<DeviceID> playing_players;
+    for (const DeviceID pdevid : player_devices) {
+        if (player_status.at(pdevid) == PlayerStatus::PLAYING)
+            playing_players.push_back(pdevid);
+    }
+    return playing_players;
 }
 
 void Gameplay::registerObservers(MultiplayerState& parent, AppContext& app)
@@ -93,7 +117,7 @@ void Gameplay::registerObservers(MultiplayerState& parent, AppContext& app)
 
         well.registerObserver(WellEvent::Type::NEXT_REQUESTED, [this, &parent, device_id](const WellEvent&){
             // if the game is still running
-            if (!gravity_levels.at(device_id).empty())
+            if (player_status.at(device_id) == PlayerStatus::PLAYING)
                 addNextPiece(parent, device_id);
         });
 
@@ -163,8 +187,17 @@ void Gameplay::registerObservers(MultiplayerState& parent, AppContext& app)
                 gravity_stack.pop();
                 if (gravity_stack.empty()) {
                     lines_left = 0;
-                    // music->fadeOut(std::chrono::seconds(1));
-                    // parent.states.emplace_back(std::make_unique<GameComplete>(parent, app));
+                    // IF MARATHON
+                        player_status.at(device_id) = PlayerStatus::FINISHED;
+                        gameend_anim_timers.at(device_id).restart();
+                        sfx_onfinish->playOnce();
+
+                        // find out who else is still playing
+                        const auto playing_players = playingPlayers();
+                        if (playing_players.empty())
+                            music->fadeOut(std::chrono::seconds(1));
+                    // IF BATTLE
+                        // wait until someone gets game over
                     return;
                 }
                 parent.ui_wells.at(device_id).well().setGravity(gravity_stack.top());
@@ -201,9 +234,28 @@ void Gameplay::registerObservers(MultiplayerState& parent, AppContext& app)
             player_stats.score += ScoreTable::value(ScoreType::SOFTDROP);
         });
 
-        well.registerObserver(WellEvent::Type::GAME_OVER, [this, &parent, &app](const WellEvent&){
-            music->fadeOut(std::chrono::seconds(1));
-            // parent.states.emplace_back(std::make_unique<GameOver>(parent, app));
+        well.registerObserver(WellEvent::Type::GAME_OVER, [this, &parent, &app, device_id](const WellEvent&){
+            // set game over for the triggering player
+            player_status.at(device_id) = PlayerStatus::GAME_OVER;
+            gameend_anim_timers.at(device_id).restart();
+
+            // IF MARATHON
+                // wait until all players finish the game
+            // IF BATTLE
+            {
+                // find out who else is still playing
+                const auto playing_players = playingPlayers();
+                assert(!playing_players.empty());
+
+                // if there's only one player left, s/he is the winner
+                if (playing_players.size() == 1) {
+                    const DeviceID pdevid = playing_players.front();
+                    player_status.at(pdevid) = PlayerStatus::FINISHED;
+                    gameend_anim_timers.at(pdevid).restart();
+                    sfx_onfinish->playOnce();
+                    music->fadeOut(std::chrono::seconds(1));
+                }
+            }
         });
     } // end of `for`
 }
@@ -240,9 +292,13 @@ void Gameplay::update(MultiplayerState& parent, const std::vector<Event>& events
     }
 
     for (const DeviceID device_id : player_devices) {
-        parent.ui_wells.at(device_id).well().updateGameplayOnly(input_events[device_id]);
+        if (player_status.at(device_id) == PlayerStatus::PLAYING) {
+            parent.ui_wells.at(device_id).well().updateGameplayOnly(input_events[device_id]);
+            parent.player_stats.at(device_id).gametime += Timing::frame_duration;
+        }
         parent.ui_topbars.at(device_id).update();
-        // parent.player_stats.at(device_id).gametime += Timing::frame_duration;
+
+        gameend_anim_timers.at(device_id).update(Timing::frame_duration);
     }
 
     if (texts_need_update) {
@@ -272,6 +328,26 @@ void Gameplay::drawActive(MultiplayerState& parent, GraphicsContext& gcx) const
 {
    for (const auto& ui_well : parent.ui_wells)
         ui_well.second.drawContent(gcx);
+
+   for (const DeviceID device_id : player_devices) {
+        const auto& ui = parent.ui_wells.at(device_id);
+        switch (player_status.at(device_id)) {
+            case PlayerStatus::GAME_OVER: {
+                const int box_h = ui.wellHeight() * gameend_anim_timers.at(device_id).value();
+                gcx.drawFilledRect({
+                    ui.wellX(), ui.wellY() + ui.wellHeight() - box_h,
+                    ui.wellWidth(), box_h
+                }, 0xA0_rgba);
+            }
+            break;
+            case PlayerStatus::FINISHED:
+                tex_finish->drawAt(ui.wellX() + (ui.wellWidth() - tex_finish->width()) / 2,
+                                   ui.wellY() + (ui.wellHeight() - tex_finish->height()) / 2);
+            break;
+            default:
+                break;
+        }
+    }
 }
 
 } // namespace States
