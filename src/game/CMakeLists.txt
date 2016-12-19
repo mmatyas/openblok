@@ -50,6 +50,7 @@ set(MOD_GAME_SRC
     states/SinglePlayState.cpp
     states/substates/mainmenu/Base.cpp
     states/substates/mainmenu/Options.cpp
+    states/substates/multiplayer/Countdown.cpp
     states/substates/multiplayer/FadeInOut.cpp
     states/substates/multiplayer/Gameplay.cpp
     states/substates/multiplayer/PlayerSelect.cpp
@@ -128,6 +129,7 @@ set(MOD_GAME_H
     states/substates/MainMenu.h
     states/substates/mainmenu/Base.h
     states/substates/mainmenu/Options.h
+    states/substates/multiplayer/Countdown.h
     states/substates/multiplayer/FadeInOut.h
     states/substates/multiplayer/Gameplay.h
     states/substates/multiplayer/PlayerSelect.h

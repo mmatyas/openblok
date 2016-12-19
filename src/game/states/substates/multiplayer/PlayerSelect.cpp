@@ -1,5 +1,6 @@
 #include "PlayerSelect.h"
 
+#include "Countdown.h"
 #include "FadeInOut.h"
 #include "Gameplay.h"
 #include "game/AppContext.h"
@@ -93,6 +94,7 @@ void PlayerSelect::update(MultiplayerState& parent, const std::vector<Event>& ev
                             assert(devices.size() > 1);
                             parent.states.emplace_back(std::make_unique<FadeOut>([this, &parent, &app](){
                                 parent.states.emplace_back(std::make_unique<Gameplay>(parent, app, devices));
+                                parent.states.emplace_back(std::make_unique<Countdown>(app));
                                 parent.states.emplace_back(std::make_unique<FadeIn>([&parent, &app](){
                                     parent.states.pop_back();
                                 }));

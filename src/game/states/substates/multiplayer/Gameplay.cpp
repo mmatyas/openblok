@@ -1,5 +1,6 @@
 #include "Gameplay.h"
 
+#include "Countdown.h"
 #include "game/AppContext.h"
 #include "game/components/Piece.h"
 #include "game/states/MultiplayerState.h"
@@ -219,14 +220,14 @@ void Gameplay::update(MultiplayerState& parent, const std::vector<Event>& events
         switch (event.type) {
             case EventType::WINDOW:
                 if (event.window == WindowEvent::FOCUS_LOST) {
-                    //parent.states.emplace_back(std::make_unique<Countdown>(app));
+                    parent.states.emplace_back(std::make_unique<Countdown>(app));
                     //parent.states.emplace_back(std::make_unique<Pause>(app));
                     return;
                 }
                 break;
             case EventType::INPUT:
                 if (event.input.type() == InputType::GAME_PAUSE && event.input.down()) {
-                    //parent.states.emplace_back(std::make_unique<Countdown>(app));
+                    parent.states.emplace_back(std::make_unique<Countdown>(app));
                     //parent.states.emplace_back(std::make_unique<Pause>(app));
                     return;
                 }
