@@ -24,10 +24,14 @@ public:
     void draw(GraphicsContext&, int x, int y) const;
 
 private:
+    static std::deque<PieceType> global_piece_queue;
+    std::deque<PieceType>::const_iterator global_queue_it;
     std::deque<PieceType> piece_queue;
     std::array<std::unique_ptr<Piece>, 7> piece_storage;
     unsigned displayed_piece_count;
 
-    void generate_pieces();
+    // When there are multiple players, we want to provide
+    // the same order of pieces for all of them.
+    void generate_global_pieces();
     void draw_nth_piece(unsigned i, int x, int y) const;
 };
