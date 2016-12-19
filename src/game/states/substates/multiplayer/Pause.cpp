@@ -86,7 +86,7 @@ void Pause::drawActive(MultiplayerState& parent, GraphicsContext&) const
             const auto& tex = tex_menuitems.at(i).at(i == current_menuitem ? 1 : 0);
             tex->drawAt(
                 center_x - tex->width() / 2,
-                center_y + 150 - i * tex->height());
+                center_y + 150 + i * tex->height());
         }
     }
 }
