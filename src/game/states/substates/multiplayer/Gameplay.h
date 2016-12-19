@@ -49,6 +49,7 @@ private:
     std::unordered_map<DeviceID, unsigned short> back2back_length;
     std::unordered_map<DeviceID, Transition<double>> gameend_anim_timers;
 
+    Transition<unsigned> gameend_statistics_delay;
 
     enum class PlayerStatus : uint8_t {
         PLAYING,

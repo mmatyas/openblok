@@ -2,6 +2,7 @@
 
 #include "Countdown.h"
 #include "Pause.h"
+#include "Statistics.h"
 #include "game/AppContext.h"
 #include "game/components/Piece.h"
 #include "game/states/MultiplayerState.h"
@@ -37,6 +38,9 @@ Gameplay::Gameplay(MultiplayerState& parent, AppContext& app, const std::vector<
     , sfx_ongameover(app.audio().loadSound(Paths::data() + "sfx/gameover.ogg"))
     , sfx_onfinish(app.audio().loadSound(Paths::data() + "sfx/finish.ogg"))
     , lineclears_per_level(10)
+    , gameend_statistics_delay(std::chrono::seconds(5),
+        [](double t){ return t * 5; },
+        [&parent, &app](){ parent.states.emplace_back(std::make_unique<Statistics>(parent, app)); })
 {
     assert(player_devices.size() > 1);
     assert(player_devices.size() <= 4);
@@ -82,6 +86,8 @@ Gameplay::Gameplay(MultiplayerState& parent, AppContext& app, const std::vector<
 
     music->playLoop();
     app.audio().pauseAll();
+
+    gameend_statistics_delay.stop();
 
     registerObservers(parent, app);
 }
@@ -191,6 +197,7 @@ void Gameplay::registerObservers(MultiplayerState& parent, AppContext& app)
                         player_status.at(device_id) = PlayerStatus::FINISHED;
                         gameend_anim_timers.at(device_id).restart();
                         sfx_onfinish->playOnce();
+                        gameend_statistics_delay.restart();
 
                         // find out who else is still playing
                         const auto playing_players = playingPlayers();
@@ -253,6 +260,7 @@ void Gameplay::registerObservers(MultiplayerState& parent, AppContext& app)
                     player_status.at(pdevid) = PlayerStatus::FINISHED;
                     gameend_anim_timers.at(pdevid).restart();
                     sfx_onfinish->playOnce();
+                    gameend_statistics_delay.restart();
                     music->fadeOut(std::chrono::seconds(1));
                 }
             }
@@ -268,28 +276,37 @@ void Gameplay::updateAnimationsOnly(MultiplayerState& parent, AppContext&)
 
 void Gameplay::update(MultiplayerState& parent, const std::vector<Event>& events, AppContext& app)
 {
+    const bool someone_still_playing = !playingPlayers().empty();
     std::map<DeviceID, std::vector<InputEvent>> input_events;
     for (const auto& event : events) {
         switch (event.type) {
             case EventType::WINDOW:
-                if (event.window == WindowEvent::FOCUS_LOST) {
+                if (someone_still_playing && event.window == WindowEvent::FOCUS_LOST) {
                     parent.states.emplace_back(std::make_unique<Countdown>(app));
                     parent.states.emplace_back(std::make_unique<Pause>(app));
                     return;
                 }
                 break;
             case EventType::INPUT:
-                if (event.input.type() == InputType::GAME_PAUSE && event.input.down()) {
-                    parent.states.emplace_back(std::make_unique<Countdown>(app));
-                    parent.states.emplace_back(std::make_unique<Pause>(app));
-                    return;
+                if (someone_still_playing) {
+                    if (event.input.type() == InputType::GAME_PAUSE && event.input.down()) {
+                        parent.states.emplace_back(std::make_unique<Countdown>(app));
+                        parent.states.emplace_back(std::make_unique<Pause>(app));
+                        return;
+                    }
+                    input_events[event.input.srcDeviceID()].emplace_back(event.input);
                 }
-                input_events[event.input.srcDeviceID()].emplace_back(event.input);
+                else if (gameend_statistics_delay.value() > 1) {
+                    // allow input only after at least one second has passed
+                    gameend_statistics_delay.update(gameend_statistics_delay.length());
+                }
                 break;
             default:
                 break;
         }
     }
+
+    gameend_statistics_delay.update(Timing::frame_duration);
 
     for (const DeviceID device_id : player_devices) {
         if (player_status.at(device_id) == PlayerStatus::PLAYING) {
