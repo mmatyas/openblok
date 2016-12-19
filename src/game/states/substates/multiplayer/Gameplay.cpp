@@ -93,7 +93,7 @@ void Gameplay::registerObservers(MultiplayerState& parent, AppContext& app)
 
         well.registerObserver(WellEvent::Type::NEXT_REQUESTED, [this, &parent, device_id](const WellEvent&){
             // if the game is still running
-            if (!gravity_levels.empty())
+            if (!gravity_levels.at(device_id).empty())
                 addNextPiece(parent, device_id);
         });
 
