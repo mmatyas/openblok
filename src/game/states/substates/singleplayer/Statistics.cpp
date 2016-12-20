@@ -136,7 +136,7 @@ void Statistics::draw(SinglePlayState& parent, GraphicsContext& gcx) const
 
 void Statistics::drawBackground(SinglePlayState& parent, GraphicsContext& gcx) const
 {
-    const int height = 10 + parent.ui_well.wellHeight() * background_percent.value();
+    const int height = 10 + parent.player_area.wellBox().h * background_percent.value();
     const int width = gcx.screenWidth() * 0.92;
     const int half_height = height / 2;
     const int half_width = width / 2;

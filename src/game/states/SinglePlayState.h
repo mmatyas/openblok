@@ -2,9 +2,7 @@
 
 #include "game/GameState.h"
 #include "game/PlayerStatistics.h"
-#include "game/layout/singleplayer/LeftSidebarBox.h"
-#include "game/layout/singleplayer/RightSidebarBox.h"
-#include "game/layout/singleplayer/WellBox.h"
+#include "game/layout/gameplay/WidePA.h"
 
 #include <list>
 #include <memory>
@@ -29,16 +27,14 @@ public:
 
     std::list<std::unique_ptr<SubStates::SinglePlayer::State>> states;
 
-    int wellCenterX() const { return ui_well.x() + ui_well.width() / 2; };
-    int wellCenterY() const { return ui_well.y() + ui_well.height() / 2; };
+    int wellCenterX() const { return player_area.wellBox().x + player_area.wellBox().w / 2; };
+    int wellCenterY() const { return player_area.wellBox().y + player_area.wellBox().h / 2; };
 
 private:
     PlayerStatistics player_stats;
     std::unique_ptr<Texture> tex_background;
 
-    Layout::WellBox ui_well;
-    Layout::LeftSidebarBox ui_leftside;
-    Layout::RightSidebarBox ui_rightside;
+    Layout::WidePA player_area;
 
     void updatePositions(GraphicsContext&);
     void drawCommon(GraphicsContext&);

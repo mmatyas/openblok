@@ -232,10 +232,11 @@ void GameOver::draw(SinglePlayState& parent, GraphicsContext& gcx) const
     assert(parent.states.size() > 1);
     parent.states.front()->draw(parent, gcx);
 
-    int box_h = parent.ui_well.wellHeight() * background_percent.value();
+    const auto& wellbox = parent.player_area.wellBox();
+    int box_h = wellbox.h * background_percent.value();
     gcx.drawFilledRect({
-        parent.ui_well.wellX(), parent.ui_well.wellY() + parent.ui_well.wellHeight() - box_h,
-        parent.ui_well.wellWidth(), box_h
+        wellbox.x, wellbox.y + wellbox.h - box_h,
+        wellbox.w, box_h
     }, 0xA0_rgba);
 
     tex_gameover->drawAt(parent.wellCenterX() - static_cast<int>(tex_gameover->width()) / 2,

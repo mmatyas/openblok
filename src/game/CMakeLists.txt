@@ -31,6 +31,9 @@ set(MOD_GAME_SRC
 
     layout/gameplay/PlayerArea.cpp
     layout/gameplay/WellContainer.cpp
+    layout/gameplay/WidePA.cpp
+    layout/gameplay/wide/LeftSidebarBox.cpp
+    layout/gameplay/wide/RightSidebarBox.cpp
     layout/menu/Logo.cpp
     layout/menu/MainMenuBtn.cpp
     layout/menu/PieceRain.cpp
@@ -42,8 +45,6 @@ set(MOD_GAME_SRC
     layout/options/ValueChooser.cpp
     layout/multiplayer/BottomBarBox.cpp
     layout/multiplayer/TopBarBox.cpp
-    layout/singleplayer/LeftSidebarBox.cpp
-    layout/singleplayer/RightSidebarBox.cpp
     layout/singleplayer/WellBox.cpp
 
     states/InitState.cpp
@@ -110,6 +111,9 @@ set(MOD_GAME_H
     layout/MenuItem.h
     layout/gameplay/PlayerArea.h
     layout/gameplay/WellContainer.h
+    layout/gameplay/WidePA.h
+    layout/gameplay/wide/LeftSidebarBox.h
+    layout/gameplay/wide/RightSidebarBox.h
     layout/menu/Button.h
     layout/menu/Logo.h
     layout/menu/MainMenuBtn.h
@@ -122,8 +126,6 @@ set(MOD_GAME_H
     layout/options/ValueChooser.h
     layout/multiplayer/BottomBarBox.h
     layout/multiplayer/TopBarBox.h
-    layout/singleplayer/LeftSidebarBox.h
-    layout/singleplayer/RightSidebarBox.h
     layout/singleplayer/WellBox.h
 
     states/InitState.h

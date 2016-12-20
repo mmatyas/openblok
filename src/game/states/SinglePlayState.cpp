@@ -8,9 +8,7 @@
 
 SinglePlayState::SinglePlayState(AppContext& app)
     : tex_background(app.gcx().loadTexture(Paths::data() + "gamebg.png"))
-    , ui_well(app)
-    , ui_leftside(app, ui_well.height())
-    , ui_rightside(app, ui_well.height())
+    , player_area(app)
 {
     updatePositions(app.gcx());
     states.emplace_back(std::make_unique<SubStates::SinglePlayer::States::FadeIn>());
@@ -20,10 +18,8 @@ SinglePlayState::~SinglePlayState() = default;
 
 void SinglePlayState::updatePositions(GraphicsContext& gcx)
 {
-    ui_well.setPosition((gcx.screenWidth() - ui_well.width()) / 2,
-                        (gcx.screenHeight() - ui_well.height()) / 2);
-    ui_leftside.setPosition(ui_well.x() - ui_leftside.width() - 10, ui_well.y());
-    ui_rightside.setPosition(ui_well.x() + ui_well.width() + 10, ui_well.y());
+    player_area.setPosition((gcx.screenWidth() - player_area.width()) / 2,
+                            (gcx.screenHeight() - player_area.height()) / 2);
 }
 
 void SinglePlayState::update(const std::vector<Event>& events, AppContext& app)
@@ -43,7 +39,7 @@ void SinglePlayState::update(const std::vector<Event>& events, AppContext& app)
                 break;
         }
     }
-    ui_well.well().updateKeystateOnly(input_events);
+    player_area.well().updateKeystateOnly(input_events);
     states.back()->update(*this, events, app);
 }
 
@@ -56,8 +52,5 @@ void SinglePlayState::draw(GraphicsContext& gcx)
 void SinglePlayState::drawCommon(GraphicsContext& gcx)
 {
     tex_background->drawScaled({0, 0, gcx.screenWidth(), gcx.screenHeight()});
-
-    ui_well.drawBase(gcx);
-    ui_leftside.draw(gcx);
-    ui_rightside.draw(gcx);
+    player_area.drawPassive(gcx);
 }

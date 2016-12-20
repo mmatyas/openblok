@@ -13,7 +13,7 @@ class Font;
 class Texture;
 
 namespace Layout {
-class RightSidebarBox : Layout::Box {
+class RightSidebarBox : public Layout::Box {
 public:
     RightSidebarBox(AppContext&, int height);
 
@@ -23,7 +23,8 @@ public:
     void updateScore(unsigned);
     void updateGametime(Duration);
 
-    void draw(GraphicsContext&) const;
+    void drawActive(GraphicsContext&) const;
+    void drawPassive(GraphicsContext&) const;
 
     NextQueue& nextQueue() { return next_queue; }
 

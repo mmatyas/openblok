@@ -46,7 +46,7 @@ Gameplay::Gameplay(SinglePlayState& parent, AppContext& app)
         float multiplier = std::pow(0.8 - (i * 0.007), i);
         gravity_levels.push(std::chrono::duration_cast<Duration>(multiplier * std::chrono::seconds(1)));
     }
-    parent.ui_well.well().setGravity(gravity_levels.top());
+    parent.player_area.well().setGravity(gravity_levels.top());
 
     pending_levelup_msg.stop();
 
@@ -60,13 +60,13 @@ Gameplay::~Gameplay() = default;
 
 void Gameplay::addNextPiece(SinglePlayState& parent)
 {
-    parent.ui_well.well().addPiece(parent.ui_rightside.nextQueue().next());
-    parent.ui_leftside.holdQueue().onNextTurn();
+    parent.player_area.well().addPiece(parent.player_area.nextQueue().next());
+    parent.player_area.holdQueue().onNextTurn();
 }
 
 void Gameplay::registerObservers(SinglePlayState& parent, AppContext& app)
 {
-    auto& well = parent.ui_well.well();
+    auto& well = parent.player_area.well();
 
     well.registerObserver(WellEvent::Type::PIECE_LOCKED, [this](const WellEvent&){
         this->sfx_onlock->playOnce();
@@ -83,8 +83,8 @@ void Gameplay::registerObservers(SinglePlayState& parent, AppContext& app)
     });
 
     well.registerObserver(WellEvent::Type::HOLD_REQUESTED, [this, &parent](const WellEvent&){
-        auto& well = parent.ui_well.well();
-        auto& hold_queue = parent.ui_leftside.holdQueue();
+        auto& well = parent.player_area.well();
+        auto& hold_queue = parent.player_area.holdQueue();
 
         hold_queue.onSwapRequested();
         if (hold_queue.swapAllowed()) {
@@ -152,7 +152,7 @@ void Gameplay::registerObservers(SinglePlayState& parent, AppContext& app)
                 parent.states.emplace_back(std::make_unique<GameComplete>(parent, app));
                 return;
             }
-            parent.ui_well.well().setGravity(this->gravity_levels.top());
+            parent.player_area.well().setGravity(this->gravity_levels.top());
             this->lineclears_left += this->lineclears_per_level;
             parent.player_stats.level++;
             sfx_onlevelup->playOnce();
@@ -201,7 +201,7 @@ void Gameplay::registerObservers(SinglePlayState& parent, AppContext& app)
 
 void Gameplay::updateAnimationsOnly(SinglePlayState& parent, AppContext&)
 {
-    parent.ui_well.well().updateAnimationsOnly();
+    parent.player_area.well().updateAnimationsOnly();
 
     pending_levelup_msg.update(Timing::frame_duration);
     // remove old animations
@@ -211,10 +211,12 @@ void Gameplay::updateAnimationsOnly(SinglePlayState& parent, AppContext&)
 
     // newly created popups don't know theit position,
     // that's why this is here, and not in SinglePlayState
+    const int center_x = parent.player_area.x() - 10
+        + (parent.player_area.wellBox().x - 10 - parent.player_area.x()) / 2;
     for (auto& popup : textpopups) {
         popup->setInitialPosition(
-            parent.ui_leftside.x() - 10 + (parent.ui_leftside.width() - static_cast<int>(popup->width())) / 2.0,
-            parent.ui_leftside.y() + parent.ui_leftside.height() * 0.5
+            center_x - static_cast<int>(popup->width()) / 2,
+            parent.player_area.y() + parent.player_area.height() / 2
         );
         popup->update();
     }
@@ -245,13 +247,13 @@ void Gameplay::update(SinglePlayState& parent, const std::vector<Event>& events,
         }
     }
 
-    parent.ui_well.well().updateGameplayOnly(input_events);
-    parent.ui_leftside.update();
+    parent.player_area.well().updateGameplayOnly(input_events);
+    parent.player_area.update();
 
     if (texts_need_update) {
-        parent.ui_leftside.updateGoalCounter(lineclears_left);
-        parent.ui_leftside.updateLevelCounter(parent.player_stats.level);
-        parent.ui_rightside.updateScore(parent.player_stats.score);
+        parent.player_area.updateGoalCounter(lineclears_left);
+        parent.player_area.updateLevelCounter(parent.player_stats.level);
+        parent.player_area.updateScore(parent.player_stats.score);
         texts_need_update = false;
     }
 
@@ -260,12 +262,12 @@ void Gameplay::update(SinglePlayState& parent, const std::vector<Event>& events,
     updateAnimationsOnly(parent, app);
 
     parent.player_stats.gametime += Timing::frame_duration;
-    parent.ui_rightside.updateGametime(parent.player_stats.gametime);
+    parent.player_area.updateGametime(parent.player_stats.gametime);
 }
 
 void Gameplay::draw(SinglePlayState& parent, GraphicsContext& gfx) const
 {
-    parent.ui_well.drawContent(gfx);
+    parent.player_area.drawActive(gfx);
     for (const auto& popup : textpopups)
         popup->draw();
 }

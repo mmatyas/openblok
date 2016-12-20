@@ -20,7 +20,8 @@ public:
     void updateGoalCounter(unsigned);
     void updateLevelCounter(unsigned);
 
-    void draw(GraphicsContext&) const;
+    void drawActive(GraphicsContext&) const;
+    void drawPassive(GraphicsContext&) const;
 
     HoldQueue& holdQueue() { return hold_queue; }
 
@@ -30,7 +31,6 @@ private:
     static constexpr int item_padding = 10;
     const RGBAColor box_color = 0x0A0AFF80_rgba;
 
-    std::shared_ptr<Font> font_label;
     std::shared_ptr<Font> font_content;
     std::shared_ptr<Font> font_content_highlight;
 

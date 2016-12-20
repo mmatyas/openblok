@@ -16,15 +16,16 @@ LeftSidebarBox::LeftSidebarBox(AppContext& app, int height)
     bounding_box.h = height;
 
     // TODO: cache
-    font_label = app.gcx().loadFont(Paths::data() + "fonts/PTN57F.ttf", 28);
+    auto font_label = app.gcx().loadFont(Paths::data() + "fonts/PTN57F.ttf", 28);
     font_content = app.gcx().loadFont(Paths::data() + "fonts/PTN77F.ttf", 30);
     font_content_highlight = app.gcx().loadFont(Paths::data() + "fonts/PTN77F.ttf", 32);
 
-    tex_hold = font_label->renderText(tr("HOLD"), 0xEEEEEE_rgb);
-    tex_goal = font_label->renderText(tr("GOAL"), 0xEEEEEE_rgb);
-    tex_level = font_label->renderText(tr("LEVEL"), 0xEEEEEE_rgb);
-    tex_goal_counter = font_content->renderText("0", 0xEEEEEE_rgb);
-    tex_level_counter = font_content->renderText("0", 0xEEEEEE_rgb);
+    const auto color = 0xEEEEEE_rgb;
+    tex_hold = font_label->renderText(tr("HOLD"), color);
+    tex_goal = font_label->renderText(tr("GOAL"), color);
+    tex_level = font_label->renderText(tr("LEVEL"), color);
+    tex_goal_counter = font_content->renderText("0", color);
+    tex_level_counter = font_content->renderText("0", color);
 
     setPosition(0, 0);
 }
@@ -58,7 +59,7 @@ void LeftSidebarBox::updateLevelCounter(unsigned num)
     tex_level_counter = font_content->renderText(std::to_string(num), 0xEEEEEE_rgb);
 }
 
-void LeftSidebarBox::draw(GraphicsContext& gcx) const
+void LeftSidebarBox::drawPassive(GraphicsContext& gcx) const
 {
     // hold queue
     tex_hold->drawAt(x(), y());
@@ -75,6 +76,10 @@ void LeftSidebarBox::draw(GraphicsContext& gcx) const
     tex_level_counter->drawAt(rect_level.x + (rect_level.w - tex_level_counter->width()) / 2,
                               rect_level.y + 5);
     tex_level->drawAt(rect_level.x, rect_level.y - text_padding - text_height);
+}
+
+void LeftSidebarBox::drawActive(GraphicsContext&) const
+{
 }
 
 } // namespace Layout

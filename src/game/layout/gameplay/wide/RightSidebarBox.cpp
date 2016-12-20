@@ -22,10 +22,11 @@ RightSidebarBox::RightSidebarBox(AppContext& app, int height)
     font_label = app.gcx().loadFont(Paths::data() + "fonts/PTN57F.ttf", 28);
     font_content = app.gcx().loadFont(Paths::data() + "fonts/PTN77F.ttf", 30);
 
-    tex_next = font_label->renderText(tr("NEXT"), 0xEEEEEE_rgb);
-    tex_score = font_label->renderText(tr("SCORE"), 0xEEEEEE_rgb);
-    tex_score_counter = font_content->renderText("0", 0xEEEEEE_rgb);
-    tex_time_counter = font_content->renderText(gametime_text, 0xEEEEEE_rgb);
+    const auto color = 0xEEEEEE_rgb;
+    tex_next = font_label->renderText(tr("NEXT"), color);
+    tex_score = font_label->renderText(tr("SCORE"), color);
+    tex_score_counter = font_content->renderText("0", color);
+    tex_time_counter = font_content->renderText(gametime_text, color);
 
     setPosition(0, 0);
 }
@@ -35,8 +36,9 @@ void RightSidebarBox::setPosition(int x, int y)
     bounding_box.x = x;
     bounding_box.y = y;
 
-    rect_score = { x, y + height() - text_height - text_padding * 2,
-                  width(), text_height + text_padding * 2 };
+    rect_score = {
+        x, y + height() - text_height - text_padding * 2,
+        width(), text_height + text_padding * 2 };
     rect_time = rect_score;
     rect_time.y = rect_score.y - text_padding * 2 - text_height - item_padding - rect_score.h;
 }
@@ -58,7 +60,7 @@ void RightSidebarBox::updateGametime(Duration gametime)
     }
 }
 
-void RightSidebarBox::draw(GraphicsContext& gcx) const
+void RightSidebarBox::drawPassive(GraphicsContext& gcx) const
 {
     // next queue
     tex_next->drawAt(x() + width() - tex_next->width(), y());
@@ -75,6 +77,10 @@ void RightSidebarBox::draw(GraphicsContext& gcx) const
     gcx.drawFilledRect(rect_time, box_color);
     tex_time_counter->drawAt(rect_time.x + (rect_time.w - tex_time_counter->width()) / 2,
                              rect_time.y + 5);
+}
+
+void RightSidebarBox::drawActive(GraphicsContext&) const
+{
 }
 
 } // namespace Layout
