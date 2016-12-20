@@ -27,8 +27,8 @@ public:
 
     std::list<std::unique_ptr<SubStates::SinglePlayer::State>> states;
 
-    int wellCenterX() const { return player_area.wellBox().x + player_area.wellBox().w / 2; };
-    int wellCenterY() const { return player_area.wellBox().y + player_area.wellBox().h / 2; };
+    int wellCenterX() const { return player_area.wellCenterX(); };
+    int wellCenterY() const { return player_area.wellCenterY(); };
 
 private:
     PlayerStatistics player_stats;

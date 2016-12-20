@@ -33,6 +33,8 @@ public:
 
     virtual Well& well() { return ui_well.well(); };
     virtual ::Rectangle wellBox() const { return wellbox; }
+    virtual int wellCenterX() const { return wellBox().x + wellBox().w / 2; }
+    virtual int wellCenterY() const { return wellBox().y + wellBox().h / 2; }
 
 protected:
     ::Rectangle wellbox;
