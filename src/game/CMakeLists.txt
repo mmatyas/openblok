@@ -29,6 +29,8 @@ set(MOD_GAME_SRC
     components/well/TSpin.cpp
     components/well/Render.cpp
 
+    layout/gameplay/PlayerArea.cpp
+    layout/gameplay/WellContainer.cpp
     layout/menu/Logo.cpp
     layout/menu/MainMenuBtn.cpp
     layout/menu/PieceRain.cpp
@@ -106,6 +108,8 @@ set(MOD_GAME_H
 
     layout/Box.h
     layout/MenuItem.h
+    layout/gameplay/PlayerArea.h
+    layout/gameplay/WellContainer.h
     layout/menu/Button.h
     layout/menu/Logo.h
     layout/menu/MainMenuBtn.h
