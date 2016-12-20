@@ -10,10 +10,10 @@
 
 namespace Layout {
 
-TopBarBox::TopBarBox(AppContext& app)
+TopBarBox::TopBarBox(AppContext& app, int width)
     : next_queue(1)
 {
-    bounding_box.w = 10 + 10 * Mino::texture_size_px;
+    bounding_box.w = width;
     bounding_box.h = 4 * Mino::texture_size_px;
 
     auto font_label = app.gcx().loadFont(Paths::data() + "fonts/PTN57F.ttf", 28);
@@ -28,7 +28,7 @@ void TopBarBox::update()
     hold_queue.update();
 }
 
-void TopBarBox::draw(GraphicsContext& gcx) const
+void TopBarBox::drawPassive(GraphicsContext& gcx) const
 {
     // hold queue
     hold_queue.draw(gcx, x(), y());
@@ -37,6 +37,10 @@ void TopBarBox::draw(GraphicsContext& gcx) const
     // next queue
     next_queue.draw(gcx, x() + width() - 5 * Mino::texture_size_px, y());
     tex_next->drawAt(x() + width() - tex_next->width() - 5, y());
+}
+
+void TopBarBox::drawActive(GraphicsContext&) const
+{
 }
 
 } // namespace Layout

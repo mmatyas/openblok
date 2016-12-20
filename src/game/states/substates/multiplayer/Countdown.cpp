@@ -58,9 +58,9 @@ void Countdown::drawActive(MultiplayerState& parent, GraphicsContext&) const
 {
     assert(current_idx < 3);
     const auto& tex = tex_countdown.at(current_idx);
-    for (const auto& ui_well : parent.ui_wells) {
-        const int center_x = ui_well.second.wellX() + ui_well.second.wellWidth() / 2;
-        const int center_y = ui_well.second.wellY() + ui_well.second.wellHeight() / 2;
+    for (const auto& ui_playerarea : parent.player_areas) {
+        const int center_x = ui_playerarea.second.wellCenterX();
+        const int center_y = ui_playerarea.second.wellCenterY();
         tex->drawAt(center_x - tex->width() / 2, center_y - tex->height() / 2);
     }
 }

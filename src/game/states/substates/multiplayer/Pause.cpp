@@ -75,9 +75,9 @@ void Pause::update(MultiplayerState& parent, const std::vector<Event>& events, A
 
 void Pause::drawActive(MultiplayerState& parent, GraphicsContext&) const
 {
-    for (const auto& ui_well : parent.ui_wells) {
-        const int center_x = ui_well.second.wellX() + ui_well.second.wellWidth() / 2;
-        const int center_y = ui_well.second.wellY() + ui_well.second.wellHeight() / 2;
+    for (const auto& ui_pa : parent.player_areas) {
+        const int center_x = ui_pa.second.wellCenterX();
+        const int center_y = ui_pa.second.wellCenterY();
         tex_pause->drawAt(
             center_x - tex_pause->width() / 2,
             center_y - tex_pause->height() / 2);

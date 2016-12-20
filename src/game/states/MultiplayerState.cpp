@@ -7,11 +7,6 @@
 #include "system/Paths.h"
 #include "system/Texture.h"
 
-// TODO: move these somewhere else
-static const int well_width = 10 * Mino::texture_size_px + 10;
-static const int well_height = 20.3 * Mino::texture_size_px + 10;
-static const int well_padding_x = 5 + Mino::texture_size_px;
-
 
 MultiplayerState::MultiplayerState(AppContext& app, MultiplayerMode gamemode)
     : gamemode(gamemode)
@@ -28,26 +23,25 @@ MultiplayerState::~MultiplayerState() = default;
 
 void MultiplayerState::updatePositions(GraphicsContext& gcx)
 {
-    if (ui_wells.empty())
+    if (player_areas.empty())
         return;
-    assert(ui_wells.size() > 1);
+
+    static const int well_padding_x = 5 + Mino::texture_size_px;
 
     const float scale = 0.8;
     const float inverse_scale = 1.f / scale;
 
-    const int well_full_width = well_width + 2 * well_padding_x;
-    int well_x = well_padding_x + (gcx.screenWidth() * inverse_scale - well_full_width * ui_wells.size()) / 2;
-    const int well_y = 40 + (gcx.screenHeight() * inverse_scale - well_height) / 2;
+    const int center_x = (gcx.screenWidth() * inverse_scale) / 2;
+    const int center_y = (gcx.screenHeight() * inverse_scale) / 2;
 
-    assert(ui_wells.size() == ui_topbars.size());
+    const int well_y = center_y - player_areas.at(device_order.front()).height() / 2;
+    const int well_full_width = 2 * well_padding_x
+        + player_areas.at(device_order.front()).width();
+
+    int well_x = center_x - (well_full_width * player_areas.size()) / 2;
+
     for (const DeviceID device_id : device_order) {
-        auto& topbar = ui_topbars.at(device_id);
-        topbar.setPosition(well_x, well_y - 10 - topbar.height());
-
-        auto& bottombar = ui_bottombars.at(device_id);
-        bottombar.setPosition(well_x, well_y + well_height + 10);
-
-        ui_wells.at(device_id).setPosition(well_x, well_y);
+        player_areas.at(device_id).setPosition(well_x + well_padding_x, well_y);
         well_x += well_full_width;
     }
 }
@@ -69,8 +63,8 @@ void MultiplayerState::update(const std::vector<Event>& events, AppContext& app)
                 break;
         }
     }
-    for (auto& ui_well : ui_wells)
-        ui_well.second.well().updateKeystateOnly(input_events[ui_well.first]);
+    for (auto& ui_pa : player_areas)
+        ui_pa.second.well().updateKeystateOnly(input_events[ui_pa.first]);
 
     states.back()->update(*this, events, app);
 }

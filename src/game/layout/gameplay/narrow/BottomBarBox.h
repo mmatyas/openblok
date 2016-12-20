@@ -10,22 +10,21 @@ class Font;
 class GraphicsContext;
 class Texture;
 
+
 namespace Layout {
 class BottomBarBox : public Layout::Box {
 public:
-    BottomBarBox(AppContext&);
+    BottomBarBox(AppContext&, int width);
 
     void setPosition(int x, int y) override;
 
     void updateLevelCounter(unsigned);
     void updateScore(unsigned num);
 
-    void draw(GraphicsContext&) const;
+    void drawActive(GraphicsContext&) const;
+    void drawPassive(GraphicsContext&) const;
 
 private:
-    static constexpr int text_height = 30;
-    static constexpr int text_padding = 10;
-    static constexpr int item_padding = 10;
     const RGBAColor box_color = 0x0A0AFF80_rgba;
 
     std::shared_ptr<Font> font_content;

@@ -40,7 +40,9 @@ Gameplay::Gameplay(MultiplayerState& parent, AppContext& app, const std::vector<
     , lineclears_per_level(10)
     , gameend_statistics_delay(std::chrono::seconds(5),
         [](double t){ return t * 5; },
-        [&parent, &app](){ parent.states.emplace_back(std::make_unique<Statistics>(parent, app)); })
+        [&parent, &app](){
+            parent.states.emplace_back(std::make_unique<Statistics>(parent, app));
+        })
 {
     assert(player_devices.size() > 1);
     assert(player_devices.size() <= 4);
@@ -57,7 +59,7 @@ Gameplay::Gameplay(MultiplayerState& parent, AppContext& app, const std::vector<
         assert(player_devices.size() == gravity_levels.size());
     }
     for (const DeviceID device_id : player_devices) {
-        assert(parent.ui_wells.count(device_id) == 0);
+        assert(parent.player_areas.count(device_id) == 0);
 
         lineclears_left[device_id] = lineclears_per_level;
         previous_lineclear_type[device_id] = ScoreType::CLEAR_SINGLE;
@@ -68,17 +70,12 @@ Gameplay::Gameplay(MultiplayerState& parent, AppContext& app, const std::vector<
             std::forward_as_tuple(std::chrono::seconds(2), [](double t){ return t; }));
         gameend_anim_timers.at(device_id).stop();
 
-        parent.ui_wells.emplace(std::piecewise_construct,
-            std::forward_as_tuple(device_id), std::forward_as_tuple(app));
-        parent.ui_wells.at(device_id).well().setGravity(gravity_levels.at(device_id).top());
-        parent.ui_topbars.emplace(std::piecewise_construct,
-            std::forward_as_tuple(device_id), std::forward_as_tuple(app));
-        parent.ui_bottombars.emplace(std::piecewise_construct,
+        parent.player_areas.emplace(std::piecewise_construct,
             std::forward_as_tuple(device_id), std::forward_as_tuple(app));
         parent.player_stats.emplace(std::piecewise_construct,
             std::forward_as_tuple(device_id), std::forward_as_tuple());
     }
-    assert(parent.ui_wells.size() > 1);
+    assert(parent.player_areas.size() > 1);
     parent.updatePositions(app.gcx());
 
     auto font_big = app.gcx().loadFont(Paths::data() + "fonts/PTC75F.ttf", 45);
@@ -94,8 +91,9 @@ Gameplay::Gameplay(MultiplayerState& parent, AppContext& app, const std::vector<
 
 void Gameplay::addNextPiece(MultiplayerState& parent, DeviceID device_id)
 {
-    parent.ui_wells.at(device_id).well().addPiece(parent.ui_topbars.at(device_id).nextQueue().next());
-    parent.ui_topbars.at(device_id).holdQueue().onNextTurn();
+    auto& parea = parent.player_areas.at(device_id);
+    parea.well().addPiece(parea.nextQueue().next());
+    parea.holdQueue().onNextTurn();
 }
 
 std::vector<DeviceID> Gameplay::playingPlayers()
@@ -111,7 +109,7 @@ std::vector<DeviceID> Gameplay::playingPlayers()
 void Gameplay::registerObservers(MultiplayerState& parent, AppContext& app)
 {
     for (const DeviceID device_id : player_devices) {
-        auto& well = parent.ui_wells.at(device_id).well();
+        auto& well = parent.player_areas.at(device_id).well();
 
         well.registerObserver(WellEvent::Type::PIECE_LOCKED, [this](const WellEvent&){
             sfx_onlock->playOnce();
@@ -128,8 +126,8 @@ void Gameplay::registerObservers(MultiplayerState& parent, AppContext& app)
         });
 
         well.registerObserver(WellEvent::Type::HOLD_REQUESTED, [this, &parent, device_id](const WellEvent&){
-            auto& well = parent.ui_wells.at(device_id).well();
-            auto& hold_queue = parent.ui_topbars.at(device_id).holdQueue();
+            auto& well = parent.player_areas.at(device_id).well();
+            auto& hold_queue = parent.player_areas.at(device_id).holdQueue();
 
             hold_queue.onSwapRequested();
             if (hold_queue.swapAllowed()) {
@@ -209,7 +207,7 @@ void Gameplay::registerObservers(MultiplayerState& parent, AppContext& app)
                         // wait until someone gets game over
                     return;
                 }
-                parent.ui_wells.at(device_id).well().setGravity(gravity_stack.top());
+                parent.player_areas.at(device_id).well().setGravity(gravity_stack.top());
                 lines_left += lineclears_per_level;
                 player_stats.level++;
                 sfx_onlevelup->playOnce();
@@ -276,8 +274,8 @@ void Gameplay::registerObservers(MultiplayerState& parent, AppContext& app)
 
 void Gameplay::updateAnimationsOnly(MultiplayerState& parent, AppContext&)
 {
-    for (auto& ui_well : parent.ui_wells)
-        ui_well.second.well().updateAnimationsOnly();
+    for (auto& ui_pa : parent.player_areas)
+        ui_pa.second.well().updateAnimationsOnly();
 }
 
 void Gameplay::update(MultiplayerState& parent, const std::vector<Event>& events, AppContext& app)
@@ -316,10 +314,10 @@ void Gameplay::update(MultiplayerState& parent, const std::vector<Event>& events
 
     for (const DeviceID device_id : player_devices) {
         if (player_status.at(device_id) == PlayerStatus::PLAYING) {
-            parent.ui_wells.at(device_id).well().updateGameplayOnly(input_events[device_id]);
+            parent.player_areas.at(device_id).well().updateGameplayOnly(input_events[device_id]);
             parent.player_stats.at(device_id).gametime += Timing::frame_duration;
         }
-        parent.ui_topbars.at(device_id).update();
+        parent.player_areas.at(device_id).update();
 
         gameend_anim_timers.at(device_id).update(Timing::frame_duration);
     }
@@ -327,7 +325,7 @@ void Gameplay::update(MultiplayerState& parent, const std::vector<Event>& events
     if (texts_need_update) {
         for (const DeviceID device_id : player_devices) {
             const auto& stats = parent.player_stats.at(device_id);
-            auto& ui = parent.ui_bottombars.at(device_id);
+            auto& ui = parent.player_areas.at(device_id);
             ui.updateLevelCounter(stats.level);
             ui.updateScore(stats.score);
         }
@@ -339,33 +337,29 @@ void Gameplay::update(MultiplayerState& parent, const std::vector<Event>& events
 
 void Gameplay::drawPassive(MultiplayerState& parent, GraphicsContext& gcx) const
 {
-    for (const auto& ui_well : parent.ui_wells)
-        ui_well.second.drawBase(gcx);
-    for (const auto& ui_topbar : parent.ui_topbars)
-        ui_topbar.second.draw(gcx);
-    for (const auto& ui_bottombar : parent.ui_bottombars)
-        ui_bottombar.second.draw(gcx);
+    for (const auto& ui_pa : parent.player_areas)
+        ui_pa.second.drawPassive(gcx);
 }
 
 void Gameplay::drawActive(MultiplayerState& parent, GraphicsContext& gcx) const
 {
-   for (const auto& ui_well : parent.ui_wells)
-        ui_well.second.drawContent(gcx);
+   for (const auto& ui_pa : parent.player_areas)
+        ui_pa.second.drawActive(gcx);
 
    for (const DeviceID device_id : player_devices) {
-        const auto& ui = parent.ui_wells.at(device_id);
+        const auto& ui = parent.player_areas.at(device_id);
         switch (player_status.at(device_id)) {
             case PlayerStatus::GAME_OVER: {
-                const int box_h = ui.wellHeight() * gameend_anim_timers.at(device_id).value();
+                const int box_h = ui.wellBox().h * gameend_anim_timers.at(device_id).value();
                 gcx.drawFilledRect({
-                    ui.wellX(), ui.wellY() + ui.wellHeight() - box_h,
-                    ui.wellWidth(), box_h
+                    ui.wellBox().x, ui.wellBox().y + ui.wellBox().h - box_h,
+                    ui.wellBox().w, box_h
                 }, 0xA0_rgba);
             }
             break;
             case PlayerStatus::FINISHED:
-                tex_finish->drawAt(ui.wellX() + (ui.wellWidth() - tex_finish->width()) / 2,
-                                   ui.wellY() + (ui.wellHeight() - tex_finish->height()) / 2);
+                tex_finish->drawAt(ui.wellCenterX() - tex_finish->width() / 2,
+                                   ui.wellCenterY() - tex_finish->height() / 2);
             break;
             default:
                 break;

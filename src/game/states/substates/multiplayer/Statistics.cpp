@@ -93,21 +93,20 @@ void Statistics::update(MultiplayerState& parent, const std::vector<Event>& even
 
 void Statistics::drawBackground(MultiplayerState& parent, GraphicsContext& gcx) const
 {
-    for (const auto& ui_well : parent.ui_wells) {
-        const auto& ui = ui_well.second;
+    for (const auto& ui_pa : parent.player_areas) {
         auto color = 0x2030FF00_rgba;
         color.a = fadein_percent.value() * 0xFF;
-        gcx.drawFilledRect({ui.wellX(), ui.wellY(), ui.wellWidth(), ui.wellHeight()}, color);
+        gcx.drawFilledRect(ui_pa.second.wellBox(), color);
     }
 }
 
 void Statistics::drawItems(MultiplayerState& parent) const
 {
     for (const DeviceID device_id : parent.device_order) {
-        const auto& ui_well = parent.ui_wells.at(device_id);
+        const auto& ui_pa = parent.player_areas.at(device_id);
 
-        int pos_x = ui_well.wellX();
-        int pos_y = ui_well.wellY();
+        int pos_x = ui_pa.wellBox().x;
+        int pos_y = ui_pa.wellBox().y;
 
         tex_title->drawAt(pos_x, pos_y);
         pos_y += tex_title->height() * 1.25;
@@ -119,8 +118,8 @@ void Statistics::drawItems(MultiplayerState& parent) const
             pos_y += tex->height();
         }
 
-        pos_x += ui_well.wellWidth();
-        pos_y = ui_well.wellY() + tex_title->height() * 1.25;
+        pos_x += ui_pa.wellBox().w;
+        pos_y = ui_pa.wellBox().y + tex_title->height() * 1.25;
         const auto& values = scores.at(device_id);
 
         assert(displayed_item_count.value() <= values.size());

@@ -2,9 +2,7 @@
 
 #include "game/GameState.h"
 #include "game/PlayerStatistics.h"
-#include "game/layout/multiplayer/BottomBarBox.h"
-#include "game/layout/multiplayer/TopBarBox.h"
-#include "game/layout/singleplayer/WellBox.h"
+#include "game/layout/gameplay/NarrowPA.h"
 
 #include <list>
 #include <memory>
@@ -32,9 +30,7 @@ public:
     const MultiplayerMode gamemode;
     std::list<std::unique_ptr<SubStates::Multiplayer::State>> states;
     std::vector<DeviceID> device_order;
-    std::unordered_map<DeviceID, Layout::WellBox> ui_wells;
-    std::unordered_map<DeviceID, Layout::TopBarBox> ui_topbars;
-    std::unordered_map<DeviceID, Layout::BottomBarBox> ui_bottombars;
+    std::unordered_map<DeviceID, Layout::NarrowPA> player_areas;
     std::unordered_map<DeviceID, PlayerStatistics> player_stats;
 
 private:

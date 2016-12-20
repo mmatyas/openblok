@@ -9,7 +9,7 @@
 
 
 namespace Layout {
-BottomBarBox::BottomBarBox(AppContext& app)
+BottomBarBox::BottomBarBox(AppContext& app, int width)
 {
     font_content = app.gcx().loadFont(Paths::data() + "fonts/PTN77F.ttf", 30);
     font_content_highlight = app.gcx().loadFont(Paths::data() + "fonts/PTN77F.ttf", 32);
@@ -17,7 +17,7 @@ BottomBarBox::BottomBarBox(AppContext& app)
     tex_level_counter = font_content->renderText(tr("LEVEL 0"), 0xEEEEEE_rgb);
     tex_score_counter = font_content->renderText("0", 0xEEEEEE_rgb);
 
-    bounding_box.w = 10 + 10 * Mino::texture_size_px;
+    bounding_box.w = width;
     bounding_box.h = tex_level_counter->height() + 2 * 5;
 
     setPosition(0, 0);
@@ -44,7 +44,7 @@ void BottomBarBox::updateScore(unsigned num)
     tex_score_counter = font_content->renderText(std::to_string(num), 0xEEEEEE_rgb);
 }
 
-void BottomBarBox::draw(GraphicsContext& gcx) const
+void BottomBarBox::drawPassive(GraphicsContext& gcx) const
 {
     // level
     gcx.drawFilledRect(rect_level, box_color);
@@ -55,4 +55,9 @@ void BottomBarBox::draw(GraphicsContext& gcx) const
     tex_score_counter->drawAt(rect_score.x + rect_score.w - tex_score_counter->width() - 10,
                               rect_score.y + 5);
 }
+
+void BottomBarBox::drawActive(GraphicsContext&) const
+{
+}
+
 } // namespace Layout

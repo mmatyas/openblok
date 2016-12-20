@@ -30,8 +30,11 @@ set(MOD_GAME_SRC
     components/well/Render.cpp
 
     layout/gameplay/PlayerArea.cpp
+    layout/gameplay/NarrowPA.cpp
     layout/gameplay/WellContainer.cpp
     layout/gameplay/WidePA.cpp
+    layout/gameplay/narrow/BottomBarBox.cpp
+    layout/gameplay/narrow/TopBarBox.cpp
     layout/gameplay/wide/LeftSidebarBox.cpp
     layout/gameplay/wide/RightSidebarBox.cpp
     layout/menu/Logo.cpp
@@ -43,9 +46,6 @@ set(MOD_GAME_SRC
     layout/options/OptionsItem.cpp
     layout/options/ToggleBtn.cpp
     layout/options/ValueChooser.cpp
-    layout/multiplayer/BottomBarBox.cpp
-    layout/multiplayer/TopBarBox.cpp
-    layout/singleplayer/WellBox.cpp
 
     states/InitState.cpp
     states/MainMenuState.cpp
@@ -110,8 +110,11 @@ set(MOD_GAME_H
     layout/Box.h
     layout/MenuItem.h
     layout/gameplay/PlayerArea.h
+    layout/gameplay/NarrowPA.h
     layout/gameplay/WellContainer.h
     layout/gameplay/WidePA.h
+    layout/gameplay/narrow/BottomBarBox.h
+    layout/gameplay/narrow/TopBarBox.h
     layout/gameplay/wide/LeftSidebarBox.h
     layout/gameplay/wide/RightSidebarBox.h
     layout/menu/Button.h
@@ -124,9 +127,6 @@ set(MOD_GAME_H
     layout/options/OptionsItem.h
     layout/options/ToggleBtn.h
     layout/options/ValueChooser.h
-    layout/multiplayer/BottomBarBox.h
-    layout/multiplayer/TopBarBox.h
-    layout/singleplayer/WellBox.h
 
     states/InitState.h
     states/MainMenuState.h
