@@ -2,6 +2,7 @@
 
 #include "FadeInOut.h"
 #include "game/AppContext.h"
+#include "game/layout/gameplay/PlayerArea.h"
 #include "game/states/MultiplayerState.h"
 #include "system/AudioContext.h"
 #include "system/Font.h"
@@ -76,8 +77,8 @@ void Pause::update(MultiplayerState& parent, const std::vector<Event>& events, A
 void Pause::drawActive(MultiplayerState& parent, GraphicsContext&) const
 {
     for (const auto& ui_pa : parent.player_areas) {
-        const int center_x = ui_pa.second.wellCenterX();
-        const int center_y = ui_pa.second.wellCenterY();
+        const int center_x = ui_pa.second->wellCenterX();
+        const int center_y = ui_pa.second->wellCenterY();
         tex_pause->drawAt(
             center_x - tex_pause->width() / 2,
             center_y - tex_pause->height() / 2);

@@ -2,15 +2,19 @@
 
 #include "game/GameState.h"
 #include "game/PlayerStatistics.h"
-#include "game/layout/gameplay/NarrowPA.h"
 
 #include <list>
 #include <memory>
 #include <unordered_map>
 
+namespace Layout {
+    class PlayerArea;
+}
+
 namespace SubStates { namespace Multiplayer {
     class State;
 } }
+
 
 enum class MultiplayerMode : uint8_t {
     MARATHON,
@@ -30,7 +34,7 @@ public:
     const MultiplayerMode gamemode;
     std::list<std::unique_ptr<SubStates::Multiplayer::State>> states;
     std::vector<DeviceID> device_order;
-    std::unordered_map<DeviceID, Layout::NarrowPA> player_areas;
+    std::unordered_map<DeviceID, std::unique_ptr<Layout::PlayerArea>> player_areas;
     std::unordered_map<DeviceID, PlayerStatistics> player_stats;
 
 private:

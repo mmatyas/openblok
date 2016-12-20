@@ -1,6 +1,7 @@
 #include "MultiplayerState.h"
 
 #include "game/AppContext.h"
+#include "game/layout/gameplay/PlayerArea.h"
 #include "substates/Multiplayer.h"
 #include "substates/multiplayer/FadeInOut.h"
 #include "substates/multiplayer/PlayerSelect.h"
@@ -34,14 +35,14 @@ void MultiplayerState::updatePositions(GraphicsContext& gcx)
     const int center_x = (gcx.screenWidth() * inverse_scale) / 2;
     const int center_y = (gcx.screenHeight() * inverse_scale) / 2;
 
-    const int well_y = center_y - player_areas.at(device_order.front()).height() / 2;
+    const int well_y = center_y - player_areas.at(device_order.front())->height() / 2;
     const int well_full_width = 2 * well_padding_x
-        + player_areas.at(device_order.front()).width();
+        + player_areas.at(device_order.front())->width();
 
     int well_x = center_x - (well_full_width * player_areas.size()) / 2;
 
     for (const DeviceID device_id : device_order) {
-        player_areas.at(device_id).setPosition(well_x + well_padding_x, well_y);
+        player_areas.at(device_id)->setPosition(well_x + well_padding_x, well_y);
         well_x += well_full_width;
     }
 }
@@ -64,7 +65,7 @@ void MultiplayerState::update(const std::vector<Event>& events, AppContext& app)
         }
     }
     for (auto& ui_pa : player_areas)
-        ui_pa.second.well().updateKeystateOnly(input_events[ui_pa.first]);
+        ui_pa.second->well().updateKeystateOnly(input_events[ui_pa.first]);
 
     states.back()->update(*this, events, app);
 }

@@ -4,7 +4,11 @@
 #include "Pause.h"
 #include "Statistics.h"
 #include "game/AppContext.h"
+#include "game/components/HoldQueue.h"
+#include "game/components/NextQueue.h"
 #include "game/components/Piece.h"
+#include "game/layout/gameplay/NarrowBattlePA.h"
+#include "game/layout/gameplay/NarrowPA.h"
 #include "game/states/MultiplayerState.h"
 #include "system/AudioContext.h"
 #include "system/Font.h"
@@ -70,10 +74,20 @@ Gameplay::Gameplay(MultiplayerState& parent, AppContext& app, const std::vector<
             std::forward_as_tuple(std::chrono::seconds(2), [](double t){ return t; }));
         gameend_anim_timers.at(device_id).stop();
 
-        parent.player_areas.emplace(std::piecewise_construct,
-            std::forward_as_tuple(device_id), std::forward_as_tuple(app));
         parent.player_stats.emplace(std::piecewise_construct,
             std::forward_as_tuple(device_id), std::forward_as_tuple());
+    }
+    switch (parent.gamemode) {
+        case MultiplayerMode::MARATHON:
+            for (const DeviceID device_id : player_devices)
+                parent.player_areas[device_id] = std::make_unique<Layout::NarrowPA>(app);
+            break;
+        case MultiplayerMode::BATTLE:
+            for (const DeviceID device_id : player_devices)
+                parent.player_areas[device_id] = std::make_unique<Layout::NarrowBattlePA>(app);
+            break;
+        default:
+            assert(false);
     }
     assert(parent.player_areas.size() > 1);
     parent.updatePositions(app.gcx());
@@ -91,7 +105,7 @@ Gameplay::Gameplay(MultiplayerState& parent, AppContext& app, const std::vector<
 
 void Gameplay::addNextPiece(MultiplayerState& parent, DeviceID device_id)
 {
-    auto& parea = parent.player_areas.at(device_id);
+    auto& parea = *parent.player_areas.at(device_id);
     parea.well().addPiece(parea.nextQueue().next());
     parea.holdQueue().onNextTurn();
 }
@@ -109,7 +123,7 @@ std::vector<DeviceID> Gameplay::playingPlayers()
 void Gameplay::registerObservers(MultiplayerState& parent, AppContext& app)
 {
     for (const DeviceID device_id : player_devices) {
-        auto& well = parent.player_areas.at(device_id).well();
+        auto& well = parent.player_areas.at(device_id)->well();
 
         well.registerObserver(WellEvent::Type::PIECE_LOCKED, [this](const WellEvent&){
             sfx_onlock->playOnce();
@@ -126,8 +140,8 @@ void Gameplay::registerObservers(MultiplayerState& parent, AppContext& app)
         });
 
         well.registerObserver(WellEvent::Type::HOLD_REQUESTED, [this, &parent, device_id](const WellEvent&){
-            auto& well = parent.player_areas.at(device_id).well();
-            auto& hold_queue = parent.player_areas.at(device_id).holdQueue();
+            auto& well = parent.player_areas.at(device_id)->well();
+            auto& hold_queue = parent.player_areas.at(device_id)->holdQueue();
 
             hold_queue.onSwapRequested();
             if (hold_queue.swapAllowed()) {
@@ -207,7 +221,7 @@ void Gameplay::registerObservers(MultiplayerState& parent, AppContext& app)
                         // wait until someone gets game over
                     return;
                 }
-                parent.player_areas.at(device_id).well().setGravity(gravity_stack.top());
+                parent.player_areas.at(device_id)->well().setGravity(gravity_stack.top());
                 lines_left += lineclears_per_level;
                 player_stats.level++;
                 sfx_onlevelup->playOnce();
@@ -275,7 +289,7 @@ void Gameplay::registerObservers(MultiplayerState& parent, AppContext& app)
 void Gameplay::updateAnimationsOnly(MultiplayerState& parent, AppContext&)
 {
     for (auto& ui_pa : parent.player_areas)
-        ui_pa.second.well().updateAnimationsOnly();
+        ui_pa.second->well().updateAnimationsOnly();
 }
 
 void Gameplay::update(MultiplayerState& parent, const std::vector<Event>& events, AppContext& app)
@@ -314,10 +328,10 @@ void Gameplay::update(MultiplayerState& parent, const std::vector<Event>& events
 
     for (const DeviceID device_id : player_devices) {
         if (player_status.at(device_id) == PlayerStatus::PLAYING) {
-            parent.player_areas.at(device_id).well().updateGameplayOnly(input_events[device_id]);
+            parent.player_areas.at(device_id)->well().updateGameplayOnly(input_events[device_id]);
             parent.player_stats.at(device_id).gametime += Timing::frame_duration;
         }
-        parent.player_areas.at(device_id).update();
+        parent.player_areas.at(device_id)->update();
 
         gameend_anim_timers.at(device_id).update(Timing::frame_duration);
     }
@@ -325,7 +339,7 @@ void Gameplay::update(MultiplayerState& parent, const std::vector<Event>& events
     if (texts_need_update) {
         for (const DeviceID device_id : player_devices) {
             const auto& stats = parent.player_stats.at(device_id);
-            auto& ui = parent.player_areas.at(device_id);
+            auto& ui = *parent.player_areas.at(device_id);
             ui.updateLevelCounter(stats.level);
             ui.updateScore(stats.score);
         }
@@ -338,28 +352,29 @@ void Gameplay::update(MultiplayerState& parent, const std::vector<Event>& events
 void Gameplay::drawPassive(MultiplayerState& parent, GraphicsContext& gcx) const
 {
     for (const auto& ui_pa : parent.player_areas)
-        ui_pa.second.drawPassive(gcx);
+        ui_pa.second->drawPassive(gcx);
 }
 
 void Gameplay::drawActive(MultiplayerState& parent, GraphicsContext& gcx) const
 {
    for (const auto& ui_pa : parent.player_areas)
-        ui_pa.second.drawActive(gcx);
+        ui_pa.second->drawActive(gcx);
 
    for (const DeviceID device_id : player_devices) {
         const auto& ui = parent.player_areas.at(device_id);
         switch (player_status.at(device_id)) {
             case PlayerStatus::GAME_OVER: {
-                const int box_h = ui.wellBox().h * gameend_anim_timers.at(device_id).value();
+                const auto& wellbox = ui->wellBox();
+                const int box_h = wellbox.h * gameend_anim_timers.at(device_id).value();
                 gcx.drawFilledRect({
-                    ui.wellBox().x, ui.wellBox().y + ui.wellBox().h - box_h,
-                    ui.wellBox().w, box_h
+                    wellbox.x, wellbox.y + wellbox.h - box_h,
+                    wellbox.w, box_h
                 }, 0xA0_rgba);
             }
             break;
             case PlayerStatus::FINISHED:
-                tex_finish->drawAt(ui.wellCenterX() - tex_finish->width() / 2,
-                                   ui.wellCenterY() - tex_finish->height() / 2);
+                tex_finish->drawAt(ui->wellCenterX() - tex_finish->width() / 2,
+                                   ui->wellCenterY() - tex_finish->height() / 2);
             break;
             default:
                 break;

@@ -1,9 +1,10 @@
 #include "Countdown.h"
 
-#include "system/Color.h"
 #include "game/AppContext.h"
+#include "game/layout/gameplay/PlayerArea.h"
 #include "game/states/MultiplayerState.h"
 #include "system/AudioContext.h"
+#include "system/Color.h"
 #include "system/Font.h"
 #include "system/GraphicsContext.h"
 #include "system/Paths.h"
@@ -59,8 +60,8 @@ void Countdown::drawActive(MultiplayerState& parent, GraphicsContext&) const
     assert(current_idx < 3);
     const auto& tex = tex_countdown.at(current_idx);
     for (const auto& ui_playerarea : parent.player_areas) {
-        const int center_x = ui_playerarea.second.wellCenterX();
-        const int center_y = ui_playerarea.second.wellCenterY();
+        const int center_x = ui_playerarea.second->wellCenterX();
+        const int center_y = ui_playerarea.second->wellCenterY();
         tex->drawAt(center_x - tex->width() / 2, center_y - tex->height() / 2);
     }
 }

@@ -1,14 +1,15 @@
 #include "Statistics.h"
 
-#include "system/Color.h"
-#include <game/AppContext.h>
-#include <system/GraphicsContext.h>
-#include <system/Paths.h>
-#include <game/states/MultiplayerState.h>
-#include <system/Font.h>
-#include <system/Localize.h>
-#include <game/util/DurationToString.h>
 #include "FadeInOut.h"
+#include "game/AppContext.h"
+#include "game/layout/gameplay/PlayerArea.h"
+#include "game/states/MultiplayerState.h"
+#include "game/util/DurationToString.h"
+#include "system/Color.h"
+#include "system/Font.h"
+#include "system/GraphicsContext.h"
+#include "system/Localize.h"
+#include "system/Paths.h"
 
 
 namespace SubStates {
@@ -96,14 +97,14 @@ void Statistics::drawBackground(MultiplayerState& parent, GraphicsContext& gcx) 
     for (const auto& ui_pa : parent.player_areas) {
         auto color = 0x2030FF00_rgba;
         color.a = fadein_percent.value() * 0xFF;
-        gcx.drawFilledRect(ui_pa.second.wellBox(), color);
+        gcx.drawFilledRect(ui_pa.second->wellBox(), color);
     }
 }
 
 void Statistics::drawItems(MultiplayerState& parent) const
 {
     for (const DeviceID device_id : parent.device_order) {
-        const auto& ui_pa = parent.player_areas.at(device_id);
+        const auto& ui_pa = *parent.player_areas.at(device_id);
 
         int pos_x = ui_pa.wellBox().x;
         int pos_y = ui_pa.wellBox().y;

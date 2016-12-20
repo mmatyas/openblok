@@ -29,7 +29,9 @@ set(MOD_GAME_SRC
     components/well/TSpin.cpp
     components/well/Render.cpp
 
+    layout/gameplay/GarbageGauge.cpp
     layout/gameplay/PlayerArea.cpp
+    layout/gameplay/NarrowBattlePA.cpp
     layout/gameplay/NarrowPA.cpp
     layout/gameplay/WellContainer.cpp
     layout/gameplay/WidePA.cpp
@@ -109,7 +111,9 @@ set(MOD_GAME_H
 
     layout/Box.h
     layout/MenuItem.h
+    layout/gameplay/GarbageGauge.h
     layout/gameplay/PlayerArea.h
+    layout/gameplay/NarrowBattlePA.h
     layout/gameplay/NarrowPA.h
     layout/gameplay/WellContainer.h
     layout/gameplay/WidePA.h

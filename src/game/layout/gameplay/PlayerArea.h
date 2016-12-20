@@ -27,9 +27,11 @@ public:
     virtual void updateScore(unsigned) {}
     virtual void updateGametime(Duration) {}
     virtual void updateGoalCounter(unsigned) {}
+    virtual void updateGarbageGauge(unsigned) {}
 
     virtual HoldQueue& holdQueue() = 0;
     virtual NextQueue& nextQueue() = 0;
+    virtual unsigned queuedGarbageLines() const { return 0; }
 
     virtual Well& well() { return ui_well.well(); };
     virtual ::Rectangle wellBox() const { return wellbox; }
