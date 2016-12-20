@@ -1,5 +1,6 @@
 set(MOD_GAME_SRC
     AppContext.cpp
+    BattleAttackTable.cpp
     GameConfigFile.cpp
     ScoreTable.cpp
 
@@ -70,6 +71,7 @@ set(MOD_GAME_SRC
 
 set(MOD_GAME_H
     AppContext.h
+    BattleAttackTable.h
     GameConfigFile.h
     GameState.h
     PlayerStatistics.h

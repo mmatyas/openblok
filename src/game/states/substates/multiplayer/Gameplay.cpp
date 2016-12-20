@@ -4,6 +4,7 @@
 #include "Pause.h"
 #include "Statistics.h"
 #include "game/AppContext.h"
+#include "game/BattleAttackTable.h"
 #include "game/components/HoldQueue.h"
 #include "game/components/NextQueue.h"
 #include "game/components/Piece.h"
@@ -125,8 +126,9 @@ void Gameplay::registerObservers(MultiplayerState& parent, AppContext& app)
     for (const DeviceID device_id : player_devices) {
         auto& well = parent.player_areas.at(device_id)->well();
 
-        well.registerObserver(WellEvent::Type::PIECE_LOCKED, [this](const WellEvent&){
+        well.registerObserver(WellEvent::Type::PIECE_LOCKED, [this, device_id](const WellEvent&){
             sfx_onlock->playOnce();
+            // TODO: add garbage lines to well
         });
 
         well.registerObserver(WellEvent::Type::PIECE_ROTATED, [this](const WellEvent&){
@@ -183,7 +185,8 @@ void Gameplay::registerObservers(MultiplayerState& parent, AppContext& app)
             std::string popup_text = ScoreTable::name(score_type);
             player_stats.event_count[score_type]++;
 
-            if (ScoreTable::canContinueBackToBack(previous_lineclear_type.at(device_id), score_type)) {
+            const bool back2back = ScoreTable::canContinueBackToBack(previous_lineclear_type.at(device_id), score_type);
+            if (back2back) {
                 score *= ScoreTable::back2backMultiplier();
                 popup_text = ScoreTable::back2backName() + "\n" + popup_text;
                 back2back_length.at(device_id)++;
@@ -196,6 +199,39 @@ void Gameplay::registerObservers(MultiplayerState& parent, AppContext& app)
 
             player_stats.score += score * player_stats.level;
             previous_lineclear_type.at(device_id) = score_type;
+
+
+            // send garbage lines to other players
+            if (parent.gamemode == MultiplayerMode::BATTLE) {
+                unsigned sendable_lines = BattleAttackTable::sendableLineCount(event.lineclear, back2back);
+                if (sendable_lines > 0) {
+                    // reduce current garbage
+                    auto& parea = *parent.player_areas.at(device_id);
+                    unsigned current_queue = parea.queuedGarbageLines();
+                    unsigned smallest = std::min(sendable_lines, current_queue);
+                    current_queue -= smallest;
+                    sendable_lines -= smallest;
+                    parea.updateGarbageGauge(current_queue);
+                }
+                // if we can still send some lines
+                if (sendable_lines > 0) {
+                    // find target player
+                    std::vector<DeviceID> possible_players;
+                    for (const DeviceID possible_device : player_devices) {
+                        if (player_status.at(possible_device) == PlayerStatus::PLAYING && possible_device != device_id)
+                            possible_players.push_back(possible_device);
+                    }
+                    assert(!possible_players.empty());
+                    std::random_shuffle(possible_players.begin(), possible_players.end());
+                    DeviceID target_id = possible_players.front();
+                    assert(target_id != device_id);
+
+                    // send the lines
+                    auto& target_player = *parent.player_areas.at(target_id);
+                    target_player.updateGarbageGauge(target_player.queuedGarbageLines() + sendable_lines);
+                    // TODO: visual effect
+                }
+            }
 
 
             // increase gravity level
