@@ -12,6 +12,7 @@
 #include "game/WellEvent.h"
 
 #include <algorithm>
+#include <cstdlib>
 #include <assert.h>
 
 
