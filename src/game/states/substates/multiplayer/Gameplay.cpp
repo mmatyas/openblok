@@ -74,6 +74,7 @@ Gameplay::Gameplay(MultiplayerState& parent, AppContext& app, const std::vector<
             std::forward_as_tuple(device_id),
             std::forward_as_tuple(std::chrono::seconds(2), [](double t){ return t; }));
         gameend_anim_timers.at(device_id).stop();
+        pending_garbage_lines[device_id] = 0;
 
         parent.player_stats.emplace(std::piecewise_construct,
             std::forward_as_tuple(device_id), std::forward_as_tuple());
@@ -126,9 +127,11 @@ void Gameplay::registerObservers(MultiplayerState& parent, AppContext& app)
     for (const DeviceID device_id : player_devices) {
         auto& well = parent.player_areas.at(device_id)->well();
 
-        well.registerObserver(WellEvent::Type::PIECE_LOCKED, [this, device_id](const WellEvent&){
+        well.registerObserver(WellEvent::Type::PIECE_LOCKED, [this, &parent, device_id](const WellEvent&){
             sfx_onlock->playOnce();
-            // TODO: add garbage lines to well
+            auto& parea = *parent.player_areas.at(device_id);
+            pending_garbage_lines.at(device_id) = parea.queuedGarbageLines();
+            parea.updateGarbageGauge(0);
         });
 
         well.registerObserver(WellEvent::Type::PIECE_ROTATED, [this](const WellEvent&){
@@ -212,6 +215,7 @@ void Gameplay::registerObservers(MultiplayerState& parent, AppContext& app)
                     current_queue -= smallest;
                     sendable_lines -= smallest;
                     parea.updateGarbageGauge(current_queue);
+                    pending_garbage_lines.at(device_id) = current_queue;
                 }
                 // if we can still send some lines
                 if (sendable_lines > 0) {
@@ -364,7 +368,12 @@ void Gameplay::update(MultiplayerState& parent, const std::vector<Event>& events
 
     for (const DeviceID device_id : player_devices) {
         if (player_status.at(device_id) == PlayerStatus::PLAYING) {
-            parent.player_areas.at(device_id)->well().updateGameplayOnly(input_events[device_id]);
+            auto& well = parent.player_areas.at(device_id)->well();
+
+            well.updateGameplayOnly(input_events[device_id]);
+            well.addGarbageLines(pending_garbage_lines.at(device_id));
+            pending_garbage_lines.at(device_id) = 0;
+
             parent.player_stats.at(device_id).gametime += Timing::frame_duration;
         }
         parent.player_areas.at(device_id)->update();

@@ -48,6 +48,7 @@ private:
     std::unordered_map<DeviceID, ScoreType> previous_lineclear_type;
     std::unordered_map<DeviceID, unsigned short> back2back_length;
     std::unordered_map<DeviceID, Transition<double>> gameend_anim_timers;
+    std::unordered_map<DeviceID, unsigned short> pending_garbage_lines;
 
     Transition<unsigned> gameend_statistics_delay;
 

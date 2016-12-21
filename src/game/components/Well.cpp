@@ -1,5 +1,6 @@
 #include "Well.h"
 
+#include "MinoStorage.h"
 #include "Piece.h"
 #include "PieceFactory.h"
 #include "animations/CellLockAnim.h"
@@ -113,6 +114,22 @@ void Well::addPiece(PieceType type)
 void Well::deletePiece()
 {
     active_piece.reset();
+}
+
+void Well::addGarbageLines(unsigned short line_count)
+{
+    if (!line_count)
+        return;
+
+    std::rotate(matrix.begin(), matrix.begin() + line_count, matrix.end());
+
+    size_t gap_location = std::rand() % 10;
+    for (size_t row = matrix.size() - line_count; row < matrix.size(); row++) {
+        auto& mx_row = matrix.at(row);
+        for (size_t col = 0; col < mx_row.size(); col++)
+            mx_row.at(col) = MinoStorage::getMino(PieceType::GARBAGE);
+        mx_row.at(gap_location).reset();
+    }
 }
 
 void Well::setGravity(Duration duration)
