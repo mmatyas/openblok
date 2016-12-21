@@ -6,29 +6,32 @@
 
 
 PieceType Piece::typeFromAscii(char type) {
-    switch(type) {
-    case 'I' : return PieceType::I;
-    case 'J' : return PieceType::J;
-    case 'L' : return PieceType::L;
-    case 'O' : return PieceType::O;
-    case 'S' : return PieceType::S;
-    case 'T' : return PieceType::T;
-    case 'Z' : return PieceType::Z;
-    }
-    assert(false);
+    static const std::unordered_map<char, PieceType> type_map = {
+        {'I', PieceType::I},
+        {'J', PieceType::J},
+        {'L', PieceType::L},
+        {'O', PieceType::O},
+        {'S', PieceType::S},
+        {'T', PieceType::T},
+        {'Z', PieceType::Z},
+        {'+', PieceType::GARBAGE},
+    };
+    assert(type_map.count(type));
+    return type_map.at(type);
 }
 
 uint8_t Piece::displayWidth(PieceType type) {
-    switch(type) {
-    case PieceType::I : return 4;
-    case PieceType::J : return 3;
-    case PieceType::L : return 3;
-    case PieceType::O : return 4;
-    case PieceType::S : return 3;
-    case PieceType::T : return 3;
-    case PieceType::Z : return 3;
-    }
-    assert(false);
+    static const std::unordered_map<PieceType, uint8_t, PieceTypeHash> width_map = {
+        {PieceType::I, 4},
+        {PieceType::J, 3},
+        {PieceType::L, 3},
+        {PieceType::O, 4},
+        {PieceType::S, 3},
+        {PieceType::T, 3},
+        {PieceType::Z, 3},
+    };
+    assert(width_map.count(type)); // garbage is not allowed!
+    return width_map.at(type);
 }
 
 Piece::Piece(PieceType type, const std::array<std::bitset<16>, 4>& gridbits)

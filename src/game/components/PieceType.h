@@ -5,7 +5,7 @@
 
 
 enum class PieceType : uint8_t {
-    I, J, L, O, S, T, Z
+    I, J, L, O, S, T, Z, GARBAGE,
 };
 
 constexpr std::array<PieceType, 7> PieceTypeList = {{

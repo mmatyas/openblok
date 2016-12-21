@@ -13,6 +13,7 @@ char toAscii(PieceType type)
         case PieceType::S: return 'S';
         case PieceType::T: return 'T';
         case PieceType::Z: return 'Z';
+        case PieceType::GARBAGE: return '+';
     }
     assert(false);
 }

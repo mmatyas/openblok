@@ -17,12 +17,14 @@ void MinoStorage::loadDummyMinos()
         minos[type] = std::make_shared<Mino>(nullptr, ::toAscii(type));
         ghosts[type] = std::make_shared<Mino>(nullptr, 'g');
     }
+    minos[PieceType::GARBAGE] = std::make_shared<Mino>(nullptr, ::toAscii(PieceType::GARBAGE));
     matrixcell.reset();
 }
 #endif
 
 void MinoStorage::loadTintedMinos(GraphicsContext& gcx, const std::string& path)
 {
+    minos[PieceType::GARBAGE] = std::make_shared<Mino>(gcx.loadTexture(path), ::toAscii(PieceType::GARBAGE));
     for (const auto& type : PieceTypeList)
         minos[type] = std::make_shared<Mino>(gcx.loadTexture(path, color(type)), ::toAscii(type));
 }
@@ -66,6 +68,7 @@ RGBColor MinoStorage::color(PieceType type)
     case PieceType::S : return 0x80FF00_rgb;
     case PieceType::T : return 0xAA00FF_rgb;
     case PieceType::Z : return 0xFF0000_rgb;
+    case PieceType::GARBAGE : return 0xFFFFFF_rgb;
     }
     assert(false);
 }
