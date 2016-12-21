@@ -25,7 +25,7 @@ void LineClearAnim::draw(GraphicsContext& gcx, int x, int y) const
     static const int row_width = Mino::texture_size_px * 10;
     gcx.drawFilledRect({
         x + static_cast<int>(row_percent.value() * row_width),
-        y + (row - 2) * Mino::texture_size_px,
+        y + (row - 20) * Mino::texture_size_px,
         static_cast<int>(row_width * (1 - row_percent.value())),
         Mino::texture_size_px},
         0xEEEEEE_rgb);

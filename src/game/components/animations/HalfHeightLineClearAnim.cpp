@@ -5,7 +5,7 @@
 
 
 HalfHeightLineClearAnim::HalfHeightLineClearAnim()
-    : LineClearAnim(1)
+    : LineClearAnim(19)
 {}
 
 void HalfHeightLineClearAnim::draw(GraphicsContext& gcx, int x, int y) const

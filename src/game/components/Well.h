@@ -58,6 +58,9 @@ public:
     /// For actual input handling, call Well's update method.
     const std::unique_ptr<Piece>& activePiece() const { return active_piece; }
 
+    /// Add garbage lines to the bottom of the well.
+    void addGarbageLines(unsigned short);
+
     /// Set the gravity update rate
     void setGravity(Duration);
     /// Set the rotation function
@@ -88,7 +91,7 @@ private:
 
     // the grid matrix
     // TODO: set dimensions from config
-    Matrix<std::shared_ptr<Mino>, 22, 10> matrix;
+    Matrix<std::shared_ptr<Mino>, 40, 10> matrix;
 
     // the active piece
     int8_t active_piece_x;

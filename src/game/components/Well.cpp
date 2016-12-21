@@ -96,8 +96,8 @@ void Well::addPiece(PieceType type)
     active_piece_x = 3;
 
     // try to place the piece in row 20, then move up if it fails
-    for (active_piece_y = 3; active_piece_y > 0; /* note: unsigned */ ) {
-        if (!hasCollisionAt(active_piece_x, --active_piece_y)) {
+    for (active_piece_y = 20; active_piece_y >= 18; active_piece_y--) {
+        if (!hasCollisionAt(active_piece_x, active_piece_y)) {
             calculateGhostOffset();
             lock_delay.cancel();
             return;
@@ -352,8 +352,8 @@ void Well::lockAndReleasePiece()
                     active_piece->currentGridMut()[row][cell]
                 );
 
-                if (active_piece_y + row >= 2) {
-                    pending_anims.emplace_back(active_piece_y + row - 2,
+                if (active_piece_y + row >= 20) {
+                    pending_anims.emplace_back(active_piece_y + row - 20,
                                                active_piece_x + cell);
                 }
             }

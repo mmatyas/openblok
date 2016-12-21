@@ -11,10 +11,10 @@ namespace WellComponents {
 
 void Ascii::fromAscii(Well& well, const std::string& text)
 {
-    assert(text.length() == well.matrix.size() * (well.matrix[0].size() + 1));
+    assert(text.length() == 22 * (well.matrix[0].size() + 1));
 
     unsigned str_i = 0;
-    for (unsigned row = 0; row < well.matrix.size(); row++) {
+    for (unsigned row = 18; row < well.matrix.size(); row++) {
         for (unsigned cell = 0; cell < well.matrix[0].size(); cell++) {
             if (text.at(str_i) == '.')
                 well.matrix[row][cell].reset();
@@ -39,7 +39,7 @@ std::string Ascii::asAscii(const Well& well) const
     std::string piece_layer;
 
     // print board
-    for (size_t row = 0; row < well.matrix.size(); row++) {
+    for (size_t row = 18; row < well.matrix.size(); row++) {
         for (size_t cell = 0; cell < well.matrix[0].size(); cell++) {
             if (well.matrix[row][cell])
                 board_layer += well.matrix[row][cell]->asAscii();
@@ -50,7 +50,7 @@ std::string Ascii::asAscii(const Well& well) const
     }
 
     // print piece layer
-    for (unsigned row = 0; row < well.matrix.size(); row++) {
+    for (unsigned row = 18; row < well.matrix.size(); row++) {
         for (unsigned cell = 0; cell < well.matrix[0].size(); cell++) {
             char appended_char = '.';
 

@@ -37,7 +37,7 @@ void Render::drawContent(const Well& well, GraphicsContext& gcx, int draw_offset
 {
     // Draw board Minos
     for (int col = 0; col < 10; col++) {
-        const auto& cell = well.matrix.at(1).at(col);
+        const auto& cell = well.matrix.at(19).at(col);
         if (cell) {
             cell->drawPartial(top_row_cliprect, {
                 draw_offset_x + col * Mino::texture_size_px, draw_offset_y,
@@ -47,7 +47,7 @@ void Render::drawContent(const Well& well, GraphicsContext& gcx, int draw_offset
     draw_offset_y += top_row_height;
     for (unsigned row = 0; row < 20; row++) {
         for (unsigned col = 0; col < 10; col++) {
-            const auto& cell = well.matrix.at(row + 2).at(col);
+            const auto& cell = well.matrix.at(row + 20).at(col);
             if (cell) {
                 cell->draw(draw_offset_x + col * Mino::texture_size_px,
                            draw_offset_y + row * Mino::texture_size_px);
@@ -58,31 +58,31 @@ void Render::drawContent(const Well& well, GraphicsContext& gcx, int draw_offset
     // Draw current piece
     if (well.active_piece) {
         // draw ghost
+        const auto& ghost_cell = MinoStorage::getGhost(well.active_piece->type());
         for (unsigned row = 0; row < 4; row++) {
-            if (well.ghost_piece_y + row < 2) // hide rows 21-22
+            if (well.ghost_piece_y + row < 20) // hide buffer zone
                 continue;
             for (unsigned col = 0; col < 4; col++) {
                 if (well.active_piece->currentGrid().at(row).at(col)) {
-                    const auto& cell = MinoStorage::getGhost(well.active_piece->type());
-                    cell->draw(draw_offset_x + (well.active_piece_x + col) * Mino::texture_size_px,
-                               draw_offset_y + (well.ghost_piece_y + row - 2) * Mino::texture_size_px);
+                    ghost_cell->draw(draw_offset_x + (well.active_piece_x + col) * Mino::texture_size_px,
+                                     draw_offset_y + (well.ghost_piece_y + row - 20) * Mino::texture_size_px);
                 }
             }
         }
 
         // draw piece
         for (int row = 0; row < 4; row++) {
-            if (well.active_piece_y + row < 1) // hide row 22
+            if (well.active_piece_y + row < 19) // hide buffer zone
                 continue;
 
-            if (well.active_piece_y + row < 2) { // partially draw row 21
+            if (well.active_piece_y + row < 20) { // partially draw the topmost row
                 draw_offset_y -= top_row_height;
                 for (int col = 0; col < 4; col++) {
                     const auto& cell = well.active_piece->currentGrid().at(row).at(col);
                     if (cell) {
                         cell->drawPartial(top_row_cliprect, {
                             draw_offset_x + (well.active_piece_x + col) * Mino::texture_size_px,
-                            draw_offset_y + (well.active_piece_y + row - 1) * Mino::texture_size_px,
+                            draw_offset_y + (well.active_piece_y + row - 19) * Mino::texture_size_px,
                             Mino::texture_size_px, top_row_height});
                     }
                 }
@@ -94,7 +94,7 @@ void Render::drawContent(const Well& well, GraphicsContext& gcx, int draw_offset
                 const auto& cell = well.active_piece->currentGrid().at(row).at(col);
                 if (cell) {
                     cell->draw(draw_offset_x + (well.active_piece_x + col) * Mino::texture_size_px,
-                               draw_offset_y + (well.active_piece_y + row - 2) * Mino::texture_size_px);
+                               draw_offset_y + (well.active_piece_y + row - 20) * Mino::texture_size_px);
                 }
             }
         }
