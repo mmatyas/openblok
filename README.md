@@ -24,7 +24,7 @@ A customizable, cross platform, open-source falling block game, packed with a bu
 - [ ] Combo support
 - [x] Gamepad support
 - [x] Menu, configuration and stats
-- [ ] Battle mode
+- [x] Battle mode
 - [x] Music and sound effects
 - [x] Big screen support
 - [x] Small screen support
