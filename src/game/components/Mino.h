@@ -19,7 +19,8 @@ public:
     /// The Ascii value of the Mino, used mainly for debugging
     char asAscii() const { return ascii_val; }
 
-    static const int8_t texture_size_px;
+    // TODO: load from config maybe
+    static constexpr int8_t texture_size_px = 32;
 
 private:
     const std::unique_ptr<Texture> texture;
