@@ -14,11 +14,12 @@ class Piece;
 class NextQueue {
 public:
     /// Create a piece queue and allow previewing the next N pieces.
-    NextQueue(unsigned displayed_piece_count);
+    NextQueue(unsigned displayed_piece_count = 1);
     ~NextQueue();
 
     /// Pop the top of the queue.
     PieceType next();
+    void setPreviewCount(unsigned);
 
     /// Draw the N previewable pieces at (x,y)
     void draw(GraphicsContext&, int x, int y) const;

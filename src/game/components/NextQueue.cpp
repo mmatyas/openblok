@@ -10,7 +10,7 @@
 
 std::deque<PieceType> NextQueue::global_piece_queue = {};
 
-NextQueue::NextQueue (unsigned displayed_piece_count)
+NextQueue::NextQueue(unsigned displayed_piece_count)
     : displayed_piece_count(displayed_piece_count)
 {
     if (global_piece_queue.size() <= displayed_piece_count)
@@ -52,6 +52,11 @@ void NextQueue::generate_global_pieces()
     std::random_shuffle(possible_pieces.begin(), possible_pieces.end());
     for (const auto p : possible_pieces)
         global_piece_queue.push_back(p);
+}
+
+void NextQueue::setPreviewCount(unsigned num)
+{
+    displayed_piece_count = num;
 }
 
 void NextQueue::draw(GraphicsContext& gcx, int x, int y) const
