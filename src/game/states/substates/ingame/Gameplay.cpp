@@ -411,17 +411,18 @@ void Gameplay::update(IngameState& parent, const std::vector<Event>& events, App
 
     for (const DeviceID device_id : player_devices) {
         if (player_status.at(device_id) == PlayerStatus::PLAYING) {
-            auto& well = parent.player_areas.at(device_id).well();
+            auto& parea = parent.player_areas.at(device_id);
+            auto& well = parea.well();
 
             well.updateGameplayOnly(input_events[device_id]);
             well.addGarbageLines(pending_garbage_lines.at(device_id));
             pending_garbage_lines.at(device_id) = 0;
 
-            parent.player_stats.at(device_id).gametime += Timing::frame_duration;
+            auto& stats = parent.player_stats.at(device_id);
+            stats.gametime += Timing::frame_duration;
+            parea.setGametime(stats.gametime);
         }
         parent.player_areas.at(device_id).update();
-
-        // gameend_anim_timers.at(device_id).update(Timing::frame_duration);
     }
 
     if (texts_need_update) {
@@ -431,7 +432,6 @@ void Gameplay::update(IngameState& parent, const std::vector<Event>& events, App
             parea.setGoalCounter(lineclears_left.at(device_id));
             parea.setLevelCounter(stats.level);
             parea.setScore(stats.score);
-            parea.setGametime(stats.gametime);
         }
         texts_need_update = false;
     }
