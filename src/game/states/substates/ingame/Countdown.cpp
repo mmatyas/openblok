@@ -4,7 +4,6 @@
 #include "game/layout/gameplay/PlayerArea.h"
 #include "game/states/IngameState.h"
 #include "system/AudioContext.h"
-#include "system/Color.h"
 #include "system/Font.h"
 #include "system/GraphicsContext.h"
 #include "system/Paths.h"
@@ -23,7 +22,7 @@ Countdown::Countdown(AppContext& app)
             app.audio().loadSound(Paths::data() + "sfx/countdown2.ogg"),
             app.audio().loadSound(Paths::data() + "sfx/countdown1.ogg"),
         }})
-    , requested_sfx(sfx_countdown.at(0))
+    , pending_sfx(sfx_countdown.at(0))
 {
     auto font_huge = app.gcx().loadFont(Paths::data() + "fonts/helsinki.ttf", 150);
     tex_countdown = {{
@@ -44,12 +43,12 @@ void Countdown::update(IngameState& parent, const std::vector<Event>&, AppContex
             return;
         }
         assert(current_idx < 3);
-        requested_sfx = sfx_countdown.at(current_idx);
+        pending_sfx = sfx_countdown.at(current_idx);
         this->timer.restart();
     }
-    if (requested_sfx) {
-        requested_sfx->playOnce();
-        requested_sfx.reset();
+    if (pending_sfx) {
+        pending_sfx->playOnce();
+        pending_sfx.reset();
     }
 
     timer.update(Timing::frame_duration);
