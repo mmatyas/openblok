@@ -48,7 +48,6 @@ public:
     int wellCenterY() const { return wellBox().y + wellBox().h / 2; }
 
 protected:
-    bool is_narrow;
     ::Rectangle wellbox;
     WellContainer ui_well;
 
@@ -72,7 +71,8 @@ protected:
 
     ::Rectangle rect_level;
     std::unique_ptr<Texture> tex_level;
-    std::unique_ptr<Texture> tex_level_counter;
+    std::unique_ptr<Texture> tex_level_counter_wide;
+    std::unique_ptr<Texture> tex_level_counter_narrow;
 
     ::Rectangle rect_score;
     std::unique_ptr<Texture> tex_score;

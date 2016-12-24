@@ -30,8 +30,7 @@ PlayerArea::GameEndVars::GameEndVars(AppContext& app)
 }
 
 PlayerArea::PlayerArea(AppContext& app, bool draw_gauge)
-    : is_narrow(false)
-    , ui_well(app)
+    : ui_well(app)
     , draw_gauge(draw_gauge)
     , garbage_gauge(app, ui_well.height())
     , rect_level{}
@@ -81,7 +80,6 @@ void PlayerArea::setMaxWidth(unsigned max_width)
         draw_fn_active = [this](GraphicsContext& gcx){ drawNarrowActive(gcx); };
         draw_fn_passive = [this](GraphicsContext& gcx){ drawNarrowPassive(gcx); };
 
-        is_narrow = true;
         nextQueue().setPreviewCount(1);
     }
     else {
@@ -92,7 +90,6 @@ void PlayerArea::setMaxWidth(unsigned max_width)
         draw_fn_active = [this](GraphicsContext& gcx){ drawWideActive(gcx); };
         draw_fn_passive = [this](GraphicsContext& gcx){ drawWidePassive(gcx); };
 
-        is_narrow = false;
         nextQueue().setPreviewCount(5);
     }
 
@@ -154,10 +151,8 @@ void PlayerArea::update()
 
 void PlayerArea::setLevelCounter(unsigned num)
 {
-    if (is_narrow)
-        tex_level_counter = font_content->renderText(tr("LEVEL ") + std::to_string(num), 0xEEEEEE_rgb);
-    else
-        tex_level_counter = font_content->renderText(std::to_string(num), 0xEEEEEE_rgb);
+    tex_level_counter_narrow = font_content->renderText(tr("LEVEL ") + std::to_string(num), 0xEEEEEE_rgb);
+    tex_level_counter_wide = font_content->renderText(std::to_string(num), 0xEEEEEE_rgb);
 }
 
 void PlayerArea::setScore(unsigned num)
@@ -279,8 +274,8 @@ void PlayerArea::drawWidePassive(GraphicsContext& gcx) const
 
     // level
     gcx.drawFilledRect(rect_level, box_color);
-    tex_level_counter->drawAt(rect_level.x + (rect_level.w - tex_level_counter->width()) / 2,
-                              rect_level.y + 5);
+    tex_level_counter_wide->drawAt(rect_level.x + (rect_level.w - tex_level_counter_wide->width()) / 2,
+                                   rect_level.y + 5);
     tex_level->drawAt(rect_level.x, rect_level.y - inner_padding - label_height);
 }
 
@@ -307,12 +302,11 @@ void PlayerArea::drawNarrowPassive(GraphicsContext& gcx) const
 
     // level
     gcx.drawFilledRect(rect_level, box_color);
-    tex_level_counter->drawAt(rect_level.x + 10, rect_level.y + 5);
+    tex_level_counter_narrow->drawAt(rect_level.x + 10, rect_level.y);
 
     // score
     gcx.drawFilledRect(rect_score, box_color);
-    tex_score_counter->drawAt(rect_score.x + rect_score.w - tex_score_counter->width() - 10,
-                              rect_score.y + 5);
+    tex_score_counter->drawAt(rect_score.x + rect_score.w - tex_score_counter->width() - 10, rect_score.y);
 }
 
 void PlayerArea::drawNarrowActive(GraphicsContext& gcx) const
