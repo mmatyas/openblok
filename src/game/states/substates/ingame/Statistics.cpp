@@ -86,7 +86,7 @@ void Statistics::update(IngameState& parent, const std::vector<Event>& events, A
         if (event.type == EventType::INPUT && event.input.down()) {
             parent.states.emplace_back(std::make_unique<FadeOut>([&app](){
                 app.states().pop();
-            }, parent.draw_inverse_scale));
+            }));
             return;
         }
     }

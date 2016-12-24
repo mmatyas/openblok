@@ -25,8 +25,7 @@ static const int well_width = 10 * Mino::texture_size_px;
 static const int well_height = 20 * Mino::texture_size_px;
 static const int well_padding_x = 5 + Mino::texture_size_px;
 
-PlayerSelect::PlayerSelect(AppContext& app, float draw_scale)
-    : draw_scale(draw_scale)
+PlayerSelect::PlayerSelect(AppContext& app)
 {
     auto font_smaller = app.gcx().loadFont(Paths::data() + "fonts/PTS75F.ttf", 30);
     auto font_player = app.gcx().loadFont(Paths::data() + "fonts/PTS75F.ttf", 45);
@@ -98,10 +97,10 @@ void PlayerSelect::update(IngameState& parent, const std::vector<Event>& events,
                                 parent.states.emplace_back(std::make_unique<Countdown>(app));
                                 parent.states.emplace_back(std::make_unique<FadeIn>([&parent, &app](){
                                     parent.states.pop_back();
-                                }, parent.draw_inverse_scale));
+                                }));
                                 parent.states.pop_front(); // pop playerselect
                                 parent.states.pop_front(); // pop fadeout
-                            }, parent.draw_inverse_scale));
+                            }));
                             return;
                         }
                     }
@@ -110,7 +109,7 @@ void PlayerSelect::update(IngameState& parent, const std::vector<Event>& events,
                     if (devices.empty()) {
                         parent.states.emplace_back(std::make_unique<FadeOut>([&app](){
                             app.states().pop();
-                        }, parent.draw_inverse_scale));
+                        }));
                         return;
                     }
                     onPlayerLeave(event.input.srcDeviceID());
@@ -126,14 +125,14 @@ void PlayerSelect::update(IngameState& parent, const std::vector<Event>& events,
     }
 }
 
-void PlayerSelect::drawPassive(IngameState&, GraphicsContext& gcx) const
+void PlayerSelect::drawPassive(IngameState& parent, GraphicsContext& gcx) const
 {
     static const int well_full_width = (well_width + 2 * well_padding_x);
     const int well_count = std::min<int>(devices.size() + 1, 4);
 
-    const int first_well_x = ((gcx.screenWidth() * draw_scale - well_full_width * well_count) / 2);
+    const int first_well_x = ((gcx.screenWidth() * parent.draw_inverse_scale - well_full_width * well_count) / 2);
     int well_x = first_well_x;
-    const int well_y = ((gcx.screenHeight() * draw_scale - well_height) / 2);
+    const int well_y = ((gcx.screenHeight() * parent.draw_inverse_scale - well_height) / 2);
 
     for (const auto& player_id : player_ids) {
         drawJoinedWell(gcx, well_x, well_y, player_id);

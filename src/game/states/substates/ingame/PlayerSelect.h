@@ -14,12 +14,11 @@ namespace States {
 
 class PlayerSelect : public State {
 public:
-    PlayerSelect(AppContext&, float draw_scale = 1.f);
+    PlayerSelect(AppContext&);
     void update(IngameState&, const std::vector<Event>&, AppContext&) final;
     void drawPassive(IngameState&, GraphicsContext&) const final;
 
 private:
-    const float draw_scale;
     std::vector<DeviceID> devices;
     std::vector<uint8_t> player_ids;
     std::array<std::unique_ptr<Texture>, 4> tex_player;

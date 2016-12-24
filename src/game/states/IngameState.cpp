@@ -27,10 +27,10 @@ IngameState::IngameState(AppContext& app, GameMode gamemode)
         }));
     }
     else {
-        states.emplace_back(std::make_unique<SubStates::Ingame::States::PlayerSelect>(app, draw_inverse_scale));
+        states.emplace_back(std::make_unique<SubStates::Ingame::States::PlayerSelect>(app));
         states.emplace_back(std::make_unique<SubStates::Ingame::States::FadeIn>([this](){
             states.pop_back();
-        }, draw_inverse_scale));
+        }));
     }
 }
 
