@@ -44,9 +44,16 @@ set(MOD_GAME_SRC
     layout/options/ValueChooser.cpp
 
     states/InitState.cpp
+    states/IngameState.cpp
     states/MainMenuState.cpp
     states/MultiplayerState.cpp
     states/SinglePlayState.cpp
+    states/substates/ingame/Countdown.cpp
+    states/substates/ingame/FadeInOut.cpp
+    states/substates/ingame/Gameplay.cpp
+    states/substates/ingame/Pause.cpp
+    states/substates/ingame/PlayerSelect.cpp
+    states/substates/ingame/Statistics.cpp
     states/substates/mainmenu/Base.cpp
     states/substates/mainmenu/Options.cpp
     states/substates/multiplayer/Countdown.cpp
@@ -121,12 +128,20 @@ set(MOD_GAME_H
     layout/options/ValueChooser.h
 
     states/InitState.h
+    states/IngameState.h
     states/MainMenuState.h
     states/MultiplayerState.h
     states/SinglePlayState.h
+    states/substates/Ingame.h
+    states/substates/MainMenu.h
     states/substates/Multiplayer.h
     states/substates/SinglePlayer.h
-    states/substates/MainMenu.h
+    states/substates/ingame/Countdown.h
+    states/substates/ingame/FadeInOut.h
+    states/substates/ingame/Gameplay.h
+    states/substates/ingame/Pause.h
+    states/substates/ingame/PlayerSelect.h
+    states/substates/ingame/Statistics.h
     states/substates/mainmenu/Base.h
     states/substates/mainmenu/Options.h
     states/substates/multiplayer/Countdown.h
