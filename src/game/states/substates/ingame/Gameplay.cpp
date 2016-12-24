@@ -55,91 +55,36 @@ Gameplay::Gameplay(AppContext& app, IngameState& parent,
 {
     assert(player_devices.size() > 0);
     assert(player_devices.size() <= 4);
-    for (const DeviceID device_id : player_devices) {
-        assert(parent.player_areas.count(device_id) == 0);
+    assert(starting_gravity_level < 15);
+    assert(parent.player_areas.empty());
 
+
+    const bool is_battle = (parent.gamemode == GameMode::MP_BATTLE);
+
+    for (const DeviceID device_id : player_devices) {
         lineclears_left[device_id] = lineclears_per_level;
         previous_lineclear_type[device_id] = ScoreType::CLEAR_SINGLE;
         back2back_length[device_id] = 0;
         pending_garbage_lines[device_id] = 0;
 
         player_status[device_id] = PlayerStatus::PLAYING;
-        //parent.player_areas.emplace(std::piecewise_construct,
-        //    std::forward_as_tuple(device_id), std::forward_as_tuple(app));
-        // parent.player_areas.at(device_id)->well().setGravity(gravity_levels.at(device_id).top());
-
-        gameend_anim_timers.emplace(std::piecewise_construct,
-            std::forward_as_tuple(device_id),
-            std::forward_as_tuple(std::chrono::seconds(2), [](double t){ return t; }));
-        gameend_anim_timers.at(device_id).stop();
-
+        parent.player_areas.emplace(std::piecewise_construct,
+                std::forward_as_tuple(device_id), std::forward_as_tuple(app, is_battle));
         parent.player_stats.emplace(std::piecewise_construct,
             std::forward_as_tuple(device_id), std::forward_as_tuple());
     }
     {
-        // check if we can provide the wide player area to the players
-
-        // TODO: magic numbers (ui_well + 2 * sidebar + 2 * inner padding)
-        //static const int wide_parea_width = (20 * Mino::texture_size_px + 20) * 0.8;
-        int available_width = app.gcx().screenWidth() / player_devices.size();
-        bool is_battle = false;
-        if (parent.gamemode == GameMode::MP_BATTLE)
-            is_battle = true;
-
-        for (const DeviceID device_id : player_devices) {
-            parent.player_areas.emplace(std::piecewise_construct,
-                std::forward_as_tuple(device_id), std::forward_as_tuple(app, is_battle));
-
-        }
-        if (player_devices.size() > 1) {
-            for (const DeviceID device_id : player_devices)
-                parent.player_areas.at(device_id).setMaxWidth(available_width * (1.f / 0.8));
-        }
-
-        /*if (available_width < wide_parea_width) {
-            assert(parent.gamemode != GameMode::SP_MARATHON); // there shouldn't be any size issue in single player
-            switch (parent.gamemode) {
-                case GameMode::MP_MARATHON:
-                    for (const DeviceID device_id : player_devices)
-                        parent.player_areas[device_id] = std::make_unique<Layout::NarrowPA>(app);
-                    break;
-                case GameMode::MP_BATTLE:
-                    for (const DeviceID device_id : player_devices)
-                        parent.player_areas[device_id] = std::make_unique<Layout::NarrowBattlePA>(app);
-                    break;
-                default:
-                    assert(false);
-            }
-        }
-        else {
-            switch (parent.gamemode) {
-                case GameMode::SP_MARATHON:
-                case GameMode::MP_MARATHON:
-                    for (const DeviceID device_id : player_devices)
-                        parent.player_areas[device_id] = std::make_unique<Layout::WidePA>(app);
-                    break;
-                case GameMode::MP_BATTLE:
-                    for (const DeviceID device_id : player_devices)
-                        parent.player_areas[device_id] = std::make_unique<Layout::WideBattlePA>(app);
-                    break;
-                default:
-                    assert(false);
-            }
-        }*/
-    }
-    {
-        auto& gravity_stack = gravity_levels[player_devices.front()];
         // TODO: consider alternative algorithm
-        assert(starting_gravity_level < 15); // 0 - 14
+        auto& gravity_stack = gravity_levels[player_devices.front()];
         for (int i = 14; i >= starting_gravity_level; i--) {
             float multiplier = std::pow(0.8 - (i * 0.007), i);
             gravity_stack.push(std::chrono::duration_cast<Duration>(multiplier * std::chrono::seconds(1)));
         }
+
         for (const DeviceID device_id : player_devices) {
             gravity_levels[device_id] = gravity_stack;
             parent.player_areas.at(device_id).well().setGravity(gravity_stack.top());
         }
-        assert(player_devices.size() == gravity_levels.size());
     }
 
 
