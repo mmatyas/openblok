@@ -51,23 +51,24 @@ Statistics::Statistics(IngameState& parent, AppContext& app)
 
     for (const DeviceID device_id : parent.device_order) {
         auto& stats = parent.player_stats.at(device_id);
+        auto& event_cnt = stats.event_count;
         auto& texs = scores[device_id];
 
         texs.emplace_back(font->renderText(std::to_string(stats.total_cleared_lines), color));
-        texs.emplace_back(font->renderText(std::to_string(stats.event_count[ScoreType::CLEAR_SINGLE]), color));
-        texs.emplace_back(font->renderText(std::to_string(stats.event_count[ScoreType::CLEAR_DOUBLE]), color));
-        texs.emplace_back(font->renderText(std::to_string(stats.event_count[ScoreType::CLEAR_TRIPLE]), color));
-        texs.emplace_back(font->renderText(std::to_string(stats.event_count[ScoreType::CLEAR_PERFECT]), color));
+        texs.emplace_back(font->renderText(std::to_string(event_cnt[ScoreType::CLEAR_SINGLE]), color));
+        texs.emplace_back(font->renderText(std::to_string(event_cnt[ScoreType::CLEAR_DOUBLE]), color));
+        texs.emplace_back(font->renderText(std::to_string(event_cnt[ScoreType::CLEAR_TRIPLE]), color));
+        texs.emplace_back(font->renderText(std::to_string(event_cnt[ScoreType::CLEAR_PERFECT]), color));
 
         texs.emplace_back(font->renderText(std::to_string(stats.back_to_back_count), color));
         texs.emplace_back(font->renderText(std::to_string(stats.back_to_back_longest), color));
 
-        texs.emplace_back(font->renderText(std::to_string(stats.event_count[ScoreType::MINI_TSPIN]), color));
-        texs.emplace_back(font->renderText(std::to_string(stats.event_count[ScoreType::CLEAR_MINI_TSPIN_SINGLE]), color));
-        texs.emplace_back(font->renderText(std::to_string(stats.event_count[ScoreType::TSPIN]), color));
-        texs.emplace_back(font->renderText(std::to_string(stats.event_count[ScoreType::CLEAR_TSPIN_SINGLE]), color));
-        texs.emplace_back(font->renderText(std::to_string(stats.event_count[ScoreType::CLEAR_TSPIN_DOUBLE]), color));
-        texs.emplace_back(font->renderText(std::to_string(stats.event_count[ScoreType::CLEAR_TSPIN_TRIPLE]), color));
+        texs.emplace_back(font->renderText(std::to_string(event_cnt[ScoreType::MINI_TSPIN]), color));
+        texs.emplace_back(font->renderText(std::to_string(event_cnt[ScoreType::CLEAR_MINI_TSPIN_SINGLE]), color));
+        texs.emplace_back(font->renderText(std::to_string(event_cnt[ScoreType::TSPIN]), color));
+        texs.emplace_back(font->renderText(std::to_string(event_cnt[ScoreType::CLEAR_TSPIN_SINGLE]), color));
+        texs.emplace_back(font->renderText(std::to_string(event_cnt[ScoreType::CLEAR_TSPIN_DOUBLE]), color));
+        texs.emplace_back(font->renderText(std::to_string(event_cnt[ScoreType::CLEAR_TSPIN_TRIPLE]), color));
 
         texs.emplace_back(font->renderText(Timing::toString(stats.gametime), color));
         texs.emplace_back(font_highlight->renderText(std::to_string(stats.level), color_highlight));
@@ -94,11 +95,11 @@ void Statistics::update(IngameState& parent, const std::vector<Event>& events, A
 
 void Statistics::drawBackground(IngameState& parent, GraphicsContext& gcx) const
 {
-    for (const auto& ui_pa : parent.player_areas) {
-        auto color = 0x2030FF00_rgba;
-        color.a = fadein_percent.value() * 0xFF;
+    auto color = 0x2030FF00_rgba;
+    color.a = fadein_percent.value() * 0xFF;
+
+    for (const auto& ui_pa : parent.player_areas)
         gcx.drawFilledRect(ui_pa.second.wellBox(), color);
-    }
 }
 
 void Statistics::drawItems(IngameState& parent) const
@@ -106,28 +107,25 @@ void Statistics::drawItems(IngameState& parent) const
     for (const DeviceID device_id : parent.device_order) {
         const auto& ui_pa = parent.player_areas.at(device_id);
 
-        int pos_x = ui_pa.wellBox().x;
+        const int pos_x = ui_pa.wellBox().x;
+        const int pos_x_right = ui_pa.wellBox().x + ui_pa.wellBox().w;
         int pos_y = ui_pa.wellBox().y;
 
         tex_title->drawAt(pos_x, pos_y);
         pos_y += tex_title->height() * 1.25;
 
-        assert(displayed_item_count.value() <= labels.size());
-        for (size_t i = 0; i < displayed_item_count.value(); i++) {
-            const auto& tex = labels.at(i);
-            tex->drawAt(pos_x, pos_y);
-            pos_y += tex->height();
-        }
-
-        pos_x += ui_pa.wellBox().w;
-        pos_y = ui_pa.wellBox().y + tex_title->height() * 1.25;
         const auto& values = scores.at(device_id);
-
+        assert(displayed_item_count.value() <= labels.size());
         assert(displayed_item_count.value() <= values.size());
+
         for (size_t i = 0; i < displayed_item_count.value(); i++) {
-            const auto& tex = values.at(i);
-            tex->drawAt(pos_x - tex->width(), pos_y);
-            pos_y += tex->height();
+            const auto& label = labels.at(i);
+            label->drawAt(pos_x, pos_y);
+
+            const auto& value = values.at(i);
+            value->drawAt(pos_x_right - value->width(), pos_y);
+
+            pos_y += label->height();
         }
     }
 }
