@@ -86,6 +86,10 @@ Gameplay::Gameplay(AppContext& app, IngameState& parent,
             parent.player_areas.at(device_id).well().setGravity(gravity_stack.top());
         }
     }
+    if (is_battle) {
+        for (auto& parea : parent.player_areas)
+            parea.second.enableGameOverSFX(false);
+    }
 
 
     parent.updatePositions(app.gcx());
@@ -252,7 +256,7 @@ void Gameplay::registerObservers(IngameState& parent, AppContext& app)
                     // IF MARATHON/finishable
                     if (parent.gamemode == GameMode::SP_MARATHON || parent.gamemode == GameMode::MP_MARATHON) {
                         player_status.at(device_id) = PlayerStatus::FINISHED;
-                        gameend_anim_timers.at(device_id).restart();
+                        parent.player_areas.at(device_id).startGameFinish();
                         sfx_onfinish->playOnce();
                         gameend_statistics_delay.restart();
 
@@ -312,7 +316,7 @@ void Gameplay::registerObservers(IngameState& parent, AppContext& app)
         well.registerObserver(WellEvent::Type::GAME_OVER, [this, &parent, &app, device_id](const WellEvent&){
             // set game over for the triggering player
             player_status.at(device_id) = PlayerStatus::GAME_OVER;
-            gameend_anim_timers.at(device_id).restart();
+            parent.player_areas.at(device_id).startGameOver();
 
             // find out who else is still playing
             auto playing_players = playingPlayers();
@@ -325,7 +329,7 @@ void Gameplay::registerObservers(IngameState& parent, AppContext& app)
                 if (playing_players.size() == 1) {
                     const DeviceID pdevid = playing_players.front();
                     player_status.at(pdevid) = PlayerStatus::FINISHED;
-                    gameend_anim_timers.at(pdevid).restart();
+                    parent.player_areas.at(pdevid).startGameFinish();
                     sfx_onfinish->playOnce();
                     playing_players.clear();
                 }
@@ -447,27 +451,6 @@ void Gameplay::drawActive(IngameState& parent, GraphicsContext& gcx) const
 {
    for (const auto& parea : parent.player_areas)
         parea.second.drawActive(gcx);
-
-   for (const DeviceID device_id : player_devices) {
-        const auto& parea = parent.player_areas.at(device_id);
-        switch (player_status.at(device_id)) {
-            case PlayerStatus::GAME_OVER: {
-                const auto& wellbox = parea.wellBox();
-                const int box_h = wellbox.h * gameend_anim_timers.at(device_id).value();
-                gcx.drawFilledRect({
-                    wellbox.x, wellbox.y + wellbox.h - box_h,
-                    wellbox.w, box_h
-                }, 0xA0_rgba);
-            }
-            break;
-            case PlayerStatus::FINISHED:
-                tex_finish->drawAt(parea.wellCenterX() - tex_finish->width() / 2,
-                                   parea.wellCenterY() - tex_finish->height() / 2);
-            break;
-            default:
-                break;
-        }
-    }
 }
 
 } // namespace States
