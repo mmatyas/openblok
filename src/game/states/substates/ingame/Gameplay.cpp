@@ -70,6 +70,7 @@ Gameplay::Gameplay(AppContext& app, IngameState& parent,
                 std::forward_as_tuple(device_id), std::forward_as_tuple(app, is_battle));
         parent.player_stats.emplace(std::piecewise_construct,
             std::forward_as_tuple(device_id), std::forward_as_tuple());
+
         textpopups.emplace(std::piecewise_construct,
             std::forward_as_tuple(device_id), std::forward_as_tuple());
     }
@@ -86,11 +87,11 @@ Gameplay::Gameplay(AppContext& app, IngameState& parent,
             parent.player_areas.at(device_id).well().setGravity(gravity_stack.top());
         }
     }
+
     if (is_battle) {
         for (auto& parea : parent.player_areas)
             parea.second.enableGameOverSFX(false);
     }
-
 
     parent.updatePositions(app.gcx());
 
@@ -296,7 +297,7 @@ void Gameplay::registerObservers(IngameState& parent, AppContext& app)
         });
 
         well.registerObserver(WellEvent::Type::MINI_TSPIN_DETECTED, [this, &parent, device_id](const WellEvent&){
-            this->texts_need_update = true;
+            texts_need_update = true;
             auto& player_stats = parent.player_stats.at(device_id);
             player_stats.score += ScoreTable::value(ScoreType::MINI_TSPIN);
             player_stats.event_count[ScoreType::MINI_TSPIN]++;
@@ -305,7 +306,7 @@ void Gameplay::registerObservers(IngameState& parent, AppContext& app)
         });
 
         well.registerObserver(WellEvent::Type::TSPIN_DETECTED, [this, &parent, device_id](const WellEvent&){
-            this->texts_need_update = true;
+            texts_need_update = true;
             auto& player_stats = parent.player_stats.at(device_id);
             player_stats.score += ScoreTable::value(ScoreType::TSPIN);
             player_stats.event_count[ScoreType::TSPIN]++;
@@ -315,13 +316,13 @@ void Gameplay::registerObservers(IngameState& parent, AppContext& app)
 
         well.registerObserver(WellEvent::Type::HARDDROPPED, [this, &parent, device_id](const WellEvent& event){
             assert(event.harddrop.count < 22);
-            this->texts_need_update = true;
+            texts_need_update = true;
             auto& player_stats = parent.player_stats.at(device_id);
             player_stats.score += event.harddrop.count * ScoreTable::value(ScoreType::HARDDROP);
         });
 
         well.registerObserver(WellEvent::Type::SOFTDROPPED, [this, &parent, device_id](const WellEvent&){
-            this->texts_need_update = true;
+            texts_need_update = true;
             auto& player_stats = parent.player_stats.at(device_id);
             player_stats.score += ScoreTable::value(ScoreType::SOFTDROP);
         });
