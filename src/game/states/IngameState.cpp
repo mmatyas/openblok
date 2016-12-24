@@ -13,6 +13,8 @@
 
 IngameState::IngameState(AppContext& app, GameMode gamemode)
     : gamemode(gamemode)
+    , draw_scale(gamemode == GameMode::SP_MARATHON ? 1.0 : 0.8)
+    , draw_inverse_scale(1.0 / draw_scale)
     , tex_background(app.gcx().loadTexture(Paths::data() + "gamebg.png"))
 {
     updatePositions(app.gcx());
@@ -25,10 +27,10 @@ IngameState::IngameState(AppContext& app, GameMode gamemode)
         }));
     }
     else {
-        states.emplace_back(std::make_unique<SubStates::Ingame::States::PlayerSelect>(app, 1.0 / 0.8));
+        states.emplace_back(std::make_unique<SubStates::Ingame::States::PlayerSelect>(app, draw_inverse_scale));
         states.emplace_back(std::make_unique<SubStates::Ingame::States::FadeIn>([this](){
             states.pop_back();
-        }, 1.0 / 0.8));
+        }, draw_inverse_scale));
     }
 }
 
@@ -41,16 +43,13 @@ void IngameState::updatePositions(GraphicsContext& gcx)
 
     static const int well_padding_x = 5 + Mino::texture_size_px;
 
-    const float scale = (gamemode == GameMode::SP_MARATHON) ? 1.0 : 0.8;
-    const float inverse_scale = 1.f / scale;
-
-    const int center_x = (gcx.screenWidth() * inverse_scale) / 2;
-    const int center_y = (gcx.screenHeight() * inverse_scale) / 2;
+    const int center_x = (gcx.screenWidth() * draw_inverse_scale) / 2;
+    const int center_y = (gcx.screenHeight() * draw_inverse_scale) / 2;
 
     const int well_y = center_y - player_areas.at(device_order.front()).height() / 2;
     const int well_full_width = 2 * well_padding_x
         + player_areas.at(device_order.front()).width();
-    int available_width = inverse_scale * gcx.screenWidth() / device_order.size();
+    int available_width = draw_inverse_scale * gcx.screenWidth() / device_order.size();
 
     int well_x = center_x - (well_full_width * player_areas.size()) / 2;
 
@@ -88,9 +87,8 @@ void IngameState::draw(GraphicsContext& gcx)
 {
     drawCommon(gcx);
 
-    const float scale = (gamemode == GameMode::SP_MARATHON) ? 1.0 : 0.8;
     const auto original_scale = gcx.getDrawScale();
-    gcx.modifyDrawScale(original_scale * scale);
+    gcx.modifyDrawScale(original_scale * draw_scale);
 
     for(const auto& state : states)
         state->drawPassive(*this, gcx);

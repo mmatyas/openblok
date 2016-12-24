@@ -53,7 +53,7 @@ void Pause::update(IngameState& parent, const std::vector<Event>& events, AppCon
                         case 1: // back to main menu
                             parent.states.emplace_back(std::make_unique<FadeOut>([&app](){
                                 app.states().pop();
-                            }));
+                            }, parent.draw_inverse_scale));
                             return;
                         default:
                             assert(false);

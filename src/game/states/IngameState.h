@@ -35,6 +35,9 @@ public:
     std::unordered_map<DeviceID, Layout::PlayerArea> player_areas;
     std::unordered_map<DeviceID, PlayerStatistics> player_stats;
 
+    const float draw_scale;
+    const float draw_inverse_scale;
+
 private:
     std::unique_ptr<Texture> tex_background;
 

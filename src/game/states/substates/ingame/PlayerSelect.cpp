@@ -98,10 +98,10 @@ void PlayerSelect::update(IngameState& parent, const std::vector<Event>& events,
                                 parent.states.emplace_back(std::make_unique<Countdown>(app));
                                 parent.states.emplace_back(std::make_unique<FadeIn>([&parent, &app](){
                                     parent.states.pop_back();
-                                }));
+                                }, parent.draw_inverse_scale));
                                 parent.states.pop_front(); // pop playerselect
                                 parent.states.pop_front(); // pop fadeout
-                            }));
+                            }, parent.draw_inverse_scale));
                             return;
                         }
                     }
@@ -110,7 +110,7 @@ void PlayerSelect::update(IngameState& parent, const std::vector<Event>& events,
                     if (devices.empty()) {
                         parent.states.emplace_back(std::make_unique<FadeOut>([&app](){
                             app.states().pop();
-                        }));
+                        }, parent.draw_inverse_scale));
                         return;
                     }
                     onPlayerLeave(event.input.srcDeviceID());
