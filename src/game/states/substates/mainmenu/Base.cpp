@@ -5,8 +5,7 @@
 #include "game/components/PieceFactory.h"
 #include "game/components/rotations/SRS.h"
 #include "game/states/MainMenuState.h"
-#include "game/states/MultiplayerState.h"
-#include "game/states/SinglePlayState.h"
+#include "game/states/IngameState.h"
 #include "game/util/CircularModulo.h"
 #include "system/AudioContext.h"
 #include "system/GraphicsContext.h"
@@ -40,7 +39,9 @@ Base::Base(MainMenuState& parent, AppContext& app)
             this->state_transition_alpha = std::make_unique<Transition<uint8_t>>(
                 duration,
                 [](double t){ return t * 0xFF; },
-                [this, &app](){ this->onFadeoutComplete(app, std::make_unique<SinglePlayState>(app)); }
+                [this, &app](){
+                    this->onFadeoutComplete(app, std::make_unique<IngameState>(app, GameMode::SP_MARATHON));
+                }
             );
             music->fadeOut(duration);
         });
@@ -56,7 +57,7 @@ Base::Base(MainMenuState& parent, AppContext& app)
                 [](double t){ return t * 0xFF; },
                 [this, &app](){
                     this->onFadeoutComplete(app,
-                        std::make_unique<MultiplayerState>(app, MultiplayerMode::MARATHON));
+                        std::make_unique<IngameState>(app, GameMode::MP_MARATHON));
                 }
             );
             music->fadeOut(duration);
@@ -68,7 +69,7 @@ Base::Base(MainMenuState& parent, AppContext& app)
                 [](double t){ return t * 0xFF; },
                 [this, &app](){
                     this->onFadeoutComplete(app,
-                        std::make_unique<MultiplayerState>(app, MultiplayerMode::BATTLE));
+                        std::make_unique<IngameState>(app, GameMode::MP_BATTLE));
                 }
             );
             music->fadeOut(duration);
