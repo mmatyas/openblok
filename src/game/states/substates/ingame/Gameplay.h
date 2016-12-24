@@ -5,6 +5,7 @@
 #include "game/states/substates/Ingame.h"
 
 #include <array>
+#include <list>
 #include <memory>
 #include <stack>
 #include <unordered_map>
@@ -12,6 +13,7 @@
 class Font;
 class Music;
 class SoundEffect;
+class TextPopup;
 class Texture;
 
 
@@ -22,6 +24,8 @@ namespace States {
 class Gameplay : public State {
 public:
     Gameplay(AppContext&, IngameState&, const std::vector<DeviceID>&, unsigned short starting_gravity_level = 0);
+    virtual ~Gameplay();
+
     void updateAnimationsOnly(IngameState&, AppContext&) final;
     void update(IngameState&, const std::vector<Event>&, AppContext&) final;
     void drawPassive(IngameState&, GraphicsContext&) const final;
@@ -31,6 +35,7 @@ private:
     const std::vector<DeviceID> player_devices;
 
     std::shared_ptr<Music> music;
+    std::shared_ptr<Font> font_popuptext;
     std::shared_ptr<SoundEffect> sfx_onhold;
     std::shared_ptr<SoundEffect> sfx_onlevelup;
     std::array<std::shared_ptr<SoundEffect>, 4> sfx_onlineclear;
@@ -48,6 +53,7 @@ private:
     std::unordered_map<DeviceID, ScoreType> previous_lineclear_type;
     std::unordered_map<DeviceID, unsigned short> back2back_length;
     std::unordered_map<DeviceID, unsigned short> pending_garbage_lines;
+    std::unordered_map<DeviceID, std::list<TextPopup>> textpopups;
 
     Transition<unsigned> gameend_statistics_delay;
 

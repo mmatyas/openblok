@@ -8,6 +8,7 @@
 #include "game/components/HoldQueue.h"
 #include "game/components/NextQueue.h"
 #include "game/components/Piece.h"
+#include "game/components/animations/TextPopup.h"
 #include "game/states/IngameState.h"
 #include "system/AudioContext.h"
 #include "system/Font.h"
@@ -29,6 +30,7 @@ Gameplay::Gameplay(AppContext& app, IngameState& parent,
                    unsigned short starting_gravity_level)
     : player_devices(player_devices)
     , music(app.audio().loadMusic(Paths::data() + "music/gameplay.ogg"))
+    , font_popuptext(app.gcx().loadFont(Paths::data() + "fonts/PTS76F.ttf", 34))
     , sfx_onhold(app.audio().loadSound(Paths::data() + "sfx/hold.ogg"))
     , sfx_onlevelup(app.audio().loadSound(Paths::data() + "sfx/levelup.ogg"))
     , sfx_onlineclear({{
@@ -42,10 +44,6 @@ Gameplay::Gameplay(AppContext& app, IngameState& parent,
     , texts_need_update(true)
     , sfx_ongameover(app.audio().loadSound(Paths::data() + "sfx/gameover.ogg"))
     , sfx_onfinish(app.audio().loadSound(Paths::data() + "sfx/finish.ogg"))
-//    , font_popuptext(app.gcx().loadFont(Paths::data() + "fonts/PTS76F.ttf", 34))
-//    , pending_levelup_msg(std::chrono::milliseconds(500), [](double){}, [this](){
-//            this->textpopups.emplace_back(std::make_unique<TextPopup>(tr("LEVEL UP!"), font_popuptext));
-//        })
     , lineclears_per_level(10)
     , gameend_statistics_delay(std::chrono::seconds(5),
         [](double t){ return t * 5; },
@@ -71,6 +69,8 @@ Gameplay::Gameplay(AppContext& app, IngameState& parent,
         parent.player_areas.emplace(std::piecewise_construct,
                 std::forward_as_tuple(device_id), std::forward_as_tuple(app, is_battle));
         parent.player_stats.emplace(std::piecewise_construct,
+            std::forward_as_tuple(device_id), std::forward_as_tuple());
+        textpopups.emplace(std::piecewise_construct,
             std::forward_as_tuple(device_id), std::forward_as_tuple());
     }
     {
@@ -105,6 +105,7 @@ Gameplay::Gameplay(AppContext& app, IngameState& parent,
     registerObservers(parent, app);
 }
 
+Gameplay::~Gameplay() = default;
 
 void Gameplay::addNextPiece(IngameState& parent, DeviceID device_id)
 {
@@ -149,6 +150,9 @@ void Gameplay::increaseScoreMaybe(IngameState& parent, DeviceID source_player,
 
     player_stats.score += score * player_stats.level;
     previous_lineclear_type.at(source_player) = score_type;
+
+    if (score_type != ScoreType::CLEAR_SINGLE)
+        textpopups.at(source_player).emplace_back(popup_text, font_popuptext);
 }
 
 void Gameplay::sendGarbageMaybe(IngameState& parent, DeviceID source_player,
@@ -189,6 +193,7 @@ void Gameplay::sendGarbageMaybe(IngameState& parent, DeviceID source_player,
         // send the lines
         auto& target_player = parent.player_areas.at(target_id);
         target_player.setGarbageCount(target_player.queuedGarbageLines() + sendable_lines);
+
         // TODO: visual effect
     }
 }
@@ -228,10 +233,7 @@ void Gameplay::increaseLevelMaybe(IngameState& parent, DeviceID source_player,
     parent.player_stats.at(source_player).level++;
     sfx_onlevelup->playOnce();
 
-//    // produce delayed popup if there are other popups already
-//    pending_levelup_msg.restart();
-//    if (textpopups.empty())
-//        pending_levelup_msg.update(this->pending_levelup_msg.length());
+    textpopups.at(source_player).emplace_back(tr("LEVEL UP!"), font_popuptext);
 }
 
 void Gameplay::registerObservers(IngameState& parent, AppContext& app)
@@ -298,9 +300,8 @@ void Gameplay::registerObservers(IngameState& parent, AppContext& app)
             auto& player_stats = parent.player_stats.at(device_id);
             player_stats.score += ScoreTable::value(ScoreType::MINI_TSPIN);
             player_stats.event_count[ScoreType::MINI_TSPIN]++;
-//            this->textpopups.emplace_back(std::make_unique<TextPopup>(
-//                ScoreTable::name(ScoreType::MINI_TSPIN),
-//                this->font_popuptext));
+
+            textpopups.at(device_id).emplace_back(ScoreTable::name(ScoreType::MINI_TSPIN), font_popuptext);
         });
 
         well.registerObserver(WellEvent::Type::TSPIN_DETECTED, [this, &parent, device_id](const WellEvent&){
@@ -308,9 +309,8 @@ void Gameplay::registerObservers(IngameState& parent, AppContext& app)
             auto& player_stats = parent.player_stats.at(device_id);
             player_stats.score += ScoreTable::value(ScoreType::TSPIN);
             player_stats.event_count[ScoreType::TSPIN]++;
-//            this->textpopups.emplace_back(std::make_unique<TextPopup>(
-//                ScoreTable::name(ScoreType::TSPIN),
-//                this->font_popuptext));
+
+            textpopups.at(device_id).emplace_back(ScoreTable::name(ScoreType::TSPIN), font_popuptext);
         });
 
         well.registerObserver(WellEvent::Type::HARDDROPPED, [this, &parent, device_id](const WellEvent& event){
@@ -363,28 +363,25 @@ void Gameplay::updateAnimationsOnly(IngameState& parent, AppContext&)
         auto& parea = parent.player_areas.at(device_id);
         parea.well().updateAnimationsOnly();
 
-//        auto& pending_msg = pending_levelup_msg.at(device_id);
-//        if (pending_msg) {
-//            pending_msg.update(Timing::frame_duration);
-//        }
+        auto& popups = textpopups.at(device_id);
 
-//        // newly created popups don't know theit position,
-//        // that's why this is here, and not in SinglePlayState
-//        const int center_x = parea.x() - 10
-//            + (parea.wellBox().x - 10 - parea.x()) / 2;
-//        for (auto& popup : textpopups) {
-//            popup->setInitialPosition(
-//                center_x - static_cast<int>(popup->width()) / 2,
-//                parea.y() + parea.height() / 2
-//            );
-//            popup->update();
-//        }
+        // remove old animations
+        while (!popups.empty() && !popups.front().isActive())
+            popups.pop_front();
+
+        // newly created popups don't know their position
+        const int center_x = parea.x() - 10
+            + (parea.wellBox().x - 10 - parea.x()) / 2;
+        for (auto& popup : popups) {
+            popup.setInitialPosition(
+                center_x - static_cast<int>(popup.width()) / 2,
+                parea.y() + parea.height() / 2
+            );
+            popup.update();
+            if (popup.visibility() > (0.6 * 0xFF))
+                break;
+        }
     }
-
-    // remove old animations
-//    textpopups.erase(std::remove_if(textpopups.begin(), textpopups.end(),
-//        [](std::unique_ptr<TextPopup>& popup){ return !popup->isActive(); }),
-//        textpopups.end());
 }
 
 void Gameplay::update(IngameState& parent, const std::vector<Event>& events, AppContext& app)
@@ -458,6 +455,12 @@ void Gameplay::drawPassive(IngameState& parent, GraphicsContext& gcx) const
 {
     for (const auto& parea : parent.player_areas)
         parea.second.drawPassive(gcx);
+
+    for (const auto& popup_vec : textpopups) {
+        for (const auto& popup : popup_vec.second) {
+            popup.draw();
+        }
+    }
 }
 
 void Gameplay::drawActive(IngameState& parent, GraphicsContext& gcx) const
