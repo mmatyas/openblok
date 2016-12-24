@@ -15,15 +15,16 @@ TextPopup::TextPopup(const std::string& text, std::shared_ptr<Font>& font)
     , alpha(pos_y_delta.length(), [](double t){
             return (1.0 - t) * 0xFF;
         })
-    , font(font)
 {
     tex = font->renderText(text, 0xEEEEEEFF_rgba);
+    tex->setAlpha(0x0);
 }
 
 void TextPopup::setInitialPosition(int x, int y)
 {
     pos_x = x;
     pos_y = y;
+    tex->setAlpha(0xFF);
 }
 
 unsigned TextPopup::width() const
@@ -35,10 +36,7 @@ void TextPopup::update()
 {
     pos_y_delta.update(Timing::frame_duration);
     alpha.update(Timing::frame_duration);
-
-    RGBAColor color = 0xEEEEEEFF_rgba;
-    color.a = alpha.value();
-    tex = font->renderText(text, color);
+    tex->setAlpha(alpha.value());
 }
 
 void TextPopup::draw() const

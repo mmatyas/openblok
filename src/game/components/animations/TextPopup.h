@@ -5,7 +5,6 @@
 #include <memory>
 #include <string>
 
-
 class Font;
 class Texture;
 
@@ -18,6 +17,7 @@ public:
     void draw() const;
 
     unsigned width() const;
+    float visibility() const { return alpha.value(); }
 
     bool isActive() const { return alpha.running(); }
     void setInitialPosition(int x, int y);
@@ -28,6 +28,5 @@ private:
     Transition<int> pos_y_delta;
     Transition<uint8_t> alpha;
 
-    std::shared_ptr<Font> font;
     std::unique_ptr<Texture> tex;
 };
