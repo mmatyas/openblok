@@ -56,6 +56,7 @@ protected:
     static constexpr int inner_padding = 10;
     static constexpr int sidebar_width = 5 * Mino::texture_size_px;
     static constexpr int topbar_height = 4 * Mino::texture_size_px;
+    static constexpr int bottombar_height = 30 + 2 * 5;
 
     std::shared_ptr<Font> font_content;
     std::shared_ptr<Font> font_content_highlight;

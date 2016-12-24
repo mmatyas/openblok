@@ -37,7 +37,6 @@ PlayerArea::PlayerArea(AppContext& app, bool draw_gauge)
     , rect_level{}
     , rect_score{}
     , rect_goal{}
-    , gametime_text("00:00")
     , rect_time{}
     , game_end(app)
     , special_update([]{})
@@ -51,21 +50,20 @@ PlayerArea::PlayerArea(AppContext& app, bool draw_gauge)
 
     tex_next = font_label->renderText(tr("NEXT"), color);
     tex_hold = font_label->renderText(tr("HOLD"), color);
-    tex_time_counter = font_content->renderText(gametime_text, color);
     tex_score = font_label->renderText(tr("SCORE"), color);
-    tex_score_counter = font_content->renderText("0", color);
     tex_goal = font_label->renderText(tr("GOAL"), color);
-    tex_goal_counter = font_content->renderText("0", color);
     tex_level = font_label->renderText(tr("LEVEL"), color);
-    tex_level_counter = font_content->renderText("0", color);
+
+    setScore(0);
+    setGoalCounter(0);
+    setLevelCounter(0);
+    setGametime(Duration::zero());
 
     setMaxWidth(app.gcx().screenWidth());
 }
 
 void PlayerArea::setMaxWidth(unsigned max_width)
 {
-    static const int bottombar_height = tex_level_counter->height() + 2 * 5;
-
     int width_wide = ui_well.width() + 2 * inner_padding + 2 * sidebar_width;
     int width_narrow = ui_well.width();
     const int height_wide = ui_well.height();
@@ -130,7 +128,6 @@ void PlayerArea::calcWideLayout()
 
 void PlayerArea::calcNarrowLayout()
 {
-    static const int bottombar_height = 30 + 2 * 5;
     const int bottombar_y = ui_well.y() + ui_well.height() + inner_padding;
     static const int bottom_block_width = ui_well.wellWidth() / 2;
 
@@ -149,15 +146,10 @@ void PlayerArea::calcWellBox()
     };
 }
 
-void PlayerArea::drawActive(GraphicsContext& gcx) const
+void PlayerArea::update()
 {
-    draw_fn_active(gcx);
-    special_draw(gcx);
-}
-
-void PlayerArea::drawPassive(GraphicsContext& gcx) const
-{
-    draw_fn_passive(gcx);
+    hold_queue.update();
+    special_update();
 }
 
 void PlayerArea::setLevelCounter(unsigned num)
@@ -239,10 +231,15 @@ void PlayerArea::startGameFinish()
     };
 }
 
-void PlayerArea::update()
+void PlayerArea::drawActive(GraphicsContext& gcx) const
 {
-    hold_queue.update();
-    special_update();
+    draw_fn_active(gcx);
+    special_draw(gcx);
+}
+
+void PlayerArea::drawPassive(GraphicsContext& gcx) const
+{
+    draw_fn_passive(gcx);
 }
 
 void PlayerArea::drawWidePassive(GraphicsContext& gcx) const
