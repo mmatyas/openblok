@@ -108,7 +108,7 @@ void PlayerArea::calcWideLayout()
 
 void PlayerArea::calcNarrowLayout()
 {
-    static const int bottombar_height = tex_level_counter->height() + 2 * 5;
+    static const int bottombar_height = 30 + 2 * 5;
     const int bottombar_y = ui_well.y() + ui_well.height() + inner_padding;
     static const int bottom_block_width = ui_well.wellWidth() / 2;
 
@@ -137,7 +137,7 @@ void PlayerArea::drawPassive(GraphicsContext& gcx) const
     draw_fn_passive(gcx);
 }
 
-void PlayerArea::updateLevelCounter(unsigned num)
+void PlayerArea::setLevelCounter(unsigned num)
 {
     if (is_narrow)
         tex_level_counter = font_content->renderText(tr("LEVEL ") + std::to_string(num), 0xEEEEEE_rgb);
@@ -145,12 +145,12 @@ void PlayerArea::updateLevelCounter(unsigned num)
         tex_level_counter = font_content->renderText(std::to_string(num), 0xEEEEEE_rgb);
 }
 
-void PlayerArea::updateScore(unsigned num)
+void PlayerArea::setScore(unsigned num)
 {
     tex_score_counter = font_content->renderText(std::to_string(num), 0xEEEEEE_rgb);
 }
 
-void PlayerArea::updateGoalCounter(unsigned num)
+void PlayerArea::setGoalCounter(unsigned num)
 {
     if (num <= 5)
         tex_goal_counter = font_content_highlight->renderText(std::to_string(num), 0xFFA500_rgb);
@@ -158,7 +158,7 @@ void PlayerArea::updateGoalCounter(unsigned num)
         tex_goal_counter = font_content->renderText(std::to_string(num), 0xEEEEEE_rgb);
 }
 
-void PlayerArea::updateGametime(Duration gametime)
+void PlayerArea::setGametime(Duration gametime)
 {
     const auto newstr = Timing::toString(gametime);
     if (newstr != gametime_text) {
@@ -167,7 +167,7 @@ void PlayerArea::updateGametime(Duration gametime)
     }
 }
 
-void PlayerArea::updateGarbageGauge(unsigned lines)
+void PlayerArea::setGarbageCount(unsigned lines)
 {
     garbage_gauge.setLineCount(lines);
 }

@@ -123,7 +123,7 @@ void Gameplay::registerObservers(MultiplayerState& parent, AppContext& app)
             sfx_onlock->playOnce();
             auto& parea = parent.player_areas.at(device_id);
             pending_garbage_lines.at(device_id) = parea.queuedGarbageLines();
-            parea.updateGarbageGauge(0);
+            parea.setGarbageCount(0);
         });
 
         well.registerObserver(WellEvent::Type::PIECE_ROTATED, [this](const WellEvent&){
@@ -206,7 +206,7 @@ void Gameplay::registerObservers(MultiplayerState& parent, AppContext& app)
                     unsigned smallest = std::min(sendable_lines, current_queue);
                     current_queue -= smallest;
                     sendable_lines -= smallest;
-                    parea.updateGarbageGauge(current_queue);
+                    parea.setGarbageCount(current_queue);
                     pending_garbage_lines.at(device_id) = current_queue;
                 }
                 // if we can still send some lines
@@ -224,7 +224,7 @@ void Gameplay::registerObservers(MultiplayerState& parent, AppContext& app)
 
                     // send the lines
                     auto& target_player = parent.player_areas.at(target_id);
-                    target_player.updateGarbageGauge(target_player.queuedGarbageLines() + sendable_lines);
+                    target_player.setGarbageCount(target_player.queuedGarbageLines() + sendable_lines);
                     // TODO: visual effect
                 }
             }
@@ -377,8 +377,8 @@ void Gameplay::update(MultiplayerState& parent, const std::vector<Event>& events
         for (const DeviceID device_id : player_devices) {
             const auto& stats = parent.player_stats.at(device_id);
             auto& ui = parent.player_areas.at(device_id);
-            ui.updateLevelCounter(stats.level);
-            ui.updateScore(stats.score);
+            ui.setLevelCounter(stats.level);
+            ui.setScore(stats.score);
         }
         texts_need_update = false;
     }

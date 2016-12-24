@@ -25,11 +25,11 @@ public:
     void drawActive(GraphicsContext&) const;
     void drawPassive(GraphicsContext&) const;
 
-    void updateLevelCounter(unsigned);
-    void updateScore(unsigned);
-    void updateGametime(Duration);
-    void updateGoalCounter(unsigned);
-    void updateGarbageGauge(unsigned);
+    void setLevelCounter(unsigned);
+    void setScore(unsigned);
+    void setGametime(Duration);
+    void setGoalCounter(unsigned);
+    void setGarbageCount(unsigned);
 
     HoldQueue& holdQueue() { return hold_queue; }
     NextQueue& nextQueue() { return next_queue; }
@@ -44,8 +44,8 @@ protected:
     bool is_narrow;
     ::Rectangle wellbox;
     WellContainer ui_well;
-    const RGBAColor box_color = 0x0A0AFF80_rgba;
 
+    const RGBAColor box_color = 0x0A0AFF80_rgba;
     static constexpr int inner_padding = 10;
     static constexpr int sidebar_width = 5 * Mino::texture_size_px;
     static constexpr int topbar_height = 4 * Mino::texture_size_px;

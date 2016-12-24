@@ -251,9 +251,9 @@ void Gameplay::update(SinglePlayState& parent, const std::vector<Event>& events,
     parent.player_area.update();
 
     if (texts_need_update) {
-        parent.player_area.updateGoalCounter(lineclears_left);
-        parent.player_area.updateLevelCounter(parent.player_stats.level);
-        parent.player_area.updateScore(parent.player_stats.score);
+        parent.player_area.setGoalCounter(lineclears_left);
+        parent.player_area.setLevelCounter(parent.player_stats.level);
+        parent.player_area.setScore(parent.player_stats.score);
         texts_need_update = false;
     }
 
@@ -262,7 +262,7 @@ void Gameplay::update(SinglePlayState& parent, const std::vector<Event>& events,
     updateAnimationsOnly(parent, app);
 
     parent.player_stats.gametime += Timing::frame_duration;
-    parent.player_area.updateGametime(parent.player_stats.gametime);
+    parent.player_area.setGametime(parent.player_stats.gametime);
 }
 
 void Gameplay::draw(SinglePlayState& parent, GraphicsContext& gfx) const
