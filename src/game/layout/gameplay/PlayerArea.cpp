@@ -2,6 +2,7 @@
 
 #include "game/AppContext.h"
 #include "game/util/DurationToString.h"
+#include "system/AudioContext.h"
 #include "system/Font.h"
 #include "system/GraphicsContext.h"
 #include "system/Localize.h"
@@ -9,6 +10,24 @@
 
 
 namespace Layout {
+
+PlayerArea::GameEndVars::GameEndVars(AppContext& app)
+    : gameoversfx_enabled(true)
+    , sfx_ongameover(app.audio().loadSound(Paths::data() + "sfx/gameover.ogg"))
+    , sfx_onfinish(app.audio().loadSound(Paths::data() + "sfx/finish.ogg"))
+    , anim_percent(
+        std::chrono::seconds(2),
+        [](double t){ return t; },
+        [this]{ if (sfx_onanimend) sfx_onanimend->playOnce(); })
+{
+    auto font_big = app.gcx().loadFont(Paths::data() + "fonts/PTC75F.ttf", 45);
+    const auto color = 0xEEEEEE_rgb;
+
+    tex_gameover = font_big->renderText(tr("GAME OVER"), color);
+    tex_gameover->setAlpha(0x0);
+    tex_finish = font_big->renderText(tr("FINISH!"), color);
+    tex_finish->setAlpha(0x0);
+}
 
 PlayerArea::PlayerArea(AppContext& app, bool draw_gauge)
     : is_narrow(false)
@@ -20,6 +39,9 @@ PlayerArea::PlayerArea(AppContext& app, bool draw_gauge)
     , rect_goal{}
     , gametime_text("00:00")
     , rect_time{}
+    , game_end(app)
+    , special_update([]{})
+    , special_draw([](GraphicsContext&){})
 {
     auto font_label = app.gcx().loadFont(Paths::data() + "fonts/PTN57F.ttf", 28);
     font_content = app.gcx().loadFont(Paths::data() + "fonts/PTN77F.ttf", 30);
@@ -130,6 +152,7 @@ void PlayerArea::calcWellBox()
 void PlayerArea::drawActive(GraphicsContext& gcx) const
 {
     draw_fn_active(gcx);
+    special_draw(gcx);
 }
 
 void PlayerArea::drawPassive(GraphicsContext& gcx) const
@@ -172,9 +195,54 @@ void PlayerArea::setGarbageCount(unsigned lines)
     garbage_gauge.setLineCount(lines);
 }
 
+void PlayerArea::enableGameOverSFX(bool val)
+{
+    game_end.gameoversfx_enabled = val;
+}
+
+void PlayerArea::startGameOver()
+{
+    if (game_end.gameoversfx_enabled)
+        game_end.sfx_onanimend = game_end.sfx_ongameover;
+
+    special_update = [this](){
+        auto& anim = game_end.anim_percent;
+        anim.update(Timing::frame_duration);
+        if (anim.value() > 0.4)
+            game_end.tex_gameover->setAlpha(std::min<int>(0xFF, (anim.value() - 0.4) * 0x1FF));
+    };
+    special_draw = [this](GraphicsContext& gcx){
+        const int box_h = wellbox.h * game_end.anim_percent.value();
+        gcx.drawFilledRect({
+            wellbox.x, wellbox.y + wellbox.h - box_h,
+            wellbox.w, box_h
+        }, 0xA0_rgba);
+
+        auto& tex = *game_end.tex_gameover;
+        tex.drawAt(wellCenterX() - tex.width() / 2,
+                   wellCenterY() - tex.height() / 2);
+    };
+}
+
+void PlayerArea::startGameFinish()
+{
+    game_end.sfx_onfinish->playOnce();
+    special_update = [this](){
+        auto& anim = game_end.anim_percent;
+        anim.update(Timing::frame_duration);
+        game_end.tex_finish->setAlpha(anim.value() * 0xFF);
+    };
+    special_draw = [this](GraphicsContext&){
+        auto& tex = *game_end.tex_finish;
+        tex.drawAt(wellCenterX() - tex.width() / 2,
+                   wellCenterY() - tex.height() / 2);
+    };
+}
+
 void PlayerArea::update()
 {
     hold_queue.update();
+    special_update();
 }
 
 void PlayerArea::drawWidePassive(GraphicsContext& gcx) const

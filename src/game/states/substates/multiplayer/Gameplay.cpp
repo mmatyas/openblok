@@ -71,10 +71,6 @@ Gameplay::Gameplay(MultiplayerState& parent, AppContext& app, const std::vector<
         previous_lineclear_type[device_id] = ScoreType::CLEAR_SINGLE;
         back2back_length[device_id] = 0;
         player_status[device_id] = PlayerStatus::PLAYING;
-        gameend_anim_timers.emplace(std::piecewise_construct,
-            std::forward_as_tuple(device_id),
-            std::forward_as_tuple(std::chrono::seconds(2), [](double t){ return t; }));
-        gameend_anim_timers.at(device_id).stop();
         pending_garbage_lines[device_id] = 0;
 
         parent.player_areas.emplace(std::piecewise_construct,
@@ -85,6 +81,11 @@ Gameplay::Gameplay(MultiplayerState& parent, AppContext& app, const std::vector<
     }
     assert(parent.player_areas.size() > 1);
     parent.updatePositions(app.gcx());
+
+    if (parent.gamemode == MultiplayerMode::BATTLE) {
+        for (auto& parea : parent.player_areas)
+            parea.second.enableGameOverSFX(false);
+    }
 
     auto font_big = app.gcx().loadFont(Paths::data() + "fonts/PTC75F.ttf", 45);
     tex_finish = font_big->renderText(tr("YOU WIN!"), 0xEEEEEE_rgb);
@@ -240,7 +241,7 @@ void Gameplay::registerObservers(MultiplayerState& parent, AppContext& app)
                     // IF MARATHON
                     if (parent.gamemode == MultiplayerMode::MARATHON) {
                         player_status.at(device_id) = PlayerStatus::FINISHED;
-                        gameend_anim_timers.at(device_id).restart();
+                        parent.player_areas.at(device_id).startGameFinish();
                         sfx_onfinish->playOnce();
                         gameend_statistics_delay.restart();
 
@@ -290,7 +291,7 @@ void Gameplay::registerObservers(MultiplayerState& parent, AppContext& app)
         well.registerObserver(WellEvent::Type::GAME_OVER, [this, &parent, &app, device_id](const WellEvent&){
             // set game over for the triggering player
             player_status.at(device_id) = PlayerStatus::GAME_OVER;
-            gameend_anim_timers.at(device_id).restart();
+            parent.player_areas.at(device_id).startGameOver();
 
             // find out who else is still playing
             auto playing_players = playingPlayers();
@@ -303,7 +304,7 @@ void Gameplay::registerObservers(MultiplayerState& parent, AppContext& app)
                 if (playing_players.size() == 1) {
                     const DeviceID pdevid = playing_players.front();
                     player_status.at(pdevid) = PlayerStatus::FINISHED;
-                    gameend_anim_timers.at(pdevid).restart();
+                    parent.player_areas.at(pdevid).startGameFinish();
                     sfx_onfinish->playOnce();
                     playing_players.clear();
                 }
@@ -369,8 +370,6 @@ void Gameplay::update(MultiplayerState& parent, const std::vector<Event>& events
             parent.player_stats.at(device_id).gametime += Timing::frame_duration;
         }
         parent.player_areas.at(device_id).update();
-
-        gameend_anim_timers.at(device_id).update(Timing::frame_duration);
     }
 
     if (texts_need_update) {
@@ -396,27 +395,6 @@ void Gameplay::drawActive(MultiplayerState& parent, GraphicsContext& gcx) const
 {
    for (const auto& ui_pa : parent.player_areas)
         ui_pa.second.drawActive(gcx);
-
-   for (const DeviceID device_id : player_devices) {
-        const auto& ui = parent.player_areas.at(device_id);
-        switch (player_status.at(device_id)) {
-            case PlayerStatus::GAME_OVER: {
-                const auto& wellbox = ui.wellBox();
-                const int box_h = wellbox.h * gameend_anim_timers.at(device_id).value();
-                gcx.drawFilledRect({
-                    wellbox.x, wellbox.y + wellbox.h - box_h,
-                    wellbox.w, box_h
-                }, 0xA0_rgba);
-            }
-            break;
-            case PlayerStatus::FINISHED:
-                tex_finish->drawAt(ui.wellCenterX() - tex_finish->width() / 2,
-                                   ui.wellCenterY() - tex_finish->height() / 2);
-            break;
-            default:
-                break;
-        }
-    }
 }
 
 } // namespace States
