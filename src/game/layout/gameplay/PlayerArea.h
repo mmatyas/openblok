@@ -7,7 +7,7 @@
 #include "game/components/HoldQueue.h"
 #include "game/components/NextQueue.h"
 #include "system/Color.h"
-#include <system/SoundEffect.h>
+#include "system/SoundEffect.h"
 
 class AppContext;
 class Font;
