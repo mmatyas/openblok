@@ -134,7 +134,7 @@ void Base::openSubcolumn(ButtonColumn* subcolumn)
     assert(subcolumn != &primary_buttons);
     primary_buttons.buttons.at(primary_buttons.selected_index).onHoverLeave();
     current_column = subcolumn;
-    current_column->buttons.at(0).onHoverEnter();
+    current_column->buttons.at(current_column->selected_index).onHoverEnter();
     column_slide_anim.restart();
 }
 
