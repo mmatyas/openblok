@@ -32,14 +32,7 @@ set(MOD_GAME_SRC
 
     layout/gameplay/GarbageGauge.cpp
     layout/gameplay/PlayerArea.cpp
-    layout/gameplay/NarrowBattlePA.cpp
-    layout/gameplay/NarrowPA.cpp
     layout/gameplay/WellContainer.cpp
-    layout/gameplay/WidePA.cpp
-    layout/gameplay/narrow/BottomBarBox.cpp
-    layout/gameplay/narrow/TopBarBox.cpp
-    layout/gameplay/wide/LeftSidebarBox.cpp
-    layout/gameplay/wide/RightSidebarBox.cpp
     layout/menu/Logo.cpp
     layout/menu/MainMenuBtn.cpp
     layout/menu/PieceRain.cpp
@@ -115,14 +108,7 @@ set(MOD_GAME_H
     layout/MenuItem.h
     layout/gameplay/GarbageGauge.h
     layout/gameplay/PlayerArea.h
-    layout/gameplay/NarrowBattlePA.h
-    layout/gameplay/NarrowPA.h
     layout/gameplay/WellContainer.h
-    layout/gameplay/WidePA.h
-    layout/gameplay/narrow/BottomBarBox.h
-    layout/gameplay/narrow/TopBarBox.h
-    layout/gameplay/wide/LeftSidebarBox.h
-    layout/gameplay/wide/RightSidebarBox.h
     layout/menu/Button.h
     layout/menu/Logo.h
     layout/menu/MainMenuBtn.h

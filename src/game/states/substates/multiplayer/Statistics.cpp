@@ -97,14 +97,14 @@ void Statistics::drawBackground(MultiplayerState& parent, GraphicsContext& gcx) 
     for (const auto& ui_pa : parent.player_areas) {
         auto color = 0x2030FF00_rgba;
         color.a = fadein_percent.value() * 0xFF;
-        gcx.drawFilledRect(ui_pa.second->wellBox(), color);
+        gcx.drawFilledRect(ui_pa.second.wellBox(), color);
     }
 }
 
 void Statistics::drawItems(MultiplayerState& parent) const
 {
     for (const DeviceID device_id : parent.device_order) {
-        const auto& ui_pa = *parent.player_areas.at(device_id);
+        const auto& ui_pa = parent.player_areas.at(device_id);
 
         int pos_x = ui_pa.wellBox().x;
         int pos_y = ui_pa.wellBox().y;

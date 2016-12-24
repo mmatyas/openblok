@@ -2,6 +2,7 @@
 
 #include "game/GameState.h"
 #include "game/PlayerStatistics.h"
+#include "game/layout/gameplay/PlayerArea.h"
 
 #include <list>
 #include <memory>
@@ -34,7 +35,7 @@ public:
     const MultiplayerMode gamemode;
     std::list<std::unique_ptr<SubStates::Multiplayer::State>> states;
     std::vector<DeviceID> device_order;
-    std::unordered_map<DeviceID, std::unique_ptr<Layout::PlayerArea>> player_areas;
+    std::unordered_map<DeviceID, Layout::PlayerArea> player_areas;
     std::unordered_map<DeviceID, PlayerStatistics> player_stats;
 
 private:

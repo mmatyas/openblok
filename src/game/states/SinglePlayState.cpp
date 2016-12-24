@@ -8,7 +8,7 @@
 
 SinglePlayState::SinglePlayState(AppContext& app)
     : tex_background(app.gcx().loadTexture(Paths::data() + "gamebg.png"))
-    , player_area(app)
+    , player_area(app, false)
 {
     updatePositions(app.gcx());
     states.emplace_back(std::make_unique<SubStates::SinglePlayer::States::FadeIn>());

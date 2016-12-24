@@ -2,7 +2,7 @@
 
 #include "game/GameState.h"
 #include "game/PlayerStatistics.h"
-#include "game/layout/gameplay/WidePA.h"
+#include "game/layout/gameplay/PlayerArea.h"
 
 #include <list>
 #include <memory>
@@ -34,7 +34,7 @@ private:
     PlayerStatistics player_stats;
     std::unique_ptr<Texture> tex_background;
 
-    Layout::WidePA player_area;
+    Layout::PlayerArea player_area;
 
     void updatePositions(GraphicsContext&);
     void drawCommon(GraphicsContext&);
