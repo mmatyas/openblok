@@ -21,14 +21,18 @@ Pause::Pause(AppContext& app)
     app.audio().pauseAll();
 
     auto font_big = app.gcx().loadFont(Paths::data() + "fonts/PTC75F.ttf", 45);
-    tex_pause = font_big->renderText(tr("PAUSE"), 0xEEEEEE_rgb);
-
     auto font_smaller = app.gcx().loadFont(Paths::data() + "fonts/PTC75F.ttf", 30);
+
+    const auto color_normal = 0xEEEEEE_rgb;
+    const auto color_highlight = 0xCE8000_rgb;
+
+    tex_pause = font_big->renderText(tr("PAUSE"), color_normal);
+
     const std::vector<std::string> menuitems = {tr("RESUME"), tr("QUIT")};
     for (const auto& label : menuitems) {
         tex_menuitems.emplace_back(std::array<std::unique_ptr<Texture>, 2>{
-            font_smaller->renderText(label, 0xEEEEEE_rgb),
-            font_smaller->renderText(label, 0xCE8000_rgb)
+            font_smaller->renderText(label, color_normal),
+            font_smaller->renderText(label, color_highlight)
         });
     }
 }
