@@ -46,8 +46,6 @@ set(MOD_GAME_SRC
     states/InitState.cpp
     states/IngameState.cpp
     states/MainMenuState.cpp
-    states/MultiplayerState.cpp
-    states/SinglePlayState.cpp
     states/substates/ingame/Countdown.cpp
     states/substates/ingame/FadeInOut.cpp
     states/substates/ingame/Gameplay.cpp
@@ -56,15 +54,6 @@ set(MOD_GAME_SRC
     states/substates/ingame/Statistics.cpp
     states/substates/mainmenu/Base.cpp
     states/substates/mainmenu/Options.cpp
-    states/substates/multiplayer/Countdown.cpp
-    states/substates/multiplayer/FadeInOut.cpp
-    states/substates/multiplayer/Gameplay.cpp
-    states/substates/multiplayer/Pause.cpp
-    states/substates/multiplayer/PlayerSelect.cpp
-    states/substates/multiplayer/Statistics.cpp
-    states/substates/singleplayer/Gameplay.cpp
-    states/substates/singleplayer/MinorStates.cpp
-    states/substates/singleplayer/Statistics.cpp
 
     util/DurationToString.cpp
 )
@@ -130,12 +119,8 @@ set(MOD_GAME_H
     states/InitState.h
     states/IngameState.h
     states/MainMenuState.h
-    states/MultiplayerState.h
-    states/SinglePlayState.h
     states/substates/Ingame.h
     states/substates/MainMenu.h
-    states/substates/Multiplayer.h
-    states/substates/SinglePlayer.h
     states/substates/ingame/Countdown.h
     states/substates/ingame/FadeInOut.h
     states/substates/ingame/Gameplay.h
@@ -144,15 +129,6 @@ set(MOD_GAME_H
     states/substates/ingame/Statistics.h
     states/substates/mainmenu/Base.h
     states/substates/mainmenu/Options.h
-    states/substates/multiplayer/Countdown.h
-    states/substates/multiplayer/FadeInOut.h
-    states/substates/multiplayer/Gameplay.h
-    states/substates/multiplayer/Pause.h
-    states/substates/multiplayer/PlayerSelect.h
-    states/substates/multiplayer/Statistics.h
-    states/substates/singleplayer/Gameplay.h
-    states/substates/singleplayer/MinorStates.h
-    states/substates/singleplayer/Statistics.h
 
     util/CircularModulo.h
     util/DurationToString.h
