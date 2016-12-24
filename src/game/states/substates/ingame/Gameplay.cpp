@@ -124,6 +124,115 @@ std::vector<DeviceID> Gameplay::playingPlayers()
     return playing_players;
 }
 
+void Gameplay::increaseScoreMaybe(IngameState& parent, DeviceID source_player,
+                                  const WellEvent::lineclear_t& lcevent)
+{
+    const auto score_type = ScoreTable::lineclearType(lcevent);
+    std::string popup_text = ScoreTable::name(score_type);
+
+    auto& player_stats = parent.player_stats.at(source_player);
+    player_stats.event_count[score_type]++;
+    player_stats.total_cleared_lines += lcevent.count;
+
+    unsigned score = ScoreTable::value(score_type);
+    const bool back2back = ScoreTable::canContinueBackToBack(previous_lineclear_type.at(source_player), score_type);
+    if (back2back) {
+        score *= ScoreTable::back2backMultiplier();
+        popup_text = ScoreTable::back2backName() + "\n" + popup_text;
+        back2back_length.at(source_player)++;
+        player_stats.back_to_back_count++;
+        player_stats.back_to_back_longest = std::max(player_stats.back_to_back_longest,
+                                                    back2back_length.at(source_player));
+    }
+    else
+        back2back_length.at(source_player) = 0;
+
+    player_stats.score += score * player_stats.level;
+    previous_lineclear_type.at(source_player) = score_type;
+}
+
+void Gameplay::sendGarbageMaybe(IngameState& parent, DeviceID source_player,
+                                const WellEvent::lineclear_t& lcevent)
+{
+    if (parent.gamemode != GameMode::MP_BATTLE)
+        return;
+
+    const auto score_type = ScoreTable::lineclearType(lcevent);
+    const bool back2back = ScoreTable::canContinueBackToBack(previous_lineclear_type.at(source_player), score_type);
+    unsigned sendable_lines = BattleAttackTable::sendableLineCount(lcevent, back2back);
+
+    if (sendable_lines > 0) {
+        // reduce current garbage
+        auto& parea = parent.player_areas.at(source_player);
+        unsigned current_queue = parea.queuedGarbageLines();
+        const unsigned smallest = std::min(sendable_lines, current_queue);
+        current_queue -= smallest;
+        sendable_lines -= smallest;
+        parea.setGarbageCount(current_queue);
+        pending_garbage_lines.at(source_player) = current_queue;
+    }
+
+    // if we can still send some lines
+    if (sendable_lines > 0) {
+        // find target player
+        std::vector<DeviceID> possible_players;
+        for (const DeviceID possible_device : player_devices) {
+            if (player_status.at(possible_device) == PlayerStatus::PLAYING && possible_device != source_player)
+                possible_players.push_back(possible_device);
+        }
+        assert(!possible_players.empty());
+
+        std::random_shuffle(possible_players.begin(), possible_players.end());
+        DeviceID target_id = possible_players.front();
+        assert(target_id != source_player);
+
+        // send the lines
+        auto& target_player = parent.player_areas.at(target_id);
+        target_player.setGarbageCount(target_player.queuedGarbageLines() + sendable_lines);
+        // TODO: visual effect
+    }
+}
+
+void Gameplay::increaseLevelMaybe(IngameState& parent, DeviceID source_player,
+                                  const WellEvent::lineclear_t& lcevent)
+{
+    auto& lines_left = lineclears_left.at(source_player);
+    lineclears_left.at(source_player) -= lcevent.count;
+
+    if (lines_left > 0)
+        return;
+
+    auto& parea = parent.player_areas.at(source_player);
+    auto& gravity_stack = gravity_levels.at(source_player);
+    assert(!gravity_stack.empty());
+    gravity_stack.pop();
+
+    if (gravity_stack.empty()) {
+        lines_left = 0;
+        const bool finishable = (parent.gamemode == GameMode::SP_MARATHON || parent.gamemode == GameMode::MP_MARATHON);
+        if (finishable) {
+            player_status.at(source_player) = PlayerStatus::FINISHED;
+            parea.startGameFinish();
+            sfx_onfinish->playOnce();
+            gameend_statistics_delay.restart();
+
+            // find out who else is still playing
+            if (playingPlayers().empty())
+                music->fadeOut(std::chrono::seconds(1));
+        }
+        return;
+    }
+
+    parea.well().setGravity(gravity_stack.top());
+    lines_left += lineclears_per_level;
+    parent.player_stats.at(source_player).level++;
+    sfx_onlevelup->playOnce();
+
+//    // produce delayed popup if there are other popups already
+//    pending_levelup_msg.restart();
+//    if (textpopups.empty())
+//        pending_levelup_msg.update(this->pending_levelup_msg.length());
+}
 
 void Gameplay::registerObservers(IngameState& parent, AppContext& app)
 {
@@ -178,106 +287,10 @@ void Gameplay::registerObservers(IngameState& parent, AppContext& app)
             assert(event.lineclear.count > 0);
             assert(event.lineclear.count <= 4);
 
+            increaseScoreMaybe(parent, device_id, event.lineclear);
+            sendGarbageMaybe(parent, device_id, event.lineclear);
+            increaseLevelMaybe(parent, device_id, event.lineclear);
             texts_need_update = true;
-            auto& player_stats = parent.player_stats.at(device_id);
-
-
-            // increase score
-
-            const auto score_type = ScoreTable::lineclearType(event.lineclear);
-            unsigned score = ScoreTable::value(score_type);
-            std::string popup_text = ScoreTable::name(score_type);
-            player_stats.event_count[score_type]++;
-            player_stats.total_cleared_lines += event.lineclear.count;
-
-            const bool back2back = ScoreTable::canContinueBackToBack(previous_lineclear_type.at(device_id), score_type);
-            if (back2back) {
-                score *= ScoreTable::back2backMultiplier();
-                popup_text = ScoreTable::back2backName() + "\n" + popup_text;
-                back2back_length.at(device_id)++;
-                player_stats.back_to_back_count++;
-                player_stats.back_to_back_longest = std::max(player_stats.back_to_back_longest,
-                                                            back2back_length.at(device_id));
-            }
-            else
-                back2back_length.at(device_id) = 0;
-
-            player_stats.score += score * player_stats.level;
-            previous_lineclear_type.at(device_id) = score_type;
-
-
-            // send garbage lines to other players, if the game mode allows it
-
-            if (parent.gamemode == GameMode::MP_BATTLE) {
-                unsigned sendable_lines = BattleAttackTable::sendableLineCount(event.lineclear, back2back);
-                if (sendable_lines > 0) {
-                    // reduce current garbage
-                    auto& parea = parent.player_areas.at(device_id);
-                    unsigned current_queue = parea.queuedGarbageLines();
-                    const unsigned smallest = std::min(sendable_lines, current_queue);
-                    current_queue -= smallest;
-                    sendable_lines -= smallest;
-                    parea.setGarbageCount(current_queue);
-                    pending_garbage_lines.at(device_id) = current_queue;
-                }
-                // if we can still send some lines
-                if (sendable_lines > 0) {
-                    // find target player
-                    std::vector<DeviceID> possible_players;
-                    for (const DeviceID possible_device : player_devices) {
-                        if (player_status.at(possible_device) == PlayerStatus::PLAYING && possible_device != device_id)
-                            possible_players.push_back(possible_device);
-                    }
-                    assert(!possible_players.empty());
-                    std::random_shuffle(possible_players.begin(), possible_players.end());
-                    DeviceID target_id = possible_players.front();
-                    assert(target_id != device_id);
-
-                    // send the lines
-                    auto& target_player = parent.player_areas.at(target_id);
-                    target_player.setGarbageCount(target_player.queuedGarbageLines() + sendable_lines);
-                    // TODO: visual effect
-                }
-            }
-
-
-            // increase gravity level
-
-            auto& lines_left = lineclears_left.at(device_id);
-            lineclears_left.at(device_id) -= event.lineclear.count;
-
-            if (lines_left <= 0) {
-                auto& gravity_stack = gravity_levels.at(device_id);
-                assert(!gravity_stack.empty());
-                gravity_stack.pop();
-
-                if (gravity_stack.empty()) {
-                    lines_left = 0;
-                    // IF MARATHON/finishable
-                    if (parent.gamemode == GameMode::SP_MARATHON || parent.gamemode == GameMode::MP_MARATHON) {
-                        player_status.at(device_id) = PlayerStatus::FINISHED;
-                        parent.player_areas.at(device_id).startGameFinish();
-                        sfx_onfinish->playOnce();
-                        gameend_statistics_delay.restart();
-
-                        // find out who else is still playing
-                        if (playingPlayers().empty())
-                            music->fadeOut(std::chrono::seconds(1));
-                    }
-                    // IF BATTLE
-                        // wait until someone gets game over
-                    return;
-                }
-                parent.player_areas.at(device_id).well().setGravity(gravity_stack.top());
-                lines_left += lineclears_per_level;
-                player_stats.level++;
-                sfx_onlevelup->playOnce();
-
-//                // produce delayed popup if there are other popups already
-//                pending_levelup_msg.restart();
-//                if (textpopups.empty())
-//                    pending_levelup_msg.update(this->pending_levelup_msg.length());
-            }
         });
 
         well.registerObserver(WellEvent::Type::MINI_TSPIN_DETECTED, [this, &parent, device_id](const WellEvent&){

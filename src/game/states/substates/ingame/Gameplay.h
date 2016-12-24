@@ -61,6 +61,10 @@ private:
     std::vector<DeviceID> playingPlayers();
     void addNextPiece(IngameState&, DeviceID);
     void registerObservers(IngameState&, AppContext&);
+
+    void increaseScoreMaybe(IngameState&, DeviceID, const WellEvent::lineclear_t&);
+    void sendGarbageMaybe(IngameState&, DeviceID, const WellEvent::lineclear_t&);
+    void increaseLevelMaybe(IngameState&, DeviceID, const WellEvent::lineclear_t&);
 };
 
 } // namespace States
