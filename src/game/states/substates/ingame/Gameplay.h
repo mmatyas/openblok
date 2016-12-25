@@ -2,6 +2,7 @@
 
 #include "game/ScoreTable.h"
 #include "game/Transition.h"
+#include "game/components/animations/BattleAttack.h"
 #include "game/states/substates/Ingame.h"
 
 #include <array>
@@ -54,6 +55,7 @@ private:
     std::unordered_map<DeviceID, unsigned short> back2back_length;
     std::unordered_map<DeviceID, unsigned short> pending_garbage_lines;
     std::unordered_map<DeviceID, std::list<TextPopup>> textpopups;
+    std::list<BattleAttackAnim> attackanims;
 
     Transition<unsigned> gameend_statistics_delay;
 

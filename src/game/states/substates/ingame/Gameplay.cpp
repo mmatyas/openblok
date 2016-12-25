@@ -189,11 +189,18 @@ void Gameplay::sendGarbageMaybe(IngameState& parent, DeviceID source_player,
         DeviceID target_id = possible_players.front();
         assert(target_id != source_player);
 
-        // send the lines
-        auto& target_player = parent.player_areas.at(target_id);
-        target_player.setGarbageCount(target_player.queuedGarbageLines() + sendable_lines);
+        const auto& src_parea = parent.player_areas.at(source_player);
+        const auto& dst_parea = parent.player_areas.at(target_id);
+        const int distance = dst_parea.wellCenterX() - src_parea.wellCenterX();
+        assert(distance != 0);
 
-        // TODO: visual effect
+        attackanims.emplace_back(
+            src_parea.wellCenterX(), distance,
+            src_parea.wellBox().y, src_parea.wellBox().y + src_parea.wellBox().h,
+            [this, &parent, target_id, sendable_lines](){
+                auto& target_player = parent.player_areas.at(target_id);
+                target_player.setGarbageCount(target_player.queuedGarbageLines() + sendable_lines);
+            });
     }
 }
 
@@ -381,6 +388,10 @@ void Gameplay::updateAnimationsOnly(IngameState& parent, AppContext&)
                 break;
         }
     }
+
+    attackanims.remove_if([](BattleAttackAnim& anim){ return !anim.isActive(); });
+    for (auto& anim : attackanims)
+        anim.update();
 }
 
 void Gameplay::update(IngameState& parent, const std::vector<Event>& events, AppContext& app)
@@ -460,6 +471,9 @@ void Gameplay::drawPassive(IngameState& parent, GraphicsContext& gcx) const
             popup.draw();
         }
     }
+
+    for (const auto& anim : attackanims)
+        anim.draw();
 }
 
 void Gameplay::drawActive(IngameState& parent, GraphicsContext& gcx) const

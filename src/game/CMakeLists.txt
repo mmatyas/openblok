@@ -13,6 +13,7 @@ set(MOD_GAME_SRC
     components/PieceType.cpp
     components/Well.cpp
 
+    components/animations/BattleAttack.cpp
     components/animations/CellLockAnim.cpp
     components/animations/HalfHeightLineClearAnim.cpp
     components/animations/LineClearAnim.cpp
@@ -80,11 +81,12 @@ set(MOD_GAME_H
     components/PieceType.h
     components/Well.h
 
-    components/animations/WellAnimation.h
+    components/animations/BattleAttack.h
     components/animations/CellLockAnim.h
     components/animations/HalfHeightLineClearAnim.h
     components/animations/LineClearAnim.h
     components/animations/TextPopup.h
+    components/animations/WellAnimation.h
 
     components/rotations/Classic.h
     components/rotations/RotationFactory.h
