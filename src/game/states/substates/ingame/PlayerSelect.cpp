@@ -7,6 +7,7 @@
 #include "game/components/Mino.h"
 #include "game/components/MinoStorage.h"
 #include "game/states/IngameState.h"
+#include "game/util/CircularModulo.h"
 #include "system/Color.h"
 #include "system/Font.h"
 #include "system/GraphicsContext.h"
@@ -23,7 +24,7 @@ namespace States {
 
 static const int well_width = 10 * Mino::texture_size_px;
 static const int well_height = 20 * Mino::texture_size_px;
-static const int well_padding_x = 5 + Mino::texture_size_px;
+static const int well_padding_x = Mino::texture_size_px;
 
 PlayerSelect::PlayerSelect(AppContext& app)
 {
@@ -36,40 +37,91 @@ PlayerSelect::PlayerSelect(AppContext& app)
     tex_player.at(2) = font_player->renderText(tr("PLAYER C"), 0x00B7EB_rgb);
     tex_player.at(3) = font_player->renderText(tr("PLAYER D"), 0xEEEE10_rgb);
     tex_pending = font_smaller->renderText(tr("PRESS START\nTO JOIN"), 0xEEEEEE_rgb);
-    tex_begin = font_smaller->renderText(tr("PRESS START\nTO BEGIN!"), 0xEEEEEE_rgb);
+    tex_begin = font_ready->renderText(tr("PRESS START TO BEGIN!"), 0xEEEEEE_rgb);
 }
 
 void PlayerSelect::onPlayerJoin(DeviceID device_id)
 {
-    assert(devices.size() < 4);
-    assert(devices.size() == player_ids.size());
-    // store the joining player's device id
-    devices.push_back(device_id);
-    // find the next available "name" (color) for the joining player
-    for (uint8_t new_player_id = 0; new_player_id < 4; new_player_id++) {
-        const bool player_id_exists = player_ids.end()
-            != std::find(player_ids.begin(), player_ids.end(), new_player_id);
-        if (!player_id_exists) {
-            player_ids.push_back(new_player_id);
+    assert(column_slots.size() < 4);
+    assert(column_slots.size() == player_colors.size());
+
+    // find the next available color for the joining player
+    std::set<uint8_t> occupied_colors;
+    for (const auto& color : player_colors)
+        occupied_colors.insert(color.second);
+    for (uint8_t color = 0; color < MAX_PLAYERS; color++) {
+        if (!occupied_colors.count(color)) {
+            player_colors[device_id] = color;
             break;
         }
     }
-    assert(devices.size() == player_ids.size());
+    assert(column_slots.size() + 1 == player_colors.size());
+
+    column_slots[MAX_PLAYERS - 1] = device_id;
+    onPlayerNextWell(device_id);
+    assert(column_slots.size() == player_colors.size());
 }
 
 void PlayerSelect::onPlayerLeave(DeviceID device_id)
 {
-    assert(devices.size() == player_ids.size());
-    for (size_t idx = 0; idx < devices.size(); idx++) {
-        if (devices.at(idx) == device_id) {
-            // disconnect the player
-            devices.erase(devices.begin() + idx);
-            // make the leaving player's color available again
-            player_ids.erase(player_ids.begin() + idx);
-            break;
-        }
+    player_colors.erase(device_id);
+    for (auto& entry : column_slots) {
+        if (entry.second == device_id)
+            column_slots.erase(entry.first);
     }
-    assert(devices.size() == player_ids.size());
+}
+
+void PlayerSelect::onPlayerNextWell(DeviceID device_id)
+{
+    // all slots are occupied
+    if (column_slots.size() == MAX_PLAYERS)
+        return;
+
+    const uint8_t start_col = columnOfPlayer(device_id);
+    assert(start_col < MAX_PLAYERS);
+    column_slots.erase(start_col);
+
+    uint8_t col = (start_col + 1) % MAX_PLAYERS;
+    while (col != start_col) {
+        if (!column_slots.count(col)) {
+            column_slots[col] = device_id;
+            return;
+        }
+        col = circularModulo(++col, MAX_PLAYERS);
+    }
+
+    assert(false);
+}
+
+void PlayerSelect::onPlayerPrevWell(DeviceID device_id)
+{
+    // all slots are occupied
+    if (column_slots.size() == MAX_PLAYERS)
+        return;
+
+    const int8_t start_col = columnOfPlayer(device_id);
+    assert(start_col < MAX_PLAYERS);
+    column_slots.erase(start_col);
+
+    int8_t col = circularModulo(start_col - 1, MAX_PLAYERS);
+    while (col != start_col) {
+        if (!column_slots.count(col)) {
+            column_slots[col] = device_id;
+            return;
+        }
+        col = circularModulo(--col, MAX_PLAYERS);
+    }
+
+    assert(false);
+}
+
+uint8_t PlayerSelect::columnOfPlayer(DeviceID device_id)
+{
+    for (auto& entry : column_slots) {
+        if (entry.second == device_id)
+            return entry.first;
+    }
+    assert(false);
 }
 
 void PlayerSelect::update(IngameState& parent, const std::vector<Event>& events, AppContext& app)
@@ -84,14 +136,14 @@ void PlayerSelect::update(IngameState& parent, const std::vector<Event>& events,
             if (event.input.down()) {
                 switch (event.input.type()) {
                 case InputType::MENU_OK:
-                    if (devices.size() < 4) {
-                        const bool device_exists = devices.end()
-                            != std::find(devices.begin(), devices.end(), event.input.srcDeviceID());
+                    if (column_slots.size() <= MAX_PLAYERS) {
+                        const bool device_exists = player_colors.count(event.input.srcDeviceID());
                         if (!device_exists)
                             onPlayerJoin(event.input.srcDeviceID());
-                        else if (event.input.srcDeviceID() == devices.front() && devices.size() > 1) {
-                            parent.device_order = devices;
-                            assert(devices.size() > 1);
+                        else if (column_slots.size() > 1) {
+                            assert(parent.device_order.empty());
+                            for (const auto& slot : column_slots)
+                                parent.device_order.push_back(slot.second);
 
                             parent.states.emplace_back(std::make_unique<FadeOut>([this, &parent, &app](){
                                 parent.states.emplace_back(std::make_unique<Gameplay>(app, parent));
@@ -107,13 +159,19 @@ void PlayerSelect::update(IngameState& parent, const std::vector<Event>& events,
                     }
                     break;
                 case InputType::MENU_CANCEL:
-                    if (devices.empty()) {
+                    if (column_slots.empty()) {
                         parent.states.emplace_back(std::make_unique<FadeOut>([&app](){
                             app.states().pop();
                         }));
                         return;
                     }
                     onPlayerLeave(event.input.srcDeviceID());
+                    break;
+                case InputType::MENU_LEFT:
+                    onPlayerPrevWell(event.input.srcDeviceID());
+                    break;
+                case InputType::MENU_RIGHT:
+                    onPlayerNextWell(event.input.srcDeviceID());
                     break;
                 default:
                     break;
@@ -129,21 +187,26 @@ void PlayerSelect::update(IngameState& parent, const std::vector<Event>& events,
 void PlayerSelect::drawPassive(IngameState& parent, GraphicsContext& gcx) const
 {
     static const int well_full_width = (well_width + 2 * well_padding_x);
-    const int well_count = std::min<int>(devices.size() + 1, 4);
+    const int center_y = gcx.screenHeight() * parent.draw_inverse_scale / 2;
+    const int bottom_area_height = tex_begin->height() + 20;
+    const int well_y = center_y - bottom_area_height / 2 - well_height / 2;
+    int well_x = ((gcx.screenWidth() * parent.draw_inverse_scale - well_full_width * MAX_PLAYERS) / 2);
 
-    const int first_well_x = ((gcx.screenWidth() * parent.draw_inverse_scale - well_full_width * well_count) / 2);
-    int well_x = first_well_x;
-    const int well_y = ((gcx.screenHeight() * parent.draw_inverse_scale - well_height) / 2);
-
-    for (const auto& player_id : player_ids) {
-        drawJoinedWell(gcx, well_x, well_y, player_id);
+    for (uint8_t column = 0; column < MAX_PLAYERS; column++) {
+        if (!column_slots.count(column))
+            drawPendingWell(gcx, well_x, well_y);
+        else {
+            const DeviceID player_device = column_slots.at(column);
+            assert(player_colors.count(player_device));
+            drawJoinedWell(gcx, well_x, well_y, player_colors.at(player_device));
+        }
         well_x += well_full_width;
     }
-    if (devices.size() < 4)
-        drawPendingWell(gcx, well_x, well_y);
-    if (devices.size() > 1) {
-        tex_begin->drawAt(first_well_x + well_padding_x + 16,
-                          well_y + well_height - 10 - tex_begin->height());
+
+    if (column_slots.size() > 1) {
+        const int center_x = gcx.screenWidth() * parent.draw_inverse_scale / 2;
+        tex_begin->drawAt(center_x - tex_begin->width() / 2,
+                          well_y + well_height + 20);
     }
 }
 
