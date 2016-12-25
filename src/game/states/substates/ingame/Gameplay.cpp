@@ -25,10 +25,8 @@ namespace SubStates {
 namespace Ingame {
 namespace States {
 
-Gameplay::Gameplay(AppContext& app, IngameState& parent,
-                   const std::vector<DeviceID>& player_devices,
-                   unsigned short starting_gravity_level)
-    : player_devices(player_devices)
+Gameplay::Gameplay(AppContext& app, IngameState& parent, unsigned short starting_gravity_level)
+    : player_devices(parent.device_order)
     , music(app.audio().loadMusic(Paths::data() + "music/gameplay.ogg"))
     , font_popuptext(app.gcx().loadFont(Paths::data() + "fonts/PTS76F.ttf", 34))
     , sfx_onhold(app.audio().loadSound(Paths::data() + "sfx/hold.ogg"))

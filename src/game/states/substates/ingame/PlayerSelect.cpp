@@ -92,8 +92,9 @@ void PlayerSelect::update(IngameState& parent, const std::vector<Event>& events,
                         else if (event.input.srcDeviceID() == devices.front() && devices.size() > 1) {
                             parent.device_order = devices;
                             assert(devices.size() > 1);
+
                             parent.states.emplace_back(std::make_unique<FadeOut>([this, &parent, &app](){
-                                parent.states.emplace_back(std::make_unique<Gameplay>(app, parent, devices));
+                                parent.states.emplace_back(std::make_unique<Gameplay>(app, parent));
                                 parent.states.emplace_back(std::make_unique<Countdown>(app));
                                 parent.states.emplace_back(std::make_unique<FadeIn>([&parent, &app](){
                                     parent.states.pop_back();

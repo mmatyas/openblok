@@ -20,7 +20,7 @@ IngameState::IngameState(AppContext& app, GameMode gamemode)
     updatePositions(app.gcx());
     if (gamemode == GameMode::SP_MARATHON) {
         device_order = {-1};
-        states.emplace_back(std::make_unique<SubStates::Ingame::States::Gameplay>(app, *this, device_order));
+        states.emplace_back(std::make_unique<SubStates::Ingame::States::Gameplay>(app, *this));
         states.emplace_back(std::make_unique<SubStates::Ingame::States::Countdown>(app));
         states.emplace_back(std::make_unique<SubStates::Ingame::States::FadeIn>([this](){
             states.pop_back();

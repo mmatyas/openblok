@@ -23,7 +23,7 @@ namespace States {
 
 class Gameplay : public State {
 public:
-    Gameplay(AppContext&, IngameState&, const std::vector<DeviceID>&, unsigned short starting_gravity_level = 0);
+    Gameplay(AppContext&, IngameState&, unsigned short starting_gravity_level = 0);
     virtual ~Gameplay();
 
     void updateAnimationsOnly(IngameState&, AppContext&) final;
