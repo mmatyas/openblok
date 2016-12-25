@@ -3,6 +3,7 @@
 #include "system/GraphicsContext.h"
 
 #include <SDL2pp/SDL2pp.hh>
+#include <map>
 
 
 /// A graphics context implementation, based on SDL2
@@ -33,6 +34,8 @@ private:
     SDL2pp::Renderer renderer;
     SDL2pp::SDLTTF ttf;
     uint32_t pixelformat;
+
+    std::map<std::string, std::shared_ptr<Font>> font_cache;
 
     std::function<void()> on_render_callback;
     void saveScreenshotBMP(const SDL2pp::Window&, const std::string& path);

@@ -79,11 +79,10 @@ void SDLGraphicsContext::modifyDrawScale(float scale)
 
 std::shared_ptr<Font> SDLGraphicsContext::loadFont(const std::string& path, unsigned pt)
 {
-    static std::map<std::pair<const std::string, unsigned>, std::weak_ptr<Font>> cache;
-    auto item = cache[{path, pt}].lock();
-    if (!item)
-        cache[{path, pt}] = item = std::make_shared<SDLFont>(SDL2pp::Font(path, pt));
-    return item;
+    const std::string key = path + ";" + std::to_string(pt);
+    if (!font_cache.count(key))
+        font_cache[key] = std::make_shared<SDLFont>(SDL2pp::Font(path, pt));
+    return font_cache.at(key);
 }
 
 std::unique_ptr<Texture> SDLGraphicsContext::loadTexture(const std::string& path)
