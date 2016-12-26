@@ -40,6 +40,9 @@ Base::Base(MainMenuState& parent, AppContext& app)
         singleplayer_buttons.buttons.emplace_back(app, tr("SPRINT"), [this, &app](){
             startGame(app, GameMode::SP_40LINES);
         });
+        singleplayer_buttons.buttons.emplace_back(app, tr("ULTRA"), [this, &app](){
+            startGame(app, GameMode::SP_2MIN);
+        });
     }
     primary_buttons.buttons.emplace_back(app, tr("MULTIPLAYER"), [this](){
         openSubcolumn(&multiplayer_buttons);

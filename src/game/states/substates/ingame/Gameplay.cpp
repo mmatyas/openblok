@@ -445,6 +445,19 @@ void Gameplay::update(IngameState& parent, const std::vector<Event>& events, App
         parent.player_areas.at(device_id).update();
     }
 
+    if (parent.gamemode == GameMode::SP_2MIN && someone_still_playing) {
+        assert(parent.device_order.size() == 1);
+        const DeviceID device_id = parent.device_order.front();
+        const auto gametime = parent.player_stats.at(device_id).gametime;
+        if (gametime >= std::chrono::minutes(2)) {
+            player_status.at(device_id) = PlayerStatus::FINISHED;
+            parent.player_areas.at(device_id).startGameFinish();
+            sfx_onfinish->playOnce();
+            gameend_statistics_delay.restart();
+            music->fadeOut(std::chrono::seconds(1));
+        }
+    }
+
     if (texts_need_update) {
         for (const DeviceID device_id : player_devices) {
             const auto& stats = parent.player_stats.at(device_id);

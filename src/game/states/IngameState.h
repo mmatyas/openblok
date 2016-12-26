@@ -16,6 +16,7 @@ namespace SubStates { namespace Ingame {
 enum class GameMode : uint8_t {
     SP_MARATHON,
     SP_40LINES,
+    SP_2MIN,
     MP_MARATHON,
     MP_BATTLE,
 };

@@ -16,6 +16,7 @@ bool isSinglePlayer(GameMode gamemode)
     switch (gamemode) {
         case GameMode::SP_MARATHON:
         case GameMode::SP_40LINES:
+        case GameMode::SP_2MIN:
             return true;
         default:
             return false;
