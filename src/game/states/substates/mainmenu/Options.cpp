@@ -9,6 +9,7 @@
 #include "game/layout/options/ValueChooser.h"
 #include "game/states/MainMenuState.h"
 #include "game/util/CircularModulo.h"
+#include "system/AudioContext.h"
 #include "system/GraphicsContext.h"
 #include "system/Localize.h"
 #include "system/Paths.h"
@@ -58,14 +59,14 @@ Options::Options(MainMenuState& parent, AppContext& app)
             tr("Enable or disable sound effects."),
             [&app](bool val){
                 app.sysconfig().sfx = val;
-                // TODO
+                app.audio().toggleSFXMute();
             }));
         system_options.emplace_back(std::make_shared<ToggleButton>(
             app, app.sysconfig().music, tr("Background music"),
             tr("Enable or disable the background music."),
             [&app](bool val){
                 app.sysconfig().music = val;
-                // TODO
+                app.audio().toggleMusicMute();
             }));
     }
     subitem_panels.push_back(std::move(system_options));

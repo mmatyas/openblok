@@ -16,6 +16,8 @@ public:
     void pauseAll() final;
     void resumeAll() final;
     void stopAll() final;
+    void toggleSFXMute() final;
+    void toggleMusicMute() final;
 
 private:
     SDL2pp::Mixer mixer;

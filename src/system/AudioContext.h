@@ -26,4 +26,9 @@ public:
     virtual void resumeAll() = 0;
     /// Stops all playing audio. You'll have to call `play()` on them again.
     virtual void stopAll() = 0;
+
+    /// Mutes or unmutes the sound effects.
+    virtual void toggleSFXMute() = 0;
+    /// Mutes or unmutes the music.
+    virtual void toggleMusicMute() = 0;
 };

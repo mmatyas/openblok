@@ -59,3 +59,19 @@ void SDLAudioContext::stopAll()
     mixer.HaltMusic();
     mixer.HaltChannel(-1);
 }
+
+void SDLAudioContext::toggleSFXMute()
+{
+    if (mixer.GetVolume(-1) > 0)
+        mixer.SetVolume(-1, 0);
+    else
+        mixer.SetVolume(-1, MIX_MAX_VOLUME);
+}
+
+void SDLAudioContext::toggleMusicMute()
+{
+    if (mixer.GetMusicVolume() > 0)
+        mixer.SetMusicVolume(0);
+    else
+        mixer.SetMusicVolume(MIX_MAX_VOLUME);
+}
