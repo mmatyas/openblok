@@ -21,18 +21,15 @@ A customizable, cross platform, open-source falling block game, packed with a bu
 - [x] Classic, Extended and Infinity lock support
 - [x] Sonic drop and Zangi-move support
 - [x] T-Spin and Mini T-Spin support
-- [ ] Combo support
+- [x] Combo support
+- [x] Battle mode, Sprint and Ultra
+- [x] Proper menu, configuration and stats
 - [x] Gamepad support
-- [x] Menu, configuration and stats
-- [x] Battle mode
 - [x] Music and sound effects
-- [x] Big screen support
-- [x] Small screen support
+- [x] Big screen, small screen support
 - [x] Runs on most desktop systems
 - [x] Runs on embedded Linux, even without X11
 - [x] Runs in browsers (experimental)
-- [ ] Mobile (touch) support
-- [ ] Mouse support
 
 
 Dependencies
