@@ -18,7 +18,8 @@ enum class ScoreType : unsigned char {
     CLEAR_TSPIN_DOUBLE,
     CLEAR_TSPIN_TRIPLE,
     SOFTDROP,
-    HARDDROP
+    HARDDROP,
+    COMBO,
 };
 
 

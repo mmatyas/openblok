@@ -61,6 +61,9 @@ Gameplay::Gameplay(AppContext& app, IngameState& parent, unsigned short starting
         lineclears_left[device_id] = lineclears_per_level;
         previous_lineclear_type[device_id] = ScoreType::CLEAR_SINGLE;
         back2back_length[device_id] = 0;
+        combo_length[device_id] = 0;
+        current_piece_cleared_line[device_id] = false;
+        prev_piece_cleared_line[device_id] = false;
         pending_garbage_lines[device_id] = 0;
 
         player_status[device_id] = PlayerStatus::PLAYING;
@@ -131,6 +134,7 @@ void Gameplay::increaseScoreMaybe(IngameState& parent, DeviceID source_player,
     player_stats.event_count[score_type]++;
     player_stats.total_cleared_lines += lcevent.count;
 
+
     unsigned score = ScoreTable::value(score_type);
     const bool back2back = ScoreTable::canContinueBackToBack(previous_lineclear_type.at(source_player), score_type);
     if (back2back) {
@@ -144,11 +148,23 @@ void Gameplay::increaseScoreMaybe(IngameState& parent, DeviceID source_player,
     else
         back2back_length.at(source_player) = 0;
 
-    player_stats.score += score * player_stats.level;
     previous_lineclear_type.at(source_player) = score_type;
-
     if (score_type != ScoreType::CLEAR_SINGLE)
         textpopups.at(source_player).emplace_back(popup_text, font_popuptext);
+
+
+    auto& combo_count = combo_length.at(source_player);
+    if (prev_piece_cleared_line.at(source_player)) {
+        combo_count++;
+        score += ScoreTable::value(ScoreType::COMBO);
+        popup_text = std::to_string(combo_count) + ScoreTable::name(ScoreType::COMBO);
+        textpopups.at(source_player).emplace_back(popup_text, font_popuptext);
+    }
+    else
+        combo_count = 0;
+
+
+    player_stats.score += score * player_stats.level;
 }
 
 void Gameplay::sendGarbageMaybe(IngameState& parent, DeviceID source_player,
@@ -249,6 +265,9 @@ void Gameplay::registerObservers(IngameState& parent, AppContext& app)
             auto& parea = parent.player_areas.at(device_id);
             pending_garbage_lines.at(device_id) = parea.queuedGarbageLines();
             parea.setGarbageCount(0);
+
+            prev_piece_cleared_line.at(device_id) = current_piece_cleared_line.at(device_id);
+            current_piece_cleared_line.at(device_id) = false;
         });
 
         well.registerObserver(WellEvent::Type::PIECE_ROTATED, [this](const WellEvent&){
@@ -295,6 +314,8 @@ void Gameplay::registerObservers(IngameState& parent, AppContext& app)
             increaseScoreMaybe(parent, device_id, event.lineclear);
             sendGarbageMaybe(parent, device_id, event.lineclear);
             increaseLevelMaybe(parent, device_id, event.lineclear);
+
+            current_piece_cleared_line.at(device_id) = true;
             texts_need_update = true;
         });
 

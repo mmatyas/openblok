@@ -18,7 +18,8 @@ const std::map<ScoreType, unsigned short> ScoreTable::score_table = {
     {ScoreType::CLEAR_TSPIN_DOUBLE, 1200},
     {ScoreType::CLEAR_TSPIN_TRIPLE, 1600},
     {ScoreType::SOFTDROP, 1},
-    {ScoreType::HARDDROP, 2}
+    {ScoreType::HARDDROP, 2},
+    {ScoreType::COMBO, 50},
 };
 
 const std::map<ScoreType, const std::string> ScoreTable::score_name = {
@@ -31,7 +32,8 @@ const std::map<ScoreType, const std::string> ScoreTable::score_name = {
     {ScoreType::TSPIN, tr("T-SPIN")},
     {ScoreType::CLEAR_TSPIN_SINGLE, tr("T-SPIN SINGLE")},
     {ScoreType::CLEAR_TSPIN_DOUBLE, tr("T-SPIN DOUBLE")},
-    {ScoreType::CLEAR_TSPIN_TRIPLE, tr("T-SPIN TRIPLE")}
+    {ScoreType::CLEAR_TSPIN_TRIPLE, tr("T-SPIN TRIPLE")},
+    {ScoreType::COMBO, tr(" COMBO")},
 };
 
 float ScoreTable::back2back_multiplier = 1.5;

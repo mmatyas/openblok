@@ -52,6 +52,11 @@ private:
     std::unordered_map<DeviceID, std::stack<Duration>> gravity_levels;
     std::unordered_map<DeviceID, ScoreType> previous_lineclear_type;
     std::unordered_map<DeviceID, unsigned short> back2back_length;
+
+    std::unordered_map<DeviceID, unsigned short> combo_length;
+    std::unordered_map<DeviceID, bool> prev_piece_cleared_line;
+    std::unordered_map<DeviceID, bool> current_piece_cleared_line;
+
     std::unordered_map<DeviceID, unsigned short> pending_garbage_lines;
     std::unordered_map<DeviceID, std::list<TextPopup>> textpopups;
     std::list<BattleAttackAnim> attackanims;
