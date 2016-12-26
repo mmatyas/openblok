@@ -42,7 +42,6 @@ Gameplay::Gameplay(AppContext& app, IngameState& parent, unsigned short starting
     , texts_need_update(true)
     , sfx_ongameover(app.audio().loadSound(Paths::data() + "sfx/gameover.ogg"))
     , sfx_onfinish(app.audio().loadSound(Paths::data() + "sfx/finish.ogg"))
-    , lineclears_per_level(parent.gamemode == GameMode::SP_40LINES ? 40 : 10)
     , gameend_statistics_delay(std::chrono::seconds(5),
         [](double t){ return t * 5; },
         [&parent, &app](){
@@ -58,7 +57,6 @@ Gameplay::Gameplay(AppContext& app, IngameState& parent, unsigned short starting
     const bool is_battle = (parent.gamemode == GameMode::MP_BATTLE);
 
     for (const DeviceID device_id : player_devices) {
-        lineclears_left[device_id] = lineclears_per_level;
         previous_lineclear_type[device_id] = ScoreType::CLEAR_SINGLE;
         back2back_length[device_id] = 0;
         combo_length[device_id] = 0;
@@ -86,6 +84,28 @@ Gameplay::Gameplay(AppContext& app, IngameState& parent, unsigned short starting
         for (const DeviceID device_id : player_devices) {
             gravity_levels[device_id] = gravity_stack;
             parent.player_areas.at(device_id).well().setGravity(gravity_stack.top());
+            gravity_levels[device_id].pop();
+        }
+    }
+    {
+        auto& lineclear_stack = lineclears_required[player_devices.front()];
+        if (usesDynamicLineAwards(parent)) {
+            for (int i = 15; i > starting_gravity_level; i--)
+                lineclear_stack.push(i * 5);
+        }
+        else {
+            if (parent.gamemode == GameMode::SP_40LINES)
+                lineclear_stack.push(40);
+            else {
+                for (int i = 15; i > starting_gravity_level; i--)
+                    lineclear_stack.push(10);
+            }
+        }
+
+        for (const DeviceID device_id : player_devices) {
+            lineclears_required[device_id] = lineclear_stack;
+            lineclears_left[device_id] = lineclear_stack.top();
+            lineclears_required[device_id].pop();
         }
     }
 
@@ -148,7 +168,6 @@ void Gameplay::increaseScoreMaybe(IngameState& parent, DeviceID source_player,
     else
         back2back_length.at(source_player) = 0;
 
-    previous_lineclear_type.at(source_player) = score_type;
     if (score_type != ScoreType::CLEAR_SINGLE)
         textpopups.at(source_player).emplace_back(popup_text, font_popuptext);
 
@@ -217,42 +236,60 @@ void Gameplay::sendGarbageMaybe(IngameState& parent, DeviceID source_player,
     }
 }
 
+bool Gameplay::usesDynamicLineAwards(IngameState& parent)
+{
+    switch (parent.gamemode) {
+        case GameMode::SP_40LINES:
+            return false;
+        default:
+            return true;
+    }
+}
+
 void Gameplay::increaseLevelMaybe(IngameState& parent, DeviceID source_player,
                                   const WellEvent::lineclear_t& lcevent)
 {
     auto& lines_left = lineclears_left.at(source_player);
-    lineclears_left.at(source_player) -= lcevent.count;
+    int line_awards = lcevent.count;
+    if (usesDynamicLineAwards(parent)) {
+        const auto clear_type = ScoreTable::lineclearType(lcevent);
+        line_awards = ScoreTable::lineAwards(clear_type);
 
-    if (lines_left > 0)
-        return;
-
-    auto& parea = parent.player_areas.at(source_player);
-    auto& gravity_stack = gravity_levels.at(source_player);
-    assert(!gravity_stack.empty());
-    gravity_stack.pop();
-
-    if (gravity_stack.empty() || parent.gamemode == GameMode::SP_40LINES) {
-        lines_left = 0;
-        const bool finishable = (isSinglePlayer(parent.gamemode) || parent.gamemode == GameMode::MP_MARATHON);
-        if (finishable) {
-            player_status.at(source_player) = PlayerStatus::FINISHED;
-            parea.startGameFinish();
-            sfx_onfinish->playOnce();
-            gameend_statistics_delay.restart();
-
-            // find out who else is still playing
-            if (playingPlayers().empty())
-                music->fadeOut(std::chrono::seconds(1));
-        }
-        return;
+        if (ScoreTable::canContinueBackToBack(previous_lineclear_type.at(source_player), clear_type))
+            line_awards *= ScoreTable::back2backMultiplier();
     }
+    lines_left -= line_awards;
 
-    parea.well().setGravity(gravity_stack.top());
-    lines_left += lineclears_per_level;
-    parent.player_stats.at(source_player).level++;
-    sfx_onlevelup->playOnce();
+    while (lines_left <= 0) {
+        auto& parea = parent.player_areas.at(source_player);
+        auto& gravity_stack = gravity_levels.at(source_player);
+        auto& line_req_stack = lineclears_required.at(source_player);
 
-    textpopups.at(source_player).emplace_back(tr("LEVEL UP!"), font_popuptext);
+        if (line_req_stack.empty() || gravity_stack.empty()) {
+            lines_left = 0;
+            const bool finishable = (isSinglePlayer(parent.gamemode) || parent.gamemode == GameMode::MP_MARATHON);
+            if (finishable) {
+                player_status.at(source_player) = PlayerStatus::FINISHED;
+                parea.startGameFinish();
+                sfx_onfinish->playOnce();
+                gameend_statistics_delay.restart();
+
+                // find out who else is still playing
+                if (playingPlayers().empty())
+                    music->fadeOut(std::chrono::seconds(1));
+            }
+            return;
+        }
+
+        parea.well().setGravity(gravity_stack.top());
+        gravity_stack.pop();
+        lines_left += line_req_stack.top();
+        line_req_stack.pop();
+        parent.player_stats.at(source_player).level++;
+
+        sfx_onlevelup->playOnce();
+        textpopups.at(source_player).emplace_back(tr("LEVEL UP!"), font_popuptext);
+    }
 }
 
 void Gameplay::registerObservers(IngameState& parent, AppContext& app)
@@ -315,6 +352,7 @@ void Gameplay::registerObservers(IngameState& parent, AppContext& app)
             sendGarbageMaybe(parent, device_id, event.lineclear);
             increaseLevelMaybe(parent, device_id, event.lineclear);
 
+            previous_lineclear_type.at(device_id) = ScoreTable::lineclearType(event.lineclear);
             current_piece_cleared_line.at(device_id) = true;
             texts_need_update = true;
         });

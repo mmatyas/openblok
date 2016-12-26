@@ -36,6 +36,17 @@ const std::map<ScoreType, const std::string> ScoreTable::score_name = {
     {ScoreType::COMBO, tr(" COMBO")},
 };
 
+const std::map<ScoreType, unsigned short> ScoreTable::lineaward_table = {
+    {ScoreType::CLEAR_SINGLE, 1},
+    {ScoreType::CLEAR_DOUBLE, 2},
+    {ScoreType::CLEAR_TRIPLE, 5},
+    {ScoreType::CLEAR_PERFECT, 8},
+    {ScoreType::CLEAR_MINI_TSPIN_SINGLE, 1},
+    {ScoreType::CLEAR_TSPIN_SINGLE, 8},
+    {ScoreType::CLEAR_TSPIN_DOUBLE, 12},
+    {ScoreType::CLEAR_TSPIN_TRIPLE, 16},
+};
+
 float ScoreTable::back2back_multiplier = 1.5;
 const std::string ScoreTable::back2back_name = tr("BACK-TO-BACK");
 

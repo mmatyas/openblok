@@ -29,6 +29,7 @@ public:
     static const std::string& name(ScoreType type) { return score_name.at(type); }
 
     static ScoreType lineclearType(const WellEvent::lineclear_t&);
+    static unsigned short lineAwards(ScoreType type) { return lineaward_table.at(type); }
 
     static bool canContinueBackToBack(ScoreType previous, ScoreType current);
     static float back2backMultiplier() { return back2back_multiplier; }
@@ -37,6 +38,7 @@ public:
 private:
     static const std::map<ScoreType, unsigned short> score_table;
     static const std::map<ScoreType, const std::string> score_name;
+    static const std::map<ScoreType, unsigned short> lineaward_table;
 
     static float back2back_multiplier;
     static const std::string back2back_name;

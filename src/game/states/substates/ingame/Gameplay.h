@@ -47,8 +47,10 @@ private:
     std::shared_ptr<SoundEffect> sfx_ongameover;
     std::shared_ptr<SoundEffect> sfx_onfinish;
 
-    const int lineclears_per_level;
+    std::unordered_map<DeviceID, std::stack<unsigned short>> lineclears_required;
     std::unordered_map<DeviceID, int> lineclears_left;
+    bool usesDynamicLineAwards(IngameState&);
+
     std::unordered_map<DeviceID, std::stack<Duration>> gravity_levels;
     std::unordered_map<DeviceID, ScoreType> previous_lineclear_type;
     std::unordered_map<DeviceID, unsigned short> back2back_length;
