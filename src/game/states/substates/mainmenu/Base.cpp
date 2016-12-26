@@ -37,16 +37,19 @@ Base::Base(MainMenuState& parent, AppContext& app)
         singleplayer_buttons.buttons.emplace_back(app, tr("MARATHON"), [this, &app](){
             startGame(app, GameMode::SP_MARATHON);
         });
+        singleplayer_buttons.buttons.emplace_back(app, tr("SPRINT"), [this, &app](){
+            startGame(app, GameMode::SP_40LINES);
+        });
     }
     primary_buttons.buttons.emplace_back(app, tr("MULTIPLAYER"), [this](){
         openSubcolumn(&multiplayer_buttons);
     });
     {
-        multiplayer_buttons.buttons.emplace_back(app, tr("MARATHON"), [this, &app](){
-            startGame(app, GameMode::MP_MARATHON);
-        });
         multiplayer_buttons.buttons.emplace_back(app, tr("BATTLE"), [this, &app](){
             startGame(app, GameMode::MP_BATTLE);
+        });
+        multiplayer_buttons.buttons.emplace_back(app, tr("MARATHON"), [this, &app](){
+            startGame(app, GameMode::MP_MARATHON);
         });
     }
     primary_buttons.buttons.emplace_back(app, tr("OPTIONS"), [&app, &parent](){

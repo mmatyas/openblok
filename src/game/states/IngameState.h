@@ -15,9 +15,12 @@ namespace SubStates { namespace Ingame {
 
 enum class GameMode : uint8_t {
     SP_MARATHON,
+    SP_40LINES,
     MP_MARATHON,
     MP_BATTLE,
 };
+
+bool isSinglePlayer(GameMode);
 
 class IngameState: public GameState {
 public:

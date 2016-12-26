@@ -42,7 +42,7 @@ Gameplay::Gameplay(AppContext& app, IngameState& parent, unsigned short starting
     , texts_need_update(true)
     , sfx_ongameover(app.audio().loadSound(Paths::data() + "sfx/gameover.ogg"))
     , sfx_onfinish(app.audio().loadSound(Paths::data() + "sfx/finish.ogg"))
-    , lineclears_per_level(10)
+    , lineclears_per_level(parent.gamemode == GameMode::SP_40LINES ? 40 : 10)
     , gameend_statistics_delay(std::chrono::seconds(5),
         [](double t){ return t * 5; },
         [&parent, &app](){
@@ -218,9 +218,9 @@ void Gameplay::increaseLevelMaybe(IngameState& parent, DeviceID source_player,
     assert(!gravity_stack.empty());
     gravity_stack.pop();
 
-    if (gravity_stack.empty()) {
+    if (gravity_stack.empty() || parent.gamemode == GameMode::SP_40LINES) {
         lines_left = 0;
-        const bool finishable = (parent.gamemode == GameMode::SP_MARATHON || parent.gamemode == GameMode::MP_MARATHON);
+        const bool finishable = (isSinglePlayer(parent.gamemode) || parent.gamemode == GameMode::MP_MARATHON);
         if (finishable) {
             player_status.at(source_player) = PlayerStatus::FINISHED;
             parea.startGameFinish();

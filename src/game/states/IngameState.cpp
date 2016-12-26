@@ -11,14 +11,26 @@
 #include <game/states/substates/ingame/Gameplay.h>
 
 
+bool isSinglePlayer(GameMode gamemode)
+{
+    switch (gamemode) {
+        case GameMode::SP_MARATHON:
+        case GameMode::SP_40LINES:
+            return true;
+        default:
+            return false;
+    }
+}
+
+
 IngameState::IngameState(AppContext& app, GameMode gamemode)
     : gamemode(gamemode)
-    , draw_scale(gamemode == GameMode::SP_MARATHON ? 1.0 : 0.8)
+    , draw_scale(isSinglePlayer(gamemode) ? 1.0 : 0.8)
     , draw_inverse_scale(1.0 / draw_scale)
     , tex_background(app.gcx().loadTexture(Paths::data() + "gamebg.png"))
 {
     updatePositions(app.gcx());
-    if (gamemode == GameMode::SP_MARATHON) {
+    if (isSinglePlayer(gamemode)) {
         device_order = {-1};
         states.emplace_back(std::make_unique<SubStates::Ingame::States::Gameplay>(app, *this));
         states.emplace_back(std::make_unique<SubStates::Ingame::States::Countdown>(app));
