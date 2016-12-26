@@ -240,6 +240,8 @@ bool Gameplay::usesDynamicLineAwards(IngameState& parent)
 {
     switch (parent.gamemode) {
         case GameMode::SP_40LINES:
+        case GameMode::SP_MARATHON_SIMPLE:
+        case GameMode::MP_MARATHON_SIMPLE:
             return false;
         default:
             return true;
@@ -267,7 +269,9 @@ void Gameplay::increaseLevelMaybe(IngameState& parent, DeviceID source_player,
 
         if (line_req_stack.empty() || gravity_stack.empty()) {
             lines_left = 0;
-            const bool finishable = (isSinglePlayer(parent.gamemode) || parent.gamemode == GameMode::MP_MARATHON);
+            const bool finishable = (isSinglePlayer(parent.gamemode)
+                || parent.gamemode == GameMode::MP_MARATHON
+                || parent.gamemode == GameMode::MP_MARATHON_SIMPLE);
             if (finishable) {
                 player_status.at(source_player) = PlayerStatus::FINISHED;
                 parea.startGameFinish();

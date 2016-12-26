@@ -43,6 +43,9 @@ Base::Base(MainMenuState& parent, AppContext& app)
         singleplayer_buttons.buttons.emplace_back(app, tr("ULTRA"), [this, &app](){
             startGame(app, GameMode::SP_2MIN);
         });
+        singleplayer_buttons.buttons.emplace_back(app, tr("MARATHON SIMPLE"), [this, &app](){
+            startGame(app, GameMode::SP_MARATHON_SIMPLE);
+        });
     }
     primary_buttons.buttons.emplace_back(app, tr("MULTIPLAYER"), [this](){
         openSubcolumn(&multiplayer_buttons);
@@ -53,6 +56,9 @@ Base::Base(MainMenuState& parent, AppContext& app)
         });
         multiplayer_buttons.buttons.emplace_back(app, tr("MARATHON"), [this, &app](){
             startGame(app, GameMode::MP_MARATHON);
+        });
+        multiplayer_buttons.buttons.emplace_back(app, tr("MARATHON SIMPLE"), [this, &app](){
+            startGame(app, GameMode::MP_MARATHON_SIMPLE);
         });
     }
     primary_buttons.buttons.emplace_back(app, tr("OPTIONS"), [&app, &parent](){

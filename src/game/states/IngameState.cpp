@@ -13,14 +13,13 @@
 
 bool isSinglePlayer(GameMode gamemode)
 {
-    switch (gamemode) {
-        case GameMode::SP_MARATHON:
-        case GameMode::SP_40LINES:
-        case GameMode::SP_2MIN:
-            return true;
-        default:
-            return false;
-    }
+    static const std::set<GameMode> sp_modes = {
+        GameMode::SP_MARATHON,
+        GameMode::SP_40LINES,
+        GameMode::SP_2MIN,
+        GameMode::SP_MARATHON_SIMPLE,
+    };
+    return sp_modes.count(gamemode);
 }
 
 

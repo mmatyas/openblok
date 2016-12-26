@@ -17,8 +17,10 @@ enum class GameMode : uint8_t {
     SP_MARATHON,
     SP_40LINES,
     SP_2MIN,
+    SP_MARATHON_SIMPLE,
     MP_MARATHON,
     MP_BATTLE,
+    MP_MARATHON_SIMPLE,
 };
 
 bool isSinglePlayer(GameMode);
