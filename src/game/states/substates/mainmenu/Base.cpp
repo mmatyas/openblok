@@ -35,15 +35,7 @@ Base::Base(MainMenuState& parent, AppContext& app)
     });
     {
         singleplayer_buttons.buttons.emplace_back(app, tr("MARATHON"), [this, &app](){
-            const auto duration = std::chrono::milliseconds(500);
-            this->state_transition_alpha = std::make_unique<Transition<uint8_t>>(
-                duration,
-                [](double t){ return t * 0xFF; },
-                [this, &app](){
-                    this->onFadeoutComplete(app, std::make_unique<IngameState>(app, GameMode::SP_MARATHON));
-                }
-            );
-            music->fadeOut(duration);
+            startGame(app, GameMode::SP_MARATHON);
         });
     }
     primary_buttons.buttons.emplace_back(app, tr("MULTIPLAYER"), [this](){
@@ -51,28 +43,10 @@ Base::Base(MainMenuState& parent, AppContext& app)
     });
     {
         multiplayer_buttons.buttons.emplace_back(app, tr("MARATHON"), [this, &app](){
-            const auto duration = std::chrono::milliseconds(500);
-            this->state_transition_alpha = std::make_unique<Transition<uint8_t>>(
-                duration,
-                [](double t){ return t * 0xFF; },
-                [this, &app](){
-                    this->onFadeoutComplete(app,
-                        std::make_unique<IngameState>(app, GameMode::MP_MARATHON));
-                }
-            );
-            music->fadeOut(duration);
+            startGame(app, GameMode::MP_MARATHON);
         });
         multiplayer_buttons.buttons.emplace_back(app, tr("BATTLE"), [this, &app](){
-            const auto duration = std::chrono::milliseconds(500);
-            this->state_transition_alpha = std::make_unique<Transition<uint8_t>>(
-                duration,
-                [](double t){ return t * 0xFF; },
-                [this, &app](){
-                    this->onFadeoutComplete(app,
-                        std::make_unique<IngameState>(app, GameMode::MP_BATTLE));
-                }
-            );
-            music->fadeOut(duration);
+            startGame(app, GameMode::MP_BATTLE);
         });
     }
     primary_buttons.buttons.emplace_back(app, tr("OPTIONS"), [&app, &parent](){
@@ -98,6 +72,19 @@ Base::Base(MainMenuState& parent, AppContext& app)
 }
 
 Base::~Base() = default;
+
+void Base::startGame(AppContext& app, GameMode gamemode)
+{
+    const auto duration = std::chrono::milliseconds(500);
+    this->state_transition_alpha = std::make_unique<Transition<uint8_t>>(
+        duration,
+        [](double t){ return t * 0xFF; },
+        [this, &app, gamemode](){
+            this->onFadeoutComplete(app, std::make_unique<IngameState>(app, gamemode));
+        }
+    );
+    music->fadeOut(duration);
+}
 
 void Base::updatePositions(GraphicsContext& gcx)
 {

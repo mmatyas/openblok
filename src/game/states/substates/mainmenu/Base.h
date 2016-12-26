@@ -14,6 +14,8 @@ class Music;
 class SoundEffect;
 class Texture;
 
+enum class GameMode : uint8_t;
+
 
 namespace SubStates {
 namespace MainMenu {
@@ -54,6 +56,7 @@ private:
     std::shared_ptr<Music> music;
     std::unique_ptr<Transition<uint8_t>> state_transition_alpha;
 
+    void startGame(AppContext&, GameMode);
     void onFadeoutComplete(AppContext&, std::unique_ptr<GameState>&&);
 };
 
