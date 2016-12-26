@@ -46,7 +46,6 @@ private:
 
     std::shared_ptr<SoundEffect> sfx_ongameover;
     std::shared_ptr<SoundEffect> sfx_onfinish;
-    std::unique_ptr<Texture> tex_finish;
 
     const int lineclears_per_level;
     std::unordered_map<DeviceID, int> lineclears_left;

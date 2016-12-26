@@ -93,9 +93,6 @@ Gameplay::Gameplay(AppContext& app, IngameState& parent, unsigned short starting
 
     parent.updatePositions(app.gcx());
 
-    auto font_big = app.gcx().loadFont(Paths::data() + "fonts/PTC75F.ttf", 45);
-    tex_finish = font_big->renderText(tr("YOU WIN!"), 0xEEEEEE_rgb);
-
     music->playLoop();
     app.audio().pauseAll();
 
