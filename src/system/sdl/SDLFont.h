@@ -8,8 +8,8 @@
 class SDLFont : public Font {
 public:
     SDLFont(SDL2pp::Font&&);
-    std::unique_ptr<Texture> renderText(const std::string&, const RGBColor&) final;
-    std::unique_ptr<Texture> renderText(const std::string&, const RGBAColor&) final;
+    std::unique_ptr<Texture> renderText(const std::string&, const RGBColor&, TextAlign) final;
+    std::unique_ptr<Texture> renderText(const std::string&, const RGBAColor&, TextAlign) final;
 
 private:
     static SDL2pp::Renderer* renderer;

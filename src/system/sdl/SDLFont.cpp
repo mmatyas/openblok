@@ -26,12 +26,12 @@ SDLFont::SDLFont(SDL2pp::Font&& font)
     : font(std::move(font))
 {}
 
-std::unique_ptr<Texture> SDLFont::renderText(const std::string& text, const RGBColor& color)
+std::unique_ptr<Texture> SDLFont::renderText(const std::string& text, const RGBColor& color, TextAlign align)
 {
-    return renderText(text, RGBAColor {color.r, color.g, color.b, 255});
+    return renderText(text, RGBAColor {color.r, color.g, color.b, 255}, align);
 }
 
-std::unique_ptr<Texture> SDLFont::renderText(const std::string& text, const RGBAColor& color)
+std::unique_ptr<Texture> SDLFont::renderText(const std::string& text, const RGBAColor& color, TextAlign align)
 {
     assert(renderer);
 
@@ -64,11 +64,24 @@ std::unique_ptr<Texture> SDLFont::renderText(const std::string& text, const RGBA
     SDL2pp::Surface basesurf(0, width,  line_height * lines.size(),
                              bpp, rmask, gmask, bmask, amask);
     basesurf.SetBlendMode(SDL_BLENDMODE_ADD);
-    for (unsigned l = 0; l < lines.size(); l++) {
-        auto surf = font.RenderUTF8_Blended(lines.at(l), rgba_color);
-        surf.Blit(SDL2pp::NullOpt,
-                  basesurf,
-                  SDL2pp::Rect(0, l * line_height, surf.GetWidth(), surf.GetHeight()));
+    switch (align) {
+        case TextAlign::LEFT:
+            for (unsigned l = 0; l < lines.size(); l++) {
+                auto surf = font.RenderUTF8_Blended(lines.at(l), rgba_color);
+                surf.Blit(SDL2pp::NullOpt,
+                          basesurf,
+                          SDL2pp::Rect(0, l * line_height, surf.GetWidth(), surf.GetHeight()));
+            }
+            break;
+        case TextAlign::RIGHT:
+            for (unsigned l = 0; l < lines.size(); l++) {
+                auto surf = font.RenderUTF8_Blended(lines.at(l), rgba_color);
+                surf.Blit(SDL2pp::NullOpt,
+                          basesurf,
+                          SDL2pp::Rect(basesurf.GetWidth() - surf.GetWidth(), l * line_height,
+                                       surf.GetWidth(), surf.GetHeight()));
+            }
+            break;
     }
 
     return std::make_unique<SDLTexture>(SDL2pp::Texture(*renderer, basesurf.SetAlphaMod(color.a)));
