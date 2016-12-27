@@ -131,6 +131,8 @@ void Well::addGarbageLines(unsigned short line_count)
             mx_row.at(col) = MinoStorage::getMino(PieceType::GARBAGE);
         mx_row.at(gap_location).reset();
     }
+
+    calculateGhostOffset();
 }
 
 void Well::setGravity(Duration duration)
