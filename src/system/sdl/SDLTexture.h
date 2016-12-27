@@ -14,6 +14,7 @@ public:
     void drawPartialScaled(const Rectangle& from, const Rectangle& to) final;
 
     void setAlpha(uint8_t) final;
+    uint8_t alpha() const final { return tex.GetAlphaMod(); }
 
     unsigned width() const final { return tex.GetWidth(); }
     unsigned height() const final { return tex.GetHeight(); }
