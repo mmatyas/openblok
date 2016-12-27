@@ -28,7 +28,7 @@ Statistics::Statistics(IngameState& parent, AppContext& app)
     const auto color_highlight = 0xFEC500_rgb;
     auto font = app.gcx().loadFont(Paths::data() + "fonts/PTS55F.ttf", 26);
     auto font_highlight = app.gcx().loadFont(Paths::data() + "fonts/PTS75F.ttf", 26);
-    auto font_title = app.gcx().loadFont(Paths::data() + "fonts/PTS75F.ttf", 30);
+    auto font_title = app.gcx().loadFont(Paths::data() + "fonts/PTS75F.ttf", 34);
 
     tex_title = font_title->renderText(tr("STATISTICS"), color);
 
@@ -95,7 +95,7 @@ void Statistics::update(IngameState& parent, const std::vector<Event>& events, A
 
 void Statistics::drawBackground(IngameState& parent, GraphicsContext& gcx) const
 {
-    auto color = 0x2030FF00_rgba;
+    static auto color = 0x1A3A8A00_rgba;
     color.a = fadein_percent.value() * 0xFF;
 
     for (const auto& ui_pa : parent.player_areas)
@@ -111,6 +111,7 @@ void Statistics::drawItems(IngameState& parent) const
         const int pos_x_right = ui_pa.wellBox().x + ui_pa.wellBox().w;
         int pos_y = ui_pa.wellBox().y;
 
+        pos_y += tex_title->height() * 0.2;
         tex_title->drawAt(pos_x, pos_y);
         pos_y += tex_title->height() * 1.25;
 
