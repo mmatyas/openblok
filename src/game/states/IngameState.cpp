@@ -53,21 +53,20 @@ void IngameState::updatePositions(GraphicsContext& gcx)
     if (player_areas.empty())
         return;
 
-    static const int well_padding_x = 5 + Mino::texture_size_px;
+    // changing the available width may change the area's width/height
+    const int available_width = draw_inverse_scale * gcx.screenWidth() / device_order.size();
+    for (const DeviceID device_id : device_order)
+        player_areas.at(device_id).setMaxWidth(available_width);
 
+    static const int well_padding_x = 5 + Mino::texture_size_px;
     const int center_x = (gcx.screenWidth() * draw_inverse_scale) / 2;
     const int center_y = (gcx.screenHeight() * draw_inverse_scale) / 2;
-
-    const int well_y = center_y - player_areas.at(device_order.front()).height() / 2;
-    const int well_full_width = 2 * well_padding_x
-        + player_areas.at(device_order.front()).width();
-    int available_width = draw_inverse_scale * gcx.screenWidth() / device_order.size();
-
+    const int well_y = center_y - player_areas.cbegin()->second.height() / 2;
+    const int well_full_width = 2 * well_padding_x + player_areas.cbegin()->second.width();
     int well_x = center_x - (well_full_width * player_areas.size()) / 2;
 
     for (const DeviceID device_id : device_order) {
         player_areas.at(device_id).setPosition(well_x + well_padding_x, well_y);
-        player_areas.at(device_id).setMaxWidth(available_width);
         well_x += well_full_width;
     }
 }

@@ -125,11 +125,11 @@ void PlayerArea::calcWideLayout()
 
 void PlayerArea::calcNarrowLayout()
 {
-    const int bottombar_y = ui_well.y() + ui_well.height() + inner_padding;
-    static const int bottom_block_width = ui_well.wellWidth() / 2;
-
     ui_well.setPosition(x(), y() + topbar_height + inner_padding);
     garbage_gauge.setPosition(ui_well.x() + ui_well.width(), ui_well.y());
+
+    static const int bottom_block_width = ui_well.wellWidth() / 2;
+    const int bottombar_y = ui_well.y() + ui_well.height() + inner_padding;
 
     rect_level = { x(), bottombar_y, bottom_block_width, bottombar_height };
     rect_score = { x() + width() - bottom_block_width, bottombar_y, bottom_block_width, bottombar_height };
