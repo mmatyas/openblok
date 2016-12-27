@@ -8,6 +8,7 @@
 #include "game/states/IngameState.h"
 #include "game/util/CircularModulo.h"
 #include "system/AudioContext.h"
+#include "system/Font.h"
 #include "system/GraphicsContext.h"
 #include "system/Localize.h"
 #include "system/Music.h"
@@ -30,36 +31,65 @@ Base::Base(MainMenuState& parent, AppContext& app)
     PieceFactory::changeInitialPositions(Rotations::SRS().initialPositions());
     column_slide_anim.stop();
 
+    auto desc_font = app.gcx().loadFont(Paths::data() + "fonts/PTS55F.ttf", 24);
+    const auto desc_color = 0xEEEEEE_rgb;
+
     primary_buttons.buttons.emplace_back(app, tr("SINGLEPLAYER"), [this](){
         openSubcolumn(&singleplayer_buttons);
     });
     {
-        singleplayer_buttons.buttons.emplace_back(app, tr("MARATHON"), [this, &app](){
-            startGame(app, GameMode::SP_MARATHON);
-        });
-        singleplayer_buttons.buttons.emplace_back(app, tr("SPRINT"), [this, &app](){
-            startGame(app, GameMode::SP_40LINES);
-        });
-        singleplayer_buttons.buttons.emplace_back(app, tr("ULTRA"), [this, &app](){
-            startGame(app, GameMode::SP_2MIN);
-        });
-        singleplayer_buttons.buttons.emplace_back(app, tr("MARATHON SIMPLE"), [this, &app](){
-            startGame(app, GameMode::SP_MARATHON_SIMPLE);
-        });
+        singleplayer_buttons.buttons.emplace_back(app, tr("MARATHON"),
+            [this, &app](){ startGame(app, GameMode::SP_MARATHON); });
+        singleplayer_buttons.buttons.emplace_back(app, tr("SPRINT"),
+            [this, &app](){ startGame(app, GameMode::SP_40LINES); });
+        singleplayer_buttons.buttons.emplace_back(app, tr("ULTRA"),
+            [this, &app](){ startGame(app, GameMode::SP_2MIN); });
+        singleplayer_buttons.buttons.emplace_back(app, tr("MARATHON SIMPLE"),
+            [this, &app](){ startGame(app, GameMode::SP_MARATHON_SIMPLE); });
+
+        singleplayer_buttons.descriptions.emplace_back(desc_font->renderText(
+            tr("Clear 15 levels with increasing\n"
+               "difficulty - use advanced moves\n"
+               "to speed up your progress and\n"
+               "gain more score!"), desc_color, TextAlign::RIGHT));
+        singleplayer_buttons.descriptions.emplace_back(desc_font->renderText(
+            tr("Clear 40 lines as fast as you can!"), desc_color));
+        singleplayer_buttons.descriptions.emplace_back(desc_font->renderText(
+            tr("Score as many points as you can\n"
+               "in just 2 minutes!"), desc_color, TextAlign::RIGHT));
+        singleplayer_buttons.descriptions.emplace_back(desc_font->renderText(
+            tr("Like Marathon, but using advanced\n"
+               "moves won't reward you with\n"
+               "bonus lines."), desc_color, TextAlign::RIGHT));
+
+        assert(singleplayer_buttons.buttons.size() == singleplayer_buttons.descriptions.size());
     }
     primary_buttons.buttons.emplace_back(app, tr("MULTIPLAYER"), [this](){
         openSubcolumn(&multiplayer_buttons);
     });
     {
-        multiplayer_buttons.buttons.emplace_back(app, tr("BATTLE"), [this, &app](){
-            startGame(app, GameMode::MP_BATTLE);
-        });
-        multiplayer_buttons.buttons.emplace_back(app, tr("MARATHON"), [this, &app](){
-            startGame(app, GameMode::MP_MARATHON);
-        });
-        multiplayer_buttons.buttons.emplace_back(app, tr("MARATHON SIMPLE"), [this, &app](){
-            startGame(app, GameMode::MP_MARATHON_SIMPLE);
-        });
+        multiplayer_buttons.buttons.emplace_back(app, tr("BATTLE"),
+            [this, &app](){ startGame(app, GameMode::MP_BATTLE); });
+        multiplayer_buttons.buttons.emplace_back(app, tr("MARATHON"),
+            [this, &app](){ startGame(app, GameMode::MP_MARATHON); });
+        multiplayer_buttons.buttons.emplace_back(app, tr("MARATHON SIMPLE"),
+            [this, &app](){ startGame(app, GameMode::MP_MARATHON_SIMPLE); });
+
+        multiplayer_buttons.descriptions.emplace_back(desc_font->renderText(
+            tr("Battle with you friends: clear\n"
+               "multiple lines, and throw them\n"
+               "to the other players!"), desc_color, TextAlign::RIGHT));
+        multiplayer_buttons.descriptions.emplace_back(desc_font->renderText(
+            tr("Clear 15 levels with increasing\n"
+               "difficulty - use advanced moves\n"
+               "to speed up your progress and\n"
+               "gain more score!"), desc_color, TextAlign::RIGHT));
+        multiplayer_buttons.descriptions.emplace_back(desc_font->renderText(
+            tr("Like Marathon, but using advanced\n"
+               "moves won't reward you with\n"
+               "bonus lines."), desc_color, TextAlign::RIGHT));
+
+        assert(multiplayer_buttons.buttons.size() == multiplayer_buttons.descriptions.size());
     }
     primary_buttons.buttons.emplace_back(app, tr("OPTIONS"), [&app, &parent](){
         parent.states.emplace_back(std::make_unique<SubStates::MainMenu::Options>(parent, app));
@@ -80,6 +110,7 @@ Base::Base(MainMenuState& parent, AppContext& app)
 
     music->playLoop();
 
+    desc_rect = { 0, 0, 0, 0 };
     updatePositions(app.gcx());
 }
 
@@ -118,6 +149,9 @@ void Base::updatePositions(GraphicsContext& gcx)
     setColumnPosition(primary_buttons.buttons, left_x, center_y);
     setColumnPosition(singleplayer_buttons.buttons, left_x, center_y);
     setColumnPosition(multiplayer_buttons.buttons, left_x, center_y);
+
+    desc_rect.x = right_x;
+    desc_rect.y = center_y;
 }
 
 void Base::setColumnPosition(std::vector<Layout::MainMenuButton>& buttons, int left_x, int center_y)
@@ -129,6 +163,16 @@ void Base::setColumnPosition(std::vector<Layout::MainMenuButton>& buttons, int l
     }
 }
 
+void Base::updateDescriptionRect()
+{
+    if (current_column == &primary_buttons)
+        return;
+
+    const auto& desc_tex = current_column->descriptions.at(current_column->selected_index);
+    desc_rect.w = -(desc_tex->width() + 50);
+    desc_rect.h = desc_tex->height() + 30;
+}
+
 void Base::openSubcolumn(ButtonColumn* subcolumn)
 {
     assert(subcolumn != &primary_buttons);
@@ -136,6 +180,7 @@ void Base::openSubcolumn(ButtonColumn* subcolumn)
     current_column = subcolumn;
     current_column->buttons.at(current_column->selected_index).onHoverEnter();
     column_slide_anim.restart();
+    updateDescriptionRect();
 }
 
 void Base::onFadeoutComplete(AppContext& app, std::unique_ptr<GameState>&& newstate)
@@ -207,9 +252,11 @@ void Base::update(MainMenuState& parent, const std::vector<Event>& events, AppCo
                 switch (event.input.type()) {
                     case InputType::MENU_UP:
                         current_column->selectPrev();
+                        updateDescriptionRect();
                         break;
                     case InputType::MENU_DOWN:
                         current_column->selectNext();
+                        updateDescriptionRect();
                         break;
                     case InputType::MENU_OK:
                         current_column->activate();
@@ -249,6 +296,8 @@ void Base::update(MainMenuState& parent, const std::vector<Event>& events, AppCo
         if (current_column != &primary_buttons) {
             for (auto& btn : current_column->buttons)
                 btn.setAlpha(0xFF - alpha);
+            for (auto& desc : current_column->descriptions)
+                desc->setAlpha(0xFF - alpha);
         }
     }
 }
@@ -267,6 +316,13 @@ void Base::draw(MainMenuState&, GraphicsContext& gcx) const
     if (current_column != &primary_buttons) {
         for (const auto& btn : current_column->buttons)
             btn.draw(gcx);
+
+        auto& desc_tex = current_column->descriptions.at(current_column->selected_index);
+        RGBAColor color = 0x00268700_rgba;
+        color.a = desc_tex->alpha() * 0.90;
+        gcx.drawFilledRect(desc_rect, color);
+
+        desc_tex->drawAt(desc_rect.x - desc_tex->width() - 25, desc_rect.y + 15);
     }
 
     if (state_transition_alpha) {

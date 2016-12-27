@@ -34,9 +34,11 @@ private:
     std::unique_ptr<Texture> tex_background;
     Layout::Logo logo;
     std::array<Layout::PieceRain, 2> rains;
+    ::Rectangle desc_rect;
 
     struct ButtonColumn {
         std::vector<Layout::MainMenuButton> buttons;
+        std::vector<std::unique_ptr<Texture>> descriptions;
         size_t selected_index;
 
         ButtonColumn();
@@ -52,6 +54,7 @@ private:
 
     void setColumnPosition(std::vector<Layout::MainMenuButton>&, int left_x, int center_y);
     void openSubcolumn(ButtonColumn*);
+    void updateDescriptionRect();
 
     std::shared_ptr<Music> music;
     std::unique_ptr<Transition<uint8_t>> state_transition_alpha;
