@@ -76,7 +76,7 @@ Gameplay::Gameplay(AppContext& app, IngameState& parent, unsigned short starting
     }
     {
         // TODO: consider alternative algorithm
-        auto& gravity_stack = gravity_levels[player_devices.front()];
+        std::stack<Duration> gravity_stack;
         for (int i = 14; i >= starting_gravity_level; i--) {
             float multiplier = std::pow(0.8 - (i * 0.007), i);
             gravity_stack.push(std::chrono::duration_cast<Duration>(multiplier * std::chrono::seconds(1)));
@@ -89,7 +89,7 @@ Gameplay::Gameplay(AppContext& app, IngameState& parent, unsigned short starting
         }
     }
     {
-        auto& lineclear_stack = lineclears_required[player_devices.front()];
+        std::stack<unsigned short> lineclear_stack;
         if (usesDynamicLineAwards(parent)) {
             for (int i = 15; i > starting_gravity_level; i--)
                 lineclear_stack.push(i * 5);
