@@ -42,6 +42,7 @@ private:
     std::array<std::shared_ptr<SoundEffect>, 4> sfx_onlineclear;
     std::shared_ptr<SoundEffect> sfx_onlock;
     std::shared_ptr<SoundEffect> sfx_onrotate;
+    std::shared_ptr<SoundEffect> sfx_ongarbageadded;
     bool texts_need_update;
 
     std::shared_ptr<SoundEffect> sfx_ongameover;

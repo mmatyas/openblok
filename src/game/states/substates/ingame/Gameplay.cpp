@@ -39,6 +39,7 @@ Gameplay::Gameplay(AppContext& app, IngameState& parent, unsigned short starting
         }})
     , sfx_onlock(app.audio().loadSound(Paths::data() + "sfx/lock.ogg"))
     , sfx_onrotate(app.audio().loadSound(Paths::data() + "sfx/rotate.ogg"))
+    , sfx_ongarbageadded(app.audio().loadSound(Paths::data() + "sfx/garbage.ogg"))
     , texts_need_update(true)
     , sfx_ongameover(app.audio().loadSound(Paths::data() + "sfx/gameover.ogg"))
     , sfx_onfinish(app.audio().loadSound(Paths::data() + "sfx/finish.ogg"))
@@ -232,6 +233,7 @@ void Gameplay::sendGarbageMaybe(IngameState& parent, DeviceID source_player,
             [this, &parent, target_id, sendable_lines](){
                 auto& target_player = parent.player_areas.at(target_id);
                 target_player.setGarbageCount(target_player.queuedGarbageLines() + sendable_lines);
+                sfx_ongarbageadded->playOnce();
             });
     }
 }
