@@ -126,6 +126,7 @@ std::string SDLWindow::buttonName(DeviceID device_id, uint16_t raw_key) const
         case DeviceType::LEGACY_JOYSTICK:
             return "Button " + std::to_string(raw_key);
     }
+    assert(false);
 }
 
 void SDLWindow::setKeyBinding(DeviceID device_id, InputType inputevent, uint16_t raw_device_key)
