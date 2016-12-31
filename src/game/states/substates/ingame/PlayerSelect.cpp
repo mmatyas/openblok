@@ -55,6 +55,7 @@ void PlayerSelect::onPlayerJoin(DeviceID device_id)
             break;
         }
     }
+    assert(player_colors.count(device_id));
     assert(column_slots.size() + 1 == player_colors.size());
 
     column_slots[MAX_PLAYERS - 1] = device_id;
@@ -73,6 +74,10 @@ void PlayerSelect::onPlayerLeave(DeviceID device_id)
 
 void PlayerSelect::onPlayerNextWell(DeviceID device_id)
 {
+    // the player haven't joined (pressed start) yet
+    if (!player_colors.count(device_id))
+        return;
+
     // all slots are occupied
     if (column_slots.size() == MAX_PLAYERS)
         return;
@@ -95,6 +100,10 @@ void PlayerSelect::onPlayerNextWell(DeviceID device_id)
 
 void PlayerSelect::onPlayerPrevWell(DeviceID device_id)
 {
+    // the player haven't joined (pressed start) yet
+    if (!player_colors.count(device_id))
+        return;
+
     // all slots are occupied
     if (column_slots.size() == MAX_PLAYERS)
         return;
@@ -117,6 +126,9 @@ void PlayerSelect::onPlayerPrevWell(DeviceID device_id)
 
 uint8_t PlayerSelect::columnOfPlayer(DeviceID device_id)
 {
+    // the player has joined
+    assert(player_colors.count(device_id));
+
     for (auto& entry : column_slots) {
         if (entry.second == device_id)
             return entry.first;
