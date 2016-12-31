@@ -18,8 +18,5 @@ set(CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
 
 # Debian
 set(CPACK_DEBIAN_PACKAGE_DEPENDS
-"libsdl2-2.0-0 (>= 2.0.4)\
-, libsdl2-image-2.0-0 (>= 2.0.1)\
-, libsdl2-mixer-2.0-0 (>= 2.0.1)\
-, libsdl2-ttf-2.0-0 (>= 2.0.14)")
+    "libsdl2-2.0-0 (>= 2.0.4), libsdl2-image-2.0-0 (>= 2.0.1), libsdl2-mixer-2.0-0 (>= 2.0.1), libsdl2-ttf-2.0-0 (>= 2.0.14)")
 set(CPACK_DEBIAN_PACKAGE_SECTION "games")
