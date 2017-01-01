@@ -26,7 +26,11 @@ NextQueue::NextQueue(unsigned displayed_piece_count)
     }
 }
 
-NextQueue::~NextQueue() = default;
+NextQueue::~NextQueue()
+{
+    // NOTE: next queues are created and destructed together
+    global_piece_queue.clear();
+}
 
 PieceType NextQueue::next()
 {
