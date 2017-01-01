@@ -132,7 +132,8 @@ void Well::addGarbageLines(unsigned short line_count)
         mx_row.at(gap_location).reset();
     }
 
-    calculateGhostOffset();
+    if (active_piece)
+        calculateGhostOffset();
 }
 
 void Well::setGravity(Duration duration)
