@@ -107,8 +107,8 @@ void Statistics::drawItems(IngameState& parent) const
     for (const DeviceID device_id : parent.device_order) {
         const auto& ui_pa = parent.player_areas.at(device_id);
 
-        const int pos_x = ui_pa.wellBox().x;
-        const int pos_x_right = ui_pa.wellBox().x + ui_pa.wellBox().w;
+        const int pos_x = ui_pa.wellBox().x + 5;
+        const int pos_x_right = ui_pa.wellBox().x + ui_pa.wellBox().w - 5;
         int pos_y = ui_pa.wellBox().y;
 
         pos_y += tex_title->height() * 0.2;
