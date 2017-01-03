@@ -116,8 +116,21 @@ index 0eb187d..dfc067b 100644
  
  #include <SDL2pp/SDLTTF.hh>
  #include <SDL2pp/Exception.hh>
+diff --git a/src/game/layout/gameplay/PlayerArea.h b/src/game/layout/gameplay/PlayerArea.h
+index f3eba48..b08e5d3 100644
+--- a/src/game/layout/gameplay/PlayerArea.h
++++ b/src/game/layout/gameplay/PlayerArea.h
+@@ -9,6 +9,8 @@
+ #include "system/Color.h"
+ #include "system/SoundEffect.h"
+ 
++#include <string>
++
+ class AppContext;
+ class Font;
+ class GraphicsContext;
 diff --git a/src/main.cpp b/src/main.cpp
-index d601e9f..0986bf3 100644
+index 330cfe7..8ac4962 100644
 --- a/src/main.cpp
 +++ b/src/main.cpp
 @@ -26,13 +26,16 @@
@@ -146,11 +159,15 @@ index d601e9f..0986bf3 100644
      if (!app.init())
          return 1;
  
-@@ -74,37 +76,34 @@ int main(int argc, const char** argv)
+@@ -73,42 +75,39 @@ int main(int argc, const char** argv)
+         return 1;
      }
  
- 
 +    emscripten_set_main_loop(runNextFrame, 0, 1);
++
++    // save input config on exit
++    const auto mappings = app.window().createInputConfig();
++    app.inputconfig().save(mappings, Paths::config() + "input.cfg");
 +
 +    return 0;
 +}
@@ -158,7 +175,7 @@ index d601e9f..0986bf3 100644
 +void runNextFrame()
 +{
 +    static auto gametime_delay = Timing::frame_duration; // start with an update
-+
+ 
      auto frame_starttime = std::chrono::steady_clock::now();
      auto frame_planned_endtime = frame_starttime + Timing::frame_duration;
 -    auto gametime_delay = Timing::frame_duration; // start with an update
@@ -175,22 +192,22 @@ index d601e9f..0986bf3 100644
  
 -            app.states().top()->draw(app.gcx());
 -            app.gcx().render();
--        }
--        catch (const std::exception& err) {
--            app.window().showErrorMessage(err.what());
--            return 1;
 +    try {
 +        while (gametime_delay >= Timing::frame_duration && !app.states().empty()) {
 +            auto events = app.window().collectEvents();
 +            app.states().top()->update(events, app);
 +            gametime_delay -= Timing::frame_duration;
          }
+-        catch (const std::exception& err) {
+-            app.window().showErrorMessage(err.what());
+-            return 1;
+-        }
+-
+-        auto lag = std::max(std::chrono::steady_clock::now() - frame_planned_endtime, Duration::zero());
+-        gametime_delay += Timing::frame_duration + lag;
 +        if (app.states().empty())
 +            return;
  
--        auto lag = std::max(std::chrono::steady_clock::now() - frame_planned_endtime, Duration::zero());
--        gametime_delay += Timing::frame_duration + lag;
--
 -        // max frame rate limiting
 -        std::this_thread::sleep_until(frame_planned_endtime);
 -
@@ -198,18 +215,21 @@ index d601e9f..0986bf3 100644
 -        frame_planned_endtime = frame_starttime + Timing::frame_duration;
 +        app.states().top()->draw(app.gcx());
 +        app.gcx().render();
-+    }
+     }
 +    catch (const std::exception& err) {
 +        app.window().showErrorMessage(err.what());
-     }
+ 
+-    // save input config on exit
+-    const auto mappings = app.window().createInputConfig();
+-    app.inputconfig().save(mappings, Paths::config() + "input.cfg");
++    }
  
 -    return 0;
--}
 +    auto lag = std::max(std::chrono::steady_clock::now() - frame_planned_endtime, Duration::zero());
-+        gametime_delay += Timing::frame_duration + lag;
-+ }
++    gametime_delay += Timing::frame_duration + lag;
+ }
 diff --git a/src/system/sdl/SDLGraphicsContext.cpp b/src/system/sdl/SDLGraphicsContext.cpp
-index 0f4dbf7..4dcfe16 100644
+index 4492aee..ce78b6c 100644
 --- a/src/system/sdl/SDLGraphicsContext.cpp
 +++ b/src/system/sdl/SDLGraphicsContext.cpp
 @@ -51,7 +51,7 @@ void SDLGraphicsContext::render()
