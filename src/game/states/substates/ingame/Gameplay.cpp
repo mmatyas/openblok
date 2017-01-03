@@ -305,9 +305,6 @@ void Gameplay::registerObservers(IngameState& parent, AppContext& app)
 
         well.registerObserver(WellEvent::Type::PIECE_LOCKED, [this, &parent, device_id](const WellEvent&){
             sfx_onlock->playOnce();
-            auto& parea = parent.player_areas.at(device_id);
-            pending_garbage_lines.at(device_id) = parea.queuedGarbageLines();
-            parea.setGarbageCount(0);
 
             prev_piece_cleared_line.at(device_id) = current_piece_cleared_line.at(device_id);
             current_piece_cleared_line.at(device_id) = false;
@@ -318,9 +315,14 @@ void Gameplay::registerObservers(IngameState& parent, AppContext& app)
         });
 
         well.registerObserver(WellEvent::Type::NEXT_REQUESTED, [this, &parent, device_id](const WellEvent&){
-            // if the game is still running
-            if (player_status.at(device_id) == PlayerStatus::PLAYING)
-                addNextPiece(parent, device_id);
+            if (player_status.at(device_id) != PlayerStatus::PLAYING)
+                return;
+
+            auto& parea = parent.player_areas.at(device_id);
+            pending_garbage_lines.at(device_id) = parea.queuedGarbageLines();
+            parea.setGarbageCount(0);
+
+            addNextPiece(parent, device_id);
         });
 
         well.registerObserver(WellEvent::Type::HOLD_REQUESTED, [this, &parent, device_id](const WellEvent&){
