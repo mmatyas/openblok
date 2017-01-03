@@ -305,8 +305,8 @@ Options::createInputFieldsForEvents(AppContext& app, const DeviceData& device_da
         input_fields.emplace_back(std::make_shared<Layout::Options::InputField>(app,
             std::string(eventname.first),
             device_data.id, device_data.eventmap.at(eventname.second).front(),
-            [this, &app, eventname](uint16_t raw_key) {
-                app.window().setKeyBinding(current_device_id, eventname.second, raw_key);
+            [this, &app, eventname](RawInputEvent raw_input) {
+                app.window().setKeyBinding(current_device_id, eventname.second, raw_input.button);
             }
         ));
     }
@@ -353,10 +353,10 @@ void Options::update(MainMenuState& parent, const std::vector<Event>& events, Ap
             switch (event.type) {
                 case EventType::INPUT_RAW:
                     if (event.raw_input.is_down) {
-                        current_subitem->onRawPress(app, event.raw_input.button);
+                        current_subitem->onRawPress(app, event.raw_input);
                         // do not parse regular events in the frame where the key binding changed
-                        assert(!current_subitem->isLocked());
-                        return;
+                        if (!current_subitem->isLocked())
+                            return;
                     }
                     break;
                 default:

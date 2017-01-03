@@ -111,22 +111,27 @@ const DeviceMap& SDLWindow::connectedDevices() const
 
 std::string SDLWindow::buttonName(DeviceID device_id, uint16_t raw_key) const
 {
-    if (!device_maps.count(device_id))
-        return "";
-    const auto& device = device_maps.at(device_id);
-    switch (device.type) {
-        case DeviceType::KEYBOARD: {
-            const auto key = SDL_GetKeyFromScancode(static_cast<SDL_Scancode>(raw_key));
-            return SDL_GetKeyName(key);
+    if (device_maps.count(device_id)) {
+        const auto& device = device_maps.at(device_id);
+        switch (device.type) {
+            case DeviceType::KEYBOARD: {
+                const auto key = SDL_GetKeyFromScancode(static_cast<SDL_Scancode>(raw_key));
+                const std::string keyname = SDL_GetKeyName(key);
+                if (!keyname.empty()) // empty string on error
+                    return keyname;
+                break;
+            }
+            case DeviceType::GAMEPAD: {
+                const char* name = SDL_GameControllerGetStringForButton(static_cast<SDL_GameControllerButton>(raw_key));
+                if (name) // NULL on error
+                    return name;
+                break;
+            }
+            case DeviceType::LEGACY_JOYSTICK:
+                return "Button " + std::to_string(raw_key);
         }
-        case DeviceType::GAMEPAD: {
-            const auto name = SDL_GameControllerGetStringForButton(static_cast<SDL_GameControllerButton>(raw_key));
-            return name ? name : "";
-        }
-        case DeviceType::LEGACY_JOYSTICK:
-            return "Button " + std::to_string(raw_key);
     }
-    assert(false);
+    return "<unknown>";
 }
 
 void SDLWindow::setKeyBinding(DeviceID device_id, InputType inputevent, uint16_t raw_device_key)

@@ -14,7 +14,7 @@ namespace Options {
 
 InputField::InputField(AppContext& app, std::string&& label,
                        DeviceID device, uint16_t default_raw_key,
-                       std::function<void(uint16_t)>&& on_change)
+                       std::function<void(RawInputEvent)>&& on_change)
     : OptionsItem(app, std::forward<std::string>(label), "")
     , device_id(device)
     , waiting_for_input(false)
@@ -52,15 +52,18 @@ void InputField::onPress(AppContext&, InputType input)
     }
 }
 
-void InputField::onRawPress(AppContext& app, uint16_t raw_key)
+void InputField::onRawPress(AppContext& app, RawInputEvent raw_input)
 {
     if (!isLocked())
         return;
 
-    waiting_for_input = false;
-    changeButtonTex(app, raw_key);
+    if (raw_input.device_id != device_id)
+        return;
 
-    callback(raw_key);
+    waiting_for_input = false;
+    changeButtonTex(app, raw_input.button);
+
+    callback(raw_input);
 }
 
 void InputField::draw(GraphicsContext& gcx) const
