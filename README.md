@@ -32,6 +32,20 @@ A customizable, cross platform, open-source falling block game, packed with a bu
 - [x] Runs in browsers (experimental)
 
 
+Download
+--------
+
+See the [Releases](https://github.com/mmatyas/openblok/releases) page to download the latest version.
+
+On Debian/*buntu, you can also install the game from a PPA:
+
+```sh
+sudo add-apt-repository https://dl.bintray.com/mmatyas/deb
+sudo apt-get update
+sudo apt-get install openblok
+```
+
+
 Dependencies
 ------------
 
