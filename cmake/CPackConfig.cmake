@@ -20,3 +20,11 @@ set(CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
 set(CPACK_DEBIAN_PACKAGE_DEPENDS
     "libsdl2-2.0-0 (>= 2.0.4), libsdl2-image-2.0-0 (>= 2.0.1), libsdl2-mixer-2.0-0 (>= 2.0.1), libsdl2-ttf-2.0-0 (>= 2.0.14)")
 set(CPACK_DEBIAN_PACKAGE_SECTION "games")
+set(CPACK_DEBIAN_PACKAGE_HOMEPAGE "https://github.com/mmatyas/openblok")
+
+
+# RPM
+set(CPACK_RPM_PACKAGE_GROUP Amusements/Games)
+set(CPACK_RPM_PACKAGE_LICENSE GPL-3.0)
+set(CPACK_RPM_PACKAGE_URL "https://github.com/mmatyas/openblok")
+set(CPACK_RPM_PACKAGE_REQUIRES "SDL2 (>= 2.0.4), SDL2_image, SDL2_mixer, SDL2_ttf")
