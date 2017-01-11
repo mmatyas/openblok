@@ -56,6 +56,8 @@ Dependencies
 
 Eg. on Debian: `sudo apt install cmake libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev`
 
+or on Fedora/RPM: `sudo dnf install cmake SDL2-devel SDL2_image-devel SDL2_mixer-devel SDL2_ttf-devel`
+
 
 Build
 -----
