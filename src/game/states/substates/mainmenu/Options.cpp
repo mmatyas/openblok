@@ -143,7 +143,7 @@ Options::Options(MainMenuState& parent, AppContext& app)
             tr("The time while you can still move the piece after it reaches the ground. See 'Piece lock style'."),
             [&app](const std::string& val){
                 // this must not throw error
-                app.wellconfig().shift_normal = std::stoul(val.substr(0, val.find("/")));
+                app.wellconfig().lock_delay = std::stoul(val.substr(0, val.find("/")));
             }));
 
         tuning_options.emplace_back(std::make_shared<ToggleButton>(app,
