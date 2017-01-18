@@ -262,6 +262,8 @@ void Gameplay::increaseLevelMaybe(IngameState& parent, DeviceID source_player,
 
         if (ScoreTable::canContinueBackToBack(previous_lineclear_type.at(source_player), clear_type))
             line_awards *= ScoreTable::back2backMultiplier();
+
+        line_awards += combo_length.at(source_player) / 2;
     }
     lines_left -= line_awards;
 
