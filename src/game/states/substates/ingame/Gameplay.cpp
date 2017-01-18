@@ -52,7 +52,8 @@ Gameplay::Gameplay(AppContext& app, IngameState& parent, unsigned short starting
     assert(player_devices.size() > 0);
     assert(player_devices.size() <= 4);
     assert(starting_gravity_level < 15);
-    assert(parent.player_areas.empty());
+    parent.player_areas.clear();
+    parent.player_stats.clear();
 
 
     const bool is_battle = (parent.gamemode == GameMode::MP_BATTLE);

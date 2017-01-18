@@ -1,6 +1,8 @@
 #include "Pause.h"
 
+#include "Countdown.h"
 #include "FadeInOut.h"
+#include "Gameplay.h"
 #include "game/AppContext.h"
 #include "game/layout/gameplay/PlayerArea.h"
 #include "game/states/IngameState.h"
@@ -28,7 +30,7 @@ Pause::Pause(AppContext& app)
 
     tex_pause = font_big->renderText(tr("PAUSE"), color_normal);
 
-    const std::vector<std::string> menuitems = {tr("RESUME"), tr("QUIT")};
+    const std::vector<std::string> menuitems = {tr("RESUME"), tr("RESTART"), tr("QUIT")};
     for (const auto& label : menuitems) {
         tex_menuitems.emplace_back(std::array<std::unique_ptr<Texture>, 2>{
             font_smaller->renderText(label, color_normal),
@@ -54,7 +56,17 @@ void Pause::update(IngameState& parent, const std::vector<Event>& events, AppCon
                             assert(parent.states.size() > 1);
                             parent.states.pop_back();
                             return;
-                        case 1: // back to main menu
+                        case 1: // restart
+                            parent.states.emplace_back(std::make_unique<FadeOut>([&app, &parent](){
+                                parent.states.erase(parent.states.begin(), --parent.states.end());
+                                parent.states.emplace_back(std::make_unique<Gameplay>(app, parent));
+                                parent.states.emplace_back(std::make_unique<Countdown>(app));
+                                parent.states.emplace_back(std::make_unique<FadeIn>([&parent](){
+                                    parent.states.pop_back();
+                                }));
+                            }));
+                            return;
+                        case 2: // back to main menu
                             parent.states.emplace_back(std::make_unique<FadeOut>([&app](){
                                 app.states().pop();
                             }));
