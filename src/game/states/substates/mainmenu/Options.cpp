@@ -95,7 +95,7 @@ Options::Options(MainMenuState& parent, AppContext& app)
         std::generate(das_values.begin(), das_values.end(), [&k]{ return std::to_string(++k) + "/60 s"; });
         auto das_repeat_values = das_values;
         tuning_options.emplace_back(std::make_shared<ValueChooser>(app, std::move(das_values),
-            app.wellconfig().shift_normal - 1, // num to offset
+            std::min<size_t>(das_values.size(), app.wellconfig().shift_normal) - 1, // num to offset
             tr("DAS initial delay"),
             tr("The time it takes to turn on horizontal movement autorepeat."),
             [&app](const std::string& val){
@@ -103,7 +103,7 @@ Options::Options(MainMenuState& parent, AppContext& app)
                 app.wellconfig().shift_normal = std::stoul(val.substr(0, val.find("/")));
             }));
         tuning_options.emplace_back(std::make_shared<ValueChooser>(app, std::move(das_repeat_values),
-            app.wellconfig().shift_turbo - 1, // num to offset
+            std::min<size_t>(das_values.size(), app.wellconfig().shift_turbo) - 1, // num to offset
             tr("DAS repeat delay"),
             tr("Horizontal movement delay during autorepeat."),
             [&app](const std::string& val){
@@ -138,7 +138,7 @@ Options::Options(MainMenuState& parent, AppContext& app)
         std::generate(lockdelay_values.begin(), lockdelay_values.end(), [&k]{ return std::to_string(++k) + "/60 s"; });
         tuning_options.emplace_back(std::make_shared<ValueChooser>(app,
             std::move(lockdelay_values),
-            app.wellconfig().lock_delay - 1, // num to offset
+            std::min<size_t>(lockdelay_values.size(), app.wellconfig().lock_delay) - 1, // num to offset
             tr("Lock delay"),
             tr("The time while you can still move the piece after it reaches the ground. See 'Piece lock style'."),
             [&app](const std::string& val){
