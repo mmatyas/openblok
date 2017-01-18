@@ -86,7 +86,7 @@ void GameConfigFile::save(SysConfig& sys, WellConfig& well, const std::string& p
     }
     {
         ConfigFile::KeyValPairs gameplay_entries;
-        auto well_bools = createBoolBind(sys);
+        auto well_bools = createBoolBind(well);
         for (const auto& pair : well_bools)
             gameplay_entries.emplace(pair.first, boolAsStr(*pair.second));
 
