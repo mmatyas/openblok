@@ -20,13 +20,13 @@ namespace SubStates {
 namespace MainMenu {
 
 Base::Base(MainMenuState& parent, AppContext& app)
-    : tex_background(app.gcx().loadTexture(Paths::data() + "gamebg.png"))
-    , logo(app.gcx(), 150)
+    : tex_background(app.gcx().loadTexture(app.theme().dirs.graphics() + "menu_fill.png"))
+    , logo(app, 150)
     , current_column(&primary_buttons)
     , column_slide_anim(std::chrono::milliseconds(350),
                         [](double t){ return t; },
                         [this](){  })
-    , music(app.audio().loadMusic(Paths::data() + "music/menu.ogg"))
+    , music(app.audio().loadMusic(app.theme().dirs.music() + "menu/menu.ogg"))
 {
     PieceFactory::changeInitialPositions(Rotations::SRS().initialPositions());
     column_slide_anim.stop();

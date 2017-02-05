@@ -3,6 +3,7 @@ set(MOD_GAME_SRC
     BattleAttackTable.cpp
     GameConfigFile.cpp
     ScoreTable.cpp
+    Theme.cpp
 
     components/HoldQueue.cpp
     components/Mino.cpp
@@ -67,6 +68,7 @@ set(MOD_GAME_H
     PlayerStatistics.h
     ScoreTable.h
     SysConfig.h
+    Theme.h
     Timing.h
     Transition.h
     WellConfig.h

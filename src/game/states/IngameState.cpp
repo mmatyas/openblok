@@ -27,7 +27,7 @@ IngameState::IngameState(AppContext& app, GameMode gamemode)
     : gamemode(gamemode)
     , draw_scale(isSinglePlayer(gamemode) ? 1.0 : 0.8)
     , draw_inverse_scale(1.0 / draw_scale)
-    , tex_background(app.gcx().loadTexture(Paths::data() + "gamebg.png"))
+    , tex_background(app.gcx().loadTexture(app.theme().dirs.graphics() + "game_fill.png"))
 {
     updatePositions(app.gcx());
     if (isSinglePlayer(gamemode)) {

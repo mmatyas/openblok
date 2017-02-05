@@ -12,4 +12,6 @@ public:
 
     static Blocks load(const std::string& path);
     static void save(const Blocks&, const std::string& path);
+
+    static bool parseBool(const std::pair<std::string, std::string>& keyval);
 };

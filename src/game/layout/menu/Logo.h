@@ -5,14 +5,14 @@
 #include <memory>
 
 
-class GraphicsContext;
+class AppContext;
 class Texture;
 
 
 namespace Layout {
 class Logo : public Box {
 public:
-    Logo(GraphicsContext&, int height_px);
+    Logo(AppContext&, int height_px);
     void draw() const;
 
 private:

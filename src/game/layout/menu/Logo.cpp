@@ -1,5 +1,6 @@
 #include "Logo.h"
 
+#include "game/AppContext.h"
 #include "system/GraphicsContext.h"
 #include "system/Paths.h"
 #include "system/Texture.h"
@@ -7,8 +8,8 @@
 
 namespace Layout {
 
-Logo::Logo(GraphicsContext& gcx, int height_px)
-    : tex(gcx.loadTexture(Paths::data() + "logo.png"))
+Logo::Logo(AppContext& app, int height_px)
+    : tex(app.gcx().loadTexture(app.theme().dirs.graphics() + "logo.png"))
 {
     bounding_box.h = height_px;
     float ratio = height_px * 1.f / tex->height();

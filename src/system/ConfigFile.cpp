@@ -69,3 +69,16 @@ void ConfigFile::save(const ConfigFile::Blocks& blocks, const std::string& path)
         outfile << "\n";
     }
 }
+
+bool ConfigFile::parseBool(const std::pair<std::string, std::string>& keyval)
+{
+    if (keyval.second == "on" || keyval.second == "yes" || keyval.second == "true")
+        return true;
+    else if (keyval.second == "off" || keyval.second == "no" || keyval.second == "false")
+        return false;
+    else {
+        throw std::runtime_error(
+            "Invalid value for '" + keyval.first + "', " +
+            "expected one of {on,off,yes,no,true,false}, got '" + keyval.second + "'");
+    }
+}

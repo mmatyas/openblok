@@ -54,19 +54,6 @@ const std::string boolAsStr(bool value)
     return value ? "on" : "off";
 }
 
-void parseBool(bool& config_val, const std::string& config_key, const std::string& str)
-{
-    if (str == "on")
-        config_val = true;
-    else if (str == "off")
-        config_val = false;
-    else {
-        throw std::runtime_error(
-            "Invalid value for '" + config_key+ "', " +
-            "expected 'on' or 'off', got '" + str + "'");
-    }
-}
-
 void GameConfigFile::save(SysConfig& sys, WellConfig& well, const std::string& path)
 {
     std::ofstream out(path);
@@ -117,7 +104,7 @@ std::tuple<SysConfig, WellConfig> GameConfigFile::load(const std::string& path)
     if (config.empty())
         return {};
 
-    const std::regex valid_value(R"(([0-9]{1,3}|on|off|[a-z]+))");
+    const std::regex valid_value(R"(([0-9]{1,3}|on|off|yes|no|true|false|[a-z]+))");
     const std::set<std::string> accepted_headers = {"system", "gameplay"};
 
     SysConfig sys;
@@ -147,9 +134,9 @@ std::tuple<SysConfig, WellConfig> GameConfigFile::load(const std::string& path)
 
             try {
                 if (sys_bools.count(key_str))
-                    parseBool(*sys_bools.at(key_str), key_str, val_str);
+                    *sys_bools.at(key_str) = ConfigFile::parseBool(keyval);
                 else if (well_bools.count(key_str))
-                    parseBool(*well_bools.at(key_str), key_str, val_str);
+                    *well_bools.at(key_str) = ConfigFile::parseBool(keyval);
                 else if (well_ushorts.count(key_str)) {
                     try {
                         auto value = std::stoul(val_str);

@@ -2,6 +2,7 @@
 
 #include "game/AppContext.h"
 #include "game/GameConfigFile.h"
+#include "game/Theme.h"
 #include "game/components/MinoStorage.h"
 #include "game/states/MainMenuState.h"
 #include "system/Log.h"
@@ -27,11 +28,14 @@ InitState::InitState(AppContext& app)
     if (!app.sysconfig().music)
         {} // TODO
 
-    Log::info("init") << "Loading resources from '" << Paths::data() << "'\n";
+    Log::info("init") << "Base files dir: '" << Paths::data() << "'\n";
+    Log::info("init") << "Theme files dir: '" << app.sysconfig().theme_dir << "'\n";
 
-    MinoStorage::loadTintedMinos(app.gcx(), Paths::data() + "mino.png");
-    MinoStorage::loadTintedGhosts(app.gcx(), Paths::data() + "ghost.png");
-    MinoStorage::loadMatrixCell(app.gcx(), Paths::data() + "matrix.png");
+    app.theme() = ThemeConfigFile::load(app.sysconfig().theme_dir);
+
+    MinoStorage::loadTintedMinos(app.gcx(), app.theme().dirs.graphics() + "mino.png");
+    MinoStorage::loadTintedGhosts(app.gcx(), app.theme().dirs.graphics() + "ghost.png");
+    MinoStorage::loadMatrixCell(app.gcx(), app.theme().dirs.graphics() + "matrix.png");
 
     app.states().emplace(std::make_unique<MainMenuState>(app));
 }

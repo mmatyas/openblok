@@ -18,9 +18,9 @@ Countdown::Countdown(AppContext& app)
     : current_idx(0)
     , timer(std::chrono::milliseconds(800), [](double){})
     , sfx_countdown({{
-            app.audio().loadSound(Paths::data() + "sfx/countdown3.ogg"),
-            app.audio().loadSound(Paths::data() + "sfx/countdown2.ogg"),
-            app.audio().loadSound(Paths::data() + "sfx/countdown1.ogg"),
+            app.audio().loadSound(app.theme().dirs.sfx() + "countdown3.ogg"),
+            app.audio().loadSound(app.theme().dirs.sfx() + "countdown2.ogg"),
+            app.audio().loadSound(app.theme().dirs.sfx() + "countdown1.ogg"),
         }})
     , pending_sfx(sfx_countdown.at(0))
 {
