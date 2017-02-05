@@ -109,7 +109,7 @@ void InputConfigFile::save(const std::map<DeviceName, DeviceData>& device_maps, 
     for (const auto& pair : name_to_key)
         key_to_name.emplace(pair.second, pair.first);
 
-    ConfigFile::Data config;
+    ConfigFile::Blocks config;
 
     for (const auto& device : device_maps) {
         const auto& device_type = device.second.type;

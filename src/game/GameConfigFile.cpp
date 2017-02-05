@@ -75,7 +75,7 @@ void GameConfigFile::save(SysConfig& sys, WellConfig& well, const std::string& p
         return;
     }
 
-    ConfigFile::Data config;
+    ConfigFile::Blocks config;
     {
         ConfigFile::KeyValPairs sys_entries;
         auto sys_bools = createBoolBind(sys);

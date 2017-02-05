@@ -9,17 +9,17 @@
 
 const std::string LOG_TAG("config");
 
-ConfigFile::Data ConfigFile::load(const std::string& path)
+ConfigFile::Blocks ConfigFile::load(const std::string& path)
 {
     std::ifstream infile(path);
     if (!infile.is_open())
-        return Data();
+        return Blocks();
 
     const std::regex valid_head(R"(\[[a-zA-Z0-9\.-_,: \(\)]+\])");
     const std::regex valid_data(R"([a-z_]+\s*=\s*[a-z0-9_, ]+)");
     const std::regex whitespace(R"(\s+)");
 
-    ConfigFile::Data output;
+    ConfigFile::Blocks output;
     std::string current_head;
 
     unsigned linenum = 0;
@@ -37,7 +37,7 @@ ConfigFile::Data ConfigFile::load(const std::string& path)
             if (current_head.empty()) {
                 Log::warning(LOG_TAG) << path << ":" << linenum << ": No block header defined before this line\n";
                 Log::warning(LOG_TAG) << "Using default settings\n";
-                return Data();
+                return Blocks();
             }
             line = std::regex_replace(line, whitespace, "");
             const auto split_pos = line.find("=");
@@ -48,13 +48,13 @@ ConfigFile::Data ConfigFile::load(const std::string& path)
         else {
             Log::warning(LOG_TAG) << path << ":" << linenum << ": Syntax error\n";
             Log::warning(LOG_TAG) << "Using default settings\n";
-            return Data();
+            return Blocks();
         }
     }
     return output;
 }
 
-void ConfigFile::save(const ConfigFile::Data& data, const std::string& path)
+void ConfigFile::save(const ConfigFile::Blocks& blocks, const std::string& path)
 {
     std::ofstream outfile(path);
     if (!outfile.is_open()) {
@@ -62,7 +62,7 @@ void ConfigFile::save(const ConfigFile::Data& data, const std::string& path)
         return;
     }
 
-    for (const auto& block : data) {
+    for (const auto& block : blocks) {
         outfile << "[" << block.first << "]\n";
         for (const auto& keyval : block.second)
             outfile << keyval.first << " = " << keyval.second << "\n";

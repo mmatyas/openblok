@@ -8,8 +8,8 @@ class ConfigFile {
 public:
     using BlockName = std::string;
     using KeyValPairs = std::unordered_map<std::string, std::string>;
-    using Data = std::unordered_map<BlockName, KeyValPairs>;
+    using Blocks = std::unordered_map<BlockName, KeyValPairs>;
 
-    static Data load(const std::string& path);
-    static void save(const Data&, const std::string& path);
+    static Blocks load(const std::string& path);
+    static void save(const Blocks&, const std::string& path);
 };
