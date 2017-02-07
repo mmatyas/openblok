@@ -5,7 +5,12 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
 include(ProjectVersion)
 
 # Build options
-option(INSTALL_PORTABLE "The installation step should put the runtime and the data directory next to each other" OFF)
+# Portable install
+set(INSTALL_PORTABLE_DEFAULT OFF)
+if(WIN32 OR CYGWIN)
+    set(INSTALL_PORTABLE_DEFAULT ON)
+endif()
+option(INSTALL_PORTABLE "The installation step should put the runtime and the data directory next to each other" ${INSTALL_PORTABLE_DEFAULT})
 # Currently unit tests only work only in Debug
 if(NOT "${CMAKE_BUILD_TYPE}" STREQUAL "Release")
     option(BUILD_TESTS "Build the unit tests" ON)

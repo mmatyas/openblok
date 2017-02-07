@@ -72,12 +72,12 @@ make
 **Optional build parameters:**
 
 - `CMAKE_BUILD_TYPE`: To create an **optimized release build**, set this to `Release`. To create a **debug build**, set this value to `Debug`. See the CMake documentation. Default: `Release`.
-- `INSTALL_PORTABLE`: The game needs to know where it can find the data files. By default, the game is searching for them in the absolute path of the installation location, which is usually `/usr/local/share/openblok` on Linux. By setting `INSTALL_PORTABLE` to `ON`, the game will search for the files in a `data` directory located next to the binary. Default: `OFF`. Recommended: `OFF` on Linux, `ON` on Windows.
-- `CMAKE_INSTALL_PREFIX`: The base directory of the installation step (eg. `make install`). Defaults to `/usr/local` or `C:\Program Files`. See the CMake documentation for more details.
+- `INSTALL_PORTABLE`: The game needs to know where it can find the data files. By default, the game is searching for them in the absolute path of the installation location, which is usually `/usr/local/share/openblok` or `C:\Program Files\openblok`. By setting `INSTALL_PORTABLE` to `ON`, the game will search for the files in the same directory as the binary. Default: `OFF` on Linux, `ON` on Windows.
+- `CMAKE_INSTALL_PREFIX`: The base directory of the installation step (eg. `make install`). Defaults to `/usr/local` or `C:\Program Files`. See the CMake documentation.
 - `BUILD_TESTS`: Builds the test suite. You can run them by calling `./build/tests/openblok_test`. Debug build only, default: `ON`.
 - `BUILD_COVERAGE`: Allows building the test coverage report. Requires `BUILD_TESTS` and `gcov`/`lcov`. Default: `OFF`.
 
-**Additional build targets**
+**Useful build targets**
 
 - `make coverage`: Builds the test coverage report
 - `make install/strip`: Installs the game on your system
