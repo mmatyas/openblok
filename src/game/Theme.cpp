@@ -4,32 +4,81 @@
 #include "system/Log.h"
 #include "system/Paths.h"
 
+#include <tinydir_cpp.h>
 #include <regex>
 #include <set>
 
+#ifdef _MSC_VER
+#include <io.h>
+#define posix_access _access
+#else
+#include <unistd.h>
+#define posix_access access
+#endif
+
+inline bool path_exists(const std::string& path) {
+    return posix_access(path.c_str(), F_OK) == 0;
+}
+
+
+void ThemeConfig::set_themedir(const std::string& dir_name)
+{
+    theme_dir = "themes/" + dir_name + "/";
+}
+
+std::string ThemeConfig::get_sfx(const std::string& filename) const
+{
+    return themefile_path("sfx/", filename);
+}
+
+std::string ThemeConfig::get_texture(const std::string& filename) const
+{
+    return themefile_path("graphics/", filename);
+}
+
+std::string ThemeConfig::themefile_path(const std::string& subdir, const std::string& filename) const
+{
+    // 1. user local theme dir
+    std::string path = Paths::config() + theme_dir + subdir + filename;
+    if (path_exists(path))
+        return path;
+
+    // 2. install theme dir
+    path = Paths::data() + theme_dir + subdir + filename;
+    if (path_exists(path))
+        return path;
+
+    // 3. default
+    return Paths::data() + "themes/default/" + subdir + filename;
+}
+
+std::string ThemeConfig::random_game_music() const
+{
+    return random_file_from("/music/gameplay");
+}
+
+std::string ThemeConfig::random_menu_music() const
+{
+    return random_file_from("/music/menu");
+}
+
+std::string ThemeConfig::random_file_from(const std::string& dir_name) const
+{
+    const std::string base_path = themefile_path(dir_name, "");
+
+    TinyDir dir(base_path);
+    const auto file_list = dir.fileList();
+    if (file_list.empty())
+        throw std::runtime_error("Could not find any file in '" + base_path + "'");
+
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> dis(0, file_list.size() - 1);
+    return file_list.at(dis(gen));
+}
+
 
 // TODO: this file has some copies from GameConfigFile
-
-ThemeConfig::Subdirs::Subdirs()
-    : root(Paths::data() + "themes/default")
-{}
-
-std::string ThemeConfig::Subdirs::background() {
-    static const std::string dir = "/backgrounds/";
-    return root + dir;
-}
-std::string ThemeConfig::Subdirs::music() {
-    static const std::string dir = "/music/";
-    return root + dir;
-}
-std::string ThemeConfig::Subdirs::sfx() {
-    static const std::string dir = "/sfx/";
-    return root + dir;
-}
-std::string ThemeConfig::Subdirs::graphics() {
-    static const std::string dir = "/graphics/";
-    return root + dir;
-}
 
 const std::string LOG_TAG("themecfg");
 
@@ -52,7 +101,7 @@ ThemeConfig ThemeConfigFile::load(const std::string& dir)
     const std::set<std::string> accepted_headers = {"meta", "gameplay"};
 
     ThemeConfig tcfg;
-    tcfg.dirs.root = Paths::data() + "../themes" + dir; // TODO: this is kinda ugly
+    tcfg.set_themedir(dir);
 
     auto bool_binds = createBoolBinds(tcfg);
 

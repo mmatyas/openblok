@@ -4,16 +4,6 @@
 
 
 struct ThemeConfig {
-    struct Subdirs {
-        std::string root;
-        std::string background();
-        std::string music();
-        std::string sfx();
-        std::string graphics();
-
-        Subdirs();
-    } dirs;
-
     struct GameplayConfig {
         bool draw_well;
         bool draw_text;
@@ -26,9 +16,19 @@ struct ThemeConfig {
         {}
     } gameplay;
 
-    std::string random_menu_music();
-    std::string random_game_music();
-    std::string random_game_background();
+    void set_themedir(const std::string&);
+
+    std::string random_menu_music() const;
+    std::string random_game_music() const;
+    std::string random_game_background() const;
+
+    std::string get_sfx(const std::string&) const;
+    std::string get_texture(const std::string&) const;
+
+private:
+    std::string theme_dir;
+    std::string themefile_path(const std::string&, const std::string&) const;
+    std::string random_file_from(const std::string&) const;
 };
 
 class ThemeConfigFile {

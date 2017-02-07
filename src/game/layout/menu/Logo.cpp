@@ -9,7 +9,7 @@
 namespace Layout {
 
 Logo::Logo(AppContext& app, int height_px)
-    : tex(app.gcx().loadTexture(app.theme().dirs.graphics() + "logo.png"))
+    : tex(app.gcx().loadTexture(app.theme().get_texture("logo.png")))
 {
     bounding_box.h = height_px;
     float ratio = height_px * 1.f / tex->height();

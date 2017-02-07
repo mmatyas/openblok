@@ -27,22 +27,22 @@ namespace States {
 
 Gameplay::Gameplay(AppContext& app, IngameState& parent, unsigned short starting_gravity_level)
     : player_devices(parent.device_order)
-    , music(app.audio().loadMusic(app.theme().dirs.music() + "gameplay/gameplay.ogg"))
+    , music(app.audio().loadMusic(app.theme().random_game_music()))
     , font_popuptext(app.gcx().loadFont(Paths::data() + "fonts/PTS76F.ttf", 34))
-    , sfx_onhold(app.audio().loadSound(app.theme().dirs.sfx() + "hold.ogg"))
-    , sfx_onlevelup(app.audio().loadSound(app.theme().dirs.sfx() + "levelup.ogg"))
+    , sfx_onhold(app.audio().loadSound(app.theme().get_sfx("hold.ogg")))
+    , sfx_onlevelup(app.audio().loadSound(app.theme().get_sfx("levelup.ogg")))
     , sfx_onlineclear({{
-            app.audio().loadSound(app.theme().dirs.sfx() + "lineclear1.ogg"),
-            app.audio().loadSound(app.theme().dirs.sfx() + "lineclear2.ogg"),
-            app.audio().loadSound(app.theme().dirs.sfx() + "lineclear3.ogg"),
-            app.audio().loadSound(app.theme().dirs.sfx() + "lineclear4.ogg"),
+            app.audio().loadSound(app.theme().get_sfx("lineclear1.ogg")),
+            app.audio().loadSound(app.theme().get_sfx("lineclear2.ogg")),
+            app.audio().loadSound(app.theme().get_sfx("lineclear3.ogg")),
+            app.audio().loadSound(app.theme().get_sfx("lineclear4.ogg")),
         }})
-    , sfx_onlock(app.audio().loadSound(app.theme().dirs.sfx() + "lock.ogg"))
-    , sfx_onrotate(app.audio().loadSound(app.theme().dirs.sfx() + "rotate.ogg"))
-    , sfx_ongarbageadded(app.audio().loadSound(app.theme().dirs.sfx() + "garbage.ogg"))
+    , sfx_onlock(app.audio().loadSound(app.theme().get_sfx("lock.ogg")))
+    , sfx_onrotate(app.audio().loadSound(app.theme().get_sfx("rotate.ogg")))
+    , sfx_ongarbageadded(app.audio().loadSound(app.theme().get_sfx("garbage.ogg")))
     , texts_need_update(true)
-    , sfx_ongameover(app.audio().loadSound(app.theme().dirs.sfx() + "gameover.ogg"))
-    , sfx_onfinish(app.audio().loadSound(app.theme().dirs.sfx() + "finish.ogg"))
+    , sfx_ongameover(app.audio().loadSound(app.theme().get_sfx("gameover.ogg")))
+    , sfx_onfinish(app.audio().loadSound(app.theme().get_sfx("finish.ogg")))
     , gameend_statistics_delay(std::chrono::seconds(5),
         [](double t){ return t * 5; },
         [&parent, &app](){
