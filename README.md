@@ -71,7 +71,7 @@ make
 
 **Optional build parameters:**
 
-- `CMAKE_BUILD_TYPE`: By default, the game builds without optimizations or debug symbols. To create an **optimized release build**, set this to `Release`. To create a **debug build**, set this value to `Debug`. Using certain IDEs, eg. Visual Studio, this setting has no effect, as you have to set the build type inside these programs instead. See the CMake documentation for more details.
+- `CMAKE_BUILD_TYPE`: To create an **optimized release build**, set this to `Release`. To create a **debug build**, set this value to `Debug`. See the CMake documentation. Default: `Release`.
 - `INSTALL_PORTABLE`: The game needs to know where it can find the data files. By default, the game is searching for them in the absolute path of the installation location, which is usually `/usr/local/share/openblok` on Linux. By setting `INSTALL_PORTABLE` to `ON`, the game will search for the files in a `data` directory located next to the binary. Default: `OFF`. Recommended: `OFF` on Linux, `ON` on Windows.
 - `CMAKE_INSTALL_PREFIX`: The base directory of the installation step (eg. `make install`). Defaults to `/usr/local` or `C:\Program Files`. See the CMake documentation for more details.
 - `BUILD_TESTS`: Builds the test suite. You can run them by calling `./build/tests/openblok_test`. Debug build only, default: `ON`.

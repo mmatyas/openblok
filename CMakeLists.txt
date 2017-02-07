@@ -25,6 +25,10 @@ else()
         set(DESKTOPDIR "${SHAREDIR}/applications" CACHE STRING "Install location of the desktop shortcut")
     endif()
 endif()
+# Default to release build
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE "Release")
+endif()
 
 
 # Global compiler settings
@@ -89,9 +93,6 @@ include(CPack)
 
 # Display settings
 set(MSG_BUILDTYPE ${CMAKE_BUILD_TYPE})
-if(NOT MSG_BUILDTYPE)
-    set(MSG_BUILDTYPE "Default/Not optimized")
-endif()
 set(MSG_TESTS "do not build")
 if(BUILD_TESTS)
     set(MSG_TESTS "build, tests only")
