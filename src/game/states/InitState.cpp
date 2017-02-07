@@ -29,9 +29,9 @@ InitState::InitState(AppContext& app)
         {} // TODO
 
     Log::info("init") << "Loading resources from '" << Paths::data() << "'\n";
-    Log::info("init") << "Theme: '" << app.sysconfig().theme_dir << "'\n";
+    Log::info("init") << "Theme: '" << app.sysconfig().theme_dir_name << "'\n";
 
-    app.theme() = ThemeConfigFile::load(app.sysconfig().theme_dir);
+    app.theme() = ThemeConfigFile::load(app.sysconfig().theme_dir_name);
 
     MinoStorage::loadTintedMinos(app.gcx(), app.theme().get_texture("mino.png"));
     MinoStorage::loadTintedGhosts(app.gcx(), app.theme().get_texture("ghost.png"));

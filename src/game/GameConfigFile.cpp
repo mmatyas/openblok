@@ -21,6 +21,11 @@ std::unordered_map<std::string, bool*> createBoolBind(SysConfig& sys) {
         {"music", &sys.music},
     };
 }
+std::unordered_map<std::string, std::string*> createStringBind(SysConfig& sys) {
+    return {
+        {"theme", &sys.theme_dir_name},
+    };
+}
 std::unordered_map<std::string, bool*> createBoolBind(WellConfig& well) {
     return {
         {"instant_harddrop", &well.instant_harddrop},
@@ -69,6 +74,10 @@ void GameConfigFile::save(SysConfig& sys, WellConfig& well, const std::string& p
         for (const auto& pair : sys_bools)
             sys_entries.emplace(pair.first, boolAsStr(*pair.second));
 
+        auto sys_strings = createStringBind(sys);
+        for (const auto& pair : sys_strings)
+            sys_entries.emplace(pair.first, *pair.second);
+
         config.emplace("system", std::move(sys_entries));
     }
     {
@@ -111,6 +120,7 @@ std::tuple<SysConfig, WellConfig> GameConfigFile::load(const std::string& path)
     WellConfig well;
 
     auto sys_bools = createBoolBind(sys);
+    auto sys_strings = createStringBind(sys);
     auto well_bools = createBoolBind(well);
     auto well_ushorts = createNumericBind(well);
 
@@ -133,10 +143,15 @@ std::tuple<SysConfig, WellConfig> GameConfigFile::load(const std::string& path)
             }
 
             try {
-                if (sys_bools.count(key_str))
+                if (sys_bools.count(key_str)) {
                     *sys_bools.at(key_str) = ConfigFile::parseBool(keyval);
-                else if (well_bools.count(key_str))
+                }
+                else if (sys_strings.count(key_str)) {
+                    *sys_strings.at(key_str) = val_str;
+                }
+                else if (well_bools.count(key_str)) {
                     *well_bools.at(key_str) = ConfigFile::parseBool(keyval);
+                }
                 else if (well_ushorts.count(key_str)) {
                     try {
                         auto value = std::stoul(val_str);
