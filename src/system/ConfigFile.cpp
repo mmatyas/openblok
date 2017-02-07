@@ -16,8 +16,9 @@ ConfigFile::Blocks ConfigFile::load(const std::string& path)
         return Blocks();
 
     const std::regex valid_head(R"(\[[a-zA-Z0-9\.-_,: \(\)]+\])");
-    const std::regex valid_data(R"([a-z_]+\s*=\s*[a-z0-9_, ]+)");
-    const std::regex whitespace(R"(\s+)");
+    const std::regex valid_data(R"([a-z_]+\s*=\s*([a-z0-9_, ]+|".*?"))");
+    const std::regex whitespace_left(R"(^\s+)");
+    const std::regex whitespace_right(R"(\s+$)");
 
     ConfigFile::Blocks output;
     std::string current_head;
@@ -39,10 +40,13 @@ ConfigFile::Blocks ConfigFile::load(const std::string& path)
                 Log::warning(LOG_TAG) << "Using default settings\n";
                 return Blocks();
             }
-            line = std::regex_replace(line, whitespace, "");
             const auto split_pos = line.find("=");
-            const auto key = line.substr(0, split_pos);
-            const auto val = line.substr(split_pos + 1);
+            auto key = line.substr(0, split_pos);
+            key = std::regex_replace(key, whitespace_left, "");
+            key = std::regex_replace(key, whitespace_right, "");
+            auto val = line.substr(split_pos + 1);
+            val = std::regex_replace(val, whitespace_left, "");
+            val = std::regex_replace(val, whitespace_right, "");
             output[current_head].emplace(std::move(key), std::move(val));
         }
         else {

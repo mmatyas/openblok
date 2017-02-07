@@ -16,7 +16,9 @@ struct ThemeConfig {
         {}
     } gameplay;
 
-    void set_themedir(const std::string&);
+    void set_theme_dir(const std::string&);
+
+    std::string config_path() const { return m_config_path; }
 
     std::string random_menu_music() const;
     std::string random_game_music() const;
@@ -26,8 +28,10 @@ struct ThemeConfig {
     std::string get_texture(const std::string&) const;
 
 private:
-    std::string theme_dir;
-    std::string themefile_path(const std::string&, const std::string&) const;
+    std::string m_theme_dir;
+    std::string m_config_path;
+
+    std::string resolve_path(const std::string&) const;
     std::string random_file_from(const std::string&) const;
 };
 

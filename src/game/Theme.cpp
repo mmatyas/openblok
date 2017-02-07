@@ -21,35 +21,33 @@ inline bool path_exists(const std::string& path) {
 }
 
 
-void ThemeConfig::set_themedir(const std::string& dir_name)
+void ThemeConfig::set_theme_dir(const std::string& dir_name)
 {
-    theme_dir = "themes/" + dir_name + "/";
+    m_theme_dir = "themes/" + dir_name + "/";
+    m_config_path = resolve_path("theme.cfg");
 }
 
-std::string ThemeConfig::get_sfx(const std::string& filename) const
-{
-    return themefile_path("sfx/", filename);
+std::string ThemeConfig::get_sfx(const std::string& filename) const {
+    return resolve_path("sfx/" + filename);
+}
+std::string ThemeConfig::get_texture(const std::string& filename) const {
+    return resolve_path("graphics/" + filename);
 }
 
-std::string ThemeConfig::get_texture(const std::string& filename) const
-{
-    return themefile_path("graphics/", filename);
-}
-
-std::string ThemeConfig::themefile_path(const std::string& subdir, const std::string& filename) const
+std::string ThemeConfig::resolve_path(const std::string& filename) const
 {
     // 1. user local theme dir
-    std::string path = Paths::config() + theme_dir + subdir + filename;
+    std::string path = Paths::config() + m_theme_dir + filename;
     if (path_exists(path))
         return path;
 
     // 2. install theme dir
-    path = Paths::data() + theme_dir + subdir + filename;
+    path = Paths::data() + m_theme_dir + filename;
     if (path_exists(path))
         return path;
 
     // 3. default
-    return Paths::data() + "themes/default/" + subdir + filename;
+    return Paths::data() + "themes/default/" + filename;
 }
 
 std::string ThemeConfig::random_game_music() const
@@ -90,36 +88,40 @@ std::unordered_map<std::string, bool*> createBoolBinds(ThemeConfig& theme) {
     };
 }
 
-ThemeConfig ThemeConfigFile::load(const std::string& dir)
+ThemeConfig ThemeConfigFile::load(const std::string& dir_name)
 {
-    const std::string path = dir + "/theme.cfg";
-    const auto& config = ConfigFile::load(path);
+    ThemeConfig tcfg;
+    tcfg.set_theme_dir(dir_name);
+
+    const auto& config = ConfigFile::load(tcfg.config_path());
     if (config.empty())
         return {};
 
     const std::regex valid_value(R"(([0-9]{1,3}|on|off|yes|no|true|false|[a-z]+))");
     const std::set<std::string> accepted_headers = {"meta", "gameplay"};
 
-    ThemeConfig tcfg;
-    tcfg.set_themedir(dir);
 
     auto bool_binds = createBoolBinds(tcfg);
 
     for (const auto& block : config) {
         const auto& block_name = block.first;
         if (!accepted_headers.count(block_name)) {
-            Log::warning(LOG_TAG) << path << ": Unknown settings block '" << block_name << "', skipped\n";
+            Log::warning(LOG_TAG) << tcfg.config_path() << ": Unknown settings block '"
+                                                        << block_name << "', skipped\n";
             continue;
         }
+
+        if (block_name == "meta") // for now
+            continue;
 
         for (const auto& keyval : block.second) {
             const auto& key_str = keyval.first;
             const auto& val_str = keyval.second;
 
             if (!std::regex_match(val_str, valid_value)) {
-                Log::warning(LOG_TAG) << path << ": Unknown value '" << val_str
-                                              << "' for '" << key_str << "'\n";
-                Log::warning(LOG_TAG) << path << ": under '" << block_name << "', skipped\n";
+                Log::warning(LOG_TAG) << tcfg.config_path() << ": Unknown value '" << val_str
+                                                            << "' for '" << key_str << "'\n";
+                Log::warning(LOG_TAG) << tcfg.config_path() << ": under '" << block_name << "', skipped\n";
                 continue;
             }
 
@@ -130,8 +132,8 @@ ThemeConfig ThemeConfigFile::load(const std::string& dir)
                     throw std::runtime_error("Unknown option '" + key_str + "', ignored");
             }
             catch (const std::runtime_error& err) {
-                Log::warning(LOG_TAG) << path << ": " << err.what() << "\n";
-                Log::warning(LOG_TAG) << path << ": under '" << block_name << "'\n";
+                Log::warning(LOG_TAG) << tcfg.config_path() << ": " << err.what() << "\n";
+                Log::warning(LOG_TAG) << tcfg.config_path() << ": under '" << block_name << "'\n";
             }
         }
     }
