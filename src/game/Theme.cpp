@@ -52,22 +52,24 @@ std::string ThemeConfig::resolve_path(const std::string& filename) const
 
 std::string ThemeConfig::random_game_music() const
 {
-    return random_file_from("/music/gameplay");
+    const auto path = random_file_from("music/gameplay");
+    return path.empty() ? (Paths::data() + "themes/default/music/gameplay/gameplay.ogg") : path;
 }
 
 std::string ThemeConfig::random_menu_music() const
 {
-    return random_file_from("/music/menu");
+    const auto path = random_file_from("music/menu");
+    return path.empty() ? (Paths::data() + "themes/default/music/menu/menu.ogg") : path;
 }
 
 std::string ThemeConfig::random_file_from(const std::string& dir_name) const
 {
-    const std::string base_path = themefile_path(dir_name, "");
+    const std::string base_path = resolve_path(dir_name);
 
     TinyDir dir(base_path);
     const auto file_list = dir.fileList();
     if (file_list.empty())
-        throw std::runtime_error("Could not find any file in '" + base_path + "'");
+        return "";
 
     std::random_device rd;
     std::mt19937 gen(rd());
