@@ -1,4 +1,4 @@
-This directory contains `git subtree`s. They were added like this:
+This directory contains `git subtree`s and header-only libs. The `git subtree`s were added like this:
 
 ```sh
 # from the project root

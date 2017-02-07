@@ -73,6 +73,9 @@ set(SDL2PP_WITH_MIXER ON)
 set(SDL2PP_WITH_TTF ON)
 add_subdirectory(external/libSDL2pp)
 
+# Dependencies: tinydir
+include_directories(external/tinydir)
+
 
 # The main game source
 include_directories(src)
