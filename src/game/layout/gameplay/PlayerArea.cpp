@@ -13,8 +13,8 @@ namespace Layout {
 
 PlayerArea::GameEndVars::GameEndVars(AppContext& app)
     : gameoversfx_enabled(true)
-    , sfx_ongameover(app.audio().loadSound(Paths::data() + "sfx/gameover.ogg"))
-    , sfx_onfinish(app.audio().loadSound(Paths::data() + "sfx/finish.ogg"))
+    , sfx_ongameover(app.audio().loadSound(app.theme().dirs.sfx() + "gameover.ogg"))
+    , sfx_onfinish(app.audio().loadSound(app.theme().dirs.sfx() + "finish.ogg"))
     , anim_percent(
         std::chrono::seconds(2),
         [](double t){ return t; },

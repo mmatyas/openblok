@@ -27,7 +27,7 @@ namespace States {
 
 Gameplay::Gameplay(AppContext& app, IngameState& parent, unsigned short starting_gravity_level)
     : player_devices(parent.device_order)
-    , music(app.audio().loadMusic(app.theme().dirs.music() + "game/gameplay.ogg"))
+    , music(app.audio().loadMusic(app.theme().dirs.music() + "gameplay/gameplay.ogg"))
     , font_popuptext(app.gcx().loadFont(Paths::data() + "fonts/PTS76F.ttf", 34))
     , sfx_onhold(app.audio().loadSound(app.theme().dirs.sfx() + "hold.ogg"))
     , sfx_onlevelup(app.audio().loadSound(app.theme().dirs.sfx() + "levelup.ogg"))

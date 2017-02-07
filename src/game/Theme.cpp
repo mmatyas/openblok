@@ -11,7 +11,7 @@
 // TODO: this file has some copies from GameConfigFile
 
 ThemeConfig::Subdirs::Subdirs()
-    : root(Paths::data() + "../themes/default")
+    : root(Paths::data() + "themes/default")
 {}
 
 std::string ThemeConfig::Subdirs::background() {
@@ -27,7 +27,7 @@ std::string ThemeConfig::Subdirs::sfx() {
     return root + dir;
 }
 std::string ThemeConfig::Subdirs::graphics() {
-    static const std::string dir = "/";
+    static const std::string dir = "/graphics/";
     return root + dir;
 }
 

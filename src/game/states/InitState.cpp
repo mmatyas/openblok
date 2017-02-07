@@ -28,8 +28,8 @@ InitState::InitState(AppContext& app)
     if (!app.sysconfig().music)
         {} // TODO
 
-    Log::info("init") << "Base files dir: '" << Paths::data() << "'\n";
-    Log::info("init") << "Theme files dir: '" << app.sysconfig().theme_dir << "'\n";
+    Log::info("init") << "Loading resources from '" << Paths::data() << "'\n";
+    Log::info("init") << "Theme: '" << app.sysconfig().theme_dir << "'\n";
 
     app.theme() = ThemeConfigFile::load(app.sysconfig().theme_dir);
 
