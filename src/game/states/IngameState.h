@@ -45,7 +45,10 @@ public:
     const float draw_inverse_scale;
 
 private:
-    std::unique_ptr<Texture> tex_background;
+    std::unique_ptr<Texture> tex_bg_pattern;
+    std::unique_ptr<Texture> tex_bg_wallpaper;
+
+    ::Rectangle rect_wallpaper;
 
     void drawCommon(GraphicsContext&);
 };

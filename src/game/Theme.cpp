@@ -16,6 +16,7 @@
 #define posix_access access
 #endif
 
+
 inline bool path_exists(const std::string& path) {
     return posix_access(path.c_str(), F_OK) == 0;
 }
@@ -62,9 +63,16 @@ std::string ThemeConfig::random_menu_music() const
     return path.empty() ? (Paths::data() + "themes/default/music/menu/menu.ogg") : path;
 }
 
+std::string ThemeConfig::random_game_background() const
+{
+    return random_file_from("backgrounds/gameplay");
+}
+
 std::string ThemeConfig::random_file_from(const std::string& dir_name) const
 {
     const std::string base_path = resolve_path(dir_name);
+    if (!path_exists(base_path))
+        return "";
 
     TinyDir dir(base_path);
     const auto file_list = dir.fileList();
@@ -97,7 +105,7 @@ ThemeConfig ThemeConfigFile::load(const std::string& dir_name)
 
     const auto& config = ConfigFile::load(tcfg.config_path());
     if (config.empty())
-        return {};
+        return tcfg;
 
     const std::regex valid_value(R"(([0-9]{1,3}|on|off|yes|no|true|false|[a-z]+))");
     const std::set<std::string> accepted_headers = {"meta", "gameplay"};

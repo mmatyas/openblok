@@ -27,9 +27,14 @@ IngameState::IngameState(AppContext& app, GameMode gamemode)
     : gamemode(gamemode)
     , draw_scale(isSinglePlayer(gamemode) ? 1.0 : 0.8)
     , draw_inverse_scale(1.0 / draw_scale)
-    , tex_background(app.gcx().loadTexture(app.theme().get_texture("game_fill.png")))
+    , tex_bg_pattern(app.gcx().loadTexture(app.theme().get_texture("game_fill.png")))
 {
+    const auto wallpaper_path = app.theme().random_game_background();
+    if (!wallpaper_path.empty())
+        tex_bg_wallpaper = app.gcx().loadTexture(wallpaper_path);
+
     updatePositions(app.gcx());
+
     if (isSinglePlayer(gamemode)) {
         device_order = {-1};
         states.emplace_back(std::make_unique<SubStates::Ingame::States::Gameplay>(app, *this));
@@ -69,6 +74,14 @@ void IngameState::updatePositions(GraphicsContext& gcx)
         player_areas.at(device_id).setPosition(well_x + well_padding_x, well_y);
         well_x += well_full_width;
     }
+
+    if (tex_bg_wallpaper) {
+        const float wallpaper_scale = 720 / (tex_bg_wallpaper->height() * 1.f);
+        rect_wallpaper.w = tex_bg_wallpaper->width() * wallpaper_scale;
+        rect_wallpaper.x = center_x - rect_wallpaper.w / 2;
+        rect_wallpaper.y = center_y - 720 / 2;
+        rect_wallpaper.h = 720;
+    }
 }
 
 void IngameState::update(const std::vector<Event>& events, AppContext& app)
@@ -101,6 +114,9 @@ void IngameState::draw(GraphicsContext& gcx)
     const auto original_scale = gcx.getDrawScale();
     gcx.modifyDrawScale(original_scale * draw_scale);
 
+    if (tex_bg_wallpaper)
+        tex_bg_wallpaper->drawScaled(rect_wallpaper);
+
     for(const auto& state : states)
         state->drawPassive(*this, gcx);
     states.back()->drawActive(*this, gcx);
@@ -110,6 +126,6 @@ void IngameState::draw(GraphicsContext& gcx)
 
 void IngameState::drawCommon(GraphicsContext& gcx)
 {
-    tex_background->drawScaled({0, 0, gcx.screenWidth(), gcx.screenHeight()});
+    tex_bg_pattern->drawScaled({0, 0, gcx.screenWidth(), gcx.screenHeight()});
 }
 
