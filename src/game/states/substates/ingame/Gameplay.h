@@ -36,7 +36,7 @@ public:
 private:
     const std::vector<DeviceID> player_devices;
 
-    const ThemeConfig::GameplayConfig theme_settings;
+    const GameplayTheme theme_settings;
 
     std::shared_ptr<Music> music;
     std::shared_ptr<Font> font_popuptext;

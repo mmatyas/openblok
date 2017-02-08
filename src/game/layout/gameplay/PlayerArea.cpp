@@ -29,7 +29,7 @@ PlayerArea::GameEndVars::GameEndVars(AppContext& app)
     tex_finish->setAlpha(0x0);
 }
 
-PlayerArea::PlayerArea(AppContext& app, bool draw_gauge, ThemeConfig::GameplayConfig theme_cfg)
+PlayerArea::PlayerArea(AppContext& app, bool draw_gauge, GameplayTheme theme_cfg)
     : ui_well(app)
     , theme_cfg(theme_cfg)
     , draw_gauge(draw_gauge)

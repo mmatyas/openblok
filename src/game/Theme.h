@@ -2,19 +2,20 @@
 
 #include <string>
 
+struct GameplayTheme {
+    bool draw_wellbg;
+    bool draw_labels;
+    bool draw_panels;
+
+    GameplayTheme()
+        : draw_wellbg(true)
+        , draw_labels (true)
+        , draw_panels(true)
+    {}
+};
 
 struct ThemeConfig {
-    struct GameplayConfig {
-        bool draw_wellbg;
-        bool draw_labels;
-        bool draw_panels;
-
-        GameplayConfig()
-            : draw_wellbg(true)
-            , draw_labels (true)
-            , draw_panels(true)
-        {}
-    } gameplay;
+    GameplayTheme gameplay;
 
     void set_theme_dir(const std::string&);
 

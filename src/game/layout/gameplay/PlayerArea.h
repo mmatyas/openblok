@@ -19,7 +19,7 @@ class SoundEffect;
 namespace Layout {
 class PlayerArea : public Layout::Box {
 public:
-    PlayerArea(AppContext& app, bool draw_gauge, ThemeConfig::GameplayConfig theme_cfg);
+    PlayerArea(AppContext& app, bool draw_gauge, GameplayTheme theme_cfg);
     virtual ~PlayerArea() {}
 
     void update();
@@ -52,7 +52,7 @@ protected:
     ::Rectangle wellbox;
     WellContainer ui_well;
 
-    ThemeConfig::GameplayConfig theme_cfg;
+    GameplayTheme theme_cfg;
 
     const RGBAColor box_color = 0x0A0AFF80_rgba;
     static constexpr int inner_padding = 10;
