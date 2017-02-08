@@ -27,6 +27,7 @@ namespace States {
 
 Gameplay::Gameplay(AppContext& app, IngameState& parent, unsigned short starting_gravity_level)
     : player_devices(parent.device_order)
+    , theme_settings(app.theme().gameplay)
     , music(app.audio().loadMusic(app.theme().random_game_music()))
     , font_popuptext(app.gcx().loadFont(Paths::data() + "fonts/PTS76F.ttf", 34))
     , sfx_onhold(app.audio().loadSound(app.theme().get_sfx("hold.ogg")))
@@ -68,7 +69,7 @@ Gameplay::Gameplay(AppContext& app, IngameState& parent, unsigned short starting
 
         player_status[device_id] = PlayerStatus::PLAYING;
         parent.player_areas.emplace(std::piecewise_construct,
-                std::forward_as_tuple(device_id), std::forward_as_tuple(app, is_battle));
+                std::forward_as_tuple(device_id), std::forward_as_tuple(app, is_battle, theme_settings));
         parent.player_stats.emplace(std::piecewise_construct,
             std::forward_as_tuple(device_id), std::forward_as_tuple());
 

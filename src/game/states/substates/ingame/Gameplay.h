@@ -1,5 +1,6 @@
 #pragma once
 
+#include "game/Theme.h"
 #include "game/ScoreTable.h"
 #include "game/Transition.h"
 #include "game/components/animations/BattleAttack.h"
@@ -34,6 +35,8 @@ public:
 
 private:
     const std::vector<DeviceID> player_devices;
+
+    const ThemeConfig::GameplayConfig theme_settings;
 
     std::shared_ptr<Music> music;
     std::shared_ptr<Font> font_popuptext;

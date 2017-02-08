@@ -3,6 +3,7 @@
 #include "GarbageGauge.h"
 #include "WellContainer.h"
 #include "game/Timing.h"
+#include "game/Theme.h"
 #include "game/layout/Box.h"
 #include "game/components/HoldQueue.h"
 #include "game/components/NextQueue.h"
@@ -18,7 +19,7 @@ class SoundEffect;
 namespace Layout {
 class PlayerArea : public Layout::Box {
 public:
-    PlayerArea(AppContext& app, bool draw_gauge);
+    PlayerArea(AppContext& app, bool draw_gauge, ThemeConfig::GameplayConfig theme_cfg);
     virtual ~PlayerArea() {}
 
     void update();
@@ -50,6 +51,8 @@ public:
 protected:
     ::Rectangle wellbox;
     WellContainer ui_well;
+
+    ThemeConfig::GameplayConfig theme_cfg;
 
     const RGBAColor box_color = 0x0A0AFF80_rgba;
     static constexpr int inner_padding = 10;

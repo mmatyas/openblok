@@ -29,8 +29,9 @@ PlayerArea::GameEndVars::GameEndVars(AppContext& app)
     tex_finish->setAlpha(0x0);
 }
 
-PlayerArea::PlayerArea(AppContext& app, bool draw_gauge)
+PlayerArea::PlayerArea(AppContext& app, bool draw_gauge, ThemeConfig::GameplayConfig theme_cfg)
     : ui_well(app)
+    , theme_cfg(theme_cfg)
     , draw_gauge(draw_gauge)
     , garbage_gauge(app, ui_well.height())
     , rect_level{}
@@ -239,44 +240,40 @@ void PlayerArea::drawPassive(GraphicsContext& gcx) const
 
 void PlayerArea::drawWidePassive(GraphicsContext& gcx) const
 {
-    ui_well.drawBase(gcx);
+    if (theme_cfg.draw_wellbg)
+        ui_well.drawBase(gcx);
     if (draw_gauge)
         garbage_gauge.drawPassive(gcx);
 
     const int rightside_x = x() + width();
     static constexpr int label_height = 30;
 
-    // next queue
-    tex_next->drawAt(rightside_x - tex_next->width(), y());
+    if (theme_cfg.draw_panels) {
+        gcx.drawFilledRect(rect_score, box_color);
+        gcx.drawFilledRect(rect_time, box_color);
+        gcx.drawFilledRect(rect_goal, box_color);
+        gcx.drawFilledRect(rect_level, box_color);
+    }
+    if (theme_cfg.draw_labels) {
+        tex_hold->drawAt(x(), y());
+        tex_next->drawAt(rightside_x - tex_next->width(), y());
+        tex_goal->drawAt(rect_goal.x, rect_goal.y - inner_padding - label_height);
+        tex_level->drawAt(rect_level.x, rect_level.y - inner_padding - label_height);
+        tex_score->drawAt(rightside_x - tex_score->width(),
+                          rect_score.y - inner_padding - label_height);
+    }
+
+    hold_queue.draw(gcx, x(), y() + label_height + inner_padding);
     next_queue.draw(gcx, rightside_x - sidebar_width, y() + label_height + inner_padding);
 
-    // score
-    gcx.drawFilledRect(rect_score, box_color);
     tex_score_counter->drawAt(rect_score.x + (rect_score.w - tex_score_counter->width()) / 2,
                               rect_score.y + 5);
-    tex_score->drawAt(rightside_x - tex_score->width(),
-                      rect_score.y - inner_padding - label_height);
-
-    // time
-    gcx.drawFilledRect(rect_time, box_color);
     tex_time_counter->drawAt(rect_time.x + (rect_time.w - tex_time_counter->width()) / 2,
                              rect_time.y + 5);
-
-    // hold queue
-    tex_hold->drawAt(x(), y());
-    hold_queue.draw(gcx, x(), y() + label_height + inner_padding);
-
-    // goal
-    gcx.drawFilledRect(rect_goal, box_color);
     tex_goal_counter->drawAt(rect_goal.x + (rect_goal.w - tex_goal_counter->width()) / 2,
                              rect_goal.y + 5);
-    tex_goal->drawAt(rect_goal.x, rect_goal.y - inner_padding - label_height);
-
-    // level
-    gcx.drawFilledRect(rect_level, box_color);
     tex_level_counter_wide->drawAt(rect_level.x + (rect_level.w - tex_level_counter_wide->width()) / 2,
                                    rect_level.y + 5);
-    tex_level->drawAt(rect_level.x, rect_level.y - inner_padding - label_height);
 }
 
 void PlayerArea::drawWideActive(GraphicsContext& gcx) const
@@ -288,24 +285,24 @@ void PlayerArea::drawWideActive(GraphicsContext& gcx) const
 
 void PlayerArea::drawNarrowPassive(GraphicsContext& gcx) const
 {
-    ui_well.drawBase(gcx);
+    if (theme_cfg.draw_wellbg)
+        ui_well.drawBase(gcx);
     if (draw_gauge)
         garbage_gauge.drawPassive(gcx);
 
-    // hold queue
+    if (theme_cfg.draw_panels) {
+        gcx.drawFilledRect(rect_level, box_color);
+        gcx.drawFilledRect(rect_score, box_color);
+    }
+    if (theme_cfg.draw_labels) {
+        tex_hold->drawAt(x() + 5, y());
+        tex_next->drawAt(x() + width() - tex_next->width() - 5, y());
+    }
+
     hold_queue.draw(gcx, x(), y());
-    tex_hold->drawAt(x() + 5, y());
-
-    // next queue
     next_queue.draw(gcx, x() + width() - ui_well.wellWidth() / 2, y());
-    tex_next->drawAt(x() + width() - tex_next->width() - 5, y());
 
-    // level
-    gcx.drawFilledRect(rect_level, box_color);
     tex_level_counter_narrow->drawAt(rect_level.x + 10, rect_level.y);
-
-    // score
-    gcx.drawFilledRect(rect_score, box_color);
     tex_score_counter->drawAt(rect_score.x + rect_score.w - tex_score_counter->width() - 10, rect_score.y);
 }
 

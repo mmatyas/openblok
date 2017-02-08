@@ -5,13 +5,13 @@
 
 struct ThemeConfig {
     struct GameplayConfig {
-        bool draw_well;
-        bool draw_text;
+        bool draw_wellbg;
+        bool draw_labels;
         bool draw_panels;
 
         GameplayConfig()
-            : draw_well(true)
-            , draw_text(true)
+            : draw_wellbg(true)
+            , draw_labels (true)
             , draw_panels(true)
         {}
     } gameplay;

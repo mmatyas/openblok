@@ -92,8 +92,8 @@ const std::string LOG_TAG("themecfg");
 
 std::unordered_map<std::string, bool*> createBoolBinds(ThemeConfig& theme) {
     return {
-        {"draw_well", &theme.gameplay.draw_well},
-        {"draw_text", &theme.gameplay.draw_text},
+        {"draw_wellbg", &theme.gameplay.draw_wellbg},
+        {"draw_labels", &theme.gameplay.draw_labels},
         {"draw_panels", &theme.gameplay.draw_panels},
     };
 }
