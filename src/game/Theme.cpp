@@ -19,7 +19,7 @@
 
 
 inline bool path_exists(const std::string& path) {
-    return posix_access(path.c_str(), F_OK) == 0;
+    return posix_access(path.c_str(), 0) == 0;
 }
 
 
