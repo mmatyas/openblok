@@ -67,7 +67,7 @@ void Input::handleKeys(Well& well, const std::vector<InputEvent>& events)
     }
 
 
-    if (keystates.at(InputType::GAME_MOVE_LEFT) xor keystates.at(InputType::GAME_MOVE_RIGHT)) {
+    if (keystates.at(InputType::GAME_MOVE_LEFT) ^ keystates.at(InputType::GAME_MOVE_RIGHT)) {
         bool can_move = false;
         well.das.update();
         if (well.das.inactive()) {

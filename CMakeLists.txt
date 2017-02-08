@@ -50,7 +50,6 @@ endif()
 include(TryAddingCompilerFlag)
 if(MSVC)
     try_adding_compiler_flag(/W3) # warnings
-    try_adding_compiler_flag(/Za) # disables lang extensions, enables boolean keywords
 else()
     try_adding_compiler_flag(-Wall)
     try_adding_compiler_flag(-Wextra)
