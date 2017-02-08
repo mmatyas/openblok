@@ -5,6 +5,7 @@
 #include "system/Paths.h"
 
 #include <tinydir_cpp.h>
+#include <random>
 #include <regex>
 #include <set>
 
