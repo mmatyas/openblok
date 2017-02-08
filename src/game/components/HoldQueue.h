@@ -37,7 +37,7 @@ public:
     void update();
 
     /// Draw the current holded piece at (x,y), if any.
-    void draw(GraphicsContext&, int x, int y) const;
+    void draw(GraphicsContext&, int x, int y, bool draw_panel) const;
 
 private:
     bool swap_allowed;

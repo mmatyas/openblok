@@ -22,7 +22,7 @@ public:
     void setPreviewCount(unsigned);
 
     /// Draw the N previewable pieces at (x,y)
-    void draw(GraphicsContext&, int x, int y) const;
+    void draw(GraphicsContext&, int x, int y, bool draw_panel) const;
 
 private:
     static std::deque<PieceType> global_piece_queue;

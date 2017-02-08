@@ -263,8 +263,8 @@ void PlayerArea::drawWidePassive(GraphicsContext& gcx) const
                           rect_score.y - inner_padding - label_height);
     }
 
-    hold_queue.draw(gcx, x(), y() + label_height + inner_padding);
-    next_queue.draw(gcx, rightside_x - sidebar_width, y() + label_height + inner_padding);
+    hold_queue.draw(gcx, x(), y() + label_height + inner_padding, theme_cfg.draw_panels);
+    next_queue.draw(gcx, rightside_x - sidebar_width, y() + label_height + inner_padding, theme_cfg.draw_panels);
 
     tex_score_counter->drawAt(rect_score.x + (rect_score.w - tex_score_counter->width()) / 2,
                               rect_score.y + 5);
@@ -299,8 +299,8 @@ void PlayerArea::drawNarrowPassive(GraphicsContext& gcx) const
         tex_next->drawAt(x() + width() - tex_next->width() - 5, y());
     }
 
-    hold_queue.draw(gcx, x(), y());
-    next_queue.draw(gcx, x() + width() - ui_well.wellWidth() / 2, y());
+    hold_queue.draw(gcx, x(), y(), theme_cfg.draw_panels);
+    next_queue.draw(gcx, x() + width() - ui_well.wellWidth() / 2, y(), theme_cfg.draw_panels);
 
     tex_level_counter_narrow->drawAt(rect_level.x + 10, rect_level.y);
     tex_score_counter->drawAt(rect_score.x + rect_score.w - tex_score_counter->width() - 10, rect_score.y);

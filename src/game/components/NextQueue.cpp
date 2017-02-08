@@ -68,12 +68,14 @@ void NextQueue::setPreviewCount(unsigned num)
     fill_queue();
 }
 
-void NextQueue::draw(GraphicsContext& gcx, int x, int y) const
+void NextQueue::draw(GraphicsContext& gcx, int x, int y, bool draw_panel) const
 {
-    gcx.drawFilledRect({
-        x, y,
-        5 * Mino::texture_size_px, 4 * Mino::texture_size_px},
-        0x0A0AFF80_rgba);
+    if (draw_panel) {
+        gcx.drawFilledRect({
+            x, y,
+            5 * Mino::texture_size_px, 4 * Mino::texture_size_px},
+            0x0A0AFF80_rgba);
+    }
 
     int offset_y = y + Mino::texture_size_px;
     draw_nth_piece(0, x, offset_y);
