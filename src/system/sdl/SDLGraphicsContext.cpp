@@ -4,6 +4,7 @@
 #include "SDLTexture.h"
 #include "system/Log.h"
 
+#include <SDL2/SDL_image.h>
 #include <SDL2pp/SDL2pp.hh>
 #include <cmath>
 #include <exception>
@@ -15,6 +16,7 @@ const std::string LOG_TAG("video");
 
 SDLGraphicsContext::SDLGraphicsContext(SDL2pp::Window& window)
     : renderer(window, -1, 0x0)
+    , image_loader(IMG_INIT_PNG | IMG_INIT_JPG)
     , ttf()
     , on_render_callback([](){})
 {

@@ -32,6 +32,7 @@ public:
 
 private:
     SDL2pp::Renderer renderer;
+    SDL2pp::SDLImage image_loader;
     SDL2pp::SDLTTF ttf;
     uint32_t pixelformat;
 
