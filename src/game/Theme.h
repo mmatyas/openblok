@@ -1,6 +1,19 @@
 #pragma once
 
+#include "system/Color.h"
+
 #include <string>
+
+
+struct CommonTheme {
+    RGBAColor primary_color;
+    RGBAColor secondary_color;
+
+    CommonTheme()
+        : primary_color()
+        , secondary_color()
+    {}
+};
 
 struct GameplayTheme {
     bool draw_wellbg;
@@ -15,6 +28,7 @@ struct GameplayTheme {
 };
 
 struct ThemeConfig {
+    CommonTheme common;
     GameplayTheme gameplay;
 
     void set_theme_dir(const std::string&);

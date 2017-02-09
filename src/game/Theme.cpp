@@ -14,6 +14,7 @@
 #define posix_access _access
 #else
 #include <unistd.h>
+#include <system/Color.h>
 #define posix_access access
 #endif
 
@@ -91,11 +92,18 @@ std::string ThemeConfig::random_file_from(const std::string& dir_name) const
 
 const std::string LOG_TAG("themecfg");
 
-std::unordered_map<std::string, bool*> createBoolBinds(ThemeConfig& theme) {
+std::unordered_map<std::string, bool*> createGameBoolBinds(GameplayTheme& theme) {
     return {
-        {"draw_wellbg", &theme.gameplay.draw_wellbg},
-        {"draw_labels", &theme.gameplay.draw_labels},
-        {"draw_panels", &theme.gameplay.draw_panels},
+        {"draw_wellbg", &theme.draw_wellbg},
+        {"draw_labels", &theme.draw_labels},
+        {"draw_panels", &theme.draw_panels},
+    };
+}
+
+std::unordered_map<std::string, RGBAColor*> createColorBinds(CommonTheme& theme) {
+    return {
+        {"primary_color", &theme.primary_color},
+        {"secondary_color", &theme.secondary_color},
     };
 }
 
@@ -108,11 +116,13 @@ ThemeConfig ThemeConfigFile::load(const std::string& dir_name)
     if (config.empty())
         return tcfg;
 
-    const std::regex valid_value(R"(([0-9]{1,3}|on|off|yes|no|true|false|[a-z]+))");
+    const std::regex valid_value(R"(([0-9]{1,3}|on|off|yes|no|true|false|[a-z]+|#[0-9a-fA-F]{6}))");
+    const std::regex valid_color(R"(^#[0-9a-fA-F]{6,8}$)");
     const std::set<std::string> accepted_headers = {"meta", "gameplay"};
 
 
-    auto bool_binds = createBoolBinds(tcfg);
+    auto game_bool_binds = createGameBoolBinds(tcfg.gameplay);
+    auto color_binds = createColorBinds(tcfg.common);
 
     for (const auto& block : config) {
         const auto& block_name = block.first;
@@ -137,8 +147,25 @@ ThemeConfig ThemeConfigFile::load(const std::string& dir_name)
             }
 
             try {
-                if (bool_binds.count(key_str))
-                    *bool_binds.at(key_str) = ConfigFile::parseBool(keyval);
+                if (block_name == "gameplay" && game_bool_binds.count(key_str))
+                    *game_bool_binds.at(key_str) = ConfigFile::parseBool(keyval);
+                else if (block_name == "common" && std::regex_match(val_str, valid_color)) {
+                    try {
+                        RGBAColor color;
+                        color.r = std::stoul(val_str.substr(1, 3), 0, 16);
+                        color.g = std::stoul(val_str.substr(3, 5), 0, 16);
+                        color.b = std::stoul(val_str.substr(5, 7), 0, 16);
+                        if (val_str.size() == 9 /* RGBA */)
+                            color.a = std::stoul(val_str.substr(7, 9), 0, 16);
+                        else
+                            color.a = 0xFF;
+
+                        *color_binds.at(key_str) = color;
+                    }
+                    catch (const std::exception& err) {
+                        throw std::runtime_error("Could not parse color for '" + key_str + "', ignored");
+                    }
+                }
                 else
                     throw std::runtime_error("Unknown option '" + key_str + "', ignored");
             }
