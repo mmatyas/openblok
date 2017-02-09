@@ -31,7 +31,7 @@ SDLWindow::SDLWindow()
             {SDL_SCANCODE_X, {InputType::GAME_ROTATE_RIGHT, InputType::MENU_CANCEL}},
             {SDL_SCANCODE_RETURN, {InputType::MENU_OK}},
             {SDL_SCANCODE_BACKSPACE, {InputType::MENU_CANCEL}},
-            {SDL_SCANCODE_ESCAPE, {InputType::MENU_CANCEL}},
+            {SDL_SCANCODE_ESCAPE, {InputType::GAME_PAUSE, InputType::MENU_CANCEL}},
         })
     , default_gamepad_mapping({
             {SDL_CONTROLLER_BUTTON_DPAD_UP, {InputType::GAME_HARDDROP, InputType::MENU_UP}},
