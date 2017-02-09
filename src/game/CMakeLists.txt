@@ -137,7 +137,7 @@ set(MOD_GAME_H
     util/Matrix.h
 )
 
-if(NOT CMAKE_BUILD_TYPE MATCHES Release)
+if(CMAKE_BUILD_TYPE STREQUAL "debug")
     list(APPEND MOD_GAME_SRC components/well/Ascii.cpp)
     list(APPEND MOD_GAME_H components/well/Ascii.h)
 endif()

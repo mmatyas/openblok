@@ -34,6 +34,7 @@ endif()
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "Release")
 endif()
+string(TOLOWER "${CMAKE_BUILD_TYPE}" CMAKE_BUILD_TYPE)
 
 
 # Global compiler settings
@@ -76,7 +77,7 @@ add_subdirectory(external/libSDL2pp)
 # The main game source
 include_directories(src)
 add_subdirectory(src)
-if(BUILD_TESTS)
+if(CMAKE_BUILD_TYPE STREQUAL "debug" AND BUILD_TESTS)
     add_subdirectory(external/unittest-cpp)
     include_directories(external/unittest-cpp)
     add_subdirectory(tests)
