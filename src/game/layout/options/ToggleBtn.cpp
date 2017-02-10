@@ -26,8 +26,8 @@ ToggleButton::ToggleButton(AppContext& app,
     padding_ver = (height() - tex_label->height()) / 2;
 
     auto font = app.gcx().loadFont(Paths::data() + "fonts/PTS55F.ttf", 24);
-    tex_onoff.at(0) = font->renderText(tr("OFF"), app.theme().colors.text);
-    tex_onoff.at(1) = font->renderText(tr("ON"), app.theme().colors.text);
+    tex_onoff.at(0) = font->renderText(tr("OFF"), text_color);
+    tex_onoff.at(1) = font->renderText(tr("ON"), text_color);
 }
 
 void ToggleButton::setWidth(int w)

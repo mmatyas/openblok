@@ -10,14 +10,14 @@
 namespace Layout {
 namespace Options {
 
-// darker accent to make white text more visible
+RGBAColor CategoryButton::text_color = 0xEEEEEEFF_rgba;
 RGBAColor CategoryButton::marker_color = 0xCE8000FF_rgba;
 
 CategoryButton::CategoryButton(AppContext& app, std::string&& text)
     : Layout::MenuItem(std::forward<std::string>(text))
 {
     auto font = app.gcx().loadFont(Paths::data() + "fonts/PTS75F.ttf", 30);
-    tex_label = font->renderText(btn_label_text, app.theme().colors.text);
+    tex_label = font->renderText(btn_label_text, text_color);
 
     bounding_box.w = 270;
     bounding_box.h = 90;

@@ -25,12 +25,12 @@ InputField::InputField(AppContext& app, std::string&& label,
     setWidth(750);
     padding_ver = (height() - tex_label->height()) / 2;
 
-    changeButtonTex(app, default_raw_key, app.theme().colors.text);
+    changeButtonTex(app, default_raw_key);
 }
 
-void InputField::changeButtonTex(AppContext& app, uint16_t raw_key, const RGBAColor& color)
+void InputField::changeButtonTex(AppContext& app, uint16_t raw_key)
 {
-    tex_buttonname = font->renderText(app.window().buttonName(device_id, raw_key), color);
+    tex_buttonname = font->renderText(app.window().buttonName(device_id, raw_key), text_color);
 }
 
 void InputField::setWidth(int w)
@@ -61,7 +61,7 @@ void InputField::onRawPress(AppContext& app, RawInputEvent raw_input)
         return;
 
     waiting_for_input = false;
-    changeButtonTex(app, raw_input.button, app.theme().colors.text);
+    changeButtonTex(app, raw_input.button);
 
     callback(raw_input);
 }

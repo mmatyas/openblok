@@ -18,10 +18,11 @@ public:
 
     void draw(GraphicsContext&) const override;
 
-    static RGBAColor marker_color;
-
 private:
     std::unique_ptr<Texture> tex_label;
+
+    static RGBAColor text_color;
+    static RGBAColor marker_color;
 };
 
 } // namespace Options

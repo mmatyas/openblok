@@ -34,11 +34,12 @@ public:
     int marginBottom() const { return margin_bottom; }
     void setMarginBottom(int px) { margin_bottom = px; }
 
-    static RGBAColor marker_color;
-
 protected:
     std::unique_ptr<Texture> tex_label;
     std::unique_ptr<Texture> tex_description;
+
+    static RGBAColor text_color;
+    static RGBAColor marker_color;
 
 private:
     int margin_bottom;

@@ -10,6 +10,7 @@ namespace Layout {
 namespace Options {
 
 // darker accent to make white text more visible
+RGBAColor OptionsItem::text_color = 0xEEEEEEFF_rgba;
 RGBAColor OptionsItem::marker_color = 0xCE8000FF_rgba;
 
 OptionsItem::OptionsItem(AppContext& app, std::string&& label, std::string&& description)
@@ -17,11 +18,11 @@ OptionsItem::OptionsItem(AppContext& app, std::string&& label, std::string&& des
     , margin_bottom(6)
 {
     auto font = app.gcx().loadFont(Paths::data() + "fonts/PTS55F.ttf", 24);
-    tex_label = font->renderText(btn_label_text, app.theme().colors.text);
+    tex_label = font->renderText(btn_label_text, text_color);
 
     if (!description.empty()) {
         font = app.gcx().loadFont(Paths::data() + "fonts/PTS55F.ttf", 20);
-        tex_description = font->renderText(description, app.theme().colors.text);
+        tex_description = font->renderText(description, text_color);
     }
 }
 

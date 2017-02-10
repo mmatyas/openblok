@@ -30,9 +30,6 @@ Options::Options(MainMenuState& parent, AppContext& app)
     , current_device_id(-1) // keyboard
     , current_input_handler(nullptr)
 {
-    Layout::Options::CategoryButton::marker_color = app.theme().colors.accent;
-    Layout::Options::OptionsItem::marker_color = app.theme().colors.accent;
-
     category_buttons.emplace_back(app, tr("GENERAL"));
     category_buttons.emplace_back(app, tr("FINE TUNING"));
     category_buttons.emplace_back(app, tr("INPUT (MENU)"));
