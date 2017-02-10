@@ -5,13 +5,15 @@
 #include <string>
 
 
-struct CommonTheme {
-    RGBAColor primary_color;
-    RGBAColor secondary_color;
+struct ThemeColors {
+    RGBColor primary;
+    RGBColor accent;
+    RGBColor text;
 
-    CommonTheme()
-        : primary_color()
-        , secondary_color()
+    ThemeColors()
+        : primary(0x2030FF_rgb)
+        , accent(0xFFA500_rgb)
+        , text(0xEEEEEE_rgb)
     {}
 };
 
@@ -28,7 +30,7 @@ struct GameplayTheme {
 };
 
 struct ThemeConfig {
-    CommonTheme common;
+    ThemeColors colors;
     GameplayTheme gameplay;
 
     void set_theme_dir(const std::string&);
