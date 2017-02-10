@@ -1,6 +1,7 @@
 #pragma once
 
 #include "game/layout/MenuItem.h"
+#include "system/Color.h"
 
 #include <memory>
 
@@ -16,6 +17,8 @@ public:
     CategoryButton(AppContext&, std::string&& label);
 
     void draw(GraphicsContext&) const override;
+
+    static RGBColor marker_color;
 
 private:
     std::unique_ptr<Texture> tex_label;

@@ -10,6 +10,9 @@
 namespace Layout {
 namespace Options {
 
+// darker accent to make white text more visible
+RGBColor CategoryButton::marker_color = 0xCE8000_rgb;
+
 CategoryButton::CategoryButton(AppContext& app, std::string&& text)
     : Layout::MenuItem(std::forward<std::string>(text))
 {
@@ -25,7 +28,7 @@ void CategoryButton::draw(GraphicsContext& gcx) const
     const int category_btn_padding = (height() - tex_label->height()) / 2;
     if (is_active) {
         gcx.drawFilledRect(bounding_box, 0x0060BF_rgb);
-        gcx.drawFilledRect({x(), y(), 10, height()}, 0xCE8000_rgb);
+        gcx.drawFilledRect({x(), y(), 10, height()}, marker_color);
         tex_label->drawAt(x() + 40, y() + category_btn_padding);
     }
     else {

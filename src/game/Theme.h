@@ -12,7 +12,7 @@ struct ThemeColors {
 
     ThemeColors()
         : primary(0x2030FF_rgb)
-        , accent(0xFFA500_rgb)
+        , accent(0xCE8000_rgb)
         , text(0xEEEEEE_rgb)
     {}
 };

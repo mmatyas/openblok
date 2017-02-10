@@ -33,7 +33,7 @@ PlayerArea::PlayerArea(AppContext& app, bool draw_gauge, GameplayTheme theme_cfg
     : ui_well(app)
     , theme_cfg(theme_cfg)
     , labelcolor_normal(app.theme().colors.text)
-    , labelcolor_highlight(0xFFA500_rgb)
+    , labelcolor_highlight(app.theme().colors.accent)
     , draw_gauge(draw_gauge)
     , garbage_gauge(app, ui_well.height())
     , rect_level{}

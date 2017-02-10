@@ -70,10 +70,10 @@ void InputField::draw(GraphicsContext& gcx) const
 {
     if (is_active) {
         if (isLocked())
-            gcx.drawFilledRect(bounding_box, 0xCE8000_rgb);
+            gcx.drawFilledRect(bounding_box, marker_color);
         else {
             gcx.drawFilledRect(bounding_box, 0x0060BF_rgb);
-            gcx.drawFilledRect({x(), y(), 6, height()}, 0xCE8000_rgb);
+            gcx.drawFilledRect({x(), y(), 6, height()}, marker_color);
         }
     }
     else

@@ -82,7 +82,7 @@ void ValueChooser::draw(GraphicsContext& gcx) const
     assert(current_idx < values.size());
     if (is_active) {
         gcx.drawFilledRect(bounding_box, 0x0060BF_rgb);
-        gcx.drawFilledRect({x(), y(), 6, height()}, 0xCE8000_rgb);
+        gcx.drawFilledRect({x(), y(), 6, height()}, marker_color);
         tex_label->drawAt(x() + padding_hor, y() + padding_ver);
 
         tex_actives.at(current_idx)->drawAt(right_x - tex_actives.at(current_idx)->width(), y() + padding_ver);

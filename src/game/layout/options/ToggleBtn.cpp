@@ -66,7 +66,7 @@ void ToggleButton::draw(GraphicsContext& gcx) const
 {
     if (is_active) {
         gcx.drawFilledRect(bounding_box, 0x0060BF_rgb);
-        gcx.drawFilledRect({x(), y(), 6, height()}, 0xCE8000_rgb);
+        gcx.drawFilledRect({x(), y(), 6, height()}, marker_color);
         tex_label->drawAt(x() + padding_left, y() + padding_ver);
     }
     else {
@@ -77,7 +77,7 @@ void ToggleButton::draw(GraphicsContext& gcx) const
     int switch_rect_centerx = switch_state ? rightswitch_centerx : leftswitch_centerx;
     gcx.drawFilledRect({
         switch_rect_centerx - switch_half_width, y() + 5,
-        switch_half_width * 2, height() - 10}, 0xCE8000_rgb);
+        switch_half_width * 2, height() - 10}, marker_color);
     tex_onoff.at(0)->drawAt(leftswitch_centerx - tex_onoff.at(0)->width() / 2, y() + padding_ver);
     tex_onoff.at(1)->drawAt(rightswitch_centerx - tex_onoff.at(1)->width() / 2, y() + padding_ver);
 }

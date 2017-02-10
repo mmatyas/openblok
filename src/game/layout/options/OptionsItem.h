@@ -1,6 +1,7 @@
 #pragma once
 
 #include "game/layout/MenuItem.h"
+#include "system/Color.h"
 #include "system/Event.h"
 
 #include <memory>
@@ -32,6 +33,8 @@ public:
 
     int marginBottom() const { return margin_bottom; }
     void setMarginBottom(int px) { margin_bottom = px; }
+
+    static RGBColor marker_color;
 
 protected:
     std::unique_ptr<Texture> tex_label;
