@@ -1,6 +1,7 @@
 #pragma once
 
 #include "PieceType.h"
+#include "system/Color.h"
 
 #include <deque>
 #include <memory>
@@ -23,6 +24,8 @@ public:
 
     /// Draw the N previewable pieces at (x,y)
     void draw(GraphicsContext&, int x, int y, bool draw_panel) const;
+
+    static RGBAColor panel_color;
 
 private:
     static std::deque<PieceType> global_piece_queue;

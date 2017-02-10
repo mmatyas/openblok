@@ -8,6 +8,7 @@
 #include <assert.h>
 
 
+RGBAColor NextQueue::panel_color = 0x0A0AFF80_rgba;
 std::deque<PieceType> NextQueue::global_piece_queue = {};
 
 NextQueue::NextQueue(unsigned displayed_piece_count)
@@ -74,7 +75,7 @@ void NextQueue::draw(GraphicsContext& gcx, int x, int y, bool draw_panel) const
         gcx.drawFilledRect({
             x, y,
             5 * Mino::texture_size_px, 4 * Mino::texture_size_px},
-            0x0A0AFF80_rgba);
+            panel_color);
     }
 
     int offset_y = y + Mino::texture_size_px;

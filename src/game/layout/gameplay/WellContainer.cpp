@@ -7,9 +7,13 @@
 
 namespace Layout {
 
+RGBAColor WellContainer::border_color;
+
 WellContainer::WellContainer(AppContext& app)
     : m_well(app.wellconfig())
 {
+    Layout::WellContainer::border_color = app.theme().colors.panel;
+
     bounding_box.w = wellWidth() + border_width * 2;
     bounding_box.h = wellHeight() + border_width * 2;
 
@@ -32,11 +36,10 @@ void WellContainer::drawBase(GraphicsContext& gcx) const
 {
     m_well.drawBackground(gcx, x() + border_width, y() + border_width);
 
-    static const auto boardborder_color = 0x1A3A8A_rgb;
-    gcx.drawFilledRect(border_left, boardborder_color);
-    gcx.drawFilledRect(border_right, boardborder_color);
-    gcx.drawFilledRect(border_top, boardborder_color);
-    gcx.drawFilledRect(border_bottom, boardborder_color);
+    gcx.drawFilledRect(border_left, border_color);
+    gcx.drawFilledRect(border_right, border_color);
+    gcx.drawFilledRect(border_top, border_color);
+    gcx.drawFilledRect(border_bottom, border_color);
 }
 
 void WellContainer::drawContent(GraphicsContext& gcx) const

@@ -19,7 +19,7 @@ class SoundEffect;
 namespace Layout {
 class PlayerArea : public Layout::Box {
 public:
-    PlayerArea(AppContext& app, bool draw_gauge, GameplayTheme theme_cfg);
+    PlayerArea(AppContext& app, bool draw_gauge, const GameplayTheme& theme_cfg);
     virtual ~PlayerArea() {}
 
     void update();
@@ -48,15 +48,16 @@ public:
     int wellCenterX() const { return wellBox().x + wellBox().w / 2; }
     int wellCenterY() const { return wellBox().y + wellBox().h / 2; }
 
+
 protected:
     ::Rectangle wellbox;
     WellContainer ui_well;
 
-    GameplayTheme theme_cfg;
-    const RGBAColor labelcolor_normal;
-    const RGBAColor labelcolor_highlight;
+    static GameplayTheme theme_cfg;
+    static RGBAColor labelcolor_normal;
+    static RGBAColor labelcolor_highlight;
+    static RGBAColor panel_color;
 
-    const RGBAColor box_color = 0x0A0AFF80_rgba;
     static constexpr int inner_padding = 10;
     static constexpr int sidebar_width = 5 * Mino::texture_size_px;
     static constexpr int topbar_height = 4 * Mino::texture_size_px;

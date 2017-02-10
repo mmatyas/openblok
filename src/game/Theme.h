@@ -9,11 +9,13 @@ struct ThemeColors {
     RGBAColor primary;
     RGBAColor accent;
     RGBAColor text;
+    RGBAColor panel;
 
     ThemeColors()
         : primary(0x2030FFFF_rgba)
         , accent(0xCE8000FF_rgba)
         , text(0xEEEEEEFF_rgba)
+        , panel(0x0A0AFF80_rgba)
     {}
 };
 

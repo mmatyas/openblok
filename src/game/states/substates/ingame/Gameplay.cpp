@@ -51,6 +51,9 @@ Gameplay::Gameplay(AppContext& app, IngameState& parent, unsigned short starting
         })
 {
     TextPopup::text_color = app.theme().colors.text;
+    NextQueue::panel_color = app.theme().colors.panel;
+    HoldQueue::panel_color = app.theme().colors.panel;
+
 
     assert(player_devices.size() > 0);
     assert(player_devices.size() <= 4);

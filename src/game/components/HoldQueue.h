@@ -2,6 +2,7 @@
 
 #include "PieceType.h"
 #include "game/Transition.h"
+#include "system/Color.h"
 
 #include <array>
 #include <memory>
@@ -38,6 +39,8 @@ public:
 
     /// Draw the current holded piece at (x,y), if any.
     void draw(GraphicsContext&, int x, int y, bool draw_panel) const;
+
+    static RGBAColor panel_color;
 
 private:
     bool swap_allowed;

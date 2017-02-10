@@ -105,6 +105,7 @@ std::unordered_map<std::string, RGBAColor*> createRGBBinds(ThemeColors& colors) 
         {"primary", &colors.primary},
         {"accent", &colors.accent},
         {"text", &colors.text},
+        {"panel", &colors.panel},
     };
 }
 

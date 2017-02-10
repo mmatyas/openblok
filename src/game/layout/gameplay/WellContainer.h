@@ -3,6 +3,7 @@
 #include "game/components/Mino.h"
 #include "game/components/Well.h"
 #include "game/layout/Box.h"
+#include "system/Color.h"
 
 class AppContext;
 
@@ -26,6 +27,7 @@ public:
 private:
     Well m_well;
 
+    static RGBAColor border_color;
     static constexpr uint8_t border_width = 5;
     ::Rectangle border_left;
     ::Rectangle border_right;

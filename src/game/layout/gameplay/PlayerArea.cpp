@@ -11,6 +11,11 @@
 
 namespace Layout {
 
+GameplayTheme PlayerArea::theme_cfg;
+RGBAColor PlayerArea::labelcolor_normal;
+RGBAColor PlayerArea::labelcolor_highlight;
+RGBAColor PlayerArea::panel_color;
+
 PlayerArea::GameEndVars::GameEndVars(AppContext& app)
     : gameoversfx_enabled(true)
     , sfx_ongameover(app.audio().loadSound(app.theme().get_sfx("gameover.ogg")))
@@ -29,11 +34,8 @@ PlayerArea::GameEndVars::GameEndVars(AppContext& app)
     tex_finish->setAlpha(0x0);
 }
 
-PlayerArea::PlayerArea(AppContext& app, bool draw_gauge, GameplayTheme theme_cfg)
+PlayerArea::PlayerArea(AppContext& app, bool draw_gauge, const GameplayTheme& theme_cfg)
     : ui_well(app)
-    , theme_cfg(theme_cfg)
-    , labelcolor_normal(app.theme().colors.text)
-    , labelcolor_highlight(app.theme().colors.accent)
     , draw_gauge(draw_gauge)
     , garbage_gauge(app, ui_well.height())
     , rect_level{}
@@ -44,6 +46,11 @@ PlayerArea::PlayerArea(AppContext& app, bool draw_gauge, GameplayTheme theme_cfg
     , special_update([]{})
     , special_draw([](GraphicsContext&){})
 {
+    PlayerArea::theme_cfg = theme_cfg;
+    PlayerArea::labelcolor_normal = app.theme().colors.text;
+    PlayerArea::labelcolor_highlight = app.theme().colors.accent;
+    PlayerArea::panel_color = app.theme().colors.panel;
+
     auto font_label = app.gcx().loadFont(Paths::data() + "fonts/PTN57F.ttf", 28);
     font_content = app.gcx().loadFont(Paths::data() + "fonts/PTN77F.ttf", 30);
     font_content_highlight = app.gcx().loadFont(Paths::data() + "fonts/PTN77F.ttf", 32);
@@ -249,10 +256,10 @@ void PlayerArea::drawWidePassive(GraphicsContext& gcx) const
     static constexpr int label_height = 30;
 
     if (theme_cfg.draw_panels) {
-        gcx.drawFilledRect(rect_score, box_color);
-        gcx.drawFilledRect(rect_time, box_color);
-        gcx.drawFilledRect(rect_goal, box_color);
-        gcx.drawFilledRect(rect_level, box_color);
+        gcx.drawFilledRect(rect_score, panel_color);
+        gcx.drawFilledRect(rect_time, panel_color);
+        gcx.drawFilledRect(rect_goal, panel_color);
+        gcx.drawFilledRect(rect_level, panel_color);
     }
     if (theme_cfg.draw_labels) {
         tex_hold->drawAt(x(), y());
@@ -291,8 +298,8 @@ void PlayerArea::drawNarrowPassive(GraphicsContext& gcx) const
         garbage_gauge.drawPassive(gcx);
 
     if (theme_cfg.draw_panels) {
-        gcx.drawFilledRect(rect_level, box_color);
-        gcx.drawFilledRect(rect_score, box_color);
+        gcx.drawFilledRect(rect_level, panel_color);
+        gcx.drawFilledRect(rect_score, panel_color);
     }
     if (theme_cfg.draw_labels) {
         tex_hold->drawAt(x() + 5, y());
