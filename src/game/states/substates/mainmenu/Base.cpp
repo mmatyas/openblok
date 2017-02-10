@@ -319,7 +319,7 @@ void Base::draw(MainMenuState&, GraphicsContext& gcx) const
             btn.draw(gcx);
 
         auto& desc_tex = current_column->descriptions.at(current_column->selected_index);
-        RGBAColor color = 0x00268700_rgba;
+        static RGBAColor color = 0x00268700_rgba;
         color.a = desc_tex->alpha() * 0.90;
         gcx.drawFilledRect(desc_rect, color);
 
@@ -327,7 +327,7 @@ void Base::draw(MainMenuState&, GraphicsContext& gcx) const
     }
 
     if (state_transition_alpha) {
-        RGBAColor color = 0xFF_rgba;
+        static RGBAColor color = 0xFF_rgba;
         color.a = state_transition_alpha->value();
         gcx.drawFilledRect(screen_rect, color);
     }
