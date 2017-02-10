@@ -53,8 +53,8 @@ protected:
     WellContainer ui_well;
 
     GameplayTheme theme_cfg;
-    const RGBColor labelcolor_normal;
-    const RGBColor labelcolor_highlight;
+    const RGBAColor labelcolor_normal;
+    const RGBAColor labelcolor_highlight;
 
     const RGBAColor box_color = 0x0A0AFF80_rgba;
     static constexpr int inner_padding = 10;

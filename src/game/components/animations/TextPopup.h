@@ -23,7 +23,7 @@ public:
     bool isActive() const { return alpha.running(); }
     void setInitialPosition(int x, int y);
 
-    static RGBColor text_color;
+    static RGBAColor text_color;
 
 private:
     const std::string text;

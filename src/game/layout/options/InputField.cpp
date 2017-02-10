@@ -28,7 +28,7 @@ InputField::InputField(AppContext& app, std::string&& label,
     changeButtonTex(app, default_raw_key, app.theme().colors.text);
 }
 
-void InputField::changeButtonTex(AppContext& app, uint16_t raw_key, const RGBColor& color)
+void InputField::changeButtonTex(AppContext& app, uint16_t raw_key, const RGBAColor& color)
 {
     tex_buttonname = font->renderText(app.window().buttonName(device_id, raw_key), color);
 }

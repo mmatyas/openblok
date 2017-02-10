@@ -5,7 +5,7 @@
 #include "system/Texture.h"
 
 
-RGBColor TextPopup::text_color = 0xEEEEEE_rgb;
+RGBAColor TextPopup::text_color = 0xEEEEEEFF_rgba;
 
 TextPopup::TextPopup(const std::string& text, std::shared_ptr<Font>& font)
     : text(text)

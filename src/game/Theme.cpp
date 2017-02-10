@@ -100,7 +100,7 @@ std::unordered_map<std::string, bool*> createGameBoolBinds(GameplayTheme& theme)
     };
 }
 
-std::unordered_map<std::string, RGBColor*> createRGBBinds(ThemeColors& colors) {
+std::unordered_map<std::string, RGBAColor*> createRGBBinds(ThemeColors& colors) {
     return {
         {"primary", &colors.primary},
         {"accent", &colors.accent},
@@ -152,10 +152,15 @@ ThemeConfig ThemeConfigFile::load(const std::string& dir_name)
                     *game_bool_binds.at(key_str) = ConfigFile::parseBool(keyval);
                 else if (block_name == "colors" && std::regex_match(val_str, valid_color)) {
                     try {
-                        RGBColor color;
+                        RGBAColor color;
                         color.r = std::stoul(val_str.substr(1, 3), 0, 16);
                         color.g = std::stoul(val_str.substr(3, 5), 0, 16);
                         color.b = std::stoul(val_str.substr(5, 7), 0, 16);
+                        if (val_str.size() == 9 /* RGBA */)
+                            color.a = std::stoul(val_str.substr(7, 9), 0, 16);
+                        else
+                            color.a = 0xFF;
+
                         *color_binds.at(key_str) = color;
                     }
                     catch (const std::exception& err) {

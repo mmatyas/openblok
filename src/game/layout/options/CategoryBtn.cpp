@@ -11,7 +11,7 @@ namespace Layout {
 namespace Options {
 
 // darker accent to make white text more visible
-RGBColor CategoryButton::marker_color = 0xCE8000_rgb;
+RGBAColor CategoryButton::marker_color = 0xCE8000FF_rgba;
 
 CategoryButton::CategoryButton(AppContext& app, std::string&& text)
     : Layout::MenuItem(std::forward<std::string>(text))

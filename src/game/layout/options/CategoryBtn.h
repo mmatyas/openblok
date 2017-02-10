@@ -18,7 +18,7 @@ public:
 
     void draw(GraphicsContext&) const override;
 
-    static RGBColor marker_color;
+    static RGBAColor marker_color;
 
 private:
     std::unique_ptr<Texture> tex_label;

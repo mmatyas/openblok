@@ -34,7 +34,7 @@ private:
     int padding_ver;
     static constexpr int padding_hor = 20;
 
-    void changeButtonTex(AppContext& app, uint16_t raw_key, const RGBColor& color);
+    void changeButtonTex(AppContext& app, uint16_t raw_key, const RGBAColor& color);
     std::function<void(RawInputEvent)> callback;
 };
 

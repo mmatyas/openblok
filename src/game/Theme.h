@@ -6,14 +6,14 @@
 
 
 struct ThemeColors {
-    RGBColor primary;
-    RGBColor accent;
-    RGBColor text;
+    RGBAColor primary;
+    RGBAColor accent;
+    RGBAColor text;
 
     ThemeColors()
-        : primary(0x2030FF_rgb)
-        , accent(0xCE8000_rgb)
-        , text(0xEEEEEE_rgb)
+        : primary(0x2030FFFF_rgba)
+        , accent(0xCE8000FF_rgba)
+        , text(0xEEEEEEFF_rgba)
     {}
 };
 
