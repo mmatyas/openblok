@@ -387,7 +387,7 @@ void Options::draw(MainMenuState& parent, GraphicsContext& gcx) const
 {
     parent.states.front()->draw(parent, gcx);
 
-    RGBAColor black = 0x00000080_rgba;
+    RGBAColor black = 0x80_rgba;
     gcx.drawFilledRect(screen_rect, black);
     RGBAColor panel_bg = 0x002060F0_rgba;
     gcx.drawFilledRect(container_rect, panel_bg);
