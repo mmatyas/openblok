@@ -26,20 +26,21 @@ ValueChooser::ValueChooser(AppContext& app,
     padding_ver = (height() - tex_label->height()) / 2;
 
     auto font = app.gcx().loadFont(Paths::data() + "fonts/PTS55F.ttf", 24);
+    const auto font_color = app.theme().colors.text;
 
     assert(!values.empty());
     assert(current_idx < values.size());
     for (const auto& val : values)
-        tex_inactives.emplace_back(font->renderText(val, 0xEEEEEE_rgb));
+        tex_inactives.emplace_back(font->renderText(val, font_color));
 
     if (values.size() == 1)
-        tex_actives.emplace_back(font->renderText(values.at(0), 0xEEEEEE_rgb));
+        tex_actives.emplace_back(font->renderText(values.at(0), font_color));
     else {
         // put a '<' or '>' around the text when the item is selected
-        tex_actives.emplace_back(font->renderText(values.front() + " \u203A", 0xEEEEEE_rgb));
+        tex_actives.emplace_back(font->renderText(values.front() + " \u203A", font_color));
         for (unsigned i = 1; i < values.size() - 1; i++)
-            tex_actives.emplace_back(font->renderText("\u2039 " + values.at(i) + " \u203A", 0xEEEEEE_rgb));
-        tex_actives.emplace_back(font->renderText("\u2039 " + values.back(), 0xEEEEEE_rgb));
+            tex_actives.emplace_back(font->renderText("\u2039 " + values.at(i) + " \u203A", font_color));
+        tex_actives.emplace_back(font->renderText("\u2039 " + values.back(), font_color));
     }
 }
 

@@ -21,7 +21,7 @@ PlayerArea::GameEndVars::GameEndVars(AppContext& app)
         [this]{ if (sfx_onanimend) sfx_onanimend->playOnce(); })
 {
     auto font_big = app.gcx().loadFont(Paths::data() + "fonts/PTC75F.ttf", 45);
-    const auto color = 0xEEEEEE_rgb;
+    const auto color = app.theme().colors.text;
 
     tex_gameover = font_big->renderText(tr("GAME OVER"), color);
     tex_gameover->setAlpha(0x0);
@@ -32,6 +32,8 @@ PlayerArea::GameEndVars::GameEndVars(AppContext& app)
 PlayerArea::PlayerArea(AppContext& app, bool draw_gauge, GameplayTheme theme_cfg)
     : ui_well(app)
     , theme_cfg(theme_cfg)
+    , labelcolor_normal(app.theme().colors.text)
+    , labelcolor_highlight(0xFFA500_rgb)
     , draw_gauge(draw_gauge)
     , garbage_gauge(app, ui_well.height())
     , rect_level{}
@@ -46,13 +48,11 @@ PlayerArea::PlayerArea(AppContext& app, bool draw_gauge, GameplayTheme theme_cfg
     font_content = app.gcx().loadFont(Paths::data() + "fonts/PTN77F.ttf", 30);
     font_content_highlight = app.gcx().loadFont(Paths::data() + "fonts/PTN77F.ttf", 32);
 
-    const auto color = 0xEEEEEE_rgb;
-
-    tex_next = font_label->renderText(tr("NEXT"), color);
-    tex_hold = font_label->renderText(tr("HOLD"), color);
-    tex_score = font_label->renderText(tr("SCORE"), color);
-    tex_goal = font_label->renderText(tr("GOAL"), color);
-    tex_level = font_label->renderText(tr("LEVEL"), color);
+    tex_next = font_label->renderText(tr("NEXT"), labelcolor_normal);
+    tex_hold = font_label->renderText(tr("HOLD"), labelcolor_normal);
+    tex_score = font_label->renderText(tr("SCORE"), labelcolor_normal);
+    tex_goal = font_label->renderText(tr("GOAL"), labelcolor_normal);
+    tex_level = font_label->renderText(tr("LEVEL"), labelcolor_normal);
 
     setScore(0);
     setGoalCounter(0);
@@ -152,21 +152,21 @@ void PlayerArea::update()
 
 void PlayerArea::setLevelCounter(unsigned num)
 {
-    tex_level_counter_narrow = font_content->renderText(tr("LEVEL ") + std::to_string(num), 0xEEEEEE_rgb);
-    tex_level_counter_wide = font_content->renderText(std::to_string(num), 0xEEEEEE_rgb);
+    tex_level_counter_narrow = font_content->renderText(tr("LEVEL ") + std::to_string(num), labelcolor_normal);
+    tex_level_counter_wide = font_content->renderText(std::to_string(num), labelcolor_normal);
 }
 
 void PlayerArea::setScore(unsigned num)
 {
-    tex_score_counter = font_content->renderText(std::to_string(num), 0xEEEEEE_rgb);
+    tex_score_counter = font_content->renderText(std::to_string(num), labelcolor_normal);
 }
 
 void PlayerArea::setGoalCounter(unsigned num)
 {
     if (num <= 5)
-        tex_goal_counter = font_content_highlight->renderText(std::to_string(num), 0xFFA500_rgb);
+        tex_goal_counter = font_content_highlight->renderText(std::to_string(num), labelcolor_highlight);
     else
-        tex_goal_counter = font_content->renderText(std::to_string(num), 0xEEEEEE_rgb);
+        tex_goal_counter = font_content->renderText(std::to_string(num), labelcolor_normal);
 }
 
 void PlayerArea::setGametime(Duration gametime)
@@ -174,7 +174,7 @@ void PlayerArea::setGametime(Duration gametime)
     const auto newstr = Timing::toString(gametime);
     if (newstr != gametime_text) {
         gametime_text = newstr;
-        tex_time_counter = font_content->renderText(gametime_text, 0xEEEEEE_rgb);
+        tex_time_counter = font_content->renderText(gametime_text, labelcolor_normal);
     }
 }
 

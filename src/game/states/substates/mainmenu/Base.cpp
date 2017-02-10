@@ -2,6 +2,7 @@
 
 #include "Options.h"
 #include "game/AppContext.h"
+#include "game/Theme.h"
 #include "game/components/PieceFactory.h"
 #include "game/components/rotations/SRS.h"
 #include "game/states/MainMenuState.h"
@@ -32,7 +33,7 @@ Base::Base(MainMenuState& parent, AppContext& app)
     column_slide_anim.stop();
 
     auto desc_font = app.gcx().loadFont(Paths::data() + "fonts/PTS55F.ttf", 24);
-    const auto desc_color = 0xEEEEEE_rgb;
+    const auto desc_color = app.theme().colors.text;
 
     primary_buttons.buttons.emplace_back(app, tr("SINGLEPLAYER"), [this](){
         openSubcolumn(&singleplayer_buttons);

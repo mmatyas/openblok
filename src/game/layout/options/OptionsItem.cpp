@@ -14,11 +14,11 @@ OptionsItem::OptionsItem(AppContext& app, std::string&& label, std::string&& des
     , margin_bottom(6)
 {
     auto font = app.gcx().loadFont(Paths::data() + "fonts/PTS55F.ttf", 24);
-    tex_label = font->renderText(btn_label_text, 0xEEEEEE_rgb);
+    tex_label = font->renderText(btn_label_text, app.theme().colors.text);
 
     if (!description.empty()) {
         font = app.gcx().loadFont(Paths::data() + "fonts/PTS55F.ttf", 20);
-        tex_description = font->renderText(description, 0xEEEEEE_rgb);
+        tex_description = font->renderText(description, app.theme().colors.text);
     }
 }
 

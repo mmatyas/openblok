@@ -5,6 +5,7 @@
 #include <functional>
 
 class Font;
+struct RGBColor;
 
 
 namespace Layout {
@@ -33,7 +34,7 @@ private:
     int padding_ver;
     static constexpr int padding_hor = 20;
 
-    void changeButtonTex(AppContext&, uint16_t);
+    void changeButtonTex(AppContext& app, uint16_t raw_key, const RGBColor& color);
     std::function<void(RawInputEvent)> callback;
 };
 

@@ -13,7 +13,7 @@ MainMenuButton::MainMenuButton(AppContext& app, std::string&& text, std::functio
     : Button(std::forward<std::string>(text), std::forward<std::function<void()>>(on_press))
 {
     auto font = app.gcx().loadFont(Paths::data() + "fonts/PTC75F.ttf", 35);
-    tex_label_on = font->renderText(btn_label_text, 0xEEEEEE_rgb);
+    tex_label_on = font->renderText(btn_label_text, app.theme().colors.text);
     tex_label_off = font->renderText(btn_label_text, 0x006080_rgb);
 
     bounding_box.w = 450;

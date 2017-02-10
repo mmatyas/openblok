@@ -25,7 +25,7 @@ Pause::Pause(AppContext& app)
     auto font_big = app.gcx().loadFont(Paths::data() + "fonts/PTC75F.ttf", 45);
     auto font_smaller = app.gcx().loadFont(Paths::data() + "fonts/PTC75F.ttf", 30);
 
-    const auto color_normal = 0xEEEEEE_rgb;
+    const auto color_normal = app.theme().colors.text;
     const auto color_highlight = 0xCE8000_rgb;
 
     tex_pause = font_big->renderText(tr("PAUSE"), color_normal);

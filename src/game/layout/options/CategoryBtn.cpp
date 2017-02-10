@@ -14,7 +14,7 @@ CategoryButton::CategoryButton(AppContext& app, std::string&& text)
     : Layout::MenuItem(std::forward<std::string>(text))
 {
     auto font = app.gcx().loadFont(Paths::data() + "fonts/PTS75F.ttf", 30);
-    tex_label = font->renderText(btn_label_text, 0xEEEEEE_rgb);
+    tex_label = font->renderText(btn_label_text, app.theme().colors.text);
 
     bounding_box.w = 270;
     bounding_box.h = 90;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "game/Transition.h"
+#include "system/Color.h"
 
 #include <memory>
 #include <string>
@@ -21,6 +22,8 @@ public:
 
     bool isActive() const { return alpha.running(); }
     void setInitialPosition(int x, int y);
+
+    static RGBColor text_color;
 
 private:
     const std::string text;
