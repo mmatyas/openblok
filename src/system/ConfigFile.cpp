@@ -15,8 +15,8 @@ ConfigFile::Blocks ConfigFile::load(const std::string& path)
     if (!infile.is_open())
         return Blocks();
 
-    const std::regex valid_head(R"(\[[a-zA-Z0-9\.-_,: \(\)]+\])");
-    const std::regex valid_data(R"([a-z_]+\s*=\s*([a-zA-Z0-9_, ]+|".*?"|#[a-fA-F0-9]{6}))");
+    const std::regex valid_head(R"(^\[[a-zA-Z0-9\.-_,: \(\)]+\]$)");
+    const std::regex valid_data(R"(^[a-z_]+\s*=\s*([a-zA-Z0-9_, ]+|".*?"|#[a-fA-F0-9]{6})$)");
     const std::regex whitespace_left(R"(^\s+)");
     const std::regex whitespace_right(R"(\s+$)");
 
