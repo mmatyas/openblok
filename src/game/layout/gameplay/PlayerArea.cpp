@@ -48,7 +48,7 @@ PlayerArea::PlayerArea(AppContext& app, bool draw_gauge, const GameplayTheme& th
 {
     PlayerArea::theme_cfg = theme_cfg;
     PlayerArea::labelcolor_normal = app.theme().colors.text;
-    PlayerArea::labelcolor_highlight = app.theme().colors.accent;
+    PlayerArea::labelcolor_highlight = app.theme().colors.text_accent;
     PlayerArea::panel_color = app.theme().colors.panel;
 
     auto font_label = app.gcx().loadFont(Paths::data() + "fonts/PTN57F.ttf", 28);
