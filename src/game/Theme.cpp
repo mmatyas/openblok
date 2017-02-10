@@ -102,7 +102,6 @@ std::unordered_map<std::string, bool*> createGameBoolBinds(GameplayTheme& theme)
 
 std::unordered_map<std::string, RGBAColor*> createRGBBinds(ThemeColors& colors) {
     return {
-        {"primary", &colors.primary},
         {"text", &colors.text},
         {"text_accent", &colors.text_accent},
         {"panel", &colors.panel},
