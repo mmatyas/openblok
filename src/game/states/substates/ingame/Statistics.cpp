@@ -23,6 +23,7 @@ Statistics::Statistics(IngameState& parent, AppContext& app)
     , displayed_item_count(
         std::chrono::seconds(3),
         [this](double t){ return t * labels.size(); })
+    , bg_color(app.theme().colors.panel)
 {
     const auto color = app.theme().colors.text;
     const auto color_highlight = app.theme().colors.text_accent;
@@ -81,6 +82,8 @@ void Statistics::update(IngameState& parent, const std::vector<Event>& events, A
 {
     displayed_item_count.update(Timing::frame_duration);
     fadein_percent.update(Timing::frame_duration);
+    bg_color.a = fadein_percent.value() * 0xFF;
+
     if (fadein_percent.running())
         return;
 
@@ -96,11 +99,16 @@ void Statistics::update(IngameState& parent, const std::vector<Event>& events, A
 
 void Statistics::drawBackground(IngameState& parent, GraphicsContext& gcx) const
 {
-    static auto color = 0x1A3A8A00_rgba;
-    color.a = fadein_percent.value() * 0xFF;
-
-    for (const auto& ui_pa : parent.player_areas)
-        gcx.drawFilledRect(ui_pa.second.wellBox(), color);
+    for (const auto& ui_pa : parent.player_areas) {
+        // expand the rect to cover the borders too
+        // TODO: better method
+        auto rect = ui_pa.second.wellBox();
+        rect.x -= 5;
+        rect.y -= 5;
+        rect.w += 10;
+        rect.h += 10;
+        gcx.drawFilledRect(rect, bg_color);
+    }
 }
 
 void Statistics::drawItems(IngameState& parent) const

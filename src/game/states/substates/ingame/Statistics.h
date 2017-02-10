@@ -2,6 +2,7 @@
 
 #include "game/Transition.h"
 #include "game/states/substates/Ingame.h"
+#include "system/Color.h"
 
 #include <memory>
 #include <unordered_map>
@@ -26,6 +27,8 @@ private:
 
     Transition<double> fadein_percent;
     Transition<uint8_t> displayed_item_count;
+
+    RGBAColor bg_color;
 
     void drawBackground(IngameState&, GraphicsContext&) const;
     void drawItems(IngameState&) const;
