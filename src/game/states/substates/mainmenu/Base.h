@@ -35,6 +35,7 @@ private:
     Layout::Logo logo;
     std::array<Layout::PieceRain, 2> rains;
     ::Rectangle desc_rect;
+    RGBAColor desc_panel_color;
 
     struct ButtonColumn {
         std::vector<Layout::MainMenuButton> buttons;

@@ -105,6 +105,8 @@ std::unordered_map<std::string, RGBAColor*> createRGBBinds(ThemeColors& colors) 
         {"text", &colors.text},
         {"text_accent", &colors.text_accent},
         {"panel", &colors.panel},
+        {"mainmenu_inactive", &colors.mainmenu_inactive},
+        {"mainmenu_selected", &colors.mainmenu_selected},
     };
 }
 

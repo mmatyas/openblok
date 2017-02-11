@@ -10,10 +10,15 @@ struct ThemeColors {
     RGBAColor text_accent;
     RGBAColor panel;
 
+    RGBAColor mainmenu_inactive;
+    RGBAColor mainmenu_selected;
+
     ThemeColors()
         : text(0xEEEEEEFF_rgba)
         , text_accent(0xFFA500FF_rgba)
         , panel(0x0A0AFF80_rgba)
+        , mainmenu_inactive(0x006080FF_rgba)
+        , mainmenu_selected(0x2030FFFF_rgba)
     {}
 };
 

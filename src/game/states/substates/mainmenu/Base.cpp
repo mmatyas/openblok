@@ -23,12 +23,15 @@ namespace MainMenu {
 Base::Base(MainMenuState& parent, AppContext& app)
     : tex_background(app.gcx().loadTexture(app.theme().get_texture("menu_fill.png")))
     , logo(app, 150)
+    , desc_panel_color(app.theme().colors.mainmenu_inactive)
     , current_column(&primary_buttons)
     , column_slide_anim(std::chrono::milliseconds(350),
                         [](double t){ return t; },
                         [this](){  })
     , music(app.audio().loadMusic(app.theme().random_menu_music()))
 {
+    desc_panel_color.a = 0xE6; // 90%
+
     PieceFactory::changeInitialPositions(Rotations::SRS().initialPositions());
     column_slide_anim.stop();
 
@@ -318,11 +321,8 @@ void Base::draw(MainMenuState&, GraphicsContext& gcx) const
         for (const auto& btn : current_column->buttons)
             btn.draw(gcx);
 
+        gcx.drawFilledRect(desc_rect, desc_panel_color);
         auto& desc_tex = current_column->descriptions.at(current_column->selected_index);
-        static RGBAColor color = 0x00268700_rgba;
-        color.a = desc_tex->alpha() * 0.90;
-        gcx.drawFilledRect(desc_rect, color);
-
         desc_tex->drawAt(desc_rect.x - desc_tex->width() - 25, desc_rect.y + 15);
     }
 

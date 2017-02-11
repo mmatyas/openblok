@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Button.h"
+#include "system/Color.h"
 
 #include <memory>
 
@@ -20,5 +21,7 @@ public:
 private:
     std::unique_ptr<Texture> tex_label_off;
     std::unique_ptr<Texture> tex_label_on;
+
+    static RGBAColor bg_active_color;
 };
 } // namespace Layout

@@ -9,12 +9,16 @@
 
 namespace Layout {
 
+RGBAColor MainMenuButton::bg_active_color;
+
 MainMenuButton::MainMenuButton(AppContext& app, std::string&& text, std::function<void()>&& on_press)
     : Button(std::forward<std::string>(text), std::forward<std::function<void()>>(on_press))
 {
+    MainMenuButton::bg_active_color = app.theme().colors.mainmenu_selected;
+
     auto font = app.gcx().loadFont(Paths::data() + "fonts/PTC75F.ttf", 35);
     tex_label_on = font->renderText(btn_label_text, app.theme().colors.text);
-    tex_label_off = font->renderText(btn_label_text, 0x006080_rgb);
+    tex_label_off = font->renderText(btn_label_text, app.theme().colors.mainmenu_inactive);
 
     bounding_box.w = 450;
     bounding_box.h = tex_label_on->height() + 10;
@@ -29,13 +33,11 @@ void MainMenuButton::setAlpha(uint8_t alpha)
 void MainMenuButton::draw(GraphicsContext& gcx) const
 {
     if (is_active) {
-        gcx.drawFilledRect(bounding_box, 0x2030FF_rgb);
+        gcx.drawFilledRect(bounding_box, bg_active_color);
         tex_label_on->drawAt(x() + 20, y() + 5);
     }
-    else {
+    else
         tex_label_off->drawAt(x() + 20, y() + 5);
-    }
-    //gcx.drawFilledRect(bounding_box, 0x39CCCC_rgb);
 }
 
 } // namespace Layout
