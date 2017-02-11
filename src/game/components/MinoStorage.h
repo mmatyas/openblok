@@ -14,7 +14,7 @@ class Mino;
 class MinoStorage {
 public:
     static void loadMinos(AppContext&);
-    static void loadGhosts(GraphicsContext&, const std::string&);
+    static void loadGhosts(AppContext&);
     static void loadMatrixCell(GraphicsContext&, const std::string&);
 
     static std::shared_ptr<Mino> getMino(PieceType);
@@ -29,8 +29,9 @@ public:
 
 private:
     static void loadTintedMinos(GraphicsContext&, const std::string&);
-    static void loadTintedGhosts(GraphicsContext&, const std::string&);
     static void loadCustomMinos(AppContext&);
+    static void loadTintedGhosts(GraphicsContext&, const std::string&);
+    static void loadSimpleGhosts(GraphicsContext&, const std::string&);
     static std::unordered_map<PieceType, std::shared_ptr<Mino>, PieceTypeHash> minos;
     static std::unordered_map<PieceType, std::shared_ptr<Mino>, PieceTypeHash> ghosts;
     static std::shared_ptr<Mino> matrixcell;

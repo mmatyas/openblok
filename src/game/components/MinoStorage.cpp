@@ -57,15 +57,26 @@ void MinoStorage::loadCustomMinos(AppContext& app)
     }
 }
 
-void MinoStorage::loadGhosts(GraphicsContext& gcx, const std::string& path)
+void MinoStorage::loadGhosts(AppContext& app)
 {
-    loadTintedGhosts(gcx, path);
+    const auto path = app.theme().get_texture("ghost.png");
+
+    if (app.theme().gameplay.tint_ghost)
+        loadTintedGhosts(app.gcx(), path);
+    else
+        loadSimpleGhosts(app.gcx(), path);
 }
 
 void MinoStorage::loadTintedGhosts(GraphicsContext& gcx, const std::string& path)
 {
     for (const auto& type : PieceTypeList)
         ghosts[type] = std::make_shared<Mino>(gcx.loadTexture(path, color(type)), 'g');
+}
+
+void MinoStorage::loadSimpleGhosts(GraphicsContext& gcx, const std::string& path)
+{
+    for (const auto& type : PieceTypeList)
+        ghosts[type] = std::make_shared<Mino>(gcx.loadTexture(path), 'g');
 }
 
 void MinoStorage::loadMatrixCell(GraphicsContext& gcx, const std::string& path)

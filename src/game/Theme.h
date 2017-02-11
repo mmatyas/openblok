@@ -30,12 +30,14 @@ struct GameplayTheme {
     bool draw_labels;
     bool draw_panels;
     bool custom_minos;
+    bool tint_ghost;
 
     GameplayTheme()
         : draw_wellbg(true)
         , draw_labels(true)
         , draw_panels(true)
         , custom_minos(false)
+        , tint_ghost(true)
     {}
 };
 

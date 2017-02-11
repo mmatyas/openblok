@@ -34,7 +34,7 @@ InitState::InitState(AppContext& app)
     app.theme() = ThemeConfigFile::load(app.sysconfig().theme_dir_name);
 
     MinoStorage::loadMinos(app);
-    MinoStorage::loadGhosts(app.gcx(), app.theme().get_texture("ghost.png"));
+    MinoStorage::loadGhosts(app);
     MinoStorage::loadMatrixCell(app.gcx(), app.theme().get_texture("matrix.png"));
 
     app.states().emplace(std::make_unique<MainMenuState>(app));
