@@ -25,7 +25,7 @@ All theme needs a `theme.cfg` file, where you can list some basic information (t
 
 Here is a full `theme.cfg` file with the default values as an example. Feel free to change or remove the existing parameters. All settings are optional: you don't have to list every existing option in the config file, missing parameters will use their the default values.
 
-```
+```python
 # Lines starting with '#' are comments
 # This is the 'metadata' block, where you
 # can store info about the theme
