@@ -1,9 +1,13 @@
 #pragma once
 
 #include "game/layout/Box.h"
+#include "system/Color.h"
+
+#include <memory>
 
 class AppContext;
 class GraphicsContext;
+class Texture;
 
 
 namespace Layout {
@@ -28,5 +32,8 @@ private:
     ::Rectangle border_right;
     ::Rectangle border_top;
     ::Rectangle border_bottom;
+
+    std::unique_ptr<Texture> tex_cell;
+    static RGBAColor border_color;
 };
 } // namespace Layout
