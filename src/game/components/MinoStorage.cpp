@@ -1,6 +1,7 @@
 #include "MinoStorage.h"
 
 #include "Mino.h"
+#include "game/AppContext.h"
 #include "system/GraphicsContext.h"
 
 #include <assert.h>
@@ -22,11 +23,43 @@ void MinoStorage::loadDummyMinos()
 }
 #endif
 
+void MinoStorage::loadMinos(AppContext& app)
+{
+    if (app.theme().gameplay.custom_minos)
+        loadCustomMinos(app);
+    else
+        loadTintedMinos(app.gcx(), app.theme().get_texture("mino.png"));
+}
+
 void MinoStorage::loadTintedMinos(GraphicsContext& gcx, const std::string& path)
 {
     minos[PieceType::GARBAGE] = std::make_shared<Mino>(gcx.loadTexture(path), ::toAscii(PieceType::GARBAGE));
     for (const auto& type : PieceTypeList)
         minos[type] = std::make_shared<Mino>(gcx.loadTexture(path, color(type)), ::toAscii(type));
+}
+
+void MinoStorage::loadCustomMinos(AppContext& app)
+{
+    static const std::unordered_map<PieceType, const std::string, PieceTypeHash> suffixes = {
+        { PieceType::I, "i" },
+        { PieceType::J, "j" },
+        { PieceType::L, "l" },
+        { PieceType::O, "o" },
+        { PieceType::S, "s" },
+        { PieceType::T, "t" },
+        { PieceType::Z, "z" },
+        { PieceType::GARBAGE, "garbage" },
+    };
+    for (const auto& pair : suffixes) {
+        const PieceType type = pair.first;
+        const std::string path = app.theme().get_texture("mino_" + pair.second + ".png");
+        minos[type] = std::make_shared<Mino>(app.gcx().loadTexture(path), ::toAscii(type));
+    }
+}
+
+void MinoStorage::loadGhosts(GraphicsContext& gcx, const std::string& path)
+{
+    loadTintedGhosts(gcx, path);
 }
 
 void MinoStorage::loadTintedGhosts(GraphicsContext& gcx, const std::string& path)

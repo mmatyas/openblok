@@ -97,6 +97,7 @@ std::unordered_map<std::string, bool*> createGameBoolBinds(GameplayTheme& theme)
         {"draw_wellbg", &theme.draw_wellbg},
         {"draw_labels", &theme.draw_labels},
         {"draw_panels", &theme.draw_panels},
+        {"custom_minos", &theme.custom_minos},
     };
 }
 

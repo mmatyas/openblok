@@ -6,14 +6,15 @@
 #include <memory>
 #include <unordered_map>
 
-
+class AppContext;
 class GraphicsContext;
 class Mino;
 
+
 class MinoStorage {
 public:
-    static void loadTintedMinos(GraphicsContext&, const std::string&);
-    static void loadTintedGhosts(GraphicsContext&, const std::string&);
+    static void loadMinos(AppContext&);
+    static void loadGhosts(GraphicsContext&, const std::string&);
     static void loadMatrixCell(GraphicsContext&, const std::string&);
 
     static std::shared_ptr<Mino> getMino(PieceType);
@@ -27,6 +28,9 @@ public:
 #endif
 
 private:
+    static void loadTintedMinos(GraphicsContext&, const std::string&);
+    static void loadTintedGhosts(GraphicsContext&, const std::string&);
+    static void loadCustomMinos(AppContext&);
     static std::unordered_map<PieceType, std::shared_ptr<Mino>, PieceTypeHash> minos;
     static std::unordered_map<PieceType, std::shared_ptr<Mino>, PieceTypeHash> ghosts;
     static std::shared_ptr<Mino> matrixcell;

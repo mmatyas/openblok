@@ -29,11 +29,13 @@ struct GameplayTheme {
     bool draw_wellbg;
     bool draw_labels;
     bool draw_panels;
+    bool custom_minos;
 
     GameplayTheme()
         : draw_wellbg(true)
-        , draw_labels (true)
+        , draw_labels(true)
         , draw_panels(true)
+        , custom_minos(false)
     {}
 };
 
