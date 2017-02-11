@@ -40,6 +40,8 @@ protected:
 
     static RGBAColor text_color;
     static RGBAColor marker_color;
+    static RGBAColor bg_active_color;
+    static RGBAColor bg_passive_color;
 
 private:
     int margin_bottom;

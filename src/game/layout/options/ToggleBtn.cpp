@@ -65,12 +65,12 @@ void ToggleButton::onRightPress()
 void ToggleButton::draw(GraphicsContext& gcx) const
 {
     if (is_active) {
-        gcx.drawFilledRect(bounding_box, 0x0060BF_rgb);
+        gcx.drawFilledRect(bounding_box, bg_active_color);
         gcx.drawFilledRect({x(), y(), 6, height()}, marker_color);
         tex_label->drawAt(x() + padding_left, y() + padding_ver);
     }
     else {
-        gcx.drawFilledRect(bounding_box, 0x002687_rgb);
+        gcx.drawFilledRect(bounding_box, bg_passive_color);
         tex_label->drawAt(x() + padding_left, y() + padding_ver);
     }
 

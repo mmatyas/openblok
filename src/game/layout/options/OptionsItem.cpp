@@ -9,9 +9,10 @@
 namespace Layout {
 namespace Options {
 
-// darker accent to make white text more visible
 RGBAColor OptionsItem::text_color = 0xEEEEEEFF_rgba;
 RGBAColor OptionsItem::marker_color = 0xCE8000FF_rgba;
+RGBAColor OptionsItem::bg_active_color = 0x0060BFFF_rgba;
+RGBAColor OptionsItem::bg_passive_color = 0x002687FF_rgba;
 
 OptionsItem::OptionsItem(AppContext& app, std::string&& label, std::string&& description)
     : Layout::MenuItem(std::forward<std::string>(label))
