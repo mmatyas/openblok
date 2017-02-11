@@ -52,8 +52,15 @@ void MinoStorage::loadCustomMinos(AppContext& app)
     };
     for (const auto& pair : suffixes) {
         const PieceType type = pair.first;
-        const std::string path = app.theme().get_texture("mino_" + pair.second + ".png");
-        minos[type] = std::make_shared<Mino>(app.gcx().loadTexture(path), ::toAscii(type));
+        try {
+            const std::string path = app.theme().get_texture("mino_" + pair.second + ".png");
+            minos[type] = std::make_shared<Mino>(app.gcx().loadTexture(path), ::toAscii(type));
+        }
+        catch (const std::runtime_error& err) {
+            // fallback to regular mino
+            minos[type] = std::make_shared<Mino>(app.gcx().loadTexture(
+                app.theme().get_texture("mino.png")), ::toAscii(type));
+        }
     }
 }
 
