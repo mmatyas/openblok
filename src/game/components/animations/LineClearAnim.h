@@ -2,6 +2,7 @@
 
 #include "WellAnimation.h"
 #include "game/Transition.h"
+#include "system/Color.h"
 
 
 class LineClearAnim : public WellAnimation {
@@ -13,6 +14,8 @@ public:
     void draw(GraphicsContext& gcx, int x, int y) const override;
 
     bool isActive() const final { return row_percent.running(); }
+
+    static RGBAColor anim_color;
 
 protected:
     const int row;

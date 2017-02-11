@@ -13,12 +13,15 @@ struct ThemeColors {
     RGBAColor mainmenu_inactive;
     RGBAColor mainmenu_selected;
 
+    RGBAColor line_clear;
+
     ThemeColors()
         : text(0xEEEEEEFF_rgba)
         , text_accent(0xFFA500FF_rgba)
         , panel(0x0A0AFF80_rgba)
         , mainmenu_inactive(0x006080FF_rgba)
         , mainmenu_selected(0x2030FFFF_rgba)
+        , line_clear(0xEEEEEEFF_rgba)
     {}
 };
 
