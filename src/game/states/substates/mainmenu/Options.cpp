@@ -15,9 +15,10 @@
 #include "system/Paths.h"
 #include "system/Texture.h"
 
-#include <assert.h>
+#include <tinydir_cpp.h>
 #include <algorithm>
 #include <unordered_map>
+#include <assert.h>
 
 
 namespace SubStates {
@@ -67,6 +68,17 @@ Options::Options(MainMenuState& parent, AppContext& app)
             [&app](bool val){
                 app.sysconfig().music = val;
                 app.audio().toggleMusicMute();
+            }));
+        system_options.back()->setMarginBottom(40);
+
+        auto detected_themes = detectedThemes();
+        const size_t default_theme_idx = std::distance(detected_themes.begin(),
+            std::find(detected_themes.begin(), detected_themes.end(), "default"));
+        system_options.emplace_back(std::make_shared<ValueChooser>(app,
+            std::move(detected_themes), default_theme_idx,
+            tr("Theme"), tr("Change the graphical theme of the game."),
+            [&app](const std::string& val){
+                app.sysconfig().theme_dir_name = val;
             }));
     }
     subitem_panels.push_back(std::move(system_options));
@@ -311,6 +323,33 @@ Options::createInputFieldsForEvents(AppContext& app, const DeviceData& device_da
         ));
     }
     return input_fields;
+}
+
+std::vector<std::string> Options::detectedThemes() const
+{
+    std::vector<std::string> found_themes;
+    findThemeDirs(Paths::config() + "themes", found_themes);
+    findThemeDirs(Paths::data() + "themes", found_themes);
+    assert(!found_themes.empty());
+    return found_themes;
+}
+
+void Options::findThemeDirs(const std::string& base_path, std::vector<std::string>& found_themes) const
+{
+    if (!path_exists(base_path))
+        return;
+
+    TinyDir base_theme_dir(base_path);
+    while (base_theme_dir.dir.has_next) {
+        tinydir_file file;
+        tinydir_readfile(&base_theme_dir.dir, &file);
+
+        const std::string cfg_path = std::string(file.path) + "/theme.cfg";
+        if (file.is_dir && path_exists(cfg_path))
+            found_themes.emplace_back(file.name);
+
+        tinydir_next(&base_theme_dir.dir);
+    }
 }
 
 void Options::updatePositions(GraphicsContext& gcx)

@@ -9,20 +9,6 @@
 #include <regex>
 #include <set>
 
-#ifdef _MSC_VER
-#include <io.h>
-#define posix_access _access
-#else
-#include <unistd.h>
-#include <system/Color.h>
-#define posix_access access
-#endif
-
-
-inline bool path_exists(const std::string& path) {
-    return posix_access(path.c_str(), 0) == 0;
-}
-
 
 void ThemeConfig::set_theme_dir(const std::string& dir_name)
 {

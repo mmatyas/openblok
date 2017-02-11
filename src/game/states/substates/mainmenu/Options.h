@@ -43,6 +43,8 @@ private:
     std::function<void(InputType)> fn_settings_input;
     std::function<void(InputType)>* current_input_handler;
 
+    std::vector<std::string> detectedThemes() const;
+    void findThemeDirs(const std::string&, std::vector<std::string>&) const;
     void updatePositions(GraphicsContext&);
     std::vector<std::shared_ptr<Layout::Options::OptionsItem>>
         createInputFieldsForEvents(AppContext&, const DeviceData&,
