@@ -76,6 +76,12 @@ void NextQueue::draw(GraphicsContext& gcx, int x, int y, bool draw_panel) const
             x, y,
             5 * Mino::texture_size_px, 4 * Mino::texture_size_px},
             panel_color);
+        gcx.drawFilledRect({
+            x,
+            static_cast<int>(y + 4.25 * Mino::texture_size_px),
+            static_cast<int>(3.75 * Mino::texture_size_px),
+            static_cast<int>((0.75 * (displayed_piece_count - 1) * 3 * Mino::texture_size_px) + 0.25 * Mino::texture_size_px)},
+            panel_color);
     }
 
     int offset_y = y + Mino::texture_size_px;
