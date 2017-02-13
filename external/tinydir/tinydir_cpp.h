@@ -7,11 +7,12 @@
 #include <stdexcept>
 
 #ifdef _MSC_VER
+#define WIN32_LEAN_AND_MEAN
 #include <io.h>
 #define posix_access _access
+#undef INFINITE
 #else
 #include <unistd.h>
-#include <system/Color.h>
 #define posix_access access
 #endif
 
