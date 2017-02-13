@@ -149,6 +149,8 @@ std::tuple<SysConfig, WellConfig> GameConfigFile::load(const std::string& path)
                 else if (sys_strings.count(key_str)) {
                     if (val_str.size() <= 2)
                         throw std::runtime_error("Empty string value for '" + key_str + "', skipped");
+                    if (val_str.front() != '"' || val_str.back() != '"')
+                        throw std::runtime_error("String value for '" + key_str + "', is not between quote marks, skipped");
 
                     *sys_strings.at(key_str) = val_str.substr(1, val_str.size() - 2);
                 }
