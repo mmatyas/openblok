@@ -34,5 +34,6 @@ private:
     // When there are multiple players, we want to provide
     // the same order of pieces for all of them.
     void generate_global_pieces();
+    void fill_queue();
     void draw_nth_piece(unsigned i, int x, int y) const;
 };
