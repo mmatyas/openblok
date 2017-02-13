@@ -76,7 +76,7 @@ void GameConfigFile::save(SysConfig& sys, WellConfig& well, const std::string& p
 
         auto sys_strings = createStringBind(sys);
         for (const auto& pair : sys_strings)
-            sys_entries.emplace(pair.first, *pair.second);
+            sys_entries.emplace(pair.first, '"' + *pair.second + '"');
 
         config.emplace("system", std::move(sys_entries));
     }
@@ -113,7 +113,7 @@ std::tuple<SysConfig, WellConfig> GameConfigFile::load(const std::string& path)
     if (config.empty())
         return {};
 
-    const std::regex valid_value(R"(([0-9]{1,3}|on|off|yes|no|true|false|[a-z]+))");
+    const std::regex valid_value(R"(([0-9]{1,3}|on|off|yes|no|true|false|[a-z]+|".+?"))");
     const std::set<std::string> accepted_headers = {"system", "gameplay"};
 
     SysConfig sys;
@@ -147,7 +147,10 @@ std::tuple<SysConfig, WellConfig> GameConfigFile::load(const std::string& path)
                     *sys_bools.at(key_str) = ConfigFile::parseBool(keyval);
                 }
                 else if (sys_strings.count(key_str)) {
-                    *sys_strings.at(key_str) = val_str;
+                    if (val_str.size() <= 2)
+                        throw std::runtime_error("Empty string value for '" + key_str + "', skipped");
+
+                    *sys_strings.at(key_str) = val_str.substr(1, val_str.size() - 2);
                 }
                 else if (well_bools.count(key_str)) {
                     *well_bools.at(key_str) = ConfigFile::parseBool(keyval);

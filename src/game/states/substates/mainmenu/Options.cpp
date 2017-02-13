@@ -74,6 +74,8 @@ Options::Options(MainMenuState& parent, AppContext& app)
         auto detected_themes = detectedThemes();
         const size_t current_theme_idx = std::distance(detected_themes.begin(),
             std::find(detected_themes.begin(), detected_themes.end(), app.sysconfig().theme_dir_name));
+        if (current_theme_idx >= detected_themes.size()) // if the dir was removed
+            detected_themes.emplace_back(app.sysconfig().theme_dir_name);
         system_options.emplace_back(std::make_shared<ValueChooser>(app,
             std::move(detected_themes), current_theme_idx,
             tr("Theme"), tr("Change the graphical theme of the game."),
