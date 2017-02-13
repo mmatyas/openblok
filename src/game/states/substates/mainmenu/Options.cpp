@@ -72,10 +72,10 @@ Options::Options(MainMenuState& parent, AppContext& app)
         system_options.back()->setMarginBottom(40);
 
         auto detected_themes = detectedThemes();
-        const size_t default_theme_idx = std::distance(detected_themes.begin(),
-            std::find(detected_themes.begin(), detected_themes.end(), "default"));
+        const size_t current_theme_idx = std::distance(detected_themes.begin(),
+            std::find(detected_themes.begin(), detected_themes.end(), app.sysconfig().theme_dir_name));
         system_options.emplace_back(std::make_shared<ValueChooser>(app,
-            std::move(detected_themes), default_theme_idx,
+            std::move(detected_themes), current_theme_idx,
             tr("Theme"), tr("Change the graphical theme of the game."),
             [&app](const std::string& val){
                 app.sysconfig().theme_dir_name = val;
