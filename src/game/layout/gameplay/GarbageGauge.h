@@ -29,11 +29,6 @@ private:
     static constexpr int BORDER_WIDTH = 5;
     static constexpr unsigned short MAX_LINES = 20;
 
-    ::Rectangle border_right;
-    ::Rectangle border_top;
-    ::Rectangle border_bottom;
-
     std::unique_ptr<Texture> tex_cell;
-    static RGBAColor border_color;
 };
 } // namespace Layout

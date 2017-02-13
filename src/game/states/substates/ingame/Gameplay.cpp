@@ -51,8 +51,6 @@ Gameplay::Gameplay(AppContext& app, IngameState& parent, unsigned short starting
         })
 {
     TextPopup::text_color = app.theme().colors.text;
-    NextQueue::panel_color = app.theme().colors.panel;
-    HoldQueue::panel_color = app.theme().colors.panel;
 
 
     assert(player_devices.size() > 0);
@@ -74,7 +72,7 @@ Gameplay::Gameplay(AppContext& app, IngameState& parent, unsigned short starting
 
         player_status[device_id] = PlayerStatus::PLAYING;
         parent.player_areas.emplace(std::piecewise_construct,
-                std::forward_as_tuple(device_id), std::forward_as_tuple(app, is_battle, theme_settings));
+                std::forward_as_tuple(device_id), std::forward_as_tuple(app, is_battle));
         parent.player_stats.emplace(std::piecewise_construct,
             std::forward_as_tuple(device_id), std::forward_as_tuple());
 
@@ -122,7 +120,7 @@ Gameplay::Gameplay(AppContext& app, IngameState& parent, unsigned short starting
             parea.second.enableGameOverSFX(false);
     }
 
-    parent.updatePositions(app.gcx());
+    parent.updatePositions(app);
 
     music->playLoop();
     app.audio().pauseAll();

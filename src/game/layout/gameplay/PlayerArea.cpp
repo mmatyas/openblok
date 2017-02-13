@@ -11,10 +11,9 @@
 
 namespace Layout {
 
-GameplayTheme PlayerArea::theme_cfg;
+bool PlayerArea::draw_labels;
 RGBAColor PlayerArea::labelcolor_normal;
 RGBAColor PlayerArea::labelcolor_highlight;
-RGBAColor PlayerArea::panel_color;
 
 PlayerArea::GameEndVars::GameEndVars(AppContext& app)
     : gameoversfx_enabled(true)
@@ -34,7 +33,7 @@ PlayerArea::GameEndVars::GameEndVars(AppContext& app)
     tex_finish->setAlpha(0x0);
 }
 
-PlayerArea::PlayerArea(AppContext& app, bool draw_gauge, const GameplayTheme& theme_cfg)
+PlayerArea::PlayerArea(AppContext& app, bool draw_gauge)
     : ui_well(app)
     , draw_gauge(draw_gauge)
     , garbage_gauge(app, ui_well.height())
@@ -46,10 +45,9 @@ PlayerArea::PlayerArea(AppContext& app, bool draw_gauge, const GameplayTheme& th
     , special_update([]{})
     , special_draw([](GraphicsContext&){})
 {
-    PlayerArea::theme_cfg = theme_cfg;
+    PlayerArea::draw_labels = app.theme().gameplay.draw_labels;
     PlayerArea::labelcolor_normal = app.theme().colors.text;
     PlayerArea::labelcolor_highlight = app.theme().colors.text_accent;
-    PlayerArea::panel_color = app.theme().colors.panel;
 
     auto font_label = app.gcx().loadFont(Paths::data() + "fonts/PTN57F.ttf", 28);
     font_content = app.gcx().loadFont(Paths::data() + "fonts/PTN77F.ttf", 30);
@@ -66,10 +64,10 @@ PlayerArea::PlayerArea(AppContext& app, bool draw_gauge, const GameplayTheme& th
     setLevelCounter(0);
     setGametime(Duration::zero());
 
-    setMaxWidth(app.gcx().screenWidth());
+    setMaxWidth(app, app.gcx().screenWidth());
 }
 
-void PlayerArea::setMaxWidth(unsigned max_width)
+void PlayerArea::setMaxWidth(AppContext& app, unsigned max_width)
 {
     int width_wide = ui_well.width() + 2 * inner_padding + 2 * sidebar_width;
     int width_narrow = ui_well.width();
@@ -80,25 +78,40 @@ void PlayerArea::setMaxWidth(unsigned max_width)
         width_narrow += garbage_gauge.width();
     }
 
-    if (static_cast<int>(max_width) < width_wide) {
-        bounding_box.w = width_narrow;
-        bounding_box.h = height_narrow;
+    const bool currently_is_narrow = bounding_box.w < width_wide;
+    const bool should_be_narrow = static_cast<int>(max_width) < width_wide;
 
-        layout_fn = [this](){ calcNarrowLayout(); };
-        draw_fn_active = [this](GraphicsContext& gcx){ drawNarrowActive(gcx); };
-        draw_fn_passive = [this](GraphicsContext& gcx){ drawNarrowPassive(gcx); };
+    if (currently_is_narrow != should_be_narrow) {
+        if (should_be_narrow) {
+            bounding_box.w = width_narrow;
+            bounding_box.h = height_narrow;
 
-        nextQueue().setPreviewCount(1);
-    }
-    else {
-        bounding_box.w = width_wide;
-        bounding_box.h = height_wide;
+            layout_fn = [this](){ calcNarrowLayout(); };
+            draw_fn_active = [this](GraphicsContext& gcx){ drawNarrowActive(gcx); };
+            draw_fn_passive = [this](GraphicsContext& gcx){ drawNarrowPassive(gcx); };
 
-        layout_fn = [this](){ calcWideLayout(); };
-        draw_fn_active = [this](GraphicsContext& gcx){ drawWideActive(gcx); };
-        draw_fn_passive = [this](GraphicsContext& gcx){ drawWidePassive(gcx); };
+            if (draw_gauge)
+                tex_overlay = app.gcx().loadTexture(app.theme().get_texture("well/narrow_battle.png"));
+            else
+                tex_overlay = app.gcx().loadTexture(app.theme().get_texture("well/narrow.png"));
 
-        nextQueue().setPreviewCount(5);
+            nextQueue().setPreviewCount(1);
+        }
+        else {
+            bounding_box.w = width_wide;
+            bounding_box.h = height_wide;
+
+            layout_fn = [this](){ calcWideLayout(); };
+            draw_fn_active = [this](GraphicsContext& gcx){ drawWideActive(gcx); };
+            draw_fn_passive = [this](GraphicsContext& gcx){ drawWidePassive(gcx); };
+
+            if (draw_gauge)
+                tex_overlay = app.gcx().loadTexture(app.theme().get_texture("well/wide_battle.png"));
+            else
+                tex_overlay = app.gcx().loadTexture(app.theme().get_texture("well/wide.png"));
+
+            nextQueue().setPreviewCount(5);
+        }
     }
 
     setPosition(x(), y());
@@ -129,6 +142,8 @@ void PlayerArea::calcWideLayout()
 
     rect_time = rect_score;
     rect_time.y = rect_level.y;
+
+    calcUITexPos(720.f);
 }
 
 void PlayerArea::calcNarrowLayout()
@@ -141,6 +156,8 @@ void PlayerArea::calcNarrowLayout()
 
     rect_level = { x(), bottombar_y, bottom_block_width, bottombar_height };
     rect_score = { x() + width() - bottom_block_width, bottombar_y, bottom_block_width, bottombar_height };
+
+    calcUITexPos(900.f);
 }
 
 void PlayerArea::calcWellBox()
@@ -148,6 +165,18 @@ void PlayerArea::calcWellBox()
     wellbox = {
         ui_well.wellX(), ui_well.wellY(),
         ui_well.wellWidth(), ui_well.wellHeight()
+    };
+}
+
+void PlayerArea::calcUITexPos(float max_height)
+{
+    assert(tex_overlay);
+    const float scale = max_height / tex_overlay->height();
+    rect_overlay = {
+        static_cast<int>(x() + (width() - (scale * tex_overlay->width())) / 2),
+        static_cast<int>(y() + (height() - (scale * tex_overlay->height())) / 2),
+        static_cast<int>(scale * tex_overlay->width()),
+        static_cast<int>(max_height)
     };
 }
 
@@ -247,21 +276,15 @@ void PlayerArea::drawPassive(GraphicsContext& gcx) const
 
 void PlayerArea::drawWidePassive(GraphicsContext& gcx) const
 {
-    if (theme_cfg.draw_wellbg)
-        ui_well.drawBase(gcx);
+    tex_overlay->drawScaled(rect_overlay);
+
     if (draw_gauge)
         garbage_gauge.drawPassive(gcx);
 
     const int rightside_x = x() + width();
     static constexpr int label_height = 30;
 
-    if (theme_cfg.draw_panels) {
-        gcx.drawFilledRect(rect_score, panel_color);
-        gcx.drawFilledRect(rect_time, panel_color);
-        gcx.drawFilledRect(rect_goal, panel_color);
-        gcx.drawFilledRect(rect_level, panel_color);
-    }
-    if (theme_cfg.draw_labels) {
+    if (draw_labels) {
         tex_hold->drawAt(x(), y());
         tex_next->drawAt(rightside_x - tex_next->width(), y());
         tex_goal->drawAt(rect_goal.x, rect_goal.y - inner_padding - label_height);
@@ -270,8 +293,8 @@ void PlayerArea::drawWidePassive(GraphicsContext& gcx) const
                           rect_score.y - inner_padding - label_height);
     }
 
-    hold_queue.draw(gcx, x(), y() + label_height + inner_padding, theme_cfg.draw_panels);
-    next_queue.draw(gcx, rightside_x - sidebar_width, y() + label_height + inner_padding, theme_cfg.draw_panels);
+    hold_queue.draw(gcx, x(), y() + label_height + inner_padding);
+    next_queue.draw(gcx, rightside_x - sidebar_width, y() + label_height + inner_padding);
 
     tex_score_counter->drawAt(rect_score.x + (rect_score.w - tex_score_counter->width()) / 2,
                               rect_score.y + 5);
@@ -292,22 +315,18 @@ void PlayerArea::drawWideActive(GraphicsContext& gcx) const
 
 void PlayerArea::drawNarrowPassive(GraphicsContext& gcx) const
 {
-    if (theme_cfg.draw_wellbg)
-        ui_well.drawBase(gcx);
+    tex_overlay->drawScaled(rect_overlay);
+
     if (draw_gauge)
         garbage_gauge.drawPassive(gcx);
 
-    if (theme_cfg.draw_panels) {
-        gcx.drawFilledRect(rect_level, panel_color);
-        gcx.drawFilledRect(rect_score, panel_color);
-    }
-    if (theme_cfg.draw_labels) {
+    if (draw_labels) {
         tex_hold->drawAt(x() + 5, y());
         tex_next->drawAt(x() + width() - tex_next->width() - 5, y());
     }
 
-    hold_queue.draw(gcx, x(), y(), theme_cfg.draw_panels);
-    next_queue.draw(gcx, x() + width() - ui_well.wellWidth() / 2, y(), theme_cfg.draw_panels);
+    hold_queue.draw(gcx, x(), y());
+    next_queue.draw(gcx, x() + width() - ui_well.wellWidth() / 2, y());
 
     tex_level_counter_narrow->drawAt(rect_level.x + 10, rect_level.y);
     tex_score_counter->drawAt(rect_score.x + rect_score.w - tex_score_counter->width() - 10, rect_score.y);

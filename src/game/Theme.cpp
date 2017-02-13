@@ -80,9 +80,7 @@ const std::string LOG_TAG("themecfg");
 
 std::unordered_map<std::string, bool*> createGameBoolBinds(GameplayTheme& theme) {
     return {
-        {"draw_wellbg", &theme.draw_wellbg},
         {"draw_labels", &theme.draw_labels},
-        {"draw_panels", &theme.draw_panels},
         {"custom_minos", &theme.custom_minos},
         {"tint_ghost", &theme.tint_ghost},
     };
@@ -92,7 +90,6 @@ std::unordered_map<std::string, RGBAColor*> createRGBBinds(ThemeColors& colors) 
     return {
         {"text", &colors.text},
         {"text_accent", &colors.text_accent},
-        {"panel", &colors.panel},
         {"mainmenu_inactive", &colors.mainmenu_inactive},
         {"mainmenu_selected", &colors.mainmenu_selected},
         {"line_clear", &colors.line_clear},

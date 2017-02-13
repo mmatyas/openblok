@@ -25,12 +25,8 @@ private:
     std::vector<std::unique_ptr<Texture>> labels;
     std::unordered_map<DeviceID, std::vector<std::unique_ptr<Texture>>> scores;
 
-    Transition<double> fadein_percent;
     Transition<uint8_t> displayed_item_count;
 
-    RGBAColor bg_color;
-
-    void drawBackground(IngameState&, GraphicsContext&) const;
     void drawItems(IngameState&) const;
 };
 

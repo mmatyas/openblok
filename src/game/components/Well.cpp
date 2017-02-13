@@ -479,11 +479,6 @@ void Well::fromAscii(const std::string& text)
 
 #endif
 
-void Well::drawBackground(GraphicsContext& gcx, int x, int y) const
-{
-    renderer.drawBackground(*this, gcx, x, y);
-}
-
 void Well::drawContent(GraphicsContext& gcx, int x, int y) const
 {
     renderer.drawContent(*this, gcx, x, y);

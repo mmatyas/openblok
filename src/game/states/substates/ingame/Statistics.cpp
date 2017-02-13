@@ -17,13 +17,9 @@ namespace Ingame {
 namespace States {
 
 Statistics::Statistics(IngameState& parent, AppContext& app)
-    : fadein_percent(
-        std::chrono::seconds(1),
-        [](double t){ return t; })
-    , displayed_item_count(
+    : displayed_item_count(
         std::chrono::seconds(3),
         [this](double t){ return t * labels.size(); })
-    , bg_color(app.theme().colors.panel)
 {
     const auto color = app.theme().colors.text;
     const auto color_highlight = app.theme().colors.text_accent;
@@ -81,11 +77,6 @@ Statistics::Statistics(IngameState& parent, AppContext& app)
 void Statistics::update(IngameState& parent, const std::vector<Event>& events, AppContext& app)
 {
     displayed_item_count.update(Timing::frame_duration);
-    fadein_percent.update(Timing::frame_duration);
-    bg_color.a = fadein_percent.value() * 0xFF;
-
-    if (fadein_percent.running())
-        return;
 
     for (const auto& event : events) {
         if (event.type == EventType::INPUT && event.input.down()) {
@@ -94,20 +85,6 @@ void Statistics::update(IngameState& parent, const std::vector<Event>& events, A
             }));
             return;
         }
-    }
-}
-
-void Statistics::drawBackground(IngameState& parent, GraphicsContext& gcx) const
-{
-    for (const auto& ui_pa : parent.player_areas) {
-        // expand the rect to cover the borders too
-        // TODO: better method
-        auto rect = ui_pa.second.wellBox();
-        rect.x -= 5;
-        rect.y -= 5;
-        rect.w += 10;
-        rect.h += 10;
-        gcx.drawFilledRect(rect, bg_color);
     }
 }
 
@@ -140,9 +117,8 @@ void Statistics::drawItems(IngameState& parent) const
     }
 }
 
-void Statistics::drawPassive(IngameState& parent, GraphicsContext& gcx) const
+void Statistics::drawPassive(IngameState& parent, GraphicsContext&) const
 {
-    drawBackground(parent, gcx);
     drawItems(parent);
 }
 

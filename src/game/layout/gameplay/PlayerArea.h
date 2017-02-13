@@ -19,12 +19,12 @@ class SoundEffect;
 namespace Layout {
 class PlayerArea : public Layout::Box {
 public:
-    PlayerArea(AppContext& app, bool draw_gauge, const GameplayTheme& theme_cfg);
+    PlayerArea(AppContext& app, bool draw_gauge);
     virtual ~PlayerArea() {}
 
     void update();
     void setPosition(int x, int y) override;
-    void setMaxWidth(unsigned);
+    void setMaxWidth(AppContext&, unsigned);
     void drawActive(GraphicsContext&) const;
     void drawPassive(GraphicsContext&) const;
 
@@ -53,10 +53,9 @@ protected:
     ::Rectangle wellbox;
     WellContainer ui_well;
 
-    static GameplayTheme theme_cfg;
+    static bool draw_labels;
     static RGBAColor labelcolor_normal;
     static RGBAColor labelcolor_highlight;
-    static RGBAColor panel_color;
 
     static constexpr int inner_padding = 10;
     static constexpr int sidebar_width = 5 * Mino::texture_size_px;
@@ -65,6 +64,9 @@ protected:
 
     std::shared_ptr<Font> font_content;
     std::shared_ptr<Font> font_content_highlight;
+
+    ::Rectangle rect_overlay;
+    std::unique_ptr<Texture> tex_overlay;
 
     std::unique_ptr<Texture> tex_hold;
     HoldQueue hold_queue;
@@ -93,6 +95,7 @@ protected:
     std::unique_ptr<Texture> tex_time_counter;
 
     void calcWellBox();
+    void calcUITexPos(float);
 
     std::function<void()> layout_fn;
     void calcWideLayout();

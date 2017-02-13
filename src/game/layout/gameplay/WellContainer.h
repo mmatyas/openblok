@@ -14,7 +14,6 @@ public:
     WellContainer(AppContext&);
 
     void setPosition(int x, int y) override;
-    void drawBase(GraphicsContext&) const;
     void drawContent(GraphicsContext&) const;
 
     Well& well() { return m_well; }
@@ -25,13 +24,8 @@ public:
     int wellY() const { return y() + border_width; }
 
 private:
-    Well m_well;
-
-    static RGBAColor border_color;
     static constexpr uint8_t border_width = 5;
-    ::Rectangle border_left;
-    ::Rectangle border_right;
-    ::Rectangle border_top;
-    ::Rectangle border_bottom;
+
+    Well m_well;
 };
 } // namespace Layout

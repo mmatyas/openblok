@@ -33,7 +33,7 @@ IngameState::IngameState(AppContext& app, GameMode gamemode)
     if (!wallpaper_path.empty())
         tex_bg_wallpaper = app.gcx().loadTexture(wallpaper_path);
 
-    updatePositions(app.gcx());
+    updatePositions(app);
 
     if (isSinglePlayer(gamemode)) {
         device_order = {-1};
@@ -53,19 +53,19 @@ IngameState::IngameState(AppContext& app, GameMode gamemode)
 
 IngameState::~IngameState() = default;
 
-void IngameState::updatePositions(GraphicsContext& gcx)
+void IngameState::updatePositions(AppContext& app)
 {
     if (player_areas.empty())
         return;
 
     // changing the available width may change the area's width/height
-    const int available_width = draw_inverse_scale * gcx.screenWidth() / device_order.size();
+    const int available_width = draw_inverse_scale * app.gcx().screenWidth() / device_order.size();
     for (const DeviceID device_id : device_order)
-        player_areas.at(device_id).setMaxWidth(available_width);
+        player_areas.at(device_id).setMaxWidth(app, available_width);
 
     static const int well_padding_x = 5 + Mino::texture_size_px;
-    const int center_x = (gcx.screenWidth() * draw_inverse_scale) / 2;
-    const int center_y = (gcx.screenHeight() * draw_inverse_scale) / 2;
+    const int center_x = (app.gcx().screenWidth() * draw_inverse_scale) / 2;
+    const int center_y = (app.gcx().screenHeight() * draw_inverse_scale) / 2;
     const int well_y = center_y - player_areas.cbegin()->second.height() / 2;
     const int well_full_width = 2 * well_padding_x + player_areas.cbegin()->second.width();
     int well_x = center_x - (well_full_width * player_areas.size()) / 2;
@@ -91,7 +91,7 @@ void IngameState::update(const std::vector<Event>& events, AppContext& app)
         switch (event.type) {
             case EventType::WINDOW:
                 if (event.window == WindowEvent::RESIZED)
-                    updatePositions(app.gcx());
+                    updatePositions(app);
                 break;
             case EventType::INPUT:
                 input_events[event.input.srcDeviceID()].emplace_back(event.input);

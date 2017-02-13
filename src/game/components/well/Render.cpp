@@ -16,23 +16,6 @@ Render::Render()
     , top_row_cliprect({0, Mino::texture_size_px - top_row_height, Mino::texture_size_px, top_row_height})
 {}
 
-void Render::drawBackground(const Well&, GraphicsContext&, int draw_offset_x, int draw_offset_y) const
-{
-    const auto& cell = MinoStorage::getMatrixCell();
-    for (int col = 0; col < 10; col++) {
-        cell->drawPartial(top_row_cliprect, {
-            draw_offset_x + col * Mino::texture_size_px, draw_offset_y,
-            Mino::texture_size_px, top_row_height});
-    }
-    draw_offset_y += top_row_height;
-    for (unsigned row = 0; row < 20; row++) {
-        for (unsigned col = 0; col < 10; col++) {
-            cell->draw(draw_offset_x + col * Mino::texture_size_px,
-                       draw_offset_y + row * Mino::texture_size_px);
-        }
-    }
-}
-
 void Render::drawContent(const Well& well, GraphicsContext& gcx, int draw_offset_x, int draw_offset_y) const
 {
     // Draw board Minos

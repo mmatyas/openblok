@@ -8,8 +8,6 @@
 #include <assert.h>
 
 
-RGBAColor HoldQueue::panel_color = 0x0A0AFF80_rgba;
-
 HoldQueue::HoldQueue()
     : swap_allowed(true)
     , empty(true)
@@ -73,17 +71,11 @@ void HoldQueue::update()
     swapblocked_alpha.update(Timing::frame_duration);
 }
 
-void HoldQueue::draw(GraphicsContext& gcx, int x, int y, bool draw_panel) const
+void HoldQueue::draw(GraphicsContext& gcx, int x, int y) const
 {
-    if (draw_panel) {
-        gcx.drawFilledRect({x, y,
-            5 * Mino::texture_size_px, 4 * Mino::texture_size_px},
-            panel_color);
-    }
-
     if (swapblocked_alpha.running()) {
         gcx.drawFilledRect({
-            x, static_cast<short>(y + 4 * Mino::texture_size_px),
+            x, static_cast<short>(y + 4 * Mino::texture_size_px - 10),
             static_cast<short>(5 * Mino::texture_size_px), 10},
             {0xFF, 0x0, 0x0, swapblocked_alpha.value()});
     }

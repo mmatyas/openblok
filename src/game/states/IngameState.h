@@ -33,7 +33,7 @@ public:
     void update(const std::vector<Event>&, AppContext&) final;
     void draw(GraphicsContext&) final;
 
-    void updatePositions(GraphicsContext&);
+    void updatePositions(AppContext&);
 
     const GameMode gamemode;
     std::list<std::unique_ptr<SubStates::Ingame::State>> states;

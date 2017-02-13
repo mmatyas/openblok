@@ -8,7 +8,6 @@
 #include <assert.h>
 
 
-RGBAColor NextQueue::panel_color = 0x0A0AFF80_rgba;
 std::deque<PieceType> NextQueue::global_piece_queue = {};
 
 NextQueue::NextQueue(unsigned displayed_piece_count)
@@ -69,21 +68,8 @@ void NextQueue::setPreviewCount(unsigned num)
     fill_queue();
 }
 
-void NextQueue::draw(GraphicsContext& gcx, int x, int y, bool draw_panel) const
+void NextQueue::draw(GraphicsContext& gcx, int x, int y) const
 {
-    if (draw_panel) {
-        gcx.drawFilledRect({
-            x, y,
-            5 * Mino::texture_size_px, 4 * Mino::texture_size_px},
-            panel_color);
-        gcx.drawFilledRect({
-            x,
-            static_cast<int>(y + 4.25 * Mino::texture_size_px),
-            static_cast<int>(3.75 * Mino::texture_size_px),
-            static_cast<int>((0.75 * (displayed_piece_count - 1) * 3 * Mino::texture_size_px) + 0.25 * Mino::texture_size_px)},
-            panel_color);
-    }
-
     int offset_y = y + Mino::texture_size_px;
     draw_nth_piece(0, x, offset_y);
     offset_y += Mino::texture_size_px * 3;
