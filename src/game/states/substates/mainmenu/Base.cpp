@@ -69,11 +69,11 @@ void Base::reloadUI(MainMenuState& parent, AppContext& app)
     tex_background = app.gcx().loadTexture(app.theme().get_texture("menu_fill.png"));
     logo = std::make_unique<Layout::Logo>(app, 150);
 
-    desc_panel_color = app.theme().colors.mainmenu_inactive;
+    desc_panel_color = app.theme().colors.mainmenu_panel;
     desc_panel_color.a = 0xE6; // 90%
 
     auto desc_font = app.gcx().loadFont(Paths::data() + "fonts/PTS55F.ttf", 24);
-    const auto desc_color = app.theme().colors.text;
+    const auto desc_color = app.theme().colors.mainmenu_highlight;
 
     primary_buttons.buttons.clear();
 

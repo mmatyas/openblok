@@ -31,13 +31,13 @@ PlayerSelect::PlayerSelect(AppContext& app)
     auto font_smaller = app.gcx().loadFont(Paths::data() + "fonts/PTS75F.ttf", 30);
     auto font_player = app.gcx().loadFont(Paths::data() + "fonts/PTS75F.ttf", 45);
     auto font_ready = app.gcx().loadFont(Paths::data() + "fonts/PTS75F.ttf", 40);
-    tex_ok = font_ready->renderText(tr("READY!"), app.theme().colors.text);
+    tex_ok = font_ready->renderText(tr("READY!"), app.theme().colors.mainmenu_normal);
     tex_player.at(0) = font_player->renderText(tr("PLAYER A"), 0xEE1010_rgb);
     tex_player.at(1) = font_player->renderText(tr("PLAYER B"), 0x10EE10_rgb);
     tex_player.at(2) = font_player->renderText(tr("PLAYER C"), 0x00B7EB_rgb);
     tex_player.at(3) = font_player->renderText(tr("PLAYER D"), 0xEEEE10_rgb);
-    tex_pending = font_smaller->renderText(tr("PRESS START\nTO JOIN"), app.theme().colors.text);
-    tex_begin = font_ready->renderText(tr("PRESS START TO BEGIN!"), app.theme().colors.text);
+    tex_pending = font_smaller->renderText(tr("PRESS START\nTO JOIN"), app.theme().colors.mainmenu_normal);
+    tex_begin = font_ready->renderText(tr("PRESS START TO BEGIN!"), app.theme().colors.mainmenu_normal);
 }
 
 void PlayerSelect::onPlayerJoin(DeviceID device_id)

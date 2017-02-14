@@ -14,11 +14,11 @@ RGBAColor MainMenuButton::bg_active_color;
 MainMenuButton::MainMenuButton(AppContext& app, std::string&& text, std::function<void()>&& on_press)
     : Button(std::forward<std::string>(text), std::forward<std::function<void()>>(on_press))
 {
-    MainMenuButton::bg_active_color = app.theme().colors.mainmenu_selected;
+    MainMenuButton::bg_active_color = app.theme().colors.mainmenu_panel;
 
     auto font = app.gcx().loadFont(Paths::data() + "fonts/PTC75F.ttf", 35);
-    tex_label_on = font->renderText(btn_label_text, app.theme().colors.text);
-    tex_label_off = font->renderText(btn_label_text, app.theme().colors.mainmenu_inactive);
+    tex_label_on = font->renderText(btn_label_text, app.theme().colors.mainmenu_highlight);
+    tex_label_off = font->renderText(btn_label_text, app.theme().colors.mainmenu_normal);
 
     bounding_box.w = 450;
     bounding_box.h = tex_label_on->height() + 10;

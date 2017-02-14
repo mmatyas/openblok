@@ -50,8 +50,7 @@ Gameplay::Gameplay(AppContext& app, IngameState& parent, unsigned short starting
             parent.states.emplace_back(std::make_unique<Statistics>(parent, app));
         })
 {
-    TextPopup::text_color = app.theme().colors.text;
-
+    TextPopup::text_color = app.theme().colors.popup;
 
     assert(player_devices.size() > 0);
     assert(player_devices.size() <= 4);

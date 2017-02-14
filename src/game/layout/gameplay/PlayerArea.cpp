@@ -25,7 +25,7 @@ PlayerArea::GameEndVars::GameEndVars(AppContext& app)
         [this]{ if (sfx_onanimend) sfx_onanimend->playOnce(); })
 {
     auto font_big = app.gcx().loadFont(Paths::data() + "fonts/PTC75F.ttf", 45);
-    const auto color = app.theme().colors.text;
+    const auto color = app.theme().colors.announce;
 
     tex_gameover = font_big->renderText(tr("GAME OVER"), color);
     tex_gameover->setAlpha(0x0);
@@ -46,8 +46,8 @@ PlayerArea::PlayerArea(AppContext& app, bool draw_gauge)
     , special_draw([](GraphicsContext&){})
 {
     PlayerArea::draw_labels = app.theme().gameplay.draw_labels;
-    PlayerArea::labelcolor_normal = app.theme().colors.text;
-    PlayerArea::labelcolor_highlight = app.theme().colors.text_accent;
+    PlayerArea::labelcolor_normal = app.theme().colors.label_normal;
+    PlayerArea::labelcolor_highlight = app.theme().colors.label_highlight;
 
     auto font_label = app.gcx().loadFont(Paths::data() + "fonts/PTN57F.ttf", 28);
     font_content = app.gcx().loadFont(Paths::data() + "fonts/PTN77F.ttf", 30);

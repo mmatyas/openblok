@@ -21,8 +21,8 @@ Statistics::Statistics(IngameState& parent, AppContext& app)
         std::chrono::seconds(3),
         [this](double t){ return t * labels.size(); })
 {
-    const auto color = app.theme().colors.text;
-    const auto color_highlight = app.theme().colors.text_accent;
+    const auto color = app.theme().colors.pause_normal;
+    const auto color_highlight = app.theme().colors.pause_highlight;
 
     auto font = app.gcx().loadFont(Paths::data() + "fonts/PTS55F.ttf", 26);
     auto font_highlight = app.gcx().loadFont(Paths::data() + "fonts/PTS75F.ttf", 26);

@@ -6,19 +6,30 @@
 
 
 struct ThemeColors {
-    RGBAColor text;
-    RGBAColor text_accent;
+    RGBAColor label_normal;
+    RGBAColor label_highlight;
 
-    RGBAColor mainmenu_inactive;
-    RGBAColor mainmenu_selected;
+    RGBAColor pause_normal;
+    RGBAColor pause_highlight;
 
+    RGBAColor mainmenu_normal;
+    RGBAColor mainmenu_highlight;
+    RGBAColor mainmenu_panel;
+
+    RGBAColor announce;
+    RGBAColor popup;
     RGBAColor line_clear;
 
     ThemeColors()
-        : text(0xEEEEEEFF_rgba)
-        , text_accent(0xFFA500FF_rgba)
-        , mainmenu_inactive(0x006080FF_rgba)
-        , mainmenu_selected(0x2030FFFF_rgba)
+        : label_normal(0xEEEEEEFF_rgba)
+        , label_highlight(0xFFA500FF_rgba)
+        , pause_normal(label_normal)
+        , pause_highlight(label_highlight)
+        , mainmenu_normal(0x006080FF_rgba)
+        , mainmenu_highlight(label_normal)
+        , mainmenu_panel(0x2030FFFF_rgba)
+        , announce(label_normal)
+        , popup(label_normal)
         , line_clear(0xEEEEEEFF_rgba)
     {}
 };
