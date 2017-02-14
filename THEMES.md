@@ -39,34 +39,41 @@ version = "v1.2"
 # This block defines the color scheme used in the game
 # Accepted values are RGB or RGBA color in hex format
 [colors]
-# The color of most texts
-text = #EEEEEE
-# Color used for highlighting some texts
-text_accent = #FFA500
-# Color of UI panels and borders during gameplay
-panel = #0A0AFF80
-# The color of unselected elements in the main menu
-mainmenu_inactive = #006080
-# The color of themain menu button
-mainmenu_selected = #2030FF
+# The color of the labels ('Next', 'Hold', ...) and counters
+label_normal = #EEEEEE
+# Color used for highlighting some texts,
+# eg. when the number of remaining lines is almost zero
+label_highlight = #FFA500
+# Color of the normal text of the pause menu and statistics screen
+pause_normal = #EEEEEE
+# Color of the highlighted or selected element
+pause_highlight = #FFA500
+# Text color of the unselected buttons
+mainmenu_normal = #006080
+# Text color of the selected button and the description text
+mainmenu_highlight = #EEEEEE
+# Background color of the selected button and the description panel
+mainmenu_panel = #2030FF
+# Color of the countdown text
+countdown = #EEEEEE
+# Color of the game over / finished text
+game_end = #EEEEEE
+# Color of the bonus messages (eg. 'Level up!')
+popup = #EEEEEE
 # The color of the line clear animation
 line_clear = #EEEEEE
 
 # Gameplay-related graphical settings
 # For logical values, you can use yes/no/true/false/on/off
 [gameplay]
-# Draw the panels/borders?
-draw_panels = yes
 # Draw the labels like 'Next', 'Level', etc.?
 draw_labels = yes
-# Draw the background tiles of the well?
-draw_wellbg = yes
 # If this is off, all minos will have the same texture,
 # but tinted with a different color
 # If this is on, you'll need to have a texture file for all
 # the different minos: mino_{l,r,s,z,t,i,o,garbage}.png
 custom_minos = no
-# Tint the ghost texture with the piece's color?
+# Tint the ghost texture with the piece color?
 tint_ghost = yes
 ```
 
