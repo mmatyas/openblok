@@ -28,7 +28,7 @@ public:
     void drawActive(GraphicsContext&) const;
     void drawPassive(GraphicsContext&) const;
 
-    void setLevelCounter(unsigned);
+    void setLevelCounter(bool, unsigned);
     void setScore(unsigned);
     void setGametime(Duration);
     void setGoalCounter(unsigned);

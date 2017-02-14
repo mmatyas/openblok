@@ -533,7 +533,7 @@ void Gameplay::update(IngameState& parent, const std::vector<Event>& events, App
             const auto& stats = parent.player_stats.at(device_id);
             auto& parea = parent.player_areas.at(device_id);
             parea.setGoalCounter(lineclears_left.at(device_id));
-            parea.setLevelCounter(stats.level);
+            parea.setLevelCounter(app.theme().gameplay.draw_labels, stats.level);
             parea.setScore(stats.score);
         }
         texts_need_update = false;

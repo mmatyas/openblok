@@ -61,7 +61,7 @@ PlayerArea::PlayerArea(AppContext& app, bool draw_gauge)
 
     setScore(0);
     setGoalCounter(0);
-    setLevelCounter(0);
+    setLevelCounter(app.theme().gameplay.draw_labels, 0);
     setGametime(Duration::zero());
 
     setMaxWidth(app, app.gcx().screenWidth());
@@ -186,9 +186,10 @@ void PlayerArea::update()
     special_update();
 }
 
-void PlayerArea::setLevelCounter(unsigned num)
+void PlayerArea::setLevelCounter(bool show_label, unsigned num)
 {
-    tex_level_counter_narrow = font_content->renderText(tr("LEVEL ") + std::to_string(num), labelcolor_normal);
+    tex_level_counter_narrow = font_content->renderText((show_label ? tr("LEVEL ") : "")
+        + std::to_string(num), labelcolor_normal);
     tex_level_counter_wide = font_content->renderText(std::to_string(num), labelcolor_normal);
 }
 
