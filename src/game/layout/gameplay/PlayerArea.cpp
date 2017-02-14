@@ -277,10 +277,10 @@ void PlayerArea::drawPassive(GraphicsContext& gcx) const
 
 void PlayerArea::drawWidePassive(GraphicsContext& gcx) const
 {
-    tex_overlay->drawScaled(rect_overlay);
-
     if (draw_gauge)
         garbage_gauge.drawPassive(gcx);
+
+    tex_overlay->drawScaled(rect_overlay);
 
     const int rightside_x = x() + width();
     static constexpr int label_height = 30;
@@ -316,10 +316,10 @@ void PlayerArea::drawWideActive(GraphicsContext& gcx) const
 
 void PlayerArea::drawNarrowPassive(GraphicsContext& gcx) const
 {
-    tex_overlay->drawScaled(rect_overlay);
-
     if (draw_gauge)
         garbage_gauge.drawPassive(gcx);
+
+    tex_overlay->drawScaled(rect_overlay);
 
     if (draw_labels) {
         tex_hold->drawAt(x() + 5, y());
