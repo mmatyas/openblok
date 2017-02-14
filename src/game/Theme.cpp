@@ -95,7 +95,8 @@ std::unordered_map<std::string, RGBAColor*> createRGBBinds(ThemeColors& colors) 
         {"mainmenu_normal", &colors.mainmenu_normal},
         {"mainmenu_highlight", &colors.mainmenu_highlight},
         {"mainmenu_panel", &colors.mainmenu_panel},
-        {"announce", &colors.announce},
+        {"countdown", &colors.countdown},
+        {"game_end", &colors.game_end},
         {"popup", &colors.popup},
         {"line_clear", &colors.line_clear},
     };

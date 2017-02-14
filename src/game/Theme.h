@@ -16,7 +16,8 @@ struct ThemeColors {
     RGBAColor mainmenu_highlight;
     RGBAColor mainmenu_panel;
 
-    RGBAColor announce;
+    RGBAColor countdown;
+    RGBAColor game_end;
     RGBAColor popup;
     RGBAColor line_clear;
 
@@ -28,7 +29,8 @@ struct ThemeColors {
         , mainmenu_normal(0x006080FF_rgba)
         , mainmenu_highlight(label_normal)
         , mainmenu_panel(0x2030FFFF_rgba)
-        , announce(label_normal)
+        , countdown(label_normal)
+        , game_end(label_normal)
         , popup(label_normal)
         , line_clear(0xEEEEEEFF_rgba)
     {}

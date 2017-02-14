@@ -25,7 +25,7 @@ PlayerArea::GameEndVars::GameEndVars(AppContext& app)
         [this]{ if (sfx_onanimend) sfx_onanimend->playOnce(); })
 {
     auto font_big = app.gcx().loadFont(Paths::data() + "fonts/PTC75F.ttf", 45);
-    const auto color = app.theme().colors.announce;
+    const auto color = app.theme().colors.game_end;
 
     tex_gameover = font_big->renderText(tr("GAME OVER"), color);
     tex_gameover->setAlpha(0x0);

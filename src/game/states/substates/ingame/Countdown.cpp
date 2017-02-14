@@ -25,7 +25,7 @@ Countdown::Countdown(AppContext& app)
     , pending_sfx(sfx_countdown.at(0))
 {
     auto font_huge = app.gcx().loadFont(Paths::data() + "fonts/helsinki.ttf", 150);
-    const auto text_color = app.theme().colors.announce;
+    const auto text_color = app.theme().colors.countdown;
     tex_countdown = {{
         font_huge->renderText("3", text_color),
         font_huge->renderText("2", text_color),
