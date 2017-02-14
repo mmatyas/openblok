@@ -50,6 +50,11 @@ void PieceRain::update()
     bottom_y.update(Timing::frame_duration);
 }
 
+void PieceRain::reload()
+{
+    active_pieces.clear();
+}
+
 void PieceRain::draw() const
 {
     int piece_y = bottom_y.value();

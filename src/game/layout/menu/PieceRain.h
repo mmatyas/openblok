@@ -20,6 +20,8 @@ public:
     void update();
     void draw() const;
 
+    void reload();
+
 private:
     unsigned displayed_piece_count;
     std::list<std::unique_ptr<Piece>> active_pieces;

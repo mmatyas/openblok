@@ -51,6 +51,9 @@ void Base::reloadTheme(MainMenuState& parent, AppContext& app)
     reloadUI(parent, app);
     reloadMusic(app);
 
+    for (auto& rain : rains)
+        rain.reload();
+
     updatePositions(app.gcx());
 }
 
