@@ -31,8 +31,7 @@ Here is a full `theme.cfg` file with the default values as an example. Feel free
 # can store info about the theme
 [meta]
 # Text values are between quote marks
-author = "John Smith"
-email = "jsmith@example.com"
+author = "John Smith <jsmith@example.com>"
 description = "Some fancy theme"
 version = "v1.2"
 
