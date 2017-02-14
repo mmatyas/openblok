@@ -11,6 +11,7 @@ struct WellConfig {
     unsigned short starting_gravity;
     unsigned short shift_normal;
     unsigned short shift_turbo;
+    unsigned short max_next_pieces;
     bool instant_harddrop;
     LockDelayType lock_delay_type;
     unsigned short lock_delay;
@@ -23,6 +24,7 @@ struct WellConfig {
         starting_gravity = 64,
         shift_normal = 14,
         shift_turbo = 4,
+        max_next_pieces = 5,
         instant_harddrop = true,
         lock_delay_type = LockDelayType::EXTENDED,
         lock_delay = 30,

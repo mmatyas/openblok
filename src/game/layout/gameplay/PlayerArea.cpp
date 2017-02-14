@@ -95,7 +95,7 @@ void PlayerArea::setMaxWidth(AppContext& app, unsigned max_width)
             else
                 tex_overlay = app.gcx().loadTexture(app.theme().get_texture("well/narrow.png"));
 
-            nextQueue().setPreviewCount(1);
+            nextQueue().setPreviewCount(std::min<unsigned short>(1, app.wellconfig().max_next_pieces)); // 1 or 0
         }
         else {
             bounding_box.w = width_wide;
@@ -110,7 +110,7 @@ void PlayerArea::setMaxWidth(AppContext& app, unsigned max_width)
             else
                 tex_overlay = app.gcx().loadTexture(app.theme().get_texture("well/wide.png"));
 
-            nextQueue().setPreviewCount(5);
+            nextQueue().setPreviewCount(app.wellconfig().max_next_pieces);
         }
     }
 

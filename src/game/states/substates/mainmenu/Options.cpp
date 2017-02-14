@@ -147,6 +147,16 @@ Options::Options(MainMenuState& parent, AppContext& app)
                 app.wellconfig().lock_delay_type = map.at(val);
             }));
 
+        tuning_options.emplace_back(std::make_shared<ValueChooser>(app,
+            std::vector<std::string>({"0","1","2","3","4","5"}),
+            std::min<size_t>(das_values.size() - 1, app.wellconfig().max_next_pieces),
+            tr("Next pieces"),
+            tr("The number of next pieces you can preview."),
+            [&app](const std::string& val){
+                // this must not throw error
+                app.wellconfig().max_next_pieces = std::stoul(val);
+            }));
+
         k = 0;
         std::vector<std::string> lockdelay_values(60);
         std::generate(lockdelay_values.begin(), lockdelay_values.end(), [&k]{ return std::to_string(++k) + "/60 s"; });

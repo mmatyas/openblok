@@ -70,6 +70,9 @@ void NextQueue::setPreviewCount(unsigned num)
 
 void NextQueue::draw(GraphicsContext& gcx, int x, int y) const
 {
+    if (!displayed_piece_count)
+        return;
+
     int offset_y = y + Mino::texture_size_px;
     draw_nth_piece(0, x, offset_y);
     offset_y += Mino::texture_size_px * 3;

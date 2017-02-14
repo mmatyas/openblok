@@ -39,6 +39,7 @@ std::unordered_map<std::string, unsigned short*> createNumericBind(WellConfig& w
         {"das_start", &well.shift_normal},
         {"das_repeat", &well.shift_turbo},
         {"lock_delay", &well.lock_delay},
+        {"max_next_pieces", &well.max_next_pieces},
     };
 }
 
