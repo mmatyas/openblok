@@ -16,6 +16,8 @@ public:
     void update(const std::vector<Event>&, AppContext&) final;
     void draw(GraphicsContext&) final;
 
+    void reloadTheme(AppContext&);
+
     std::list<std::unique_ptr<SubStates::MainMenu::State>> states;
 
 private:

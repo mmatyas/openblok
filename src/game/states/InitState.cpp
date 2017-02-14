@@ -3,7 +3,6 @@
 #include "game/AppContext.h"
 #include "game/GameConfigFile.h"
 #include "game/Theme.h"
-#include "game/components/MinoStorage.h"
 #include "game/states/MainMenuState.h"
 #include "system/Log.h"
 #include "system/Paths.h"
@@ -29,13 +28,6 @@ InitState::InitState(AppContext& app)
         {} // TODO
 
     Log::info("init") << "Loading resources from '" << Paths::data() << "'\n";
-    Log::info("init") << "Theme: '" << app.sysconfig().theme_dir_name << "'\n";
-
-    app.theme() = ThemeConfigFile::load(app.sysconfig().theme_dir_name);
-
-    MinoStorage::loadMinos(app);
-    MinoStorage::loadGhosts(app);
-    MinoStorage::loadMatrixCell(app.gcx(), app.theme().get_texture("matrix.png"));
 
     app.states().emplace(std::make_unique<MainMenuState>(app));
 }

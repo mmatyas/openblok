@@ -3,6 +3,7 @@
 #include "Options.h"
 #include "game/AppContext.h"
 #include "game/Theme.h"
+#include "game/components/MinoStorage.h"
 #include "game/components/PieceFactory.h"
 #include "game/components/rotations/SRS.h"
 #include "game/states/MainMenuState.h"
@@ -12,6 +13,7 @@
 #include "system/Font.h"
 #include "system/GraphicsContext.h"
 #include "system/Localize.h"
+#include "system/Log.h"
 #include "system/Music.h"
 #include "system/Paths.h"
 #include "system/Texture.h"
@@ -21,27 +23,64 @@ namespace SubStates {
 namespace MainMenu {
 
 Base::Base(MainMenuState& parent, AppContext& app)
-    : tex_background(app.gcx().loadTexture(app.theme().get_texture("menu_fill.png")))
-    , logo(app, 150)
-    , desc_panel_color(app.theme().colors.mainmenu_inactive)
-    , current_column(&primary_buttons)
+    : current_column(&primary_buttons)
     , column_slide_anim(std::chrono::milliseconds(350),
                         [](double t){ return t; },
                         [this](){  })
-    , music(app.audio().loadMusic(app.theme().random_menu_music()))
 {
-    desc_panel_color.a = 0xE6; // 90%
-
     PieceFactory::changeInitialPositions(Rotations::SRS().initialPositions());
     column_slide_anim.stop();
 
+    desc_rect = { 0, 0, 0, 0 };
+
+    // move one of the rains lower
+    auto& rain = rains.at(0);
+    rain.setPosition(0, 48); // about 1.5 minos lower, TODO: Fix magic numbers
+
+    reloadTheme(parent, app);
+}
+
+Base::~Base() = default;
+
+void Base::reloadTheme(MainMenuState& parent, AppContext& app)
+{
+    Log::info("init") << "Theme: '" << app.sysconfig().theme_dir_name << "'\n";
+    app.theme() = ThemeConfigFile::load(app.sysconfig().theme_dir_name);
+
+    reloadGameAssets(app);
+    reloadUI(parent, app);
+    reloadMusic(app);
+
+    updatePositions(app.gcx());
+}
+
+void Base::reloadGameAssets(AppContext& app)
+{
+    MinoStorage::loadMinos(app);
+    MinoStorage::loadGhosts(app);
+    MinoStorage::loadMatrixCell(app.gcx(), app.theme().get_texture("matrix.png"));
+}
+
+void Base::reloadUI(MainMenuState& parent, AppContext& app)
+{
+    tex_background = app.gcx().loadTexture(app.theme().get_texture("menu_fill.png"));
+    logo = std::make_unique<Layout::Logo>(app, 150);
+
+    desc_panel_color = app.theme().colors.mainmenu_inactive;
+    desc_panel_color.a = 0xE6; // 90%
+
     auto desc_font = app.gcx().loadFont(Paths::data() + "fonts/PTS55F.ttf", 24);
     const auto desc_color = app.theme().colors.text;
+
+    primary_buttons.buttons.clear();
 
     primary_buttons.buttons.emplace_back(app, tr("SINGLEPLAYER"), [this](){
         openSubcolumn(&singleplayer_buttons);
     });
     {
+        singleplayer_buttons.buttons.clear();
+        singleplayer_buttons.descriptions.clear();
+
         singleplayer_buttons.buttons.emplace_back(app, tr("MARATHON"),
             [this, &app](){ startGame(app, GameMode::SP_MARATHON); });
         singleplayer_buttons.buttons.emplace_back(app, tr("SPRINT"),
@@ -72,6 +111,9 @@ Base::Base(MainMenuState& parent, AppContext& app)
         openSubcolumn(&multiplayer_buttons);
     });
     {
+        multiplayer_buttons.buttons.clear();
+        multiplayer_buttons.descriptions.clear();
+
         multiplayer_buttons.buttons.emplace_back(app, tr("BATTLE"),
             [this, &app](){ startGame(app, GameMode::MP_BATTLE); });
         multiplayer_buttons.buttons.emplace_back(app, tr("MARATHON"),
@@ -107,18 +149,13 @@ Base::Base(MainMenuState& parent, AppContext& app)
         btn.setAlpha(0x0);
     for (auto& btn : multiplayer_buttons.buttons)
         btn.setAlpha(0x0);
-
-    // move one of the rains lower
-    auto& rain = rains.at(0);
-    rain.setPosition(0, 48); // about 1.5 minos lower, TODO: Fix magic numbers
-
-    music->playLoop();
-
-    desc_rect = { 0, 0, 0, 0 };
-    updatePositions(app.gcx());
 }
 
-Base::~Base() = default;
+void Base::reloadMusic(AppContext& app)
+{
+    music = app.audio().loadMusic(app.theme().random_menu_music());
+    music->playLoop();
+}
 
 void Base::startGame(AppContext& app, GameMode gamemode)
 {
@@ -141,7 +178,7 @@ void Base::updatePositions(GraphicsContext& gcx)
     const int left_x = 20 + gcx.screenWidth() * 0.1;
     const int right_x = gcx.screenWidth() - left_x + 32; // move 1 mino left, TODO: Fix magic numbers
 
-    logo.setPosition(left_x, center_y - 260);
+    logo->setPosition(left_x, center_y - 260);
 
     int rain_x = right_x;
     for (auto& rain : rains) {
@@ -313,7 +350,7 @@ void Base::draw(MainMenuState&, GraphicsContext& gcx) const
     for (const auto& rain : rains)
         rain.draw();
 
-    logo.draw();
+    logo->draw();
 
     for (const auto& btn : primary_buttons.buttons)
         btn.draw(gcx);

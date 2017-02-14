@@ -63,6 +63,11 @@ void MainMenuState::update(const std::vector<Event>& events, AppContext& app)
     states.back()->update(*this, events, app);
 }
 
+void MainMenuState::reloadTheme(AppContext& app)
+{
+    static_cast<SubStates::MainMenu::Base*>(states.front().get())->reloadTheme(*this, app);
+}
+
 void MainMenuState::draw(GraphicsContext& gcx)
 {
     states.back()->draw(*this, gcx);

@@ -29,10 +29,12 @@ public:
     void updatePositions(GraphicsContext&) final;
     void draw(MainMenuState&, GraphicsContext&) const final;
 
+    void reloadTheme(MainMenuState&, AppContext&);
+
 private:
     ::Rectangle screen_rect;
     std::unique_ptr<Texture> tex_background;
-    Layout::Logo logo;
+    std::unique_ptr<Layout::Logo> logo;
     std::array<Layout::PieceRain, 2> rains;
     ::Rectangle desc_rect;
     RGBAColor desc_panel_color;
@@ -62,6 +64,10 @@ private:
 
     void startGame(AppContext&, GameMode);
     void onFadeoutComplete(AppContext&, std::unique_ptr<GameState>&&);
+
+    void reloadGameAssets(AppContext&);
+    void reloadUI(MainMenuState&, AppContext&);
+    void reloadMusic(AppContext&);
 };
 
 } // namespace MainMenu

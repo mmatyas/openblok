@@ -79,8 +79,9 @@ Options::Options(MainMenuState& parent, AppContext& app)
         system_options.emplace_back(std::make_shared<ValueChooser>(app,
             std::move(detected_themes), current_theme_idx,
             tr("Theme"), tr("Change the graphical theme of the game."),
-            [&app](const std::string& val){
+            [&app, &parent](const std::string& val){
                 app.sysconfig().theme_dir_name = val;
+                parent.reloadTheme(app);
             }));
     }
     subitem_panels.push_back(std::move(system_options));
