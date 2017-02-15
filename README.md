@@ -30,6 +30,7 @@ A customizable, cross platform, open-source falling block game, packed with a bu
 - [x] Runs on most desktop systems
 - [x] Runs on embedded Linux, even without X11
 - [x] Runs in browsers (experimental)
+- [x] Theme support
 
 
 Download
