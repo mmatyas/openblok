@@ -111,8 +111,8 @@ ThemeConfig ThemeConfigFile::load(const std::string& dir_name)
     if (config.empty())
         return tcfg;
 
-    const std::regex valid_value(R"(([0-9]{1,3}|on|off|yes|no|true|false|[a-z]+|#[0-9a-fA-F]{6}))");
-    const std::regex valid_color(R"(^#[0-9a-fA-F]{6,8}$)");
+    const std::regex valid_value(R"(([0-9]{1,3}|on|off|yes|no|true|false|[a-z]+|#[0-9a-fA-F]{6}([0-9a-fA-F]{2})?))");
+    const std::regex valid_color(R"(^#[0-9a-fA-F]{6}([0-9a-fA-F]{2})?$)");
     const std::set<std::string> accepted_headers = {"meta", "colors", "gameplay"};
 
 
