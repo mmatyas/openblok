@@ -467,7 +467,7 @@ void Gameplay::updateAnimationsOnly(IngameState& parent, AppContext&)
 void Gameplay::update(IngameState& parent, const std::vector<Event>& events, AppContext& app)
 {
     const bool someone_still_playing = !playingPlayers().empty();
-    std::map<DeviceID, std::vector<InputEvent>> input_events;
+    std::unordered_map<DeviceID, std::vector<InputEvent>> input_events;
 
     for (const auto& event : events) {
         switch (event.type) {
@@ -498,6 +498,16 @@ void Gameplay::update(IngameState& parent, const std::vector<Event>& events, App
     }
 
     gameend_statistics_delay.update(Timing::frame_duration);
+
+    // if singleplayer, merge all input
+    if (player_devices.size() == 1) {
+        std::vector<InputEvent> temp = input_events[-1];
+        input_events.erase(-1);
+        for (const auto& event_vec : input_events)
+            temp.insert(temp.end(), event_vec.second.begin(), event_vec.second.end());
+        input_events.clear();
+        input_events.emplace(-1, std::move(temp));
+    }
 
     for (const DeviceID device_id : player_devices) {
         if (player_status.at(device_id) == PlayerStatus::PLAYING) {

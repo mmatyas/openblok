@@ -86,7 +86,7 @@ void IngameState::updatePositions(AppContext& app)
 
 void IngameState::update(const std::vector<Event>& events, AppContext& app)
 {
-    std::map<DeviceID, std::vector<InputEvent>> input_events;
+    std::unordered_map<DeviceID, std::vector<InputEvent>> input_events;
     for (const auto& event : events) {
         switch (event.type) {
             case EventType::WINDOW:
@@ -101,6 +101,17 @@ void IngameState::update(const std::vector<Event>& events, AppContext& app)
                 break;
         }
     }
+
+    // if singleplayer, merge all input
+    if (isSinglePlayer(gamemode)) {
+        std::vector<InputEvent> temp = input_events[-1];
+        input_events.erase(-1);
+        for (const auto& event_vec : input_events)
+            temp.insert(temp.end(), event_vec.second.begin(), event_vec.second.end());
+        input_events.clear();
+        input_events.emplace(-1, std::move(temp));
+    }
+
     for (auto& ui_pa : player_areas)
         ui_pa.second.well().updateKeystateOnly(input_events[ui_pa.first]);
 
