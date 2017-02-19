@@ -72,6 +72,7 @@ make
 
 **Optional build parameters:**
 
+- `ENABLE_MP3`, `ENABLE_MOD`, `ENABLE_FLAC`, `ENABLE_JPG`: Enable/disable loading certain media formats. Default: MP3 and JPG `ON`, MOD and FLAC `OFF`
 - `CMAKE_BUILD_TYPE`: To create an **optimized release build**, set this to `Release`. To create a **debug build**, set this value to `Debug`. See the CMake documentation. Default: `Release`.
 - `INSTALL_PORTABLE`: The game needs to know where it can find the data files. By default, the game is searching for them in the absolute path of the installation location, which is usually `/usr/local/share/openblok` or `C:\Program Files\openblok`. By setting `INSTALL_PORTABLE` to `ON`, the game will search for the files in the same directory as the binary. Default: `OFF` on Linux, `ON` on Windows.
 - `CMAKE_INSTALL_PREFIX`: The base directory of the installation step (eg. `make install`). Defaults to `/usr/local` or `C:\Program Files`. See the CMake documentation.
