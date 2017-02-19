@@ -5,17 +5,26 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
 include(ProjectVersion)
 
 # Build options
+
+# Default to release build
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE "release")
+endif()
+string(TOLOWER "${CMAKE_BUILD_TYPE}" CMAKE_BUILD_TYPE)
+
 # Portable install
 set(INSTALL_PORTABLE_DEFAULT OFF)
 if(WIN32 OR CYGWIN)
     set(INSTALL_PORTABLE_DEFAULT ON)
 endif()
 option(INSTALL_PORTABLE "The installation step should put the runtime and the data directory next to each other" ${INSTALL_PORTABLE_DEFAULT})
+
 # Currently unit tests only work only in Debug
-if(NOT "${CMAKE_BUILD_TYPE}" STREQUAL "Release")
+if(NOT "${CMAKE_BUILD_TYPE}" STREQUAL "release")
     option(BUILD_TESTS "Build the unit tests" ON)
     option(BUILD_TEST_COVERAGE "Build the test coverage report" OFF)
 endif()
+
 # Intallation locations
 if(INSTALL_PORTABLE)
     set(EXEDIR "." CACHE STRING "Install location of the runtime executable")
@@ -30,14 +39,10 @@ else()
         set(DESKTOPDIR "${SHAREDIR}/applications" CACHE STRING "Install location of the desktop shortcut")
     endif()
 endif()
-# Default to release build
-if(NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE "Release")
-endif()
-string(TOLOWER "${CMAKE_BUILD_TYPE}" CMAKE_BUILD_TYPE)
 
 
 # Global compiler settings
+
 # Use C++14
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -46,6 +51,7 @@ if (CMAKE_VERSION VERSION_LESS 3.1.0)
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
     endif()
 endif()
+
 # Turn on warnings
 include(TryAddingCompilerFlag)
 if(MSVC)
@@ -58,6 +64,7 @@ else()
         try_adding_compiler_flag(-Wl,--subsystem,windows)
     endif()
 endif()
+
 # Build coverage report if requested
 if(BUILD_TEST_COVERAGE)
     include(CodeCoverage)
