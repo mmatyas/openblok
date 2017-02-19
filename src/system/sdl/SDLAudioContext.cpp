@@ -9,10 +9,22 @@
 #include <map>
 
 
+static constexpr int SDL_MIX_FLAGS = MIX_INIT_OGG
+#ifdef SDL2_ENABLE_MP3
+    | MIX_INIT_MP3
+#endif
+#ifdef SDL2_ENABLE_MOD
+    | MIX_INIT_MOD
+#endif
+#ifdef SDL2_ENABLE_FLAC
+    | MIX_INIT_FLAC
+#endif
+;
+
 const std::string LOG_TAG("audio");
 
 SDLAudioContext::SDLAudioContext()
-    : audio_loader(MIX_INIT_OGG | MIX_INIT_MP3)
+    : audio_loader(SDL_MIX_FLAGS)
     , mixer(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 1024)
 {
     SDLMusic::mixer = &mixer;

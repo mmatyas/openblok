@@ -12,11 +12,17 @@
 #include <assert.h>
 
 
+static constexpr int SDL_IMG_FLAGS = IMG_INIT_PNG
+#ifdef SDL2_ENABLE_JPG
+    | IMG_INIT_JPG
+#endif
+;
+
 const std::string LOG_TAG("video");
 
 SDLGraphicsContext::SDLGraphicsContext(SDL2pp::Window& window)
     : renderer(window, -1, 0x0)
-    , image_loader(IMG_INIT_PNG | IMG_INIT_JPG)
+    , image_loader(SDL_IMG_FLAGS)
     , ttf()
     , on_render_callback([](){})
 {
