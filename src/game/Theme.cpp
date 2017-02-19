@@ -142,22 +142,25 @@ ThemeConfig ThemeConfigFile::load(const std::string& dir_name)
             }
 
             try {
-                if (block_name == "gameplay" && game_bool_binds.count(key_str))
+                if (block_name == "gameplay" && game_bool_binds.count(key_str)) {
                     *game_bool_binds.at(key_str) = ConfigFile::parseBool(keyval);
-                else if (block_name == "colors" && std::regex_match(val_str, valid_color)) {
+                }
+                else if (block_name == "colors" &&
+                        std::regex_match(val_str, valid_color) &&
+                        color_binds.count(key_str)) {
                     try {
                         RGBAColor color;
-                        color.r = std::stoul(val_str.substr(1, 2), 0, 16);
-                        color.g = std::stoul(val_str.substr(3, 2), 0, 16);
-                        color.b = std::stoul(val_str.substr(5, 2), 0, 16);
+                        color.r = std::stoul(val_str.substr(1, 2), nullptr, 16);
+                        color.g = std::stoul(val_str.substr(3, 2), nullptr, 16);
+                        color.b = std::stoul(val_str.substr(5, 2), nullptr, 16);
                         if (val_str.size() == 9 /* RGBA */)
-                            color.a = std::stoul(val_str.substr(7, 2), 0, 16);
+                            color.a = std::stoul(val_str.substr(7, 2), nullptr, 16);
                         else
                             color.a = 0xFF;
 
                         *color_binds.at(key_str) = color;
                     }
-                    catch (const std::exception& err) {
+                    catch (const std::exception&) {
                         throw std::runtime_error("Could not parse color for '" + key_str + "', ignored");
                     }
                 }
