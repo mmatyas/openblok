@@ -4,6 +4,7 @@
 #include "game/GameConfigFile.h"
 #include "game/Theme.h"
 #include "game/states/MainMenuState.h"
+#include "system/AudioContext.h"
 #include "system/Log.h"
 #include "system/Paths.h"
 #include "system/Window.h"
@@ -23,9 +24,9 @@ InitState::InitState(AppContext& app)
     if (app.sysconfig().fullscreen)
         app.window().toggleFullscreen();
     if (!app.sysconfig().sfx)
-        {} // TODO
+        app.audio().toggleSFXMute();
     if (!app.sysconfig().music)
-        {} // TODO
+        app.audio().toggleMusicMute();
 
     Log::info("init") << "Loading resources from '" << Paths::data() << "'\n";
 
