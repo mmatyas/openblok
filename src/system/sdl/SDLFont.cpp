@@ -53,17 +53,14 @@ std::unique_ptr<Texture> SDLFont::renderText(const std::string& text, const RGBA
             width = line_width;
     }
 
-    // extract the surface parameters from the SDL pixel format enum
-    int bpp;
-    Uint32 rmask, gmask, bmask, amask;
-    if (!SDL_PixelFormatEnumToMasks(pixelformat, &bpp, &rmask, &gmask, &bmask, &amask))
-        throw std::runtime_error(SDL_GetError());
-
     // create the surface and blit the lines on it
+    // NOTE: the setup of the surface (masks, initial fill) is based on
+    // the implementation of TTF_RenderUTF8_Blended
     const SDL_Color rgba_color = {color.r, color.g, color.b, 255};
-    SDL2pp::Surface basesurf(0, width,  line_height * lines.size(),
-                             bpp, rmask, gmask, bmask, amask);
-    basesurf.SetBlendMode(SDL_BLENDMODE_ADD);
+    SDL2pp::Surface basesurf(0x0, width, line_height * lines.size(),
+                             32, 0xff0000, 0xff00, 0xff, 0xff000000);
+    basesurf.FillRect(SDL2pp::NullOpt, (color.r << 16) | (color.g << 8) | color.b);
+
     switch (align) {
         case TextAlign::LEFT:
             for (unsigned l = 0; l < lines.size(); l++) {
@@ -82,6 +79,8 @@ std::unique_ptr<Texture> SDLFont::renderText(const std::string& text, const RGBA
                                        surf.GetWidth(), surf.GetHeight()));
             }
             break;
+        default:
+            assert(false);
     }
 
     return std::make_unique<SDLTexture>(SDL2pp::Texture(*renderer, basesurf.SetAlphaMod(color.a)));
