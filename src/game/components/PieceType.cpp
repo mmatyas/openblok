@@ -1,52 +1,54 @@
 #include "PieceType.h"
 
+#include <unordered_map>
 #include <assert.h>
 
 
 char toAscii(PieceType type)
 {
-    switch(type) {
-        case PieceType::I: return 'I';
-        case PieceType::J: return 'J';
-        case PieceType::L: return 'L';
-        case PieceType::O: return 'O';
-        case PieceType::S: return 'S';
-        case PieceType::T: return 'T';
-        case PieceType::Z: return 'Z';
-        case PieceType::GARBAGE: return '+';
-    }
-    assert(false);
+    static const std::unordered_map<PieceType, char, PieceTypeHash> map = {
+        { PieceType::I, 'I' },
+        { PieceType::J, 'J' },
+        { PieceType::L, 'L' },
+        { PieceType::O, 'O' },
+        { PieceType::S, 'S' },
+        { PieceType::T, 'T' },
+        { PieceType::Z, 'Z' },
+        { PieceType::GARBAGE, '+' },
+    };
+
+    return map.at(type);
 }
 
 char toAscii(PieceDirection direction)
 {
-    switch(direction) {
-        case PieceDirection::NORTH: return 'N';
-        case PieceDirection::EAST: return 'E';
-        case PieceDirection::SOUTH: return 'S';
-        case PieceDirection::WEST: return 'W';
-    }
-    assert(false);
+    static const std::unordered_map<PieceDirection, char, PieceDirectionHash> map = {
+        { PieceDirection::NORTH, 'N' },
+        { PieceDirection::EAST, 'E' },
+        { PieceDirection::SOUTH, 'S' },
+        { PieceDirection::WEST, 'W' },
+    };
+    return map.at(direction);
 }
 
 PieceDirection nextCW(PieceDirection direction)
 {
-    switch(direction) {
-        case PieceDirection::NORTH: return PieceDirection::EAST;
-        case PieceDirection::EAST: return PieceDirection::SOUTH;
-        case PieceDirection::SOUTH: return PieceDirection::WEST;
-        case PieceDirection::WEST: return PieceDirection::NORTH;
-    }
-    assert(false);
+    static const std::unordered_map<PieceDirection, PieceDirection, PieceDirectionHash> map = {
+        { PieceDirection::NORTH, PieceDirection::EAST },
+        { PieceDirection::EAST, PieceDirection::SOUTH },
+        { PieceDirection::SOUTH, PieceDirection::WEST },
+        { PieceDirection::WEST, PieceDirection::NORTH },
+    };
+    return map.at(direction);
 }
 
 PieceDirection prevCW(PieceDirection direction)
 {
-    switch(direction) {
-        case PieceDirection::NORTH: return PieceDirection::WEST;
-        case PieceDirection::EAST: return PieceDirection::NORTH;
-        case PieceDirection::SOUTH: return PieceDirection::EAST;
-        case PieceDirection::WEST: return PieceDirection::SOUTH;
-    }
-    assert(false);
+    static const std::unordered_map<PieceDirection, PieceDirection, PieceDirectionHash> map = {
+        { PieceDirection::NORTH, PieceDirection::WEST },
+        { PieceDirection::EAST, PieceDirection::NORTH },
+        { PieceDirection::SOUTH, PieceDirection::EAST },
+        { PieceDirection::WEST, PieceDirection::SOUTH },
+    };
+    return map.at(direction);
 }

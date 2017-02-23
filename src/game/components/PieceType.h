@@ -34,6 +34,12 @@ enum class PieceDirection : uint8_t {
     WEST
 };
 
+struct PieceDirectionHash {
+    size_t operator()(PieceDirection d) const {
+        return static_cast<size_t>(d);
+    }
+};
+
 char toAscii(PieceDirection);
 PieceDirection nextCW(PieceDirection);
 PieceDirection prevCW(PieceDirection);

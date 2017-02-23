@@ -133,7 +133,9 @@ uint8_t PlayerSelect::columnOfPlayer(DeviceID device_id)
         if (entry.second == device_id)
             return entry.first;
     }
+
     assert(false);
+    exit(1);
 }
 
 void PlayerSelect::update(IngameState& parent, const std::vector<Event>& events, AppContext& app)

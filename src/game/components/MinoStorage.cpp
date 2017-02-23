@@ -111,15 +111,15 @@ std::shared_ptr<Mino> MinoStorage::getMatrixCell()
 
 RGBColor MinoStorage::color(PieceType type)
 {
-    switch(type) {
-    case PieceType::I : return 0x00FFFF_rgb;
-    case PieceType::J : return 0x0040FF_rgb;
-    case PieceType::L : return 0xFFA500_rgb;
-    case PieceType::O : return 0xFFFF00_rgb;
-    case PieceType::S : return 0x80FF00_rgb;
-    case PieceType::T : return 0xAA00FF_rgb;
-    case PieceType::Z : return 0xFF0000_rgb;
-    case PieceType::GARBAGE : return 0xFFFFFF_rgb;
-    }
-    assert(false);
+    static const std::unordered_map<PieceType, RGBColor, PieceTypeHash> map = {
+        { PieceType::I, 0x00FFFF_rgb},
+        { PieceType::J, 0x0040FF_rgb},
+        { PieceType::L, 0xFFA500_rgb},
+        { PieceType::O, 0xFFFF00_rgb},
+        { PieceType::S, 0x80FF00_rgb},
+        { PieceType::T, 0xAA00FF_rgb},
+        { PieceType::Z, 0xFF0000_rgb},
+        { PieceType::GARBAGE, 0xFFFFFF_rgb},
+    };
+    return map.at(type);
 }

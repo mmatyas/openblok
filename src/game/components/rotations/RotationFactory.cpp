@@ -14,5 +14,7 @@ std::unique_ptr<RotationFn> RotationFactory::make(RotationStyle style)
         case RotationStyle::TGM: return std::make_unique<Rotations::TGM>();
         case RotationStyle::SRS: return std::make_unique<Rotations::SRS>();
     }
+
     assert(false);
+    exit(1);
 }
