@@ -39,7 +39,6 @@ std::map<DeviceName, DeviceData> InputConfigFile::load(const std::string& path)
     const std::regex valid_head_keyboard(R"(keyboard)");
     const std::regex valid_head_gamepad(R"(G:.*)");
     const std::regex valid_head_joystick(R"(J:.*)");
-    const std::regex valid_button_list(R"([0-9]{1,3}(,[0-9]{1,3})*)");
 
     DeviceType current_device_type;
 
