@@ -8,3 +8,7 @@ build
 !.gitignore
 !.travis.yml
 !.appveyor.yml
+
+# ignore IDE project files
+*.kdev4
+*.workspace
