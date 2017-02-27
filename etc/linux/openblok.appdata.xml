@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+​<!-- Copyright 2017 Mátyás Mustoha -->
+​<component type="desktop-application">
+​  <id>openblok</id>
+​  <metadata_license>CC0</metadata_license>
+​  <project_license>GPL-3.0+</project_license>
+​  <name>OpenBlok</name>
+​  <summary>A falling block puzzle game</summary>
+
+​  <description>
+​    <p>
+​      A customizable, cross platform, open-source falling block game,
+      packed with a bunch of features.
+​    </p>
+    <p>Gameplay features:</p>
+    <ul>
+      <li>Ghost piece support</li>
+      <li>Hold piece support</li>
+      <li>Customizable next pieces support</li>
+      <li>Customizable DAS support</li>
+      <li>SRS, TGM and Classic rotation</li>
+      <li>Full wall- and floor kick support</li>
+      <li>7-piece bag random generator</li>
+      <li>Classic, Extended and Infinity lock support</li>
+      <li>Sonic drop and Zangi-move support</li>
+      <li>T-Spin and Mini T-Spin support</li>
+      <li>Combo support</li>
+      <li>Battle mode, Sprint and Ultra</li>
+      <li>Proper menu, configuration and stats</li>
+      <li>Gamepad support</li>
+      <li>Music and sound effects</li>
+      <li>Big screen, small screen support</li>
+      <li>Theme support</li>
+    </ul>
+
+​  </description>
+
+  <categories>
+    <category>Game</category>
+    <category>BlocksGame</category>
+  </categories>
+​
+​  <screenshots>
+​    <screenshot type="default">
+​      <caption>Gameplay</caption>
+​      <image>https://gitcdn.xyz/repo/mmatyas/openblok/b0491168/etc/promo/screenshot01.png</image>
+​    </screenshot>
+​    <screenshot>
+​      <caption>Main menu</caption>
+​      <image>https://gitcdn.xyz/repo/mmatyas/openblok/b0491168/etc/promo/screenshot_mainmenu.png</image>
+​    </screenshot>
+​    <screenshot>
+​      <caption>Multiplayer</caption>
+​      <image>https://gitcdn.xyz/repo/mmatyas/openblok/b0491168/etc/promo/screenshot02.png</image>
+​    </screenshot>
+​  </screenshots>
+​
+​  <url type="homepage">https://github.com/mmatyas/openblok</url>
+
+  <developer_name>Mátyás Mustoha</developer_name>
+  <update_contact/>matyas.mustoha_AT_gmail.com</component>
+​
+​  <releases>
+​    <release version="0.7.0" date="2017-02-27">
+​      <description>
+​        <p>See https://github.com/mmatyas/openblok/releases/tag/v0.7.0</p>
+​      </description>
+​    </release>
+​  </releases>
+​</component>
