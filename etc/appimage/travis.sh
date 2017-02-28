@@ -52,7 +52,6 @@ delete_blacklisted
 
 rm -rf ./usr/share/applications
 rm -rf ./usr/share/pixmaps
-rm -rf ./usr/share/metainfo
 
 ########################################################################
 # desktopintegration asks the user on first run to install a menu item
