@@ -81,7 +81,10 @@ mv ./usr/{share,bin/}
 cd .. # Go out of AppImage
 
 mkdir -p ../out/
-generate_appimage
+
+BINTRAY_USER=mmatyas
+BINTRAY_REPO=appimages
+generate_type2_appimage
 
 ########################################################################
 # Upload the AppDir
