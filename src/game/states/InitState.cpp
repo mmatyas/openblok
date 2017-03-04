@@ -29,13 +29,12 @@ InitState::InitState(AppContext& app)
         app.audio().toggleMusicMute();
 
     Log::info("init") << "Loading resources from '" << Paths::data() << "'\n";
-
-    app.states().emplace(std::make_unique<MainMenuState>(app));
 }
 
 void InitState::update(const std::vector<Event>&, AppContext& app)
 {
-    app.states().pop();
+    std::unique_ptr<GameState> temp = std::make_unique<MainMenuState>(app);
+    app.states().top().swap(temp);
 }
 
 void InitState::draw(GraphicsContext&)
