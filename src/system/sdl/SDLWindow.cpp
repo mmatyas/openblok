@@ -74,6 +74,8 @@ SDLWindow::SDLWindow()
     device_maps.at(-1).type = DeviceType::KEYBOARD;
     device_maps.at(-1).buttonmap = default_keyboard_mapping;
     device_maps.at(-1).eventmap = toEventMap(device_maps.at(-1).buttonmap);
+
+    SDL_ShowCursor(SDL_DISABLE);
 }
 
 void SDLWindow::toggleFullscreen()
