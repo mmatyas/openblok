@@ -221,7 +221,7 @@ Options::Options(MainMenuState& parent, AppContext& app)
                 {tr("Down"), InputType::MENU_DOWN},
                 {tr("Left"), InputType::MENU_LEFT},
                 {tr("Right"), InputType::MENU_RIGHT},
-                {tr("OK"), InputType::MENU_OK},
+                {tr("OK/Select"), InputType::MENU_OK},
                 {tr("Cancel/Back"), InputType::MENU_CANCEL},
             };
             static const std::vector<std::pair<std::string, InputType>> game_eventnames = {
