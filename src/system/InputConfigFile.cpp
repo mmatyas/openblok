@@ -82,8 +82,6 @@ std::map<DeviceName, DeviceData> InputConfigFile::load(const std::string& path)
             while (std::getline(val_sstream, number_str, ',')) {
                 try {
                     uint16_t value = std::stoul(number_str);
-                    if (value > 0x200) // there can be 512 keys at most on a device
-                        throw std::out_of_range("");
                     buttons.emplace_back(value);
                 }
                 catch (...) {
