@@ -159,6 +159,10 @@ std::vector<Event> SDLWindow::collectEvents()
      * the input handling code for both APIs.
      */
 
+    // as defined in the SDL documentation
+    static const short int AXIS_MAX = 32767;
+    static const short int AXIS_MIN = -32768;
+
     std::vector<Event> output;
 
     SDL_Event sdl_event;
@@ -208,6 +212,43 @@ std::vector<Event> SDLWindow::collectEvents()
                 for (const auto& input_event : buttonmap[sdl_event.cbutton.button])
                     output.emplace_back(InputEvent(input_event, is_down, sdl_event.cbutton.which));
                 output.emplace_back(RawInputEvent(sdl_event.cdevice.which, sdl_event.cbutton.button, is_down));
+            }
+            break;
+        case SDL_CONTROLLERAXISMOTION: {
+                assert(gamepads.count(sdl_event.cbutton.which));
+                assert(device_maps.count(sdl_event.cbutton.which));
+
+                SDL_Event new_sdl_event;
+                new_sdl_event.cbutton.timestamp = sdl_event.caxis.timestamp;
+                new_sdl_event.cbutton.which = sdl_event.caxis.which;
+
+                if (sdl_event.caxis.value == AXIS_MAX || sdl_event.caxis.value == AXIS_MIN) { // stick pushed
+                    new_sdl_event.type = SDL_CONTROLLERBUTTONDOWN;
+                    new_sdl_event.cbutton.state = SDL_PRESSED;
+                }
+                else { // stick released
+                    new_sdl_event.type = SDL_CONTROLLERBUTTONUP;
+                    new_sdl_event.cbutton.state = SDL_RELEASED;
+                }
+
+                switch (sdl_event.caxis.axis) {
+                    case SDL_CONTROLLER_AXIS_LEFTX:
+                    case SDL_CONTROLLER_AXIS_RIGHTX:
+                        new_sdl_event.cbutton.button = (sdl_event.caxis.value < 0)
+                            ? SDL_CONTROLLER_BUTTON_DPAD_LEFT
+                            : SDL_CONTROLLER_BUTTON_DPAD_RIGHT;
+                        break;
+                    case SDL_CONTROLLER_AXIS_LEFTY:
+                    case SDL_CONTROLLER_AXIS_RIGHTY:
+                        new_sdl_event.cbutton.button = (sdl_event.caxis.value < 0)
+                            ? SDL_CONTROLLER_BUTTON_DPAD_UP
+                            : SDL_CONTROLLER_BUTTON_DPAD_DOWN;
+                        break;
+                    default:
+                        break;
+                }
+
+                SDL_PushEvent(&new_sdl_event);
             }
             break;
         case SDL_JOYDEVICEADDED:
