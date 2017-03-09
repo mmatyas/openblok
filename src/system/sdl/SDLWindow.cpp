@@ -332,6 +332,35 @@ std::vector<Event> SDLWindow::collectEvents()
                 output.emplace_back(RawInputEvent(sdl_event.jhat.which, button, true));
             }
             break;
+        case SDL_JOYAXISMOTION:
+            if (joysticks.count(sdl_event.jhat.which)) {
+                SDL_Event new_sdl_event;
+                new_sdl_event.type = SDL_JOYHATMOTION;
+                new_sdl_event.jhat.timestamp = sdl_event.jaxis.timestamp;
+                new_sdl_event.jhat.which = sdl_event.jaxis.which;
+                new_sdl_event.jhat.hat = 0;
+
+                if (sdl_event.jaxis.value == AXIS_MAX || sdl_event.jaxis.value == AXIS_MIN) { // stick pushed
+                    // assume 0, 2, 4, ... axis to be horizontal
+                    // and 1, 3, 5, ... axis to be vertical
+                    if (sdl_event.jaxis.axis % 2 == 0) {
+                        new_sdl_event.jhat.value = (sdl_event.jaxis.value < 0)
+                            ? SDL_HAT_LEFT
+                            : SDL_HAT_RIGHT;
+                    }
+                    else {
+                        new_sdl_event.jhat.value = (sdl_event.jaxis.value < 0)
+                            ? SDL_HAT_UP
+                            : SDL_HAT_DOWN;
+                    }
+                }
+                else { // stick released
+                    new_sdl_event.jhat.value = SDL_HAT_CENTERED;
+                }
+
+                SDL_PushEvent(&new_sdl_event);
+            }
+            break;
         case SDL_JOYBUTTONUP:
         case SDL_JOYBUTTONDOWN:
             if (joysticks.count(sdl_event.jbutton.which)) {
