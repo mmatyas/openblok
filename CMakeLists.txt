@@ -46,12 +46,12 @@ endif()
 
 # Global compiler settings
 
-# Use C++14
-set(CMAKE_CXX_STANDARD 14)
+# Use C++11
+set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 if (CMAKE_VERSION VERSION_LESS 3.1.0)
     if(NOT MSVC)
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
     endif()
 endif()
 
@@ -79,7 +79,7 @@ endif()
 
 
 # Dependencies: SDL2
-set(SDL2PP_CXXSTD "c++14" CACHE STRING "libSDL2pp C++ standard")
+set(SDL2PP_CXXSTD "c++11" CACHE STRING "libSDL2pp C++ standard")
 set(SDL2PP_WITH_IMAGE ON)
 set(SDL2PP_WITH_MIXER ON)
 set(SDL2PP_WITH_TTF ON)
