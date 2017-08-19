@@ -4,6 +4,7 @@
 #include "game/components/PieceFactory.h"
 #include "game/components/Well.h"
 #include "game/components/rotations/SRS.h"
+#include "system/util/MakeUnique.h"
 
 
 SUITE(WellTSpin) {

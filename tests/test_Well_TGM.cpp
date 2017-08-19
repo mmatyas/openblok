@@ -5,6 +5,7 @@
 #include "game/components/PieceFactory.h"
 #include "game/components/Well.h"
 #include "game/components/rotations/TGM.h"
+#include "system/util/MakeUnique.h"
 
 
 SUITE(WellTGM) {

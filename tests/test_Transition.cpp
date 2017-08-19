@@ -6,7 +6,16 @@
 
 
 SUITE(Transition) {
+#if __cplusplus >= 201402L
     using namespace std::chrono_literals;
+#else
+    constexpr std::chrono::seconds operator "" s(unsigned long long s) {
+        return std::chrono::seconds(s);
+    }
+    constexpr std::chrono::duration<long double> operator "" s(long double s) {
+        return std::chrono::duration<long double>(s);
+    }
+#endif
 
 TEST(CreateVoid) {
     bool val = false;
