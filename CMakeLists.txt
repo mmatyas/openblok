@@ -55,6 +55,9 @@ if (CMAKE_VERSION VERSION_LESS 3.1.0)
     endif()
 endif()
 
+# Check if we can use std::make_unique
+include(CheckMakeUnique)
+
 # Turn on warnings
 include(TryAddingCompilerFlag)
 if(MSVC)

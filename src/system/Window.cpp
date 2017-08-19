@@ -2,6 +2,7 @@
 
 #include "Log.h"
 #include "sdl/SDLWindow.h"
+#include "util/MakeUnique.h"
 
 
 std::unique_ptr<Window> Window::create()

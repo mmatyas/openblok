@@ -1,6 +1,7 @@
 #include "SDLFont.h"
 
 #include "SDLTexture.h"
+#include "system/util/MakeUnique.h"
 
 #include "SDL2/SDL.h"
 #include <sstream>

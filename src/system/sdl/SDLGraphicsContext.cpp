@@ -3,6 +3,7 @@
 #include "SDLFont.h"
 #include "SDLTexture.h"
 #include "system/Log.h"
+#include "system/util/MakeUnique.h"
 
 #include <SDL2/SDL_image.h>
 #include <SDL2pp/SDL2pp.hh>

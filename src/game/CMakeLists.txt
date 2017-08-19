@@ -153,3 +153,8 @@ if (USE_BOOST_REGEX)
     target_compile_definitions(module_game PRIVATE USE_BOOST_REGEX)
     target_link_libraries(module_game ${Boost_LIBRARIES})
 endif()
+
+# use custom std::make_unique if necessary
+if (NOT HAS_MAKEUNIQUE)
+    target_compile_definitions(module_game PRIVATE NEED_MAKEUNIQUE)
+endif()

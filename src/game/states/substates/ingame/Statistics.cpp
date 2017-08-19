@@ -10,6 +10,7 @@
 #include "system/GraphicsContext.h"
 #include "system/Localize.h"
 #include "system/Paths.h"
+#include "system/util/MakeUnique.h"
 
 
 namespace SubStates {

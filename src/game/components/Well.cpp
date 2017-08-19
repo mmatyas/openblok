@@ -10,6 +10,7 @@
 #include "game/Timing.h"
 #include "game/WellConfig.h"
 #include "game/WellEvent.h"
+#include "system/util/MakeUnique.h"
 
 #include <algorithm>
 #include <cstdlib>

@@ -8,6 +8,7 @@
 #include "system/Log.h"
 #include "system/Paths.h"
 #include "system/Window.h"
+#include "system/util/MakeUnique.h"
 
 #include <assert.h>
 

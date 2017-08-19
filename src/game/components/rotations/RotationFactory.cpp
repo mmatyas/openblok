@@ -3,6 +3,7 @@
 #include "Classic.h"
 #include "TGM.h"
 #include "SRS.h"
+#include "system/util/MakeUnique.h"
 
 #include <assert.h>
 

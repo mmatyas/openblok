@@ -22,6 +22,7 @@
 #include "game/states/InitState.h"
 #include "system/Log.h"
 #include "system/Paths.h"
+#include "system/util/MakeUnique.h"
 
 #include <algorithm>
 #include <chrono>
