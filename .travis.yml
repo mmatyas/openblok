@@ -11,21 +11,17 @@ branches:
 matrix:
   include:
   - compiler: gcc
-    env: BUILD=native
+    env: BUILD=native BOOSTREGEX=ON
     before_install:
-    - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
-    - sudo apt-get -qq update
     - sudo apt-get install -y
-        g++-4.9
+        libboost-regex-dev
         libsdl2-dev
         libsdl2-image-dev
         libsdl2-mixer-dev
         libsdl2-ttf-dev
-    - export CC=gcc-4.9
-    - export CXX=g++-4.9
   - os: osx
     compiler: clang
-    env: BUILD=native
+    env: BUILD=native BOOSTREGEX=OFF
     before_install:
     - brew update
     - brew install
@@ -47,7 +43,7 @@ script:
   - if [[ "$BUILD" == "native" ]]; then
       mkdir build;
       cd build;
-      cmake .. -DCMAKE_BUILD_TYPE=Debug;
+      cmake .. -DCMAKE_BUILD_TYPE=Debug -DUSE_BOOST_REGEX=${BOOSTREGEX};
       make VERBOSE=1;
     fi
   - if [[ "$BUILD" == "native" ]]; then
