@@ -34,7 +34,7 @@ before_install:
       libsdl2-mixer-dev
       libsdl2-ttf-dev
   - if [[ $TRAVIS_OS_NAME == linux && $BUILD_TYPE == Release ]]; then
-      wget https://github.com/mmatyas/mmatyas.github.io/releases/download/arm-libs/appstream-085-ubuntu1404.tgz;
+      wget https://github.com/mmatyas/mmatyas.github.io/releases/download/arm-libs/appstream-085-ubuntu1404.tgz &&
       sudo tar xzf appstream-085-ubuntu1404.tgz -C /;
     fi
 
@@ -55,5 +55,8 @@ script:
       ./tests/openblok_test;
     fi
   - if [[ $TRAVIS_OS_NAME == linux && $BUILD_TYPE == Release ]]; then
-      bash -e ../etc/appimage/travis.sh;
+      bash -e ../etc/appimage/travis.sh &&
+      chmod +x ~/out/OpenBlok*.AppImage &&
+      wget -c https://github.com/probonopd/uploadtool/raw/master/upload.sh &&
+      bash ./upload.sh ~/out/OpenBlok*.AppImage;
     fi
