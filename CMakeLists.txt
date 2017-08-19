@@ -85,6 +85,12 @@ add_subdirectory(external/libSDL2pp)
 # Dependencies: tinydir
 include_directories(external/tinydir)
 
+# Dependencies: Boost.Regex, if requested
+option(USE_BOOST_REGEX "Use Boost.Regex instead of C++11 regex" OFF)
+if (USE_BOOST_REGEX)
+    find_package(Boost 1.49 COMPONENTS regex REQUIRED)
+endif()
+
 
 # The main game source
 include_directories(src)

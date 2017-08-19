@@ -3,10 +3,10 @@
 #include "system/ConfigFile.h"
 #include "system/Log.h"
 #include "system/Paths.h"
+#include "system/util/Regex.h"
 
 #include <tinydir_cpp.h>
 #include <random>
-#include <regex>
 #include <set>
 
 
@@ -111,8 +111,8 @@ ThemeConfig ThemeConfigFile::load(const std::string& dir_name)
     if (config.empty())
         return tcfg;
 
-    const std::regex valid_value(R"(([0-9]{1,3}|on|off|yes|no|true|false|[a-z]+|#[0-9a-fA-F]{6}([0-9a-fA-F]{2})?))");
-    const std::regex valid_color(R"(^#[0-9a-fA-F]{6}([0-9a-fA-F]{2})?$)");
+    const regex valid_value(R"(([0-9]{1,3}|on|off|yes|no|true|false|[a-z]+|#[0-9a-fA-F]{6}([0-9a-fA-F]{2})?))");
+    const regex valid_color(R"(^#[0-9a-fA-F]{6}([0-9a-fA-F]{2})?$)");
     const std::set<std::string> accepted_headers = {"meta", "colors", "gameplay"};
 
 
@@ -134,7 +134,7 @@ ThemeConfig ThemeConfigFile::load(const std::string& dir_name)
             const auto& key_str = keyval.first;
             const auto& val_str = keyval.second;
 
-            if (!std::regex_match(val_str, valid_value)) {
+            if (!regex_match(val_str, valid_value)) {
                 Log::warning(LOG_TAG) << tcfg.config_path() << ": Unknown value '" << val_str
                                                             << "' for '" << key_str << "'\n";
                 Log::warning(LOG_TAG) << tcfg.config_path() << ": under '" << block_name << "', skipped\n";
@@ -146,7 +146,7 @@ ThemeConfig ThemeConfigFile::load(const std::string& dir_name)
                     *game_bool_binds.at(key_str) = ConfigFile::parseBool(keyval);
                 }
                 else if (block_name == "colors" &&
-                        std::regex_match(val_str, valid_color) &&
+                        regex_match(val_str, valid_color) &&
                         color_binds.count(key_str)) {
                     try {
                         RGBAColor color;

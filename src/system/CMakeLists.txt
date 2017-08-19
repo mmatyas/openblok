@@ -44,6 +44,9 @@ set(MOD_SYSTEM_H
     sdl/SDLSoundEffect.h
     sdl/SDLTexture.h
     sdl/SDLWindow.h
+
+    # Util
+    util/Regex.h
 )
 
 add_library(module_system ${MOD_SYSTEM_SRC} ${MOD_SYSTEM_H})
@@ -52,6 +55,13 @@ add_library(module_system ${MOD_SYSTEM_SRC} ${MOD_SYSTEM_H})
 target_include_directories(module_system PRIVATE ${SDL2PP_INCLUDE_DIRS})
 target_compile_definitions(module_system PRIVATE OPENBLOK_DATADIR="${DATADIR}")
 target_link_libraries(module_system ${SDL2PP_LIBRARIES})
+
+# use Boost.Regex if requested
+if (USE_BOOST_REGEX)
+    target_include_directories(module_system PRIVATE ${Boost_INCLUDE_DIRS})
+    target_compile_definitions(module_system PRIVATE USE_BOOST_REGEX)
+    target_link_libraries(module_system ${Boost_LIBRARIES})
+endif()
 
 option(ENABLE_JPG "Enable JPG image support" ON)
 option(ENABLE_MP3 "Enable MP3 music support" ON)

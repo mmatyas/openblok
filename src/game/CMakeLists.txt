@@ -146,3 +146,10 @@ endif()
 
 add_library(module_game ${MOD_GAME_SRC} ${MOD_GAME_H})
 target_link_libraries(module_game module_system)
+
+# use Boost.Regex if requested
+if (USE_BOOST_REGEX)
+    target_include_directories(module_game PRIVATE ${Boost_INCLUDE_DIRS})
+    target_compile_definitions(module_game PRIVATE USE_BOOST_REGEX)
+    target_link_libraries(module_game ${Boost_LIBRARIES})
+endif()

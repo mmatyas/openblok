@@ -1,10 +1,10 @@
 #include "ConfigFile.h"
 
 #include "Log.h"
+#include "util/Regex.h"
 
 #include <assert.h>
 #include <fstream>
-#include <regex>
 
 
 const std::string LOG_TAG("config");
@@ -15,10 +15,10 @@ ConfigFile::Blocks ConfigFile::load(const std::string& path)
     if (!infile.is_open())
         return Blocks();
 
-    const std::regex valid_head(R"(^\[[a-zA-Z0-9\.-_,: \(\)]+\]$)");
-    const std::regex valid_data(R"(^[a-z_]+\s*=\s*([a-zA-Z0-9_, ]+|".*?"|#[a-fA-F0-9]{6,8})$)");
-    const std::regex whitespace_left(R"(^\s+)");
-    const std::regex whitespace_right(R"(\s+$)");
+    const regex valid_head(R"(^\[[a-zA-Z0-9\.-_,: \(\)]+\]$)");
+    const regex valid_data(R"(^[a-z_]+\s*=\s*([a-zA-Z0-9_, ]+|".*?"|#[a-fA-F0-9]{6,8})$)");
+    const regex whitespace_left(R"(^\s+)");
+    const regex whitespace_right(R"(\s+$)");
 
     ConfigFile::Blocks output;
     std::string current_head;
@@ -30,11 +30,11 @@ ConfigFile::Blocks ConfigFile::load(const std::string& path)
         if (line.empty() || line.front() == '#')
             continue;
 
-        if (std::regex_match(line, valid_head)) {
+        if (regex_match(line, valid_head)) {
             current_head = line.substr(1, line.length() - 2);
             assert(!current_head.empty()); // the regex requires at least one char
         }
-        else if (std::regex_match(line, valid_data)) {
+        else if (regex_match(line, valid_data)) {
             if (current_head.empty()) {
                 Log::warning(LOG_TAG) << path << ":" << linenum << ": No block header defined before this line\n";
                 Log::warning(LOG_TAG) << "Using default settings\n";
@@ -42,11 +42,11 @@ ConfigFile::Blocks ConfigFile::load(const std::string& path)
             }
             const auto split_pos = line.find("=");
             auto key = line.substr(0, split_pos);
-            key = std::regex_replace(key, whitespace_left, "");
-            key = std::regex_replace(key, whitespace_right, "");
+            key = regex_replace(key, whitespace_left, "");
+            key = regex_replace(key, whitespace_right, "");
             auto val = line.substr(split_pos + 1);
-            val = std::regex_replace(val, whitespace_left, "");
-            val = std::regex_replace(val, whitespace_right, "");
+            val = regex_replace(val, whitespace_left, "");
+            val = regex_replace(val, whitespace_right, "");
             output[current_head].emplace(std::move(key), std::move(val));
         }
         else {

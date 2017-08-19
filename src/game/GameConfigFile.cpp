@@ -2,11 +2,11 @@
 
 #include "system/ConfigFile.h"
 #include "system/Log.h"
+#include "system/util/Regex.h"
 
 #include <map>
 #include <fstream>
 #include <functional>
-#include <regex>
 #include <set>
 #include <unordered_map>
 #include <assert.h>
@@ -114,7 +114,7 @@ std::tuple<SysConfig, WellConfig> GameConfigFile::load(const std::string& path)
     if (config.empty())
         return {};
 
-    const std::regex valid_value(R"(([0-9]{1,3}|on|off|yes|no|true|false|[a-z]+|".+?"))");
+    const regex valid_value(R"(([0-9]{1,3}|on|off|yes|no|true|false|[a-z]+|".+?"))");
     const std::set<std::string> accepted_headers = {"system", "gameplay"};
 
     SysConfig sys;
@@ -136,7 +136,7 @@ std::tuple<SysConfig, WellConfig> GameConfigFile::load(const std::string& path)
             const auto& key_str = keyval.first;
             const auto& val_str = keyval.second;
 
-            if (!std::regex_match(val_str, valid_value)) {
+            if (!regex_match(val_str, valid_value)) {
                 Log::warning(LOG_TAG) << path << ": Unknown value '" << val_str
                                               << "' for '" << key_str << "'\n";
                 Log::warning(LOG_TAG) << path << ": under '" << block_name << "', skipped\n";

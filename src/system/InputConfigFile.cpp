@@ -2,9 +2,9 @@
 
 #include "ConfigFile.h"
 #include "Log.h"
+#include "util/Regex.h"
 
 #include <algorithm>
-#include <regex>
 #include <sstream>
 #include <assert.h>
 
@@ -36,21 +36,21 @@ std::map<DeviceName, DeviceData> InputConfigFile::load(const std::string& path)
 
     std::map<DeviceName, DeviceData> output;
 
-    const std::regex valid_head_keyboard(R"(keyboard)");
-    const std::regex valid_head_gamepad(R"(G:.*)");
-    const std::regex valid_head_joystick(R"(J:.*)");
+    const regex valid_head_keyboard(R"(keyboard)");
+    const regex valid_head_gamepad(R"(G:.*)");
+    const regex valid_head_joystick(R"(J:.*)");
 
     DeviceType current_device_type;
 
     for (const auto& block : config) {
         auto device_name = block.first;
-        if (std::regex_match(device_name, valid_head_keyboard))
+        if (regex_match(device_name, valid_head_keyboard))
             current_device_type = DeviceType::KEYBOARD;
-        else if (std::regex_match(device_name, valid_head_gamepad)) {
+        else if (regex_match(device_name, valid_head_gamepad)) {
             current_device_type = DeviceType::GAMEPAD;
             device_name = device_name.substr(2);
         }
-        else if (std::regex_match(device_name, valid_head_joystick)) {
+        else if (regex_match(device_name, valid_head_joystick)) {
             current_device_type = DeviceType::LEGACY_JOYSTICK;
             device_name = device_name.substr(2);
         }
