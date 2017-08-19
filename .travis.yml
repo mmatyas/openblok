@@ -8,20 +8,15 @@ branches:
     - master
 
 
+env:
+  - BUILD_TYPE=Release BOOSTREGEX=ON
+  - BUILD_TYPE=Debug BOOSTREGEX=ON
+
 matrix:
   include:
-  - compiler: gcc
-    env: BUILD=native BOOSTREGEX=ON
-    before_install:
-    - sudo apt-get install -y
-        libboost-regex-dev
-        libsdl2-dev
-        libsdl2-image-dev
-        libsdl2-mixer-dev
-        libsdl2-ttf-dev
   - os: osx
     compiler: clang
-    env: BUILD=native BOOSTREGEX=OFF
+    env: BOOSTREGEX=OFF
     before_install:
     - brew update
     - brew install
@@ -31,21 +26,25 @@ matrix:
         sdl2_ttf
 
 
-before_script:
-  - if [[ "$BUILD" == "native" ]]; then
-      $CXX --version;
-      cmake --version;
-      sdl2-config --version;
-    fi
+before_install:
+  - sudo apt-get install -y
+      libboost-regex-dev
+      libsdl2-dev
+      libsdl2-image-dev
+      libsdl2-mixer-dev
+      libsdl2-ttf-dev
 
+before_script:
+  - $CXX --version
+  - cmake --version
+  - sdl2-config --version
 
 script:
-  - if [[ "$BUILD" == "native" ]]; then
-      mkdir build;
-      cd build;
-      cmake .. -DCMAKE_BUILD_TYPE=Debug -DUSE_BOOST_REGEX=${BOOSTREGEX};
-      make VERBOSE=1;
-    fi
-  - if [[ "$BUILD" == "native" ]]; then
+  - mkdir build && cd build
+  - cmake ..
+      -DCMAKE_BUILD_TYPE=${BUILD_TYPE}
+      -DUSE_BOOST_REGEX=${BOOSTREGEX}
+  - make VERBOSE=1
+  - if [[ $BUILD_TYPE == Debug ]]; then
       ./tests/openblok_test;
     fi
