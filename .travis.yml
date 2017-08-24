@@ -42,5 +42,6 @@ addons:
       -DCMAKE_BUILD_TYPE=Debug
       -DUSE_BOOST_REGEX=ON
       -DENABLE_MP3=OFF
+      -DBUILD_TESTS=OFF
     build_command: make
     branch_pattern: coverity_scan
