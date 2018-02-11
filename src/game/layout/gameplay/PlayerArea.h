@@ -10,6 +10,8 @@
 #include "system/Color.h"
 #include "system/SoundEffect.h"
 
+#include <string>
+
 class AppContext;
 class Font;
 class GraphicsContext;

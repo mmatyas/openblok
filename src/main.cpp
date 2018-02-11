@@ -27,12 +27,15 @@
 #include <algorithm>
 #include <chrono>
 #include <memory>
-#include <thread>
 #include <assert.h>
+#include <emscripten.h>
 
 
 const std::string LOG_MAIN = "main";
 const std::string LOG_HELP = "help";
+
+AppContext app;
+void runNextFrame();
 
 int main(int argc, const char** argv)
 {
@@ -63,7 +66,6 @@ int main(int argc, const char** argv)
     }
 
 
-    AppContext app;
     if (!app.init())
         return 1;
 
@@ -74,42 +76,39 @@ int main(int argc, const char** argv)
         return 1;
     }
 
-
-    auto frame_starttime = std::chrono::steady_clock::now();
-    auto frame_planned_endtime = frame_starttime + Timing::frame_duration;
-    auto gametime_delay = Timing::frame_duration; // start with an update
-
-    while (!app.window().quitRequested()) {
-        try {
-            while (gametime_delay >= Timing::frame_duration && !app.states().empty()) {
-                auto events = app.window().collectEvents();
-                app.states().top()->update(events, app);
-                gametime_delay -= Timing::frame_duration;
-            }
-            if (app.states().empty())
-                break;
-
-            app.states().top()->draw(app.gcx());
-            app.gcx().render();
-        }
-        catch (const std::exception& err) {
-            app.window().showErrorMessage(err.what());
-            return 1;
-        }
-
-        auto lag = std::max(std::chrono::steady_clock::now() - frame_planned_endtime, Duration::zero());
-        gametime_delay += Timing::frame_duration + lag;
-
-        // max frame rate limiting
-        std::this_thread::sleep_until(frame_planned_endtime);
-
-        frame_starttime = std::chrono::steady_clock::now();
-        frame_planned_endtime = frame_starttime + Timing::frame_duration;
-    }
+    emscripten_set_main_loop(runNextFrame, 0, 1);
 
     // save input config on exit
     const auto mappings = app.window().createInputConfig();
     app.inputconfig().save(mappings, Paths::config() + "input.cfg");
 
     return 0;
+}
+
+void runNextFrame()
+{
+    static auto gametime_delay = Timing::frame_duration; // start with an update
+
+    auto frame_starttime = std::chrono::steady_clock::now();
+    auto frame_planned_endtime = frame_starttime + Timing::frame_duration;
+
+    try {
+        while (gametime_delay >= Timing::frame_duration && !app.states().empty()) {
+            auto events = app.window().collectEvents();
+            app.states().top()->update(events, app);
+            gametime_delay -= Timing::frame_duration;
+        }
+        if (app.states().empty())
+            return;
+
+        app.states().top()->draw(app.gcx());
+        app.gcx().render();
+    }
+    catch (const std::exception& err) {
+        app.window().showErrorMessage(err.what());
+
+    }
+
+    auto lag = std::max(std::chrono::steady_clock::now() - frame_planned_endtime, Duration::zero());
+    gametime_delay += Timing::frame_duration + lag;
 }

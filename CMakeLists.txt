@@ -78,6 +78,26 @@ if(BUILD_TEST_COVERAGE)
 endif()
 
 
+# Emscripten
+if(EMSCRIPTEN)
+    set(CMAKE_EXECUTABLE_SUFFIX ".bc")
+    set(EMOPTIONS "${EMOPTIONS} -std=c++14") # bug?
+    set(EMOPTIONS "${EMOPTIONS} -O3")
+    # set(EMOPTIONS "${EMOPTIONS} -O0 -g4 -s ASSERTIONS=2 -s DEMANGLE_SUPPORT=1") # for debugging
+    # set(EMOPTIONS "${EMOPTIONS} -s DISABLE_EXCEPTION_CATCHING=0")
+    set(EMOPTIONS "${EMOPTIONS} -s USE_SDL=2")
+    set(EMOPTIONS "${EMOPTIONS} -s USE_SDL_IMAGE=2 -s SDL2_IMAGE_FORMATS='[\"png\"]'")
+    set(EMOPTIONS "${EMOPTIONS} -s USE_SDL_TTF=2")
+    set(EMOPTIONS "${EMOPTIONS} -s USE_OGG=1 -s USE_VORBIS=1")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${EMOPTIONS}")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${EMOPTIONS}")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --preload-file ${CMAKE_SOURCE_DIR}/data@data")
+
+    # SDL2_mixer
+    include_directories(external/SDL2_mixer/installdir/include)
+endif()
+
+
 # Dependencies: SDL2
 set(SDL2PP_CXXSTD "c++11" CACHE STRING "libSDL2pp C++ standard")
 set(SDL2PP_WITH_IMAGE ON)

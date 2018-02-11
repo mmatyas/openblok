@@ -60,7 +60,7 @@ void SDLGraphicsContext::render()
     renderer.Present();
     on_render_callback();
 
-    renderer.Clear();
+    // renderer.Clear();
 }
 
 unsigned short SDLGraphicsContext::screenWidth() const
