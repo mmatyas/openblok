@@ -12,3 +12,6 @@ build
 # ignore IDE project files
 *.kdev4
 *.workspace
+
+# ignore SDL2 mixer manual build
+external/SDL2_mixer*
