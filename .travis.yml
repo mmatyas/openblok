@@ -25,14 +25,16 @@ matrix:
         sdl2_mixer
         sdl2_ttf
 
+addons:
+  apt:
+    packages:
+      - libboost-regex-dev
+      - libsdl2-dev
+      - libsdl2-image-dev
+      - libsdl2-mixer-dev
+      - libsdl2-ttf-dev
 
 before_install:
-  - sudo apt-get install -y
-      libboost-regex-dev
-      libsdl2-dev
-      libsdl2-image-dev
-      libsdl2-mixer-dev
-      libsdl2-ttf-dev
   - if [[ $TRAVIS_OS_NAME == linux && $BUILD_TYPE == Release ]]; then
       wget https://github.com/mmatyas/mmatyas.github.io/releases/download/arm-libs/appstream-085-ubuntu1404.tgz &&
       sudo tar xzf appstream-085-ubuntu1404.tgz -C /;
