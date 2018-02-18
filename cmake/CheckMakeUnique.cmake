@@ -12,6 +12,6 @@ set(TESTCODE_MAKEUNIQUE "
         std::unique_ptr<int> ptr = std::make_unique<int>(0);
     }
 ")
-check_cxx_source_compiles("${TESTCODE_MAKEUNIQUE}" HAS_MAKEUNIQUE)
+check_cxx_source_compiles("${TESTCODE_MAKEUNIQUE}" CXX_HAS_MAKEUNIQUE)
 
 cmake_pop_check_state()

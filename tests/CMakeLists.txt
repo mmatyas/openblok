@@ -23,6 +23,6 @@ target_link_libraries(openblok_test module_game)
 
 
 # use custom std::make_unique if necessary
-if (NOT HAS_MAKEUNIQUE)
+if (NOT CXX_HAS_MAKEUNIQUE)
     target_compile_definitions(openblok_test PRIVATE NEED_MAKEUNIQUE)
 endif()

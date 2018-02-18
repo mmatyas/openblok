@@ -155,6 +155,6 @@ if (USE_BOOST_REGEX)
 endif()
 
 # use custom std::make_unique if necessary
-if (NOT HAS_MAKEUNIQUE)
+if (NOT CXX_HAS_MAKEUNIQUE)
     target_compile_definitions(module_game PRIVATE NEED_MAKEUNIQUE)
 endif()
