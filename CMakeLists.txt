@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.11 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.1 FATAL_ERROR)
 project(openblok C CXX)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
@@ -46,17 +46,18 @@ endif()
 
 # Global compiler settings
 
-# Use C++11
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-if (CMAKE_VERSION VERSION_LESS 3.1.0)
-    if(NOT MSVC)
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-    endif()
-endif()
-
-# Check if we can use std::make_unique
+# Check if we can use the C++14 std::make_unique
 include(CheckMakeUnique)
+
+# If C++14 support is available, we should use that,
+# otherwise fall back to C++11
+if(CXX_HAS_MAKEUNIQUE)
+    set(CMAKE_CXX_STANDARD 14)
+else()
+    set(CMAKE_CXX_STANDARD 11)
+    set(CMAKE_CXX_STANDARD_REQUIRED ON)
+endif()
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 # Turn on warnings
 include(TryAddingCompilerFlag)
@@ -79,7 +80,11 @@ endif()
 
 
 # Dependencies: SDL2
-set(SDL2PP_CXXSTD "c++11" CACHE STRING "libSDL2pp C++ standard")
+if(CMAKE_CXX_STANDARD EQUAL 14)
+    set(SDL2PP_CXXSTD "c++14" CACHE STRING "libSDL2pp C++ standard")
+else()
+    set(SDL2PP_CXXSTD "c++11" CACHE STRING "libSDL2pp C++ standard")
+endif()
 set(SDL2PP_WITH_IMAGE ON)
 set(SDL2PP_WITH_MIXER ON)
 set(SDL2PP_WITH_TTF ON)
