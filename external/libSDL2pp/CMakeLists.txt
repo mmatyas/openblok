@@ -102,7 +102,7 @@ INCLUDE_DIRECTORIES(SYSTEM ${SDL2_ALL_INCLUDE_DIRS})
 INCLUDE(CheckCompile)
 CHECK_COMPILE(
 	SDL2PP_WITH_EXPERIMENTAL_OPTIONAL
-	"#include <experimental/optional>\nint main() { std::experimental::optional<int> o; return !o; }"
+	"#include <experimental/optional>\nusing BadOptionalAccess = std::experimental::bad_optional_access;\nint main() { std::experimental::optional<int> o; return !o; }"
 	"experimental/optional header"
 )
 
