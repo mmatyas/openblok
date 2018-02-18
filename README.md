@@ -50,10 +50,10 @@ sudo apt-get install openblok
 Dependencies
 ------------
 
-- CMake (at least 2.8, 3.1+ recommended)
+- CMake (at least 3.1)
 - C++11 supporting compiler (GCC 4.9 or better recommended)
 - SDL2, SDL2_image, SDL2_mixer, SDL2_ttf
-- gcov, lcov (only for generating test coverage report)
+- optional: gcov, lcov (for generating test coverage report)
 
 Eg. on Debian: `sudo apt install cmake libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev`
 
