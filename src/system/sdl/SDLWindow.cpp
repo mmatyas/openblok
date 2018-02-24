@@ -67,7 +67,7 @@ SDLWindow::SDLWindow()
     , m_quit_requested(false)
 {
     window.SetIcon(SDL2pp::Surface(Paths::data() + "icon.png"));
-    SDL_GameControllerAddMappingsFromFile((Paths::data() + "gamecontrollerdb").c_str());
+    //SDL_GameControllerAddMappingsFromFile((Paths::data() + "gamecontrollerdb").c_str());
 
     device_maps[-1].id = -1;
     device_maps.at(-1).name = "keyboard";
@@ -190,7 +190,7 @@ std::vector<Event> SDLWindow::collectEvents()
                     break;
             }
             break;
-        case SDL_CONTROLLERDEVICEADDED:
+        /*case SDL_CONTROLLERDEVICEADDED:
             // Note: It seems this event doesn't always trigger,
             // so the code was moved to SDL_JOYDEVICEADDED, which happens
             // for both GameControllers and Joysticks.
@@ -250,7 +250,7 @@ std::vector<Event> SDLWindow::collectEvents()
 
                 SDL_PushEvent(&new_sdl_event);
             }
-            break;
+            break;*/
         case SDL_JOYDEVICEADDED:
             if (SDL_IsGameController(sdl_event.jdevice.which)) {
                 auto gamepad = std::unique_ptr<SDL_GameController, std::function<void(SDL_GameController*)>>(
