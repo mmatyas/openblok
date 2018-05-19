@@ -55,18 +55,6 @@ else()
 endif()
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-# Turn on warnings
-include(TryAddingCompilerFlag)
-if(MSVC)
-    try_adding_compiler_flag(/W3) # warnings
-else()
-    try_adding_compiler_flag(-Wall)
-    try_adding_compiler_flag(-Wextra)
-    try_adding_compiler_flag(-pedantic)
-    if(WIN32 OR CYGWIN)
-        try_adding_compiler_flag(-Wl,--subsystem,windows)
-    endif()
-endif()
 
 # Build coverage report if requested
 if(BUILD_TEST_COVERAGE)

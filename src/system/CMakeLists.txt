@@ -63,6 +63,9 @@ if (USE_BOOST_REGEX)
     target_link_libraries(module_system ${Boost_LIBRARIES})
 endif()
 
+include(EnableWarnings)
+enable_warnings(module_system)
+
 option(ENABLE_JPG "Enable JPG image support" ON)
 option(ENABLE_MP3 "Enable MP3 music support" ON)
 option(ENABLE_MOD "Enable MOD music support" OFF)
