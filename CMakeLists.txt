@@ -88,10 +88,10 @@ endif()
 set(SDL2PP_WITH_IMAGE ON)
 set(SDL2PP_WITH_MIXER ON)
 set(SDL2PP_WITH_TTF ON)
-add_subdirectory(external/libSDL2pp)
+add_subdirectory(thirdparty/libSDL2pp)
 
 # Dependencies: tinydir
-include_directories(external/tinydir)
+include_directories(thirdparty/tinydir)
 
 # Dependencies: Boost.Regex, if requested
 option(USE_BOOST_REGEX "Use Boost.Regex instead of C++11 regex" OFF)
@@ -104,8 +104,8 @@ endif()
 include_directories(src)
 add_subdirectory(src)
 if(CMAKE_BUILD_TYPE STREQUAL "debug" AND BUILD_TESTS)
-    add_subdirectory(external/unittest-cpp)
-    include_directories(external/unittest-cpp)
+    add_subdirectory(thirdparty/unittest-cpp)
+    include_directories(thirdparty/unittest-cpp)
     add_subdirectory(tests)
 endif()
 
