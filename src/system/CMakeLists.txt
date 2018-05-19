@@ -53,9 +53,8 @@ set(MOD_SYSTEM_H
 add_library(module_system ${MOD_SYSTEM_SRC} ${MOD_SYSTEM_H})
 
 # use SDL2
-target_include_directories(module_system PRIVATE ${SDL2PP_INCLUDE_DIRS})
 target_compile_definitions(module_system PRIVATE OPENBLOK_DATADIR="${DATADIR}")
-target_link_libraries(module_system ${SDL2PP_LIBRARIES})
+target_link_libraries(module_system SDL2pp)
 
 # use Boost.Regex if requested
 if (USE_BOOST_REGEX)
