@@ -64,7 +64,9 @@ if (USE_BOOST_REGEX)
 endif()
 
 include(EnableWarnings)
+include(RequireCxxStd)
 enable_warnings(module_system)
+require_cxx11_or_higher(module_system)
 
 option(ENABLE_JPG "Enable JPG image support" ON)
 option(ENABLE_MP3 "Enable MP3 music support" ON)

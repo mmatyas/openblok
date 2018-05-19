@@ -22,7 +22,9 @@ target_link_libraries(openblok_test module_system)
 target_link_libraries(openblok_test module_game)
 
 include(EnableWarnings)
+include(RequireCxxStd)
 enable_warnings(openblok_test)
+require_cxx11_or_higher(openblok_test)
 
 # use custom std::make_unique if necessary
 if (NOT CXX_HAS_MAKEUNIQUE)

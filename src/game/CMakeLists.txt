@@ -149,7 +149,9 @@ target_link_libraries(module_game module_system)
 target_link_libraries(module_game tinydir)
 
 include(EnableWarnings)
+include(RequireCxxStd)
 enable_warnings(module_game)
+require_cxx11_or_higher(module_game)
 
 # use Boost.Regex if requested
 if (USE_BOOST_REGEX)

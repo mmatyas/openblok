@@ -42,20 +42,6 @@ endif()
 
 # Global compiler settings
 
-# Check if we can use the C++14 std::make_unique
-include(CheckMakeUnique)
-
-# If C++14 support is available, we should use that,
-# otherwise fall back to C++11
-if(CXX_HAS_MAKEUNIQUE)
-    set(CMAKE_CXX_STANDARD 14)
-else()
-    set(CMAKE_CXX_STANDARD 11)
-    set(CMAKE_CXX_STANDARD_REQUIRED ON)
-endif()
-set(CMAKE_CXX_EXTENSIONS OFF)
-
-
 # Build coverage report if requested
 if(BUILD_TEST_COVERAGE)
     include(CodeCoverage)
