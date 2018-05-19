@@ -15,6 +15,8 @@ std::deque<PieceType> NextQueue::global_piece_queue = {};
 NextQueue::NextQueue(unsigned displayed_piece_count)
     : displayed_piece_count(displayed_piece_count)
 {
+    // TODO: use a proper random generator
+
     if (global_piece_queue.size() <= displayed_piece_count)
         generate_global_pieces();
 
@@ -68,34 +70,4 @@ void NextQueue::setPreviewCount(unsigned num)
 {
     displayed_piece_count = num;
     fill_queue();
-}
-
-void NextQueue::draw(GraphicsContext& gcx, int x, int y) const
-{
-    if (!displayed_piece_count)
-        return;
-
-    int offset_y = y + Mino::texture_size_px;
-    draw_nth_piece(0, x, offset_y);
-    offset_y += Mino::texture_size_px * 3;
-
-    const auto scale = gcx.getDrawScale();
-    gcx.modifyDrawScale(scale * 0.75);
-    x *= (1 / 0.75);
-    offset_y *= (1 / 0.75);
-    offset_y += Mino::texture_size_px;
-    for (unsigned i = 1; i < displayed_piece_count; i++) {
-        draw_nth_piece(i, x, offset_y);
-        offset_y += Mino::texture_size_px * 3;
-    }
-    gcx.modifyDrawScale(scale);
-}
-
-void NextQueue::draw_nth_piece(unsigned i, int x, int y) const
-{
-    assert(i < piece_queue.size());
-    assert(i < displayed_piece_count);
-    const auto& piece = piece_storage.at(static_cast<size_t>(piece_queue.at(i)));
-    const float padding_x = (4 - ::displayWidth(piece->type())) / 2.0f;
-    ::drawPiece(*piece, x + Mino::texture_size_px * (0.5f + padding_x), y);
 }

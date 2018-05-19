@@ -9,6 +9,7 @@ set(MOD_GAME_SRC
     components/Mino.cpp
     components/MinoStorage.cpp
     components/NextQueue.cpp
+    components/NextQueueDraw.cpp
     components/Piece.cpp
     components/PieceDraw.cpp
     components/PieceFactory.cpp
@@ -79,6 +80,7 @@ set(MOD_GAME_H
     components/Mino.h
     components/MinoStorage.h
     components/NextQueue.h
+    components/NextQueueDraw.h
     components/Piece.h
     components/PieceDraw.h
     components/PieceFactory.h

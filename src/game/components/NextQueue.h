@@ -20,10 +20,11 @@ public:
 
     /// Pop the top of the queue.
     PieceType next();
-    void setPreviewCount(unsigned);
-
-    /// Draw the N previewable pieces at (x,y)
-    void draw(GraphicsContext&, int x, int y) const;
+    void setPreviewCount(unsigned); // TODO remove
+    unsigned previewCount() const { return displayed_piece_count; }
+    ///
+    const std::deque<PieceType>& queue() const { return piece_queue; }
+    const std::array<std::unique_ptr<Piece>, 7>& piecePtrs() const { return piece_storage; }
 
 private:
     static std::deque<PieceType> global_piece_queue;
@@ -36,5 +37,4 @@ private:
     // the same order of pieces for all of them.
     void generate_global_pieces();
     void fill_queue();
-    void draw_nth_piece(unsigned i, int x, int y) const;
 };
