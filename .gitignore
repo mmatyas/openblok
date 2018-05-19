@@ -1,0 +1,60 @@
+# CMake files
+CMakeCache.txt
+CMakeDoxyfile.in
+CMakeDoxygenDefaults.cmake
+CMakeFiles/
+CTestTestfile.cmake
+Makefile
+Testing/
+cmake_install.cmake
+install_manifest.txt
+
+# Generated files
+Doxyfile
+FindSDL2PP.cmake
+SDL2pp/Config.hh
+SDL2pp/Export.hh
+sdl2pp.pc
+*.vcxproj*
+*.sln
+Debug/
+Win32/
+CMakeScripts/
+*.build
+*.xcodeproj
+
+# Binaries
+*.o
+*.exe
+examples/audio_sine
+examples/audio_wav
+examples/fill
+examples/image
+examples/lines
+examples/mixer
+examples/mixer_effects
+examples/mixer_music
+examples/mixer_music_sine
+examples/rendertarget
+examples/sprites
+examples/ttf
+libSDL2pp.a
+libSDL2pp.dll
+libSDL2pp.dll.a
+libSDL2pp.so
+libSDL2pp.so.*
+libSDL2pp.dylib
+libSDL2pp.*.dylib
+tests/live_*
+tests/test_*
+!tests/live_*.cc
+!tests/test_*.cc
+
+# Generated tests
+tests/SDL2pp_*_hh_test*
+
+# Doxygen-generated documentation
+doxygen/
+
+# OS Specific files
+.DS_Store
