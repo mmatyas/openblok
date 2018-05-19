@@ -148,6 +148,9 @@ add_library(module_game ${MOD_GAME_SRC} ${MOD_GAME_H})
 target_link_libraries(module_game module_system)
 target_link_libraries(module_game tinydir)
 
+include(EnableWarnings)
+enable_warnings(module_game)
+
 # use Boost.Regex if requested
 if (USE_BOOST_REGEX)
     target_include_directories(module_game PRIVATE ${Boost_INCLUDE_DIRS})
