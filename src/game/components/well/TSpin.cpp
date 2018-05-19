@@ -90,7 +90,7 @@ TSpinDetectionResult TSpin::check(Well& well)
             continue;
         }
 
-        if (well.matrix.at(coord.second).at(coord.first).operator bool())
+        if (well.matrix.at(coord.second).at(coord.first))
             diagonals_occupied[i] = true;
     }
     if (std::count(diagonals_occupied.begin(), diagonals_occupied.end(), true) < 3)

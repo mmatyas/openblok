@@ -52,3 +52,34 @@ PieceDirection prevCW(PieceDirection direction)
     };
     return map.at(direction);
 }
+
+PieceType typeFromAscii(char type) {
+    static const std::unordered_map<char, PieceType> type_map = {
+        // uppercase
+        {'I', PieceType::I},
+        {'J', PieceType::J},
+        {'L', PieceType::L},
+        {'O', PieceType::O},
+        {'S', PieceType::S},
+        {'T', PieceType::T},
+        {'Z', PieceType::Z},
+        // garbage
+        {'+', PieceType::GARBAGE},
+    };
+    assert(type_map.count(type));
+    return type_map.at(type);
+}
+
+uint8_t displayWidth(PieceType type) {
+    static const std::unordered_map<PieceType, uint8_t, PieceTypeHash> width_map = {
+        {PieceType::I, 4},
+        {PieceType::J, 3},
+        {PieceType::L, 3},
+        {PieceType::O, 4},
+        {PieceType::S, 3},
+        {PieceType::T, 3},
+        {PieceType::Z, 3},
+    };
+    assert(width_map.count(type)); // garbage is not allowed!
+    return width_map.at(type);
+}

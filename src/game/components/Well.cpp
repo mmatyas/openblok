@@ -35,6 +35,9 @@ Well::Well(const WellConfig& config)
 {
     setGravity(Timing::frame_duration_60Hz * config.starting_gravity);
     rotation_fn = RotationFactory::make(config.rotation_style);
+
+    for (auto& row : matrix)
+        row.fill('\0');
 }
 
 Well::~Well() = default;
@@ -129,8 +132,8 @@ void Well::addGarbageLines(unsigned short line_count)
     for (size_t row = matrix.size() - line_count; row < matrix.size(); row++) {
         auto& mx_row = matrix.at(row);
         for (size_t col = 0; col < mx_row.size(); col++)
-            mx_row.at(col) = MinoStorage::getMino(PieceType::GARBAGE);
-        mx_row.at(gap_location).reset();
+            mx_row.at(col) = ::toAscii(PieceType::GARBAGE);
+        mx_row.at(gap_location) = '\0';
     }
 
     if (active_piece)
@@ -168,10 +171,10 @@ bool Well::hasCollisionAt(int offset_x, unsigned offset_y) const
             if (row < matrix.size() &&
                 cell >= 0 &&
                 cell < static_cast<int>(matrix.at(0).size()))
-                board_has_mino_here = matrix.at(row).at(cell).operator bool();
+                board_has_mino_here = matrix.at(row).at(cell);
 
             bool piece_has_mino_here = active_piece->currentGrid()
-                                       .at(piece_gridy).at(piece_gridx).operator bool();
+                                       .at(piece_gridy).at(piece_gridx);
 
             if (piece_has_mino_here && board_has_mino_here)
                 return true;
@@ -361,6 +364,7 @@ void Well::lockAndReleasePiece()
     assert(isOnGround());
 
     std::list<std::pair<unsigned, unsigned>> pending_anims;
+    const auto type_ascii = ::toAscii(active_piece->type());
 
     for (unsigned row = 0; row < 4; row++) {
         for (unsigned cell = 0; cell < 4; cell++) {
@@ -370,9 +374,7 @@ void Well::lockAndReleasePiece()
                 continue;
 
             if (active_piece->currentGrid().at(row).at(cell)) {
-                matrix[active_piece_y + row][active_piece_x + cell].swap(
-                    active_piece->currentGridMut()[row][cell]
-                );
+                matrix[active_piece_y + row][active_piece_x + cell] = type_ascii;
 
                 if (active_piece_y + row >= 20) {
                     pending_anims.emplace_back(active_piece_y + row - 20,
@@ -417,7 +419,7 @@ void Well::checkLineclear()
     if (pending_cleared_rows.size()) {
         for (auto row : pending_cleared_rows) {
             for (auto& cell : matrix[row])
-                cell = nullptr;
+                cell = '\0';
 
             if (row >= 2)
                 animations.emplace_back(std::make_unique<LineClearAnim>(row));

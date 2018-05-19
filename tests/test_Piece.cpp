@@ -32,8 +32,8 @@ TEST_FIXTURE(PieceFixture, CtorFirstFrame)
     const auto& grid = p->currentGrid();
 
     for (const auto& row : grid) {
-        for (const auto& col : row) {
-            REQUIRE CHECK(col.get() != nullptr);
+        for (const bool col : row) {
+            REQUIRE CHECK(col);
         }
     }
 }
@@ -46,9 +46,9 @@ TEST_FIXTURE(PieceFixture, RotateCW)
     for (unsigned row = 0; row < 4; row++) {
         for (unsigned col = 0; col < 4; col++) {
             if (row == 2 && col == 3)
-                CHECK(grid[row][col].get() != nullptr);
+                CHECK(grid[row][col]);
             else
-                CHECK(grid[row][col].get() == nullptr);
+                CHECK(!grid[row][col]);
         }
     }
 }
@@ -61,9 +61,9 @@ TEST_FIXTURE(PieceFixture, RotateCCW)
     for (unsigned row = 0; row < 4; row++) {
         for (unsigned col = 0; col < 4; col++) {
             if (row == 0 && col == 3)
-                CHECK(grid[row][col].get() != nullptr);
+                CHECK(grid[row][col]);
             else
-                CHECK(grid[row][col].get() == nullptr);
+                CHECK(!grid[row][col]);
         }
     }
 }
@@ -77,7 +77,7 @@ TEST_FIXTURE(PieceFixture, RotateBack)
 
         for (const auto& row : grid) {
             for (const auto& col : row) {
-                REQUIRE CHECK(col.get() != nullptr);
+                REQUIRE CHECK(col);
             }
         }
     }
@@ -89,7 +89,7 @@ TEST_FIXTURE(PieceFixture, RotateBack)
 
         for (const auto& row : grid) {
             for (const auto& col : row) {
-                REQUIRE CHECK(col.get() != nullptr);
+                REQUIRE CHECK(col);
             }
         }
     }
@@ -106,7 +106,7 @@ TEST_FIXTURE(PieceFixture, RotateAround)
 
         for (const auto& row : grid) {
             for (const auto& col : row) {
-                REQUIRE CHECK(col.get() != nullptr);
+                REQUIRE CHECK(col);
             }
         }
     }
@@ -120,7 +120,7 @@ TEST_FIXTURE(PieceFixture, RotateAround)
 
         for (const auto& row : grid) {
             for (const auto& col : row) {
-                REQUIRE CHECK(col.get() != nullptr);
+                REQUIRE CHECK(col);
             }
         }
     }

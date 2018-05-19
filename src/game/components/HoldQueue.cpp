@@ -1,6 +1,7 @@
 #include "HoldQueue.h"
 
 #include "Mino.h"
+#include "PieceDraw.h"
 #include "PieceFactory.h"
 #include "game/Timing.h"
 #include "system/GraphicsContext.h"
@@ -82,8 +83,9 @@ void HoldQueue::draw(GraphicsContext& gcx, int x, int y) const
 
     if (!empty) {
         const auto& piece = piece_storage.at(static_cast<size_t>(current_piece));
-        const float padding_x = (4 - Piece::displayWidth(piece->type())) / 2.0f;
-        piece->draw(x + Mino::texture_size_px * (0.5f + padding_x),
-                    y + Mino::texture_size_px);
+        const float padding_x = (4 - ::displayWidth(piece->type())) / 2.0f;
+        ::drawPiece(*piece,
+            x + Mino::texture_size_px * (0.5f + padding_x),
+            y + Mino::texture_size_px);
     }
 }

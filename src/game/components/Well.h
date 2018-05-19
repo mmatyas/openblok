@@ -89,7 +89,7 @@ private:
 
     // the grid matrix
     // TODO: set dimensions from config
-    Matrix<std::shared_ptr<Mino>, 40, 10> matrix;
+    Matrix<char, 40, 10> matrix;
 
     // the active piece
     int8_t active_piece_x;

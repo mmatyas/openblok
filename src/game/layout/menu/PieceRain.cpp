@@ -2,6 +2,7 @@
 
 #include "game/components/Mino.h"
 #include "game/components/Piece.h"
+#include "game/components/PieceDraw.h"
 #include "game/components/PieceFactory.h"
 
 #include <cmath>
@@ -59,7 +60,7 @@ void PieceRain::draw() const
 {
     int piece_y = bottom_y.value();
     for (const auto& piece : active_pieces) {
-        piece->draw(x() + PADDING_PX, piece_y + PADDING_PX);
+        ::drawPiece(*piece, x() + PADDING_PX, piece_y + PADDING_PX);
         piece_y -= PIECE_SIDES_PX;
     }
 }

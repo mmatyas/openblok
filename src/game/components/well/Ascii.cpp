@@ -17,9 +17,9 @@ void Ascii::fromAscii(Well& well, const std::string& text)
     for (unsigned row = 18; row < well.matrix.size(); row++) {
         for (unsigned cell = 0; cell < well.matrix[0].size(); cell++) {
             if (text.at(str_i) == '.')
-                well.matrix[row][cell].reset();
+                well.matrix[row][cell] = '\0';
             else
-                well.matrix[row][cell] = MinoStorage::getMino(Piece::typeFromAscii(text.at(str_i)));
+                well.matrix[row][cell] = text.at(str_i);
 
             str_i++;
         }
@@ -42,7 +42,7 @@ std::string Ascii::asAscii(const Well& well) const
     for (size_t row = 18; row < well.matrix.size(); row++) {
         for (size_t cell = 0; cell < well.matrix[0].size(); cell++) {
             if (well.matrix[row][cell])
-                board_layer += well.matrix[row][cell]->asAscii();
+                board_layer += well.matrix[row][cell];
             else
                 board_layer += '.';
         }
@@ -60,17 +60,17 @@ std::string Ascii::asAscii(const Well& well) const
                     && static_cast<int>(cell) <= well.active_piece_x + 3) {
                     // check ghost first - it should be under the real piece
                     if (well.ghost_piece_y <= row && row <= well.ghost_piece_y + 3u) {
-                        const auto& mino = well.active_piece->currentGrid().at(row - well.ghost_piece_y)
+                        const char mino = well.active_piece->currentGrid().at(row - well.ghost_piece_y)
                                                                            .at(cell - well.active_piece_x);
                         if (mino)
                             appended_char = 'g';
                     }
                     // check piece - overwrite the ascii char even if it has a value
                     if (well.active_piece_y <= row && row <= well.active_piece_y + 3u) {
-                        const auto& mino = well.active_piece->currentGrid().at(row - well.active_piece_y)
-                                                                           .at(cell - well.active_piece_x);
-                        if (mino)
-                            appended_char = std::tolower(mino->asAscii());
+                        const char has_mino = well.active_piece->currentGrid().at(row - well.active_piece_y)
+                                                                              .at(cell - well.active_piece_x);
+                        if (has_mino)
+                            appended_char = std::tolower(::toAscii(well.active_piece->type()));
                     }
                 }
             }

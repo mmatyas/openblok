@@ -18,11 +18,14 @@ Render::Render()
 
 void Render::drawContent(const Well& well, GraphicsContext& gcx, int draw_offset_x, int draw_offset_y) const
 {
+    // TODO: this could be optimized
+
     // Draw board Minos
     for (int col = 0; col < 10; col++) {
-        const auto& cell = well.matrix.at(19).at(col);
-        if (cell) {
-            cell->drawPartial(top_row_cliprect, {
+        const char type_char = well.matrix.at(19).at(col);
+        if (type_char) {
+            const auto& mino = MinoStorage::getMino(::typeFromAscii(type_char));
+            mino->drawPartial(top_row_cliprect, {
                 draw_offset_x + col * Mino::texture_size_px, draw_offset_y,
                 Mino::texture_size_px, top_row_height});
         }
@@ -30,9 +33,10 @@ void Render::drawContent(const Well& well, GraphicsContext& gcx, int draw_offset
     draw_offset_y += top_row_height;
     for (unsigned row = 0; row < 20; row++) {
         for (unsigned col = 0; col < 10; col++) {
-            const auto& cell = well.matrix.at(row + 20).at(col);
-            if (cell) {
-                cell->draw(draw_offset_x + col * Mino::texture_size_px,
+            const char type_char = well.matrix.at(row + 20).at(col);
+            if (type_char) {
+                const auto& mino = MinoStorage::getMino(::typeFromAscii(type_char));
+                mino->draw(draw_offset_x + col * Mino::texture_size_px,
                            draw_offset_y + row * Mino::texture_size_px);
             }
         }
@@ -61,9 +65,10 @@ void Render::drawContent(const Well& well, GraphicsContext& gcx, int draw_offset
             if (well.active_piece_y + row < 20) { // partially draw the topmost row
                 draw_offset_y -= top_row_height;
                 for (int col = 0; col < 4; col++) {
-                    const auto& cell = well.active_piece->currentGrid().at(row).at(col);
-                    if (cell) {
-                        cell->drawPartial(top_row_cliprect, {
+                    const bool has_mino = well.active_piece->currentGrid().at(row).at(col);
+                    if (has_mino) {
+                        const auto& mino = MinoStorage::getMino(well.active_piece->type());
+                        mino->drawPartial(top_row_cliprect, {
                             draw_offset_x + (well.active_piece_x + col) * Mino::texture_size_px,
                             draw_offset_y + (well.active_piece_y + row - 19) * Mino::texture_size_px,
                             Mino::texture_size_px, top_row_height});
@@ -74,9 +79,10 @@ void Render::drawContent(const Well& well, GraphicsContext& gcx, int draw_offset
             }
 
             for (unsigned col = 0; col < 4; col++) {
-                const auto& cell = well.active_piece->currentGrid().at(row).at(col);
-                if (cell) {
-                    cell->draw(draw_offset_x + (well.active_piece_x + col) * Mino::texture_size_px,
+                const bool has_mino = well.active_piece->currentGrid().at(row).at(col);
+                if (has_mino) {
+                    const auto& mino = MinoStorage::getMino(well.active_piece->type());
+                    mino->draw(draw_offset_x + (well.active_piece_x + col) * Mino::texture_size_px,
                                draw_offset_y + (well.active_piece_y + row - 20) * Mino::texture_size_px);
                 }
             }

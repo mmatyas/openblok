@@ -43,3 +43,6 @@ struct PieceDirectionHash {
 char toAscii(PieceDirection);
 PieceDirection nextCW(PieceDirection);
 PieceDirection prevCW(PieceDirection);
+
+PieceType typeFromAscii(char);
+uint8_t displayWidth(PieceType);

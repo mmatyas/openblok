@@ -1,6 +1,8 @@
 #include "NextQueue.h"
 
+#include "PieceDraw.h"
 #include "PieceFactory.h"
+#include "Mino.h"
 #include "system/GraphicsContext.h"
 
 #include <algorithm>
@@ -94,6 +96,6 @@ void NextQueue::draw_nth_piece(unsigned i, int x, int y) const
     assert(i < piece_queue.size());
     assert(i < displayed_piece_count);
     const auto& piece = piece_storage.at(static_cast<size_t>(piece_queue.at(i)));
-    const float padding_x = (4 - Piece::displayWidth(piece->type())) / 2.0f;
-    piece->draw(x + Mino::texture_size_px * (0.5f + padding_x), y);
+    const float padding_x = (4 - ::displayWidth(piece->type())) / 2.0f;
+    ::drawPiece(*piece, x + Mino::texture_size_px * (0.5f + padding_x), y);
 }
