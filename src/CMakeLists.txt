@@ -10,7 +10,9 @@ add_subdirectory(game)
 target_link_libraries(openblok module_game)
 
 include(EnableWarnings)
+include(RequireCxx11)
 enable_warnings(openblok)
+require_cxx11_or_higher(openblok)
 
 if(WIN32 OR CYGWIN)
     include(TryAddingCompilerFlag)
