@@ -296,7 +296,7 @@ void PlayerArea::drawWidePassive(GraphicsContext& gcx) const
     }
 
     hold_queue.draw(gcx, x(), y() + label_height + inner_padding);
-    ::drawNextQueue(next_queue, gcx, rightside_x - sidebar_width, y() + label_height + inner_padding);
+    next_queue.draw(gcx, rightside_x - sidebar_width, y() + label_height + inner_padding);
 
     tex_score_counter->drawAt(rect_score.x + (rect_score.w - tex_score_counter->width()) / 2,
                               rect_score.y + 5);
@@ -328,7 +328,7 @@ void PlayerArea::drawNarrowPassive(GraphicsContext& gcx) const
     }
 
     hold_queue.draw(gcx, x(), y());
-    ::drawNextQueue(next_queue, gcx, x() + width() - ui_well.wellWidth() / 2, y());
+    next_queue.draw(gcx, x() + width() - ui_well.wellWidth() / 2, y());
 
     tex_level_counter_narrow->drawAt(rect_level.x + 10, rect_level.y);
     tex_score_counter->drawAt(rect_score.x + rect_score.w - tex_score_counter->width() - 10, rect_score.y);

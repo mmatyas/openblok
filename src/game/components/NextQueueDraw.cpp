@@ -1,22 +1,28 @@
 #include "NextQueueDraw.h"
 
 #include "Mino.h"
+#include "NextQueue.h"
 #include "PieceDraw.h"
 #include "system/GraphicsContext.h"
 
 #include <assert.h>
 
 
+namespace {
+
 void draw_nth_piece(const NextQueue& queue, unsigned i, int x, int y)
 {
-    assert(i < queue.queue().size());
+    assert(i < queue.piece_queue.size());
+    assert(i < queue.displayed_piece_count);
 
-    const auto& piece = queue.piecePtrs().at(static_cast<size_t>(queue.queue().at(i)));
+    const auto& piece = queue.m_piece_storage.at(static_cast<size_t>(queue.m_piece_queue.at(i)));
     const float padding_x = (4 - ::displayWidth(piece->type())) / 2.0f;
     ::drawPiece(*piece, x + Mino::texture_size_px * (0.5f + padding_x), y);
 }
 
-void drawNextQueue(const NextQueue& queue, GraphicsContext& gcx, int x, int y)
+} // namespace
+
+void NextQueueDraw::draw(const NextQueue& queue, GraphicsContext& gcx, int x, int y)
 {
     if (!queue.previewCount())
         return;

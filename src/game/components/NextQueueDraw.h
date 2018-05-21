@@ -1,9 +1,11 @@
 #pragma once
 
-#include "NextQueue.h"
-
 class GraphicsContext;
+class NextQueue;
 
 
-/// Draw the N previewable pieces at (x,y)
-void drawNextQueue(const NextQueue&, GraphicsContext&, int x, int y);
+class NextQueueDraw {
+public:
+    /// Draw the N previewable pieces at (x,y)
+    static void draw(const NextQueue&, GraphicsContext&, int x, int y);
+};

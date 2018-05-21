@@ -10,22 +10,22 @@
 #include <assert.h>
 
 
-std::deque<PieceType> NextQueue::global_piece_queue = {};
+std::deque<PieceType> NextQueue::m_global_piece_queue = {};
 
 NextQueue::NextQueue(unsigned displayed_piece_count)
-    : displayed_piece_count(displayed_piece_count)
+    : m_displayed_piece_count(displayed_piece_count)
 {
     // TODO: use a proper random generator
 
-    if (global_piece_queue.size() <= displayed_piece_count)
+    if (m_global_piece_queue.size() <= displayed_piece_count)
         generate_global_pieces();
 
-    global_queue_it = global_piece_queue.cbegin();
-    piece_queue = global_piece_queue;
+    m_global_queue_it = m_global_piece_queue.cbegin();
+    m_piece_queue = m_global_piece_queue;
 
     size_t i = 0;
     for(const auto ptype : PieceTypeList) {
-        piece_storage[i] = PieceFactory::make_uptr(ptype);
+        m_piece_storage[i] = PieceFactory::make_uptr(ptype);
         i++;
     }
 }
@@ -33,13 +33,13 @@ NextQueue::NextQueue(unsigned displayed_piece_count)
 NextQueue::~NextQueue()
 {
     // NOTE: next queues are created and destructed together
-    global_piece_queue.clear();
+    m_global_piece_queue.clear();
 }
 
 PieceType NextQueue::next()
 {
-    PieceType piece = piece_queue.front();
-    piece_queue.pop_front();
+    PieceType piece = m_piece_queue.front();
+    m_piece_queue.pop_front();
     fill_queue();
     return piece;
 }
@@ -49,25 +49,30 @@ void NextQueue::generate_global_pieces()
     std::array<PieceType, PieceTypeList.size()> possible_pieces = PieceTypeList;
     std::random_shuffle(possible_pieces.begin(), possible_pieces.end());
     for (const auto p : possible_pieces)
-        global_piece_queue.push_back(p);
+        m_global_piece_queue.push_back(p);
 }
 
 void NextQueue::fill_queue()
 {
-    if (piece_queue.size() <= displayed_piece_count) {
-        if (std::distance(global_queue_it, global_piece_queue.cend()) <= static_cast<int>(PieceTypeList.size()))
+    if (m_piece_queue.size() <= m_displayed_piece_count) {
+        if (std::distance(m_global_queue_it, m_global_piece_queue.cend()) <= static_cast<int>(PieceTypeList.size()))
             generate_global_pieces();
 
-        piece_queue.insert(piece_queue.end(),
-                           global_queue_it,
-                           global_queue_it + PieceTypeList.size());
-        global_queue_it += PieceTypeList.size();
+        m_piece_queue.insert(m_piece_queue.end(),
+                           m_global_queue_it,
+                           m_global_queue_it + PieceTypeList.size());
+        m_global_queue_it += PieceTypeList.size();
     }
     assert(piece_queue.size() > displayed_piece_count);
 }
 
 void NextQueue::setPreviewCount(unsigned num)
 {
-    displayed_piece_count = num;
+    m_displayed_piece_count = num;
     fill_queue();
+}
+
+void NextQueue::draw(GraphicsContext& gcx, int x, int y) const
+{
+    component_draw.draw(*this, gcx, x, y);
 }
