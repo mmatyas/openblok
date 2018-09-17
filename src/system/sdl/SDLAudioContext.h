@@ -20,6 +20,6 @@ public:
     void toggleMusicMute() final;
 
 private:
-    SDL2pp::SDLMixer audio_loader;
     SDL2pp::Mixer mixer;
+    SDL2pp::SDLMixer audio_loader;
 };

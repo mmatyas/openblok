@@ -24,8 +24,8 @@ static constexpr int SDL_MIX_FLAGS = MIX_INIT_OGG
 const std::string LOG_TAG("audio");
 
 SDLAudioContext::SDLAudioContext()
-    : audio_loader(SDL_MIX_FLAGS)
-    , mixer(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 1024)
+    : mixer(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 1024)
+    , audio_loader(SDL_MIX_FLAGS)
 {
     SDLMusic::mixer = &mixer;
     SDLSoundEffect::mixer = &mixer;
