@@ -47,7 +47,6 @@ set(MOD_SYSTEM_H
 
     # Util
     util/MakeUnique.h
-    util/Regex.h
 )
 
 add_library(module_system ${MOD_SYSTEM_SRC} ${MOD_SYSTEM_H})
@@ -56,13 +55,6 @@ target_include_directories(module_system PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/..
 # use SDL2
 target_compile_definitions(module_system PRIVATE OPENBLOK_DATADIR="${DATADIR}")
 target_link_libraries(module_system SDL2pp)
-
-# use Boost.Regex if requested
-if (USE_BOOST_REGEX)
-    target_include_directories(module_system PRIVATE ${Boost_INCLUDE_DIRS})
-    target_compile_definitions(module_system PRIVATE USE_BOOST_REGEX)
-    target_link_libraries(module_system ${Boost_LIBRARIES})
-endif()
 
 include(EnableWarnings)
 include(RequireCxx11)

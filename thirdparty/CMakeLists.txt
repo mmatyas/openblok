@@ -10,13 +10,6 @@ add_subdirectory(libSDL2pp)
 add_subdirectory(tinydir)
 
 
-# Boost.Regex, if requested
-option(USE_BOOST_REGEX "Use Boost.Regex instead of C++11 regex" OFF)
-if (USE_BOOST_REGEX)
-    find_package(Boost 1.49 COMPONENTS regex REQUIRED)
-endif()
-
-
 # UnitTest++
 if(CMAKE_BUILD_TYPE STREQUAL "debug" AND BUILD_TESTS)
     add_subdirectory(unittest-cpp)

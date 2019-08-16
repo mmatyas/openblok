@@ -1,10 +1,10 @@
 #include "ConfigFile.h"
 
 #include "Log.h"
-#include "util/Regex.h"
 
 #include <assert.h>
 #include <fstream>
+#include <regex>
 
 
 const std::string LOG_TAG("config");
@@ -15,10 +15,10 @@ ConfigFile::Blocks ConfigFile::load(const std::string& path)
     if (!infile.is_open())
         return Blocks();
 
-    const regex valid_head(R"(^\[[a-zA-Z0-9\.-_,: \(\)]+\]$)");
-    const regex valid_data(R"(^[a-z_]+\s*=\s*([a-zA-Z0-9_, ]+|".*?"|#[a-fA-F0-9]{6,8})$)");
-    const regex whitespace_left(R"(^\s+)");
-    const regex whitespace_right(R"(\s+$)");
+    const std::regex valid_head(R"(^\[[a-zA-Z0-9\.-_,: \(\)]+\]$)");
+    const std::regex valid_data(R"(^[a-z_]+\s*=\s*([a-zA-Z0-9_, ]+|".*?"|#[a-fA-F0-9]{6,8})$)");
+    const std::regex whitespace_left(R"(^\s+)");
+    const std::regex whitespace_right(R"(\s+$)");
 
     ConfigFile::Blocks output;
     std::string current_head;

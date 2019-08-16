@@ -152,10 +152,3 @@ include(EnableWarnings)
 include(RequireCxx11)
 enable_warnings(module_game)
 require_cxx11_or_higher(module_game)
-
-# use Boost.Regex if requested
-if (USE_BOOST_REGEX)
-    target_include_directories(module_game PRIVATE ${Boost_INCLUDE_DIRS})
-    target_compile_definitions(module_game PRIVATE USE_BOOST_REGEX)
-    target_link_libraries(module_game ${Boost_LIBRARIES})
-endif()

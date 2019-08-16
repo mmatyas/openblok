@@ -51,7 +51,7 @@ Dependencies
 ------------
 
 - CMake (at least 3.1)
-- C++11 supporting compiler (GCC 4.9 or better recommended)
+- C++11 supporting compiler (GCC 4.9 or better)
 - SDL2, SDL2_image, SDL2_mixer, SDL2_ttf
 - optional: gcov, lcov (for generating test coverage report)
 
@@ -78,7 +78,6 @@ make
 - `CMAKE_INSTALL_PREFIX`: The base directory of the installation step (eg. `make install`). Defaults to `/usr/local` or `C:\Program Files`. See the CMake documentation.
 - `BUILD_TESTS`: Builds the test suite. You can run them by calling `./build/tests/openblok_test`. Debug build only, default: `ON`.
 - `BUILD_COVERAGE`: Allows building the test coverage report. Requires `BUILD_TESTS` and `gcov`/`lcov`. Default: `OFF`.
-- `USE_BOOST_REGEX`: If your compiler does not support `std::regex` (eg. GCC 4.8), you can use Boost.Regex instead. Default: `OFF`.
 
 **Useful build targets**
 

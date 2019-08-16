@@ -9,14 +9,13 @@ branches:
 
 
 env:
-  - BUILD_TYPE=Release BOOSTREGEX=ON
-  - BUILD_TYPE=Debug BOOSTREGEX=ON
+  - BUILD_TYPE=Release
+  - BUILD_TYPE=Debug
 
 matrix:
   include:
   - os: osx
     compiler: clang
-    env: BOOSTREGEX=OFF
     before_install:
     - brew update
     - brew install
@@ -28,7 +27,6 @@ matrix:
 addons:
   apt:
     packages:
-      - libboost-regex-dev
       - libsdl2-dev
       - libsdl2-image-dev
       - libsdl2-mixer-dev
@@ -50,7 +48,6 @@ script:
   - cmake ..
       -DCMAKE_INSTALL_PREFIX=/usr
       -DCMAKE_BUILD_TYPE=${BUILD_TYPE}
-      -DUSE_BOOST_REGEX=${BOOSTREGEX}
       -DENABLE_MP3=OFF
   - make VERBOSE=1
   - if [[ $BUILD_TYPE == Debug ]]; then
