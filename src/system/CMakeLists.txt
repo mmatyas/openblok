@@ -85,8 +85,3 @@ endif()
 if (ENABLE_FLAC)
     target_compile_definitions(module_system PRIVATE SDL2_ENABLE_FLAC)
 endif()
-
-# use custom std::make_unique if necessary
-if (NOT CXX_HAS_MAKEUNIQUE)
-    target_compile_definitions(module_system PRIVATE NEED_MAKEUNIQUE)
-endif()

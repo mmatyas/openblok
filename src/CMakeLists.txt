@@ -19,11 +19,6 @@ if(WIN32 OR CYGWIN)
     try_adding_compiler_flag(openblok -Wl,--subsystem,windows)
 endif()
 
-# use custom std::make_unique if necessary
-if (NOT CXX_HAS_MAKEUNIQUE)
-    target_compile_definitions(openblok PRIVATE NEED_MAKEUNIQUE)
-endif()
-
 
 # Install
 install(TARGETS openblok RUNTIME DESTINATION ${EXEDIR})

@@ -25,8 +25,3 @@ include(EnableWarnings)
 include(RequireCxx11)
 enable_warnings(openblok_test)
 require_cxx11_or_higher(openblok_test)
-
-# use custom std::make_unique if necessary
-if (NOT CXX_HAS_MAKEUNIQUE)
-    target_compile_definitions(openblok_test PRIVATE NEED_MAKEUNIQUE)
-endif()

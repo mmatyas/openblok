@@ -1,8 +1,7 @@
 #pragma once
 
 
-#ifdef NEED_MAKEUNIQUE
-
+#if __cplusplus < 201402L
 namespace std {
 
 template<typename T, typename... Args>
@@ -20,5 +19,4 @@ make_unique(std::size_t size)
 }
 
 } // namespace std
-
-#endif
+#endif // __cpp_lib_make_unique
