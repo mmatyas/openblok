@@ -1,19 +1,16 @@
 language: cpp
 
 sudo: required
-dist: trusty
+dist: xenial
 
 branches:
   only:
     - master
 
-
-env:
-  - BUILD_TYPE=Release
-  - BUILD_TYPE=Debug
-
 matrix:
   include:
+  - env: BUILD_TYPE=Release
+  - env: BUILD_TYPE=Debug
   - os: osx
     compiler: clang
     before_install:
@@ -23,6 +20,7 @@ matrix:
         sdl2_image
         sdl2_mixer
         sdl2_ttf
+    env: BUILD_TYPE=Release
 
 addons:
   apt:
@@ -56,6 +54,6 @@ script:
   - if [[ $TRAVIS_OS_NAME == linux && $BUILD_TYPE == Release ]]; then
       bash -e ../etc/appimage/travis.sh &&
       chmod +x ~/out/OpenBlok*.AppImage &&
-      wget -c https://github.com/probonopd/uploadtool/raw/master/upload.sh &&
+      wget -c https://github.com/mmatyas/uploadtool/raw/master/upload.sh &&
       bash ./upload.sh ~/out/OpenBlok*.AppImage;
     fi
