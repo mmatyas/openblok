@@ -47,9 +47,11 @@ before_build:
 build_script:
   - cmake
       -DCMAKE_PREFIX_PATH=%BASEDIR%
+      -DCMAKE_CXX_FLAGS="/I%BASEDIR%\include"
       -DCMAKE_BUILD_TYPE=Release
       -DINSTALL_PORTABLE=ON
       -DCMAKE_INSTALL_PREFIX=openblok_portable
+      -DCMAKE_VERBOSE_MAKEFILE=ON
       -G "Visual Studio 14 2015" .
   - cmake --build . --config Release
 
