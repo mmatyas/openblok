@@ -40,9 +40,11 @@ install:
   - copy SDL2_mixer-2.0.1\lib\x86\* %LIBDIR% > nul
   - copy SDL2_ttf-2.0.14\lib\x86\* %LIBDIR% > nul
 
+before_build:
+  - cd %APPVEYOR_BUILD_FOLDER%
+  - git submodule update --init
 
 build_script:
-  - cd %APPVEYOR_BUILD_FOLDER%
   - cmake
       -DCMAKE_PREFIX_PATH=%BASEDIR%
       -DCMAKE_BUILD_TYPE=Release
