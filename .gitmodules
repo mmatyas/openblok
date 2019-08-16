@@ -1,0 +1,4 @@
+[submodule "thirdparty/libSDL2pp"]
+	path = thirdparty/libSDL2pp
+	url = https://github.com/mmatyas/libSDL2pp.git
+	branch = cmake_modernization
