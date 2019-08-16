@@ -4,7 +4,7 @@
 #include "system/Log.h"
 #include "system/Paths.h"
 
-#include <tinydir_cpp.h>
+#include <tinydir_cxx.h>
 #include <random>
 #include <regex>
 #include <set>
@@ -63,7 +63,7 @@ std::string ThemeConfig::random_file_from(const std::string& dir_name) const
         return "";
 
     TinyDir dir(base_path);
-    const auto file_list = dir.fileList();
+    const auto file_list = dir.file_list();
     if (file_list.empty())
         return "";
 

@@ -16,7 +16,7 @@
 #include "system/Texture.h"
 #include "system/util/MakeUnique.h"
 
-#include <tinydir_cpp.h>
+#include <tinydir_cxx.h>
 #include <algorithm>
 #include <unordered_map>
 #include <assert.h>
