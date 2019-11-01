@@ -25,7 +25,9 @@ namespace States {
 
 class Gameplay : public State {
 public:
-    Gameplay(AppContext&, IngameState&, unsigned short starting_gravity_level = 0);
+    Gameplay(AppContext&, IngameState&,
+        unsigned short starting_gravity_level = 0,
+        std::unordered_map<DeviceID, size_t>&& team_setup = {});
     virtual ~Gameplay();
 
     void updateAnimationsOnly(IngameState&, AppContext&) final;
@@ -75,6 +77,7 @@ private:
         FINISHED,
     };
     std::unordered_map<DeviceID, PlayerStatus> player_status;
+    std::unordered_map<DeviceID, size_t> player_team;
 
     std::vector<DeviceID> playingPlayers();
     void addNextPiece(IngameState&, DeviceID);

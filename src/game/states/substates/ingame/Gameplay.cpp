@@ -26,7 +26,7 @@ namespace SubStates {
 namespace Ingame {
 namespace States {
 
-Gameplay::Gameplay(AppContext& app, IngameState& parent, unsigned short starting_gravity_level)
+Gameplay::Gameplay(AppContext& app, IngameState& parent, unsigned short starting_gravity_level, std::unordered_map<DeviceID, size_t>&& team_setup)
     : player_devices(parent.device_order)
     , theme_settings(app.theme().gameplay)
     , music(app.audio().loadMusic(app.theme().random_game_music()))
@@ -50,12 +50,14 @@ Gameplay::Gameplay(AppContext& app, IngameState& parent, unsigned short starting
         [&parent, &app](){
             parent.states.emplace_back(std::make_unique<Statistics>(parent, app));
         })
+    , player_team(std::move(team_setup))
 {
     TextPopup::text_color = app.theme().colors.popup;
 
     assert(player_devices.size() > 0);
     assert(player_devices.size() <= 4);
     assert(starting_gravity_level < 15);
+    assert(player_team.size() == 0 || player_team.size() == player_devices.size());
     parent.player_areas.clear();
     parent.player_stats.clear();
 
@@ -218,7 +220,7 @@ void Gameplay::sendGarbageMaybe(IngameState& parent, DeviceID source_player,
         // find target player
         std::vector<DeviceID> possible_players;
         for (const DeviceID possible_device : player_devices) {
-            if (player_status.at(possible_device) == PlayerStatus::PLAYING && possible_device != source_player)
+            if (player_status.at(possible_device) == PlayerStatus::PLAYING && player_team.at(possible_device) != player_team.at(source_player))
                 possible_players.push_back(possible_device);
         }
         assert(!possible_players.empty());
@@ -409,18 +411,23 @@ void Gameplay::registerObservers(IngameState& parent, AppContext& app)
             parent.player_areas.at(device_id).startGameOver();
 
             // find out who else is still playing
-            auto playing_players = playingPlayers();
+            std::vector<DeviceID> playing_players = playingPlayers();
 
             // IF MARATHON
                 // wait until all players finish the game
             // IF BATTLE
             if (parent.gamemode == GameMode::MP_BATTLE) {
-                // if there's only one player left, s/he is the winner
-                if (playing_players.size() == 1) {
-                    const DeviceID pdevid = playing_players.front();
-                    player_status.at(pdevid) = PlayerStatus::FINISHED;
-                    parent.player_areas.at(pdevid).startGameFinish();
-                    sfx_onfinish->playOnce();
+                std::unordered_map<size_t, size_t> team_player_count;
+                for (DeviceID player : playing_players)
+                    team_player_count[player_team.at(player)]++;
+
+                // if there's only one team left, they are the winner
+                if (team_player_count.size() == 1) {
+                    for (DeviceID player : playing_players) {
+                        player_status.at(player) = PlayerStatus::FINISHED;
+                        parent.player_areas.at(player).startGameFinish();
+                        sfx_onfinish->playOnce();
+                    }
                     playing_players.clear();
                 }
             }

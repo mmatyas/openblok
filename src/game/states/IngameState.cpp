@@ -7,6 +7,7 @@
 #include "substates/ingame/FadeInOut.h"
 #include "substates/ingame/Gameplay.h"
 #include "substates/ingame/PlayerSelect.h"
+#include "substates/ingame/TeamSelect.h"
 #include "system/Paths.h"
 #include "system/Texture.h"
 #include "system/util/MakeUnique.h"
@@ -22,6 +23,13 @@ bool isSinglePlayer(GameMode gamemode)
     };
     return sp_modes.count(gamemode);
 }
+
+namespace {
+bool is_team_based(GameMode gamemode)
+{
+    return gamemode == GameMode::MP_BATTLE;
+}
+} // namespace
 
 
 IngameState::IngameState(AppContext& app, GameMode gamemode)
@@ -45,7 +53,11 @@ IngameState::IngameState(AppContext& app, GameMode gamemode)
         }));
     }
     else {
-        states.emplace_back(std::make_unique<SubStates::Ingame::States::PlayerSelect>(app));
+        if (is_team_based(gamemode))
+            states.emplace_back(std::make_unique<SubStates::Ingame::States::TeamSelect>(app));
+        else
+            states.emplace_back(std::make_unique<SubStates::Ingame::States::PlayerSelect>(app));
+
         states.emplace_back(std::make_unique<SubStates::Ingame::States::FadeIn>([this](){
             states.pop_back();
         }));

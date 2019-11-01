@@ -54,6 +54,7 @@ set(MOD_GAME_SRC
     states/substates/ingame/Pause.cpp
     states/substates/ingame/PlayerSelect.cpp
     states/substates/ingame/Statistics.cpp
+    states/substates/ingame/TeamSelect.cpp
     states/substates/mainmenu/Base.cpp
     states/substates/mainmenu/Options.cpp
 
@@ -131,6 +132,7 @@ set(MOD_GAME_H
     states/substates/ingame/Pause.h
     states/substates/ingame/PlayerSelect.h
     states/substates/ingame/Statistics.h
+    states/substates/ingame/TeamSelect.h
     states/substates/mainmenu/Base.h
     states/substates/mainmenu/Options.h
 
