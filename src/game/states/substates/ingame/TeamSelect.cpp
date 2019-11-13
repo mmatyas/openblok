@@ -109,15 +109,12 @@ void TeamSelect::onPlayerLeave(DeviceID device_id)
 
 void TeamSelect::onPlayerNextWell(DeviceID device_id)
 {
-    if (team_players.size() == MAX_PLAYERS) // TODO: 2
-        return;
-
     const auto player_it = find_player(device_id);
     if (player_it == team_players.cend())
         return;
 
     const std::vector<size_t> joinable_teams = find_joinable_teams_from(player_it->second);
-    assert(!joinable_teams.empty()); // due to an earlier check
+    assert(!joinable_teams.empty()); // there's always the player's own slot
 
     const size_t current_team_idx = player_it->second;
     auto next_slot_it = std::find_if(joinable_teams.cbegin(), joinable_teams.cend(),
@@ -129,15 +126,12 @@ void TeamSelect::onPlayerNextWell(DeviceID device_id)
 
 void TeamSelect::onPlayerPrevWell(DeviceID device_id)
 {
-    if (team_players.size() == MAX_PLAYERS)
-        return;
-
     const auto player_it = find_player(device_id);
     if (player_it == team_players.cend())
         return;
 
     const std::vector<size_t> joinable_teams = find_joinable_teams_from(player_it->second);
-    assert(!joinable_teams.empty()); // due to an earlier check
+    assert(!joinable_teams.empty()); // there's always the player's own slot
 
     const size_t current_team_idx = player_it->second;
     auto prev_slot_it = std::find_if(joinable_teams.crbegin(), joinable_teams.crend(),
