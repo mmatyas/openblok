@@ -105,6 +105,20 @@ void TeamSelect::onPlayerLeave(DeviceID device_id)
     const auto player_it = find_player(device_id);
     if (player_it != team_players.end())
         team_players.erase(player_it);
+
+    if (team_players.size() <= 1)
+        return;
+
+    std::array<size_t, MAX_PLAYERS> player_counts {};
+    for (const auto& playerinfo : team_players)
+        player_counts[playerinfo.second]++;
+
+    const size_t empty_teams = static_cast<size_t>(std::count(player_counts.cbegin(), player_counts.cend(), 0));
+    const size_t number_of_teams = player_counts.size() - empty_teams;
+    if (number_of_teams == 1) {
+        const DeviceID last_player_device = team_players.back().first;
+        onPlayerNextWell(last_player_device);
+    }
 }
 
 void TeamSelect::onPlayerNextWell(DeviceID device_id)
