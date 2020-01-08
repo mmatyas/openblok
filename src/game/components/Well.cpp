@@ -78,6 +78,9 @@ void Well::updateGameplayOnly(const std::vector<InputEvent>& events)
         return;
 
     gravity.update(*this);
+    if (!active_piece)
+        return;
+
     lock_delay.update(*this);
 }
 
