@@ -240,6 +240,66 @@ TEST_FIXTURE(WellFixture, Clear) {
     CHECK_EQUAL(expected_ascii, well.asAscii());
 }
 
+TEST(SonicClear) {
+    constexpr unsigned CLEAR_DELAY_FRAMES = 41;
+    constexpr unsigned LOCK_DELAY_FRAMES = 30;
+
+    std::string emptyline_ascii;
+    MinoStorage::loadDummyMinos();
+    for (unsigned i = 0; i < 10; i++)
+        emptyline_ascii += '.';
+    emptyline_ascii += '\n';
+
+    WellConfig cfg;
+    cfg.instant_harddrop = false;
+    Well well(std::move(cfg));
+
+    well.addPiece(PieceType::I);
+    for (unsigned i = 0; i < horizontal_delay_frames * 3; i++)
+        well.update({InputEvent(InputType::GAME_MOVE_LEFT, true)});
+    well.update({
+        InputEvent(InputType::GAME_MOVE_LEFT, false),
+        InputEvent(InputType::GAME_HARDDROP, true),
+        InputEvent(InputType::GAME_HARDDROP, false),
+    });
+    CHECK(well.activePiece() != nullptr);
+    for (unsigned i = 0; i < LOCK_DELAY_FRAMES; i++)
+        well.update({});
+    CHECK(well.activePiece() == nullptr);
+
+    well.addPiece(PieceType::I);
+    for (unsigned i = 0; i < horizontal_delay_frames * 3; i++)
+        well.update({InputEvent(InputType::GAME_MOVE_RIGHT, true)});
+    well.update({
+        InputEvent(InputType::GAME_MOVE_RIGHT, false),
+        InputEvent(InputType::GAME_HARDDROP, true),
+        InputEvent(InputType::GAME_HARDDROP, false),
+    });
+    CHECK(well.activePiece() != nullptr);
+    for (unsigned i = 0; i < LOCK_DELAY_FRAMES; i++)
+        well.update({});
+    CHECK(well.activePiece() == nullptr);
+
+    well.addPiece(PieceType::O);
+    well.update({
+        InputEvent(InputType::GAME_HARDDROP, true),
+        InputEvent(InputType::GAME_HARDDROP, false),
+    });
+    CHECK(well.activePiece() != nullptr);
+    for (unsigned i = 0; i < LOCK_DELAY_FRAMES; i++)
+        well.update({});
+    CHECK(well.activePiece() == nullptr);
+
+    for (unsigned i = 0; i < CLEAR_DELAY_FRAMES; i++)
+        well.update({});
+
+    std::string expected_ascii;
+    for (unsigned i = 0; i < 21; i++)
+        expected_ascii += emptyline_ascii;
+    expected_ascii += "....OO....\n";
+    CHECK_EQUAL(expected_ascii, well.asAscii());
+}
+
 TEST(Zangi) {
     std::string emptyline_ascii;
     MinoStorage::loadDummyMinos();
