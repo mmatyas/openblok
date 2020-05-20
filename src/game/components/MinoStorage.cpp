@@ -4,6 +4,7 @@
 #include "game/AppContext.h"
 #include "system/GraphicsContext.h"
 
+#include <stdexcept>
 #include <assert.h>
 
 
