@@ -1,0 +1,41 @@
+on: [push, workflow_dispatch]
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        build: [Release, Debug]
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y
+          appstream
+          libsdl2-dev
+          libsdl2-image-dev
+          libsdl2-mixer-dev
+          libsdl2-ttf-dev
+
+      - uses: actions/checkout@v2
+        with:
+          submodules: 'recursive'
+
+      - name: Configure
+        run: cmake
+          -DCMAKE_INSTALL_PREFIX=/usr
+          -DCMAKE_BUILD_TYPE=${{ matrix.build }}
+          -DENABLE_MP3=OFF
+      - name: Build
+        run: make VERBOSE=1
+
+      - name: Test
+        run: ./tests/openblok_test
+        if: matrix.build == 'Debug'
+
+      - name: Create AppImage
+        run: ./etc/appimage/travis.sh
+        if: matrix.build == 'Release'
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          path: /home/runner/out
+        if: matrix.build == 'Release'

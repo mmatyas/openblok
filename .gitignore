@@ -9,6 +9,7 @@ build
 !.travis.yml
 !.appveyor.yml
 !.circleci
+!.github
 
 # ignore IDE project files
 *.kdev4
