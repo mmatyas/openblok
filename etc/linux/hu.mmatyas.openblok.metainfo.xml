@@ -62,6 +62,7 @@
   <update_contact>matyas.mustoha_AT_gmail.com</update_contact>
 
   <releases>
+    <release version="0.8.3" date="2020-02-04" />
     <release version="0.8.2" date="2020-01-08" />
     <release version="0.8.1" date="2019-11-13" />
     <release version="0.8.0" date="2019-11-02" />
