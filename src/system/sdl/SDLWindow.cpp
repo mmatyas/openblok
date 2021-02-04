@@ -8,7 +8,36 @@
 #include <assert.h>
 
 
+namespace {
 const std::string LOG_INPUT_TAG = "input";
+
+uint16_t version_as_num(uint16_t major, uint16_t minor, uint16_t micro)
+{
+    return major * 1000u + minor * 100u + micro;
+}
+
+uint16_t linked_sdl_version()
+{
+    SDL_version raw;
+    SDL_GetVersion(&raw);
+    return version_as_num(raw.major, raw.minor, raw.patch);
+}
+
+
+const char* const gamepaddb_filename()
+{
+    const uint16_t linked_sdl = linked_sdl_version();
+
+    if (linked_sdl <= version_as_num(2, 0, 4))
+        return "gamecontrollerdb_204";
+
+    if (linked_sdl <= version_as_num(2, 0, 5))
+        return "gamecontrollerdb_205";
+
+    return "gamecontrollerdb_209";
+}
+} // namespace
+
 
 SDLWindow::SDLWindow()
     : sdl(SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER)
@@ -67,7 +96,13 @@ SDLWindow::SDLWindow()
     , m_quit_requested(false)
 {
     window.SetIcon(SDL2pp::Surface(Paths::data() + "icon.png"));
-    SDL_GameControllerAddMappingsFromFile((Paths::data() + "gamecontrollerdb").c_str());
+    const int result = SDL_GameControllerAddMappingsFromFile((Paths::data() + gamepaddb_filename()).c_str());
+    if (result < 0) {
+        Log::error(LOG_INPUT_TAG)
+            << "Failed to load gamepad mappings from "
+            << '`' << gamepaddb_filename() << "`: "
+            << SDL_GetError() << '\n';
+    }
 
     device_maps[-1].id = -1;
     device_maps.at(-1).name = "keyboard";
