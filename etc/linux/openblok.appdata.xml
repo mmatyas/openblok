@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-​<!-- Copyright 2017 Mátyás Mustoha -->
-​<component type="desktop-application">
-​  <id>openblok</id>
+<component type="desktop-application">
+​  <id>hu.mmatyas.openblok</id>
 ​  <metadata_license>CC0</metadata_license>
 ​  <project_license>GPL-3.0+</project_license>
+
 ​  <name>OpenBlok</name>
 ​  <summary>A falling block puzzle game</summary>
-
 ​  <description>
 ​    <p>
 ​      A customizable, cross platform, open-source falling block game,
@@ -55,15 +54,17 @@
 ​  </screenshots>
 ​
 ​  <url type="homepage">https://github.com/mmatyas/openblok</url>
+  <url type="bugtracker">https://github.com/mmatyas/openblok/issues</url>
+  <url type="help">https://github.com/mmatyas/openblok/issues</url>
+  <url type="donation">https://www.paypal.me/MatyasMustoha</url>
 
   <developer_name>Mátyás Mustoha</developer_name>
-  <update_contact/>matyas.mustoha_AT_gmail.com</component>
+  <update_contact>matyas.mustoha_AT_gmail.com</update_contact>
 ​
 ​  <releases>
-​    <release version="0.7.0" date="2017-02-27">
-​      <description>
-​        <p>See https://github.com/mmatyas/openblok/releases/tag/v0.7.0</p>
-​      </description>
-​    </release>
+​    <release version="0.8.2" date="2020-01-08" />
+​    <release version="0.8.1" date="2019-11-13" />
+​    <release version="0.8.0" date="2019-11-02" />
+​    <release version="0.7.0" date="2017-02-27" />
 ​  </releases>
 ​</component>
