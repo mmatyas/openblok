@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop-application">
-​  <id>hu.mmatyas.openblok</id>
-​  <metadata_license>CC0</metadata_license>
-​  <project_license>GPL-3.0+</project_license>
+  <id>hu.mmatyas.openblok</id>
+  <metadata_license>CC0</metadata_license>
+  <project_license>GPL-3.0+</project_license>
 
-​  <name>OpenBlok</name>
-​  <summary>A falling block puzzle game</summary>
-​  <description>
-​    <p>
-​      A customizable, cross platform, open-source falling block game,
+  <name>OpenBlok</name>
+  <summary>A falling block puzzle game</summary>
+  <description>
+    <p>
+      A customizable, cross platform, open-source falling block game,
       packed with a bunch of features.
-​    </p>
+    </p>
     <p>Gameplay features:</p>
     <ul>
       <li>Ghost piece support</li>
@@ -31,40 +31,40 @@
       <li>Big screen, small screen support</li>
       <li>Theme support</li>
     </ul>
-​  </description>
+  </description>
 
   <categories>
     <category>Game</category>
     <category>BlocksGame</category>
   </categories>
-​
-​  <screenshots>
-​    <screenshot type="default">
-​      <caption>Gameplay</caption>
-​      <image>https://gitcdn.xyz/repo/mmatyas/openblok/b0491168/etc/promo/screenshot01.png</image>
-​    </screenshot>
-​    <screenshot>
-​      <caption>Main menu</caption>
-​      <image>https://gitcdn.xyz/repo/mmatyas/openblok/b0491168/etc/promo/screenshot_mainmenu.png</image>
-​    </screenshot>
-​    <screenshot>
-​      <caption>Multiplayer</caption>
-​      <image>https://gitcdn.xyz/repo/mmatyas/openblok/b0491168/etc/promo/screenshot02.png</image>
-​    </screenshot>
-​  </screenshots>
-​
-​  <url type="homepage">https://github.com/mmatyas/openblok</url>
+
+  <screenshots>
+    <screenshot type="default">
+      <caption>Gameplay</caption>
+      <image>https://gitcdn.xyz/repo/mmatyas/openblok/b0491168/etc/promo/screenshot01.png</image>
+    </screenshot>
+    <screenshot>
+      <caption>Main menu</caption>
+      <image>https://gitcdn.xyz/repo/mmatyas/openblok/b0491168/etc/promo/screenshot_mainmenu.png</image>
+    </screenshot>
+    <screenshot>
+      <caption>Multiplayer</caption>
+      <image>https://gitcdn.xyz/repo/mmatyas/openblok/b0491168/etc/promo/screenshot02.png</image>
+    </screenshot>
+  </screenshots>
+
+  <url type="homepage">https://github.com/mmatyas/openblok</url>
   <url type="bugtracker">https://github.com/mmatyas/openblok/issues</url>
   <url type="help">https://github.com/mmatyas/openblok/issues</url>
   <url type="donation">https://www.paypal.me/MatyasMustoha</url>
 
   <developer_name>Mátyás Mustoha</developer_name>
   <update_contact>matyas.mustoha_AT_gmail.com</update_contact>
-​
-​  <releases>
-​    <release version="0.8.2" date="2020-01-08" />
-​    <release version="0.8.1" date="2019-11-13" />
-​    <release version="0.8.0" date="2019-11-02" />
-​    <release version="0.7.0" date="2017-02-27" />
-​  </releases>
-​</component>
+
+  <releases>
+    <release version="0.8.2" date="2020-01-08" />
+    <release version="0.8.1" date="2019-11-13" />
+    <release version="0.8.0" date="2019-11-02" />
+    <release version="0.7.0" date="2017-02-27" />
+  </releases>
+</component>
