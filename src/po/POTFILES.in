@@ -1,0 +1,10 @@
+./game/layout/gameplay/PlayerArea.cpp
+./game/layout/options/ToggleBtn.cpp
+./game/states/substates/ingame/TeamSelect.cpp
+./game/states/substates/ingame/Statistics.cpp
+./game/states/substates/ingame/Gameplay.cpp
+./game/states/substates/ingame/Pause.cpp
+./game/states/substates/mainmenu/Options.cpp
+./game/states/substates/ingame/PlayerSelect.cpp
+./game/states/substates/mainmenu/Base.cpp
+./game/ScoreTable.cpp
