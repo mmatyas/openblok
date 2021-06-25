@@ -8,7 +8,7 @@ msgstr ""
 "POT-Creation-Date: 2021-06-25 14:09+0200\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=ASCII\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Project-Id-Version: PACKAGE VERSION\n"
 "PO-Revision-Date: 2021-06-25 16:11+0200\n"
@@ -66,7 +66,7 @@ msgstr ""
 
 #: game/states/substates/mainmenu/Options.cpp:226
 msgid "Cancel/Back"
-msgstr ""
+msgstr "Abbrechen/Zurück"
 
 #: game/states/substates/mainmenu/Options.cpp:82
 msgid "Change the graphical theme of the game."
@@ -75,13 +75,15 @@ msgstr ""
 #: game/states/substates/mainmenu/Options.cpp:93
 #: game/states/substates/mainmenu/Options.cpp:104
 msgid "Classic"
-msgstr ""
+msgstr "Klassisch"
 
 #: game/states/substates/mainmenu/Options.cpp:99
 msgid ""
 "Classic: The rotation style of old console games; it does not allow wall "
 "kicking."
 msgstr ""
+"Klassisch: Der Drehstil alter Konsolen; erlaubt kein Drehen durch"
+"Wandstoß."
 
 #: game/states/substates/mainmenu/Base.cpp:98
 #: game/states/substates/mainmenu/Base.cpp:133
@@ -91,10 +93,14 @@ msgid ""
 "to speed up your progress and\n"
 "gain more score!"
 msgstr ""
+"Schaffe 15 Stufen mit steigender\n"
+"schwierigkeit - verwende Spezialmanöver\n"
+"um schneller voran zu kommen und\n"
+"mehr Punkte zu erreichen!"
 
 #: game/states/substates/mainmenu/Base.cpp:103
 msgid "Clear 40 lines as fast as you can!"
-msgstr ""
+msgstr "Schaffe 40 Zeilen so schnell wie möglich!"
 
 #. num to offset
 #: game/states/substates/mainmenu/Options.cpp:115
@@ -128,11 +134,11 @@ msgstr ""
 
 #: game/states/substates/ingame/Statistics.cpp:47
 msgid "Duration"
-msgstr ""
+msgstr "Dauer"
 
 #: game/states/substates/mainmenu/Base.cpp:147
 msgid "EXIT"
-msgstr ""
+msgstr "Beenden"
 
 #: game/states/substates/mainmenu/Options.cpp:177
 msgid "Enable T-Spins"
@@ -165,11 +171,11 @@ msgstr ""
 
 #: game/states/substates/ingame/Statistics.cpp:49
 msgid "Final Score"
-msgstr ""
+msgstr "Endstand"
 
 #: game/states/substates/mainmenu/Options.cpp:52
 msgid "Fullscreen mode"
-msgstr ""
+msgstr "Vollbild"
 
 #: game/layout/gameplay/PlayerArea.cpp:30
 msgid "GAME OVER"
@@ -177,22 +183,22 @@ msgstr ""
 
 #: game/states/substates/mainmenu/Options.cpp:35
 msgid "GENERAL"
-msgstr ""
+msgstr "Allgemein"
 
 #: game/layout/gameplay/PlayerArea.cpp:59
 msgid "GOAL"
-msgstr ""
+msgstr "Ziel"
 
 #: game/layout/gameplay/PlayerArea.cpp:57
 msgid "HOLD"
-msgstr ""
+msgstr "Gehalten"
 
 #: game/states/substates/mainmenu/Options.cpp:234
 msgid "Hard drop"
 msgstr ""
 
 #: game/states/substates/mainmenu/Options.cpp:235
-msgid "Hold"
+msgid "Halten"
 msgstr ""
 
 #: game/states/substates/mainmenu/Options.cpp:124
@@ -231,19 +237,19 @@ msgstr ""
 
 #: game/layout/gameplay/PlayerArea.cpp:60
 msgid "LEVEL"
-msgstr ""
+msgstr "Stufe"
 
 #: game/layout/gameplay/PlayerArea.cpp:191
 msgid "LEVEL "
-msgstr ""
+msgstr "Stufe "
 
 #: game/states/substates/ingame/Gameplay.cpp:306
 msgid "LEVEL UP!"
-msgstr ""
+msgstr "Stufe geschafft"
 
 #: game/states/substates/mainmenu/Options.cpp:223
 msgid "Left"
-msgstr ""
+msgstr "Links"
 
 #: game/states/substates/ingame/Statistics.cpp:48
 msgid "Level"
@@ -269,32 +275,32 @@ msgstr ""
 #: game/states/substates/mainmenu/Base.cpp:88
 #: game/states/substates/mainmenu/Base.cpp:123
 msgid "MARATHON"
-msgstr ""
+msgstr "Marathon"
 
 #: game/states/substates/mainmenu/Base.cpp:94
 #: game/states/substates/mainmenu/Base.cpp:125
 msgid "MARATHON SIMPLE"
-msgstr ""
+msgstr "Marathon (einfach)"
 
 #: game/states/substates/mainmenu/Base.cpp:114
 msgid "MULTIPLAYER"
-msgstr ""
+msgstr "Mehrspieler"
 
 #: game/states/substates/mainmenu/Options.cpp:229
 msgid "Move left"
-msgstr ""
+msgstr "Nach Links"
 
 #: game/states/substates/mainmenu/Options.cpp:230
 msgid "Move right"
-msgstr ""
+msgstr "Nach Rechts"
 
 #: game/layout/gameplay/PlayerArea.cpp:56
 msgid "NEXT"
-msgstr ""
+msgstr "Folgender Block"
 
 #: game/states/substates/mainmenu/Options.cpp:155
 msgid "Next pieces"
-msgstr ""
+msgstr "Folgende Blöcke"
 
 #: game/layout/options/ToggleBtn.cpp:29
 msgid "OFF"
@@ -306,19 +312,19 @@ msgstr ""
 
 #: game/layout/options/ToggleBtn.cpp:30
 msgid "ON"
-msgstr ""
+msgstr "Ein"
 
 #: game/states/substates/mainmenu/Base.cpp:144
 msgid "OPTIONS"
-msgstr ""
+msgstr "Einstellungen"
 
 #: game/states/substates/ingame/Pause.cpp:32
 msgid "PAUSE"
-msgstr ""
+msgstr "Pause"
 
 #: game/ScoreTable.cpp:29
 msgid "PERFECT!"
-msgstr ""
+msgstr "PERFEKT!"
 
 #: game/states/substates/ingame/TeamSelect.cpp:39
 msgid "PLAYER 1"
@@ -360,7 +366,7 @@ msgstr ""
 
 #: game/states/substates/ingame/PlayerSelect.cpp:41
 msgid "PRESS START TO BEGIN!"
-msgstr ""
+msgstr "Start drücken, um anzufangen!"
 
 #: game/states/substates/ingame/TeamSelect.cpp:36
 msgid "PRESS START TO JOIN!"
@@ -393,39 +399,39 @@ msgstr ""
 
 #: game/states/substates/ingame/Pause.cpp:34
 msgid "RESTART"
-msgstr ""
+msgstr "Neustarten"
 
 #: game/states/substates/ingame/Pause.cpp:34
 msgid "RESUME"
-msgstr ""
+msgstr "Fortsetzen"
 
 #: game/states/substates/mainmenu/Options.cpp:224
 msgid "Right"
-msgstr ""
+msgstr "Rechts"
 
 #: game/states/substates/mainmenu/Options.cpp:231
 msgid "Rotate clockwise"
-msgstr ""
+msgstr "Drehen (im Uhrzeigersinn)"
 
 #: game/states/substates/mainmenu/Options.cpp:232
-msgid "Rotate counter-clockwise"
+msgid "Drehen (gegen Uhrzeigersinn)"
 msgstr ""
 
 #: game/states/substates/mainmenu/Options.cpp:96
 msgid "Rotation style"
-msgstr ""
+msgstr "Stil des Drehens"
 
 #: game/layout/gameplay/PlayerArea.cpp:58
 msgid "SCORE"
-msgstr ""
+msgstr "Punkte"
 
 #: game/ScoreTable.cpp:26
 msgid "SINGLE"
-msgstr ""
+msgstr "Einzel"
 
 #: game/states/substates/mainmenu/Base.cpp:81
 msgid "SINGLEPLAYER"
-msgstr ""
+msgstr "Einzelspieler"
 
 #: game/states/substates/mainmenu/Base.cpp:90
 msgid "SPRINT"
@@ -442,13 +448,15 @@ msgstr ""
 
 #: game/states/substates/ingame/Statistics.cpp:32
 msgid "STATISTICS"
-msgstr ""
+msgstr "Statistiken"
 
 #: game/states/substates/mainmenu/Base.cpp:105
 msgid ""
 "Score as many points as you can\n"
 "in just 2 minutes!"
 msgstr ""
+"Erreiche soviele Punkte wie\n"
+"du kannst in 2 Minuten!"
 
 #: game/states/substates/ingame/Statistics.cpp:35
 msgid "Singles"
