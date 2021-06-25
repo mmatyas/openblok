@@ -29,6 +29,7 @@
 #include <memory>
 #include <thread>
 #include <assert.h>
+#include "libintl.h"
 
 
 const std::string LOG_MAIN = "main";
@@ -61,6 +62,11 @@ int main(int argc, const char** argv)
             return 1;
         }
     }
+
+    /* Setting the i18n environment */
+    setlocale (LC_ALL, "");
+    bindtextdomain ("main", "src/po");
+    textdomain ("main");
 
 
     AppContext app;

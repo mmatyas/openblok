@@ -1,5 +1,5 @@
 #pragma once
 
-// Translateable texts should be prefixed with `tr`
-// TODO: Add multilanguage support
-#define tr(val) val
+// Translatable texts should be prefixed with `tr`
+#include "libintl.h"
+#define tr(val) gettext(val)
