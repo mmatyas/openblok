@@ -18,7 +18,6 @@ if(WIN32 OR CYGWIN)
     try_adding_compiler_flag(openblok -Wl,--subsystem,windows)
 endif()
 
-file(COPY po DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 # Install
 install(TARGETS openblok RUNTIME DESTINATION ${EXEDIR})
