@@ -65,7 +65,7 @@ int main(int argc, const char** argv)
 
     /* Setting the i18n environment */
     setlocale (LC_ALL, "");
-    bindtextdomain ("main", "src/po");
+    bindtextdomain ("main", "../locale");
     textdomain ("main");
 
 

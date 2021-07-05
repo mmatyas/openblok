@@ -3,32 +3,38 @@
 # This file is distributed under the same license as the openblok package.
 # Igor Skoric <igor@skoric.at>, 2021.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "POT-Creation-Date: 2021-06-25 14:09+0200\n"
-"Language: en\n"
+"Language: de\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Project-Id-Version: 0.8.3\n"
+"PO-Revision-Date: 2021-07-05 12:18+0200\n"
+"Last-Translator: Igor Škorić <igor@skoric.at>\n"
+"Language-Team: German <translation-team-de@lists.sourceforge.net>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: game/ScoreTable.cpp:36
 msgid " COMBO"
-msgstr ""
+msgstr " Kombination"
 
 #: game/states/substates/mainmenu/Options.cpp:178
 msgid "Allow T-Spin detection and scoring. Works best with SRS rotation."
-msgstr ""
+msgstr "Erlaube Feststellung und Bewertung von T-Spin. Funktioniert am besten mit SRS drehung."
 
 #: game/states/substates/mainmenu/Options.cpp:187
 msgid "Allow T-Spins by wallkick"
-msgstr ""
+msgstr "Erlaube T-Spin durch Wandtritt."
 
 #: game/states/substates/mainmenu/Options.cpp:188
 msgid ""
 "Allow detecting T-Spins created by wall kicking.\n"
 "Requires the 'Enable T-Spins' option."
 msgstr ""
+"Erlaube T-Spin durch Wandtritt.\n"
+"Benötigt 'Aktiviere T-Spin' Option."
 
 #: game/states/substates/mainmenu/Options.cpp:183
 msgid ""
@@ -39,19 +45,19 @@ msgstr ""
 
 #: game/ScoreTable.cpp:51
 msgid "BACK-TO-BACK"
-msgstr ""
+msgstr "Direkt nacheinander"
 
 #: game/states/substates/mainmenu/Base.cpp:121
 msgid "BATTLE"
-msgstr ""
+msgstr "Kampf"
 
 #: game/states/substates/ingame/Statistics.cpp:39
 msgid "Back-to-Back"
-msgstr ""
+msgstr "Direkt nacheinander"
 
 #: game/states/substates/mainmenu/Options.cpp:67
 msgid "Background music"
-msgstr ""
+msgstr "Hintergrundmusik"
 
 #: game/states/substates/mainmenu/Base.cpp:129
 msgid ""
@@ -59,25 +65,30 @@ msgid ""
 "multiple lines, and throw them\n"
 "to the other players!"
 msgstr ""
+"Kämpfe mit deinen Freunden: leere\n"
+"mehrere Reihen und wirf diese\n"
+"zu den anderen Spielern!"
 
 #: game/states/substates/mainmenu/Options.cpp:226
 msgid "Cancel/Back"
-msgstr ""
+msgstr "Abbrechen/Zurück"
 
 #: game/states/substates/mainmenu/Options.cpp:82
 msgid "Change the graphical theme of the game."
-msgstr ""
+msgstr "Grafisches Thema ändern."
 
 #: game/states/substates/mainmenu/Options.cpp:93
 #: game/states/substates/mainmenu/Options.cpp:104
 msgid "Classic"
-msgstr ""
+msgstr "Klassisch"
 
 #: game/states/substates/mainmenu/Options.cpp:99
 msgid ""
 "Classic: The rotation style of old console games; it does not allow wall "
 "kicking."
 msgstr ""
+"Klassisch: Der Drehstil alter Konsolen; erlaubt kein Drehen durch"
+"Wandtritt."
 
 #: game/states/substates/mainmenu/Base.cpp:98
 #: game/states/substates/mainmenu/Base.cpp:133
@@ -87,48 +98,52 @@ msgid ""
 "to speed up your progress and\n"
 "gain more score!"
 msgstr ""
+"Schaffe 15 Stufen mit steigender\n"
+"Schwierigkeit - verwende Spezialmanöver\n"
+"um schneller voran zu kommen und\n"
+"mehr Punkte zu erreichen!"
 
 #: game/states/substates/mainmenu/Base.cpp:103
 msgid "Clear 40 lines as fast as you can!"
-msgstr ""
+msgstr "Schaffe 40 Reihen so schnell wie möglich!"
 
 #. num to offset
 #: game/states/substates/mainmenu/Options.cpp:115
 msgid "DAS initial delay"
-msgstr ""
+msgstr "DAS Anfangsverzögerung"
 
 #. num to offset
 #: game/states/substates/mainmenu/Options.cpp:123
 msgid "DAS repeat delay"
-msgstr ""
+msgstr "DAS Wiederholungsverzögerung"
 
 #: game/ScoreTable.cpp:27
 msgid "DOUBLE"
-msgstr ""
+msgstr "Doppelt"
 
 #: game/states/substates/mainmenu/Options.cpp:182
 msgid "Detect T-Spins at the walls"
-msgstr ""
+msgstr "Stelle T-Spins an der Wand fest"
 
 #: game/states/substates/mainmenu/Options.cpp:197
 msgid "Device"
-msgstr ""
+msgstr "Gerät"
 
 #: game/states/substates/ingame/Statistics.cpp:36
 msgid "Doubles"
-msgstr ""
+msgstr "Doppelte"
 
 #: game/states/substates/mainmenu/Options.cpp:222
 msgid "Down"
-msgstr ""
+msgstr "Runter"
 
 #: game/states/substates/ingame/Statistics.cpp:47
 msgid "Duration"
-msgstr ""
+msgstr "Dauer"
 
 #: game/states/substates/mainmenu/Base.cpp:147
 msgid "EXIT"
-msgstr ""
+msgstr "Beenden"
 
 #: game/states/substates/mainmenu/Options.cpp:177
 msgid "Enable T-Spins"
@@ -136,114 +151,114 @@ msgstr ""
 
 #: game/states/substates/mainmenu/Options.cpp:61
 msgid "Enable or disable sound effects."
-msgstr ""
+msgstr "Ton ein- oder ausschalten."
 
 #: game/states/substates/mainmenu/Options.cpp:68
 msgid "Enable or disable the background music."
-msgstr ""
+msgstr "Hintergrundmusik ein- und ausschalten."
 
 #: game/states/substates/mainmenu/Options.cpp:136
 #: game/states/substates/mainmenu/Options.cpp:146
 msgid "Extended"
-msgstr ""
+msgstr "Erweitert"
 
 #: game/states/substates/mainmenu/Options.cpp:141
 msgid "Extended: You can move or rotate the piece 10 times before it locks.\n"
-msgstr ""
+msgstr "Erweitert: Teile können bis zu 10 mal gedreht werden, bevor sie sperren.\n"
 
 #: game/states/substates/mainmenu/Options.cpp:36
 msgid "FINE TUNING"
-msgstr ""
+msgstr "FEineinstellung"
 
 #: game/layout/gameplay/PlayerArea.cpp:32
 msgid "FINISH!"
-msgstr ""
+msgstr "Ende!"
 
 #: game/states/substates/ingame/Statistics.cpp:49
 msgid "Final Score"
-msgstr ""
+msgstr "Endstand"
 
 #: game/states/substates/mainmenu/Options.cpp:52
 msgid "Fullscreen mode"
-msgstr ""
+msgstr "Vollbild"
 
 #: game/layout/gameplay/PlayerArea.cpp:30
 msgid "GAME OVER"
-msgstr ""
+msgstr "Game Over"
 
 #: game/states/substates/mainmenu/Options.cpp:35
 msgid "GENERAL"
-msgstr ""
+msgstr "Allgemein"
 
 #: game/layout/gameplay/PlayerArea.cpp:59
 msgid "GOAL"
-msgstr ""
+msgstr "Ziel"
 
 #: game/layout/gameplay/PlayerArea.cpp:57
 msgid "HOLD"
-msgstr ""
+msgstr "Gehalten"
 
 #: game/states/substates/mainmenu/Options.cpp:234
 msgid "Hard drop"
-msgstr ""
+msgstr "Schnelles Stürzen"
 
 #: game/states/substates/mainmenu/Options.cpp:235
 msgid "Hold"
-msgstr ""
+msgstr "Halten"
 
 #: game/states/substates/mainmenu/Options.cpp:124
 msgid "Horizontal movement delay during autorepeat."
-msgstr ""
+msgstr "Horizontale Bewegung bei automatischer Wiederholung."
 
 #: game/states/substates/mainmenu/Options.cpp:38
 msgid "INPUT (GAME)"
-msgstr ""
+msgstr "Eingabe (Spiel)"
 
 #: game/states/substates/mainmenu/Options.cpp:37
 msgid "INPUT (MENU)"
-msgstr ""
+msgstr "Eingabe (Menü)"
 
 #: game/states/substates/mainmenu/Options.cpp:133
 msgid "If set to 'ON', hard drop does not lock the piece instantly."
-msgstr ""
+msgstr "An: Schnelles Stürzen sperrt das Teil nicht sofort."
 
 #: game/states/substates/mainmenu/Options.cpp:136
 #: game/states/substates/mainmenu/Options.cpp:147
 msgid "Infinite"
-msgstr ""
+msgstr "Unendlich"
 
 #: game/states/substates/mainmenu/Options.cpp:142
 msgid "Infinite: You can move or rotate the piece an infinite number of times."
-msgstr ""
+msgstr "Unendlich: Man kann unbegrenzt oft drehen."
 
 #: game/states/substates/mainmenu/Options.cpp:136
 #: game/states/substates/mainmenu/Options.cpp:145
 msgid "Instant"
-msgstr ""
+msgstr "Sofort"
 
 #: game/states/substates/mainmenu/Options.cpp:140
 msgid "Instant: The piece locks instantly when it reaches the ground.\n"
-msgstr ""
+msgstr "Sofort: Das Teil sperrt sofort wenn es den Boden erreicht.\n"
 
 #: game/layout/gameplay/PlayerArea.cpp:60
 msgid "LEVEL"
-msgstr ""
+msgstr "Stufe"
 
 #: game/layout/gameplay/PlayerArea.cpp:191
 msgid "LEVEL "
-msgstr ""
+msgstr "Stufe "
 
 #: game/states/substates/ingame/Gameplay.cpp:306
 msgid "LEVEL UP!"
-msgstr ""
+msgstr "Stufe geschafft!"
 
 #: game/states/substates/mainmenu/Options.cpp:223
 msgid "Left"
-msgstr ""
+msgstr "Links"
 
 #: game/states/substates/ingame/Statistics.cpp:48
 msgid "Level"
-msgstr ""
+msgstr "Stufe"
 
 #: game/states/substates/mainmenu/Base.cpp:108
 #: game/states/substates/mainmenu/Base.cpp:138
@@ -252,180 +267,185 @@ msgid ""
 "moves won't reward you with\n"
 "bonus lines."
 msgstr ""
+"Wie Marathon, aber fortgeschrittene\n"
+"Züge geben keine\n"
+"Bonusreihen."
 
 #. num to offset
 #: game/states/substates/mainmenu/Options.cpp:168
 msgid "Lock delay"
-msgstr ""
+msgstr "Sperrverzögerung"
 
 #: game/states/substates/ingame/Statistics.cpp:40
 msgid "Longest Back-to-Back"
-msgstr ""
+msgstr "Längste aufeinanderfolgende Zeit"
 
 #: game/states/substates/mainmenu/Base.cpp:88
 #: game/states/substates/mainmenu/Base.cpp:123
 msgid "MARATHON"
-msgstr ""
+msgstr "Marathon"
 
 #: game/states/substates/mainmenu/Base.cpp:94
 #: game/states/substates/mainmenu/Base.cpp:125
 msgid "MARATHON SIMPLE"
-msgstr ""
+msgstr "Marathon (einfach)"
 
 #: game/states/substates/mainmenu/Base.cpp:114
 msgid "MULTIPLAYER"
-msgstr ""
+msgstr "Mehrspieler"
 
 #: game/states/substates/mainmenu/Options.cpp:229
 msgid "Move left"
-msgstr ""
+msgstr "Nach Links"
 
 #: game/states/substates/mainmenu/Options.cpp:230
 msgid "Move right"
-msgstr ""
+msgstr "Nach Rechts"
 
 #: game/layout/gameplay/PlayerArea.cpp:56
 msgid "NEXT"
-msgstr ""
+msgstr "Folgender Block"
 
 #: game/states/substates/mainmenu/Options.cpp:155
 msgid "Next pieces"
-msgstr ""
+msgstr "Folgende Blöcke"
 
 #: game/layout/options/ToggleBtn.cpp:29
 msgid "OFF"
-msgstr ""
+msgstr "Aus"
 
 #: game/states/substates/mainmenu/Options.cpp:225
 msgid "OK/Select"
-msgstr ""
+msgstr "Bestätigen/Auswählen"
 
 #: game/layout/options/ToggleBtn.cpp:30
 msgid "ON"
-msgstr ""
+msgstr "Ein"
 
 #: game/states/substates/mainmenu/Base.cpp:144
 msgid "OPTIONS"
-msgstr ""
+msgstr "Einstellungen"
 
 #: game/states/substates/ingame/Pause.cpp:32
 msgid "PAUSE"
-msgstr ""
+msgstr "Pause"
 
 #: game/ScoreTable.cpp:29
 msgid "PERFECT!"
-msgstr ""
+msgstr "Perfekt!"
 
 #: game/states/substates/ingame/TeamSelect.cpp:39
 msgid "PLAYER 1"
-msgstr ""
+msgstr "Spieler 1"
 
 #: game/states/substates/ingame/TeamSelect.cpp:40
 msgid "PLAYER 2"
-msgstr ""
+msgstr "Spieler 2"
 
 #: game/states/substates/ingame/TeamSelect.cpp:41
 msgid "PLAYER 3"
-msgstr ""
+msgstr "Spieler 3"
 
 #: game/states/substates/ingame/TeamSelect.cpp:42
 msgid "PLAYER 4"
-msgstr ""
+msgstr "Spieler 4"
 
 #: game/states/substates/ingame/PlayerSelect.cpp:36
 msgid "PLAYER A"
-msgstr ""
+msgstr "Spieler A"
 
 #: game/states/substates/ingame/PlayerSelect.cpp:37
 msgid "PLAYER B"
-msgstr ""
+msgstr "Spieler B"
 
 #: game/states/substates/ingame/PlayerSelect.cpp:38
 msgid "PLAYER C"
-msgstr ""
+msgstr "Spieler C"
 
 #: game/states/substates/ingame/PlayerSelect.cpp:39
 msgid "PLAYER D"
-msgstr ""
+msgstr "Spieler D"
 
 #: game/states/substates/ingame/PlayerSelect.cpp:40
 msgid ""
 "PRESS START\n"
 "TO JOIN"
 msgstr ""
+"Drücke Start\n"
+"um teilzunehmen"
 
 #: game/states/substates/ingame/PlayerSelect.cpp:41
 msgid "PRESS START TO BEGIN!"
-msgstr ""
+msgstr "Start drücken, um anzufangen!"
 
 #: game/states/substates/ingame/TeamSelect.cpp:36
 msgid "PRESS START TO JOIN!"
-msgstr ""
+msgstr "Start drücken, um teilzunehmen!"
 
 #: game/states/substates/ingame/TeamSelect.cpp:37
 msgid "PRESS START TO JOIN, OR AGAIN TO BEGIN!"
-msgstr ""
+msgstr "Start drücken, um teilzunehmen oder nochmals um zu starten!"
 
 #: game/states/substates/mainmenu/Options.cpp:236
 msgid "Pause"
-msgstr ""
+msgstr "Pausieren"
 
 #: game/states/substates/ingame/Statistics.cpp:38
 msgid "Perfects"
-msgstr ""
+msgstr "Perfekte"
 
 #: game/states/substates/mainmenu/Options.cpp:139
 msgid "Piece lock style"
-msgstr ""
+msgstr "Teilesperrstil"
 
 #: game/states/substates/ingame/Pause.cpp:34
 msgid "QUIT"
-msgstr ""
+msgstr "Aussteigen"
 
 #: game/states/substates/ingame/TeamSelect.cpp:34
 #: game/states/substates/ingame/PlayerSelect.cpp:35
 msgid "READY!"
-msgstr ""
+msgstr "Bereit!"
 
 #: game/states/substates/ingame/Pause.cpp:34
 msgid "RESTART"
-msgstr ""
+msgstr "Neustarten"
 
 #: game/states/substates/ingame/Pause.cpp:34
 msgid "RESUME"
-msgstr ""
+msgstr "Fortsetzen"
 
 #: game/states/substates/mainmenu/Options.cpp:224
 msgid "Right"
-msgstr ""
+msgstr "Rechts"
 
 #: game/states/substates/mainmenu/Options.cpp:231
 msgid "Rotate clockwise"
-msgstr ""
+msgstr "Drehen (im Uhrzeigersinn)"
 
 #: game/states/substates/mainmenu/Options.cpp:232
 msgid "Rotate counter-clockwise"
-msgstr ""
+msgstr "Drehen (gegen Uhrzeigersinn)"
 
 #: game/states/substates/mainmenu/Options.cpp:96
 msgid "Rotation style"
-msgstr ""
+msgstr "Stil des Drehens"
 
 #: game/layout/gameplay/PlayerArea.cpp:58
 msgid "SCORE"
-msgstr ""
+msgstr "Punkte"
 
 #: game/ScoreTable.cpp:26
 msgid "SINGLE"
-msgstr ""
+msgstr "Einzel"
 
 #: game/states/substates/mainmenu/Base.cpp:81
 msgid "SINGLEPLAYER"
-msgstr ""
+msgstr "Einzelspieler"
 
 #: game/states/substates/mainmenu/Base.cpp:90
 msgid "SPRINT"
-msgstr ""
+msgstr "Sprint"
 
 #: game/states/substates/mainmenu/Options.cpp:93
 #: game/states/substates/mainmenu/Options.cpp:102
@@ -434,86 +454,88 @@ msgstr ""
 
 #: game/states/substates/mainmenu/Options.cpp:97
 msgid "SRS: The rotation style used by most commercial falling block games.\n"
-msgstr ""
+msgstr "SRS: Der Standardstil für Rotation in gewerblichen Spielen.\n"
 
 #: game/states/substates/ingame/Statistics.cpp:32
 msgid "STATISTICS"
-msgstr ""
+msgstr "Statistiken"
 
 #: game/states/substates/mainmenu/Base.cpp:105
 msgid ""
 "Score as many points as you can\n"
 "in just 2 minutes!"
 msgstr ""
+"Erreiche so viele Punkte wie\n"
+"du kannst in 2 Minuten!"
 
 #: game/states/substates/ingame/Statistics.cpp:35
 msgid "Singles"
-msgstr ""
+msgstr "Einzelne"
 
 #: game/states/substates/mainmenu/Options.cpp:233
 msgid "Soft drop"
-msgstr ""
+msgstr "Sanftes Stürzen"
 
 #. sonic drop == not instant hard drop
 #: game/states/substates/mainmenu/Options.cpp:132
 msgid "Sonic drop"
-msgstr ""
+msgstr "Mittleres Stürzen"
 
 #: game/states/substates/mainmenu/Options.cpp:60
 msgid "Sound effects"
-msgstr ""
+msgstr "Toneffekte"
 
 #: game/ScoreTable.cpp:31
 msgid "T-MINI SINGLE"
-msgstr ""
+msgstr "T-Mini Einzel"
 
 #: game/ScoreTable.cpp:32
 msgid "T-SPIN"
-msgstr ""
+msgstr "T-Spin"
 
 #: game/ScoreTable.cpp:34
 msgid "T-SPIN DOUBLE"
-msgstr ""
+msgstr "T-Spin"
 
 #: game/ScoreTable.cpp:30
 msgid "T-SPIN MINI"
-msgstr ""
+msgstr "T-Spin mini"
 
 #: game/ScoreTable.cpp:33
 msgid "T-SPIN SINGLE"
-msgstr ""
+msgstr "T-Spin einzel"
 
 #: game/ScoreTable.cpp:35
 msgid "T-SPIN TRIPLE"
-msgstr ""
+msgstr "T-Spin dreifach"
 
 #: game/states/substates/ingame/Statistics.cpp:45
 msgid "T-Spin Doubles"
-msgstr ""
+msgstr "T-Spin doppel"
 
 #: game/states/substates/ingame/Statistics.cpp:42
 msgid "T-Spin Mini Singles"
-msgstr ""
+msgstr "T-Spin mini einzel"
 
 #: game/states/substates/ingame/Statistics.cpp:41
 msgid "T-Spin Minis"
-msgstr ""
+msgstr "T-Spin minis"
 
 #: game/states/substates/ingame/Statistics.cpp:44
 msgid "T-Spin Singles"
-msgstr ""
+msgstr "T-Spin einzelne"
 
 #: game/states/substates/ingame/Statistics.cpp:46
 msgid "T-Spin Triples"
-msgstr ""
+msgstr "T-Spin dreifache"
 
 #: game/states/substates/ingame/Statistics.cpp:43
 msgid "T-Spins"
-msgstr ""
+msgstr "T-Spin anzahl"
 
 #: game/states/substates/ingame/TeamSelect.cpp:35
 msgid "TEAM SELECT"
-msgstr ""
+msgstr "Team Auswahl"
 
 #: game/states/substates/mainmenu/Options.cpp:93
 #: game/states/substates/mainmenu/Options.cpp:103
@@ -522,48 +544,52 @@ msgstr ""
 
 #: game/states/substates/mainmenu/Options.cpp:98
 msgid "TGM: A popular style common in far eastern games and arcade machines.\n"
-msgstr ""
+msgstr "TGM: Ein beliebter Stil in östlichen Spielen und Spielhallen.\n"
 
 #: game/ScoreTable.cpp:28
 msgid "TRIPLE"
-msgstr ""
+msgstr "Dreifach"
 
 #: game/states/substates/mainmenu/Options.cpp:156
 msgid "The number of next pieces you can preview."
-msgstr ""
+msgstr "Die Anzahl der Teile in der Vorschau"
 
 #: game/states/substates/mainmenu/Options.cpp:116
 msgid "The time it takes to turn on horizontal movement autorepeat."
-msgstr ""
+msgstr "Aktivierungszeit der horizontalen automatischen Verzögerung."
 
 #: game/states/substates/mainmenu/Options.cpp:169
 msgid ""
 "The time while you can still move the piece after it reaches the ground. See "
 "'Piece lock style'."
 msgstr ""
+"Zeitraum für das bewegen eines Teiles, welches bereits den Boden erreicht hat. Siehe "
+"'Teilesperrstil'."
 
 #: game/states/substates/mainmenu/Options.cpp:82
 msgid "Theme"
-msgstr ""
+msgstr "Thema"
 
 #: game/states/substates/mainmenu/Options.cpp:53
 msgid ""
 "Toggle fullscreen mode. On certain (embedded) devices, this setting may have "
 "no effect."
 msgstr ""
+"Vollbild ein-/ausschalten. Bei gewissen (integrierten) Geräten könnte dies keinen "
+"Effekt haben."
 
 #: game/states/substates/ingame/Statistics.cpp:34
 msgid "Total Lines"
-msgstr ""
+msgstr "Reihen Gesamt"
 
 #: game/states/substates/ingame/Statistics.cpp:37
 msgid "Triples"
-msgstr ""
+msgstr "Dreifache"
 
 #: game/states/substates/mainmenu/Base.cpp:92
 msgid "ULTRA"
-msgstr ""
+msgstr "Ultra"
 
 #: game/states/substates/mainmenu/Options.cpp:221
 msgid "Up"
-msgstr ""
+msgstr "Rauf"
