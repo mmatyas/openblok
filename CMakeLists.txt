@@ -60,6 +60,13 @@ if(CMAKE_BUILD_TYPE STREQUAL "debug" AND BUILD_TESTS)
 endif()
 
 
+# Localization
+include(FindGettext)
+if(GETTEXT_FOUND)
+    add_subdirectory(locale)
+endif()
+
+
 # Install
 install(DIRECTORY data/ DESTINATION ${DATADIR} PATTERN "*.txt" EXCLUDE)
 if(INSTALL_DESKTOPICON)
@@ -100,5 +107,8 @@ if(INSTALL_DESKTOPICON)
 endif()
 if(INSTALL_APPSTREAM)
     message(STATUS "|  - appstream:      yes")
+endif()
+if(GETTEXT_FOUND)
+    message(STATUS "|  - localization:   yes")
 endif()
 message(STATUS "|")

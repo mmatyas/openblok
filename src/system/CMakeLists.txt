@@ -56,6 +56,11 @@ target_include_directories(module_system PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/..
 target_compile_definitions(module_system PRIVATE OPENBLOK_DATADIR="${DATADIR}")
 target_link_libraries(module_system SDL2pp)
 
+# GNU gettext
+find_package(Intl REQUIRED)
+target_link_libraries(module_system ${Intl_LIBRARIES})
+
+
 include(EnableWarnings)
 include(RequireCxx11)
 enable_warnings(module_system)
