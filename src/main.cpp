@@ -24,12 +24,12 @@
 #include "system/Paths.h"
 #include "system/util/MakeUnique.h"
 
+#include "libintl.h"
 #include <algorithm>
 #include <chrono>
 #include <memory>
 #include <thread>
 #include <assert.h>
-#include "libintl.h"
 
 
 const std::string LOG_MAIN = "main";
@@ -63,10 +63,16 @@ int main(int argc, const char** argv)
         }
     }
 
-    /* Setting the i18n environment */
-    setlocale (LC_ALL, "");
-    bindtextdomain ("main", "../locale");
-    textdomain ("main");
+    // Setting the i18n environment
+    const char* const locale = setlocale(LC_ALL, "");
+    if (!locale) {
+        Log::warning(LOG_MAIN) << "Could not set the program locale\n";
+    }
+    else {
+        const std::string locale_dir = Paths::data() + "locale";
+        bindtextdomain("main", locale_dir.c_str());
+        textdomain("main");
+    }
 
 
     AppContext app;
