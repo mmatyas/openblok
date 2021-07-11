@@ -19,10 +19,5 @@ if(WIN32 OR CYGWIN)
 endif()
 
 
-# GNU gettext
-find_package(Intl REQUIRED)
-target_link_libraries(openblok PUBLIC ${Intl_LIBRARIES})
-
-
 # Install
 install(TARGETS openblok RUNTIME DESTINATION ${EXEDIR})

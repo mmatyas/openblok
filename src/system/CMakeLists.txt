@@ -4,6 +4,7 @@ set(MOD_SYSTEM_SRC
     Event.cpp
     InputConfigFile.cpp
     InputMap.cpp
+    Localize.cpp
     Log.cpp
     Paths.cpp
     Window.cpp
@@ -58,7 +59,9 @@ target_link_libraries(module_system SDL2pp)
 
 # GNU gettext
 find_package(Intl REQUIRED)
-target_link_libraries(module_system ${Intl_LIBRARIES})
+find_package(Iconv REQUIRED)
+target_include_directories(module_system PUBLIC ${Intl_INCLUDE_DIRS})
+target_link_libraries(module_system ${Intl_LIBRARIES} Iconv::Iconv)
 
 
 include(EnableWarnings)
