@@ -58,10 +58,15 @@ target_compile_definitions(module_system PRIVATE OPENBLOK_DATADIR="${DATADIR}")
 target_link_libraries(module_system SDL2pp)
 
 # GNU gettext
-find_package(Intl REQUIRED)
-find_package(Iconv REQUIRED)
-target_include_directories(module_system PUBLIC ${Intl_INCLUDE_DIRS})
-target_link_libraries(module_system ${Intl_LIBRARIES} Iconv::Iconv)
+if(ENABLE_LOCALES)
+    find_package(Intl REQUIRED)
+    find_package(Iconv REQUIRED)
+
+    target_include_directories(module_system PUBLIC ${Intl_INCLUDE_DIRS})
+    target_link_libraries(module_system ${Intl_LIBRARIES} Iconv::Iconv)
+
+    target_compile_definitions(module_system PRIVATE WITH_LOCALES)
+endif()
 
 
 include(EnableWarnings)

@@ -1,5 +1,7 @@
 #include "Localize.h"
 
+#ifdef WITH_LOCALES
+
 #include "Paths.h"
 
 #include <string>
@@ -17,3 +19,12 @@ bool load_locale()
 
     return true;
 }
+
+#else // WITH_LOCALES
+
+bool load_locale()
+{
+    return true;
+}
+
+#endif // WITH_LOCALES

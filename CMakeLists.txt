@@ -61,8 +61,8 @@ endif()
 
 
 # Localization
-include(FindGettext)
-if(GETTEXT_FOUND)
+option(ENABLE_LOCALES "Enable localization support" ON)
+if(ENABLE_LOCALES)
     add_subdirectory(locale)
 endif()
 
@@ -108,7 +108,7 @@ endif()
 if(INSTALL_APPSTREAM)
     message(STATUS "|  - appstream:      yes")
 endif()
-if(GETTEXT_FOUND)
+if(ENABLE_LOCALES)
     message(STATUS "|  - localization:   yes")
 endif()
 message(STATUS "|")
