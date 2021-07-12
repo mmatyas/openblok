@@ -50,6 +50,7 @@ build_script:
       -DCMAKE_CXX_FLAGS="/I%BASEDIR%\include"
       -DCMAKE_BUILD_TYPE=Release
       -DINSTALL_PORTABLE=ON
+      -DENABLE_LOCALES=OFF
       -DCMAKE_INSTALL_PREFIX=openblok_portable
       -DCMAKE_VERBOSE_MAKEFILE=ON
       -G "Visual Studio 14 2015" .
