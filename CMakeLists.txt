@@ -39,6 +39,12 @@ else()
     endif()
 endif()
 
+# Localization
+option(ENABLE_LOCALES "Enable localization support" ON)
+if(ENABLE_LOCALES)
+    add_subdirectory(locale)
+endif()
+
 
 # Global compiler settings
 
@@ -57,13 +63,6 @@ include_directories(src)
 add_subdirectory(src)
 if(CMAKE_BUILD_TYPE STREQUAL "debug" AND BUILD_TESTS)
     add_subdirectory(tests)
-endif()
-
-
-# Localization
-option(ENABLE_LOCALES "Enable localization support" ON)
-if(ENABLE_LOCALES)
-    add_subdirectory(locale)
 endif()
 
 
