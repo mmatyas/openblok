@@ -64,9 +64,7 @@ int main(int argc, const char** argv)
     }
 
 
-    if (!load_locale())
-        Log::warning(LOG_MAIN) << "Could not set the program locale\n";
-
+    load_locale();
 
     AppContext app;
     if (!app.init())

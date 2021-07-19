@@ -62,10 +62,10 @@ if(ENABLE_LOCALES)
     find_package(Intl REQUIRED)
     find_package(Iconv REQUIRED)
 
-    target_include_directories(module_system PUBLIC ${Intl_INCLUDE_DIRS})
+    target_include_directories(module_system PRIVATE ${Intl_INCLUDE_DIRS})
     target_link_libraries(module_system ${Intl_LIBRARIES} Iconv::Iconv)
 
-    target_compile_definitions(module_system PRIVATE WITH_LOCALES)
+    target_compile_definitions(module_system PUBLIC  WITH_LOCALES)
 endif()
 
 
