@@ -13,7 +13,7 @@ jobs:
           -DCMAKE_CXX_FLAGS=-I/opt/sdl2/include
           -DCMAKE_TOOLCHAIN_FILE=/opt/toolchain.cmake
           -DCMAKE_EXE_LINKER_FLAGS='-static-libgcc -static-libstdc++'
-      - run: make
+      - run: make VERBOSE=1
       - run: make install DESTDIR=$PWD/install
       - run: i686-w64-mingw32-objdump -p install/openblok.exe | grep 'DLL Name' | sort
       # Deploy
