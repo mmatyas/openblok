@@ -1,7 +1,7 @@
 on: [push, pull_request, workflow_dispatch]
 
 jobs:
-  build:
+  x11:
     strategy:
       matrix:
         build: [Release, Debug]
@@ -40,3 +40,41 @@ jobs:
         with:
           path: /home/runner/out
         if: matrix.build == 'Release'
+
+  mingw:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Install repo dependencies
+        run: |
+          sudo apt-get update && sudo apt-get install -y g++-mingw-w64 gettext
+          sudo update-alternatives --set i686-w64-mingw32-gcc /usr/bin/i686-w64-mingw32-gcc-posix
+          sudo update-alternatives --set i686-w64-mingw32-g++ /usr/bin/i686-w64-mingw32-g++-posix
+      - name: Install prebuilt dependencies
+        run: curl -L 'https://github.com/mmatyas/openblok/releases/download/v0.6.0/windep.tar.xz' | sudo tar xJf - -C /opt/
+
+      - uses: actions/checkout@v2
+        with:
+          submodules: 'recursive'
+
+      - name: Configure
+        run: cmake
+          -DCMAKE_BUILD_TYPE=Release
+          -DINSTALL_PORTABLE=ON
+          -DCMAKE_INSTALL_PREFIX=/
+          -DCMAKE_CXX_FLAGS=-I/opt/sdl2/include
+          -DCMAKE_TOOLCHAIN_FILE=/opt/toolchain.cmake
+          -DCMAKE_EXE_LINKER_FLAGS='-static-libgcc -static-libstdc++'
+      - name: Build
+        run: make VERBOSE=1
+
+      - name: Deploy
+        run: |
+          make install DESTDIR=$PWD/install
+          i686-w64-mingw32-objdump -p install/openblok.exe | grep 'DLL Name' | sort
+          cp -av ./*.md /opt/sdl2/bin/*.dll /usr/i686-w64-mingw32/lib/libwinpthread-1.dll install/
+          (cd install && rm libFLAC* libmod* libopus* libtiff* libwebp*)
+          mv install openblok && zip -r openblok.zip openblok
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          path: openblok.zip
