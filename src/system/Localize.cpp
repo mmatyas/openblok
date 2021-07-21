@@ -33,6 +33,7 @@ bool load_locale()
 
     const char* const DOMAIN = "main";
     bindtextdomain(DOMAIN, locale_dir.c_str());
+    bind_textdomain_codeset(DOMAIN, "utf-8");
     textdomain(DOMAIN);
 
     return true;
