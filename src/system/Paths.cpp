@@ -20,7 +20,7 @@ std::string defaultDataDir()
 
 std::string defaultConfigDir()
 {
-    const auto path_raw = SDL_GetPrefPath(".", "openblok");
+    const auto path_raw = SDL_GetPrefPath(NULL, "openblok");
     const std::string path(path_raw);
     SDL_free(path_raw);
     return path;
