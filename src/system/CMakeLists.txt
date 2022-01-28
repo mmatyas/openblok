@@ -68,6 +68,30 @@ if(ENABLE_LOCALES)
     target_compile_definitions(module_system PUBLIC  WITH_LOCALES)
 endif()
 
+if(VITA)
+    target_link_libraries(module_system
+        webp
+        pthread
+        png
+        freetype
+        vorbisfile
+        vorbis
+        ogg
+        jpeg
+        z
+        mikmod
+        mpg123
+        FLAC
+        SceAudio_stub
+        SceCommonDialog_stub
+        SceCtrl_stub
+        SceDisplay_stub
+        SceGxm_stub
+        SceHid_stub
+        SceTouch_stub
+        SceMotion_stub
+    )
+endif()
 
 include(EnableWarnings)
 include(RequireCxx11)
