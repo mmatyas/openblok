@@ -111,36 +111,38 @@ void Base::reloadUI(MainMenuState& parent, AppContext& app)
 
         assert(singleplayer_buttons.buttons.size() == singleplayer_buttons.descriptions.size());
     }
-    primary_buttons.buttons.emplace_back(app, tr("MULTIPLAYER"), [this](){
-        openSubcolumn(&multiplayer_buttons);
-    });
-    {
-        multiplayer_buttons.buttons.clear();
-        multiplayer_buttons.descriptions.clear();
+    #ifndef __vita__
+        primary_buttons.buttons.emplace_back(app, tr("MULTIPLAYER"), [this](){
+            openSubcolumn(&multiplayer_buttons);
+        });
+        {
+            multiplayer_buttons.buttons.clear();
+            multiplayer_buttons.descriptions.clear();
 
-        multiplayer_buttons.buttons.emplace_back(app, tr("BATTLE"),
-            [this, &app](){ startGame(app, GameMode::MP_BATTLE); });
-        multiplayer_buttons.buttons.emplace_back(app, tr("MARATHON"),
-            [this, &app](){ startGame(app, GameMode::MP_MARATHON); });
-        multiplayer_buttons.buttons.emplace_back(app, tr("MARATHON SIMPLE"),
-            [this, &app](){ startGame(app, GameMode::MP_MARATHON_SIMPLE); });
+            multiplayer_buttons.buttons.emplace_back(app, tr("BATTLE"),
+                [this, &app](){ startGame(app, GameMode::MP_BATTLE); });
+            multiplayer_buttons.buttons.emplace_back(app, tr("MARATHON"),
+                [this, &app](){ startGame(app, GameMode::MP_MARATHON); });
+            multiplayer_buttons.buttons.emplace_back(app, tr("MARATHON SIMPLE"),
+                [this, &app](){ startGame(app, GameMode::MP_MARATHON_SIMPLE); });
 
-        multiplayer_buttons.descriptions.emplace_back(desc_font->renderText(
-            tr("Battle with you friends: clear\n"
-               "multiple lines, and throw them\n"
-               "to the other players!"), desc_color, TextAlign::RIGHT));
-        multiplayer_buttons.descriptions.emplace_back(desc_font->renderText(
-            tr("Clear 15 levels with increasing\n"
-               "difficulty - use advanced moves\n"
-               "to speed up your progress and\n"
-               "gain more score!"), desc_color, TextAlign::RIGHT));
-        multiplayer_buttons.descriptions.emplace_back(desc_font->renderText(
-            tr("Like Marathon, but using advanced\n"
-               "moves won't reward you with\n"
-               "bonus lines."), desc_color, TextAlign::RIGHT));
+            multiplayer_buttons.descriptions.emplace_back(desc_font->renderText(
+                tr("Battle with you friends: clear\n"
+                "multiple lines, and throw them\n"
+                "to the other players!"), desc_color, TextAlign::RIGHT));
+            multiplayer_buttons.descriptions.emplace_back(desc_font->renderText(
+                tr("Clear 15 levels with increasing\n"
+                "difficulty - use advanced moves\n"
+                "to speed up your progress and\n"
+                "gain more score!"), desc_color, TextAlign::RIGHT));
+            multiplayer_buttons.descriptions.emplace_back(desc_font->renderText(
+                tr("Like Marathon, but using advanced\n"
+                "moves won't reward you with\n"
+                "bonus lines."), desc_color, TextAlign::RIGHT));
 
-        assert(multiplayer_buttons.buttons.size() == multiplayer_buttons.descriptions.size());
-    }
+            assert(multiplayer_buttons.buttons.size() == multiplayer_buttons.descriptions.size());
+        }
+    #endif
     primary_buttons.buttons.emplace_back(app, tr("OPTIONS"), [&app, &parent](){
         parent.states.emplace_back(std::make_unique<SubStates::MainMenu::Options>(parent, app));
     });
@@ -193,8 +195,9 @@ void Base::updatePositions(GraphicsContext& gcx)
 
     setColumnPosition(primary_buttons.buttons, left_x, center_y);
     setColumnPosition(singleplayer_buttons.buttons, left_x, center_y);
-    setColumnPosition(multiplayer_buttons.buttons, left_x, center_y);
-
+    #ifndef __vita__
+        setColumnPosition(multiplayer_buttons.buttons, left_x, center_y);
+    #endif
     desc_rect.x = right_x;
     desc_rect.y = center_y;
 }
