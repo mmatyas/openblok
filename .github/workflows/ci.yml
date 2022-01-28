@@ -80,3 +80,31 @@ jobs:
         with:
           name: windows
           path: openblok.zip
+
+  vita:
+    runs-on: ubuntu-20.04
+    container: gnuton/vitasdk-docker:latest
+    steps:
+      - name: Install dependencies
+        run: |
+          add-apt-repository -y ppa:git-core/ppa
+          apt-get install -y git
+
+      - uses: actions/checkout@v2
+        with:
+          submodules: 'recursive'
+
+      - name: Configure
+        run: cmake
+          -DCMAKE_BUILD_TYPE=Release
+          -DCMAKE_TOOLCHAIN_FILE="${VITASDK}/share/vita.toolchain.cmake"
+      - name: Build
+        run: make VERBOSE=1
+
+      - name: Deploy
+        run: |
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: vita
+          path: src/openblok.vpk
