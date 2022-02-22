@@ -28,13 +28,16 @@ const char* const gamepaddb_filename()
 {
     const uint16_t linked_sdl = linked_sdl_version();
 
-    if (linked_sdl <= version_as_num(2, 0, 4))
-        return "gamecontrollerdb_204";
+    if (linked_sdl >= version_as_num(2, 0, 10))
+        return "gamecontrollerdb_2010";
 
-    if (linked_sdl <= version_as_num(2, 0, 5))
+    if (linked_sdl >= version_as_num(2, 0, 9))
+        return "gamecontrollerdb_209";
+
+    if (linked_sdl >= version_as_num(2, 0, 5))
         return "gamecontrollerdb_205";
 
-    return "gamecontrollerdb_209";
+    return "gamecontrollerdb_204";
 }
 } // namespace
 
