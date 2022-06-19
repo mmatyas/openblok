@@ -70,6 +70,7 @@ endif()
 
 if(VITA)
     target_link_libraries(module_system
+        SDL2
         webp
         pthread
         png
@@ -80,9 +81,11 @@ if(VITA)
         jpeg
         z
         mikmod
+        modplug
         mpg123
         FLAC
         SceAudio_stub
+        SceAudioIn_stub
         SceCommonDialog_stub
         SceCtrl_stub
         SceDisplay_stub
