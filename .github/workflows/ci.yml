@@ -5,7 +5,7 @@ jobs:
     strategy:
       matrix:
         build: [Release, Debug]
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     steps:
       - name: Install dependencies
         run: sudo apt-get update && sudo apt-get install -y
@@ -16,7 +16,7 @@ jobs:
           libsdl2-mixer-dev
           libsdl2-ttf-dev
 
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           submodules: 'recursive'
 
@@ -36,14 +36,14 @@ jobs:
         run: ./etc/appimage/travis.sh
         if: matrix.build == 'Release'
       - name: Upload artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: linux
           path: /home/runner/out
         if: matrix.build == 'Release'
 
   mingw:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
       - name: Install repo dependencies
         run: |
@@ -53,7 +53,7 @@ jobs:
       - name: Install prebuilt dependencies
         run: curl -L 'https://github.com/mmatyas/openblok/releases/download/v0.6.0/windep.tar.xz' | sudo tar xJf - -C /opt/
 
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           submodules: 'recursive'
 
@@ -76,7 +76,7 @@ jobs:
           (cd install && rm libFLAC* libmod* libopus* libtiff* libwebp*)
           mv install openblok && zip -r openblok.zip openblok
       - name: Upload artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: windows
           path: openblok.zip
@@ -90,7 +90,7 @@ jobs:
           add-apt-repository -y ppa:git-core/ppa
           apt-get install -y git
 
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           submodules: 'recursive'
 
@@ -101,10 +101,8 @@ jobs:
       - name: Build
         run: make VERBOSE=1
 
-      - name: Deploy
-        run: |
       - name: Upload artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: vita
           path: src/openblok.vpk
