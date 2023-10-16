@@ -43,6 +43,9 @@ move_lib
 ln -s pulseaudio/libpulsecommon-4.0.so ./usr/lib/x86_64-linux-gnu/
 ln -s pulseaudio/libpulsecommon-8.0.so ./usr/lib/x86_64-linux-gnu/
 ln -s pulseaudio/libpulsecommon-11.1.so ./usr/lib/x86_64-linux-gnu/
+ln -s pulseaudio/libpulsecommon-13.99.so ./usr/lib/x86_64-linux-gnu/
+ln -s pulseaudio/libpulsecommon-15.99.so ./usr/lib/x86_64-linux-gnu/
+ln -s pulseaudio/libpulsecommon-16.1.so ./usr/lib/x86_64-linux-gnu/
 
 ########################################################################
 # Delete stuff that should not go into the AppImage
