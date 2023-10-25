@@ -4,6 +4,7 @@
 #include "Log.h"
 
 #include <algorithm>
+#include <iterator>
 #include <regex>
 #include <sstream>
 #include <assert.h>
