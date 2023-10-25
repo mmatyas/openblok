@@ -1,0 +1,31 @@
+name: Build - PSVita
+
+on: [push, pull_request, workflow_dispatch]
+
+jobs:
+  vita:
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.event.pull_request.base.repo.full_name
+    runs-on: ubuntu-20.04
+    container: gnuton/vitasdk-docker:latest
+    steps:
+      - name: Install dependencies
+        run: |
+          add-apt-repository -y ppa:git-core/ppa
+          apt-get install -y git
+
+      - uses: actions/checkout@v3
+        with:
+          submodules: 'recursive'
+
+      - name: Configure
+        run: cmake
+          -DCMAKE_BUILD_TYPE=Release
+          -DCMAKE_TOOLCHAIN_FILE="${VITASDK}/share/vita.toolchain.cmake"
+      - name: Build
+        run: make VERBOSE=1
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: vita
+          path: src/openblok.vpk

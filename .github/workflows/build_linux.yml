@@ -1,0 +1,46 @@
+name: Build - Linux
+
+on: [push, pull_request, workflow_dispatch]
+
+jobs:
+  x11:
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.event.pull_request.base.repo.full_name
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        build: [Release, Debug]
+    steps:
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y
+          appstream
+          gettext
+          libsdl2-dev
+          libsdl2-image-dev
+          libsdl2-mixer-dev
+          libsdl2-ttf-dev
+
+      - uses: actions/checkout@v3
+        with:
+          submodules: 'recursive'
+
+      - name: Configure
+        run: cmake
+          -DCMAKE_INSTALL_PREFIX=/usr
+          -DCMAKE_BUILD_TYPE=${{ matrix.build }}
+          -DENABLE_MP3=OFF
+      - name: Build
+        run: make VERBOSE=1
+
+      - name: Test
+        run: ./tests/openblok_test
+        if: matrix.build == 'Debug'
+
+      - name: Create AppImage
+        run: ./etc/appimage/travis.sh
+        if: matrix.build == 'Release'
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: linux
+          path: /home/runner/out
+        if: matrix.build == 'Release'
