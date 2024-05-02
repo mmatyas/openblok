@@ -1,5 +1,5 @@
 # OpenBlok executable settings
-add_executable(openblok main.cpp)
+add_executable(openblok WIN32 main.cpp)
 
 configure_file(version.h.in generated/version.h @ONLY)
 target_include_directories(openblok PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/generated")
