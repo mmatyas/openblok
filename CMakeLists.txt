@@ -73,7 +73,7 @@ endif()
 # Install
 install(DIRECTORY data/ DESTINATION ${DATADIR} PATTERN "*.txt" EXCLUDE)
 if(INSTALL_DESKTOPICON)
-    install(FILES etc/linux/openblok.desktop DESTINATION ${DESKTOPDIR})
+    install(FILES etc/linux/hu.mmatyas.openblok.desktop DESTINATION ${DESKTOPDIR})
     install(FILES data/icon.png DESTINATION ${ICONDIR} RENAME openblok.png)
 endif()
 if(INSTALL_APPSTREAM)

@@ -4,6 +4,8 @@
   <metadata_license>CC0</metadata_license>
   <project_license>GPL-3.0+</project_license>
 
+  <launchable type="desktop-id">hu.mmatyas.openblok.desktop</launchable>
+
   <name>OpenBlok</name>
   <summary>A falling block puzzle game</summary>
   <description>
@@ -38,18 +40,20 @@
     <category>BlocksGame</category>
   </categories>
 
+  <content_rating type="oars-1.1" />
+
   <screenshots>
     <screenshot type="default">
       <caption>Gameplay</caption>
-      <image>https://gitcdn.xyz/repo/mmatyas/openblok/b0491168/etc/promo/screenshot01.png</image>
+      <image>https://raw.githubusercontent.com/mmatyas/openblok/master/etc/promo/screenshot01.png</image>
     </screenshot>
     <screenshot>
       <caption>Main menu</caption>
-      <image>https://gitcdn.xyz/repo/mmatyas/openblok/b0491168/etc/promo/screenshot_mainmenu.png</image>
+      <image>https://raw.githubusercontent.com/mmatyas/openblok/master/etc/promo/screenshot_mainmenu.png</image>
     </screenshot>
     <screenshot>
       <caption>Multiplayer</caption>
-      <image>https://gitcdn.xyz/repo/mmatyas/openblok/b0491168/etc/promo/screenshot02.png</image>
+      <image>https://raw.githubusercontent.com/mmatyas/openblok/master/etc/promo/screenshot02.png</image>
     </screenshot>
   </screenshots>
 
@@ -58,14 +62,121 @@
   <url type="help">https://github.com/mmatyas/openblok/issues</url>
   <url type="donation">https://www.paypal.me/MatyasMustoha</url>
 
-  <developer_name>Mátyás Mustoha</developer_name>
+  <developer id="hu.mmatyas">
+    <name>Mátyás Mustoha</name>
+  </developer>
   <update_contact>matyas.mustoha_AT_gmail.com</update_contact>
 
   <releases>
-    <release version="0.8.3" date="2020-02-04" />
-    <release version="0.8.2" date="2020-01-08" />
-    <release version="0.8.1" date="2019-11-13" />
-    <release version="0.8.0" date="2019-11-02" />
-    <release version="0.7.0" date="2017-02-27" />
+    <release version="0.8.7" date="2024-02-11">
+      <description>
+        <p>Fixed an error when loading gamepad support files.</p>
+      </description>
+      <url type="details">https://github.com/mmatyas/openblok/releases/tag/v0.8.7</url>
+    </release>
+
+    <release version="0.8.6" date="2023-10-16">
+      <description>
+        <p>Fixed a PulseAudio library issue in the Linux AppImage version.</p>
+      </description>
+      <url type="details">https://github.com/mmatyas/openblok/releases/tag/v0.8.6</url>
+    </release>
+
+    <release version="0.8.5" date="2023-08-16">
+      <description>
+        <p>Improved gamepad detection.</p>
+      </description>
+      <url type="details">https://github.com/mmatyas/openblok/releases/tag/v0.8.5</url>
+    </release>
+
+    <release version="0.8.4" date="2022-02-22">
+      <description>
+        <p>Improved gamepad detection.</p>
+      </description>
+      <url type="details">https://github.com/mmatyas/openblok/releases/tag/v0.8.4</url>
+    </release>
+
+    <release version="0.8.3" date="2021-02-04">
+      <description>
+        <p>Improved gamepad detection.</p>
+      </description>
+      <url type="details">https://github.com/mmatyas/openblok/releases/tag/v0.8.3</url>
+    </release>
+
+    <release version="0.8.2" date="2020-01-08">
+      <description>
+        <p>Fixed a possible crash when clearing lines with sonic drop enabled.</p>
+      </description>
+      <url type="details">https://github.com/mmatyas/openblok/releases/tag/v0.8.2</url>
+    </release>
+
+    <release version="0.8.1" date="2019-11-13">
+      <description>
+        <p>Fixed a few team battle related issues.</p>
+      </description>
+      <url type="details">https://github.com/mmatyas/openblok/releases/tag/v0.8.1</url>
+    </release>
+
+    <release version="0.8.0" date="2019-11-02">
+      <description>
+        <ul>
+          <li>Added team battle support</li>
+          <li>Gamepad support improvements</li>
+          <li>AppImage: Updated support for recent Ubuntu releases</li>
+          <li>Minor bugfixes</li>
+        </ul>
+      </description>
+      <url type="details">https://github.com/mmatyas/openblok/releases/tag/v0.8.0</url>
+    </release>
+
+    <release version="0.7.0" date="2017-02-27">
+      <description>
+        <ul>
+          <li>Added theme support (see THEMES.md)</li>
+          <li>New logo</li>
+          <li>Added AppImage support</li>
+          <li>Added AppStream (appdata.xml) support</li>
+        </ul>
+      </description>
+      <url type="details">https://github.com/mmatyas/openblok/releases/tag/v0.7.0</url>
+    </release>
+
+    <release version="0.6.2" date="2017-01-18">
+      <description>
+        <ul>
+          <li>Added Restart option to the Pause menu</li>
+          <li>On line clear, half of the current combo length is now awarded as bonus</li>
+          <li>Fixed config file bugs</li>
+          <li>Added RPM packaging support</li>
+        </ul>
+      </description>
+      <url type="details">https://github.com/mmatyas/openblok/releases/tag/v0.6.2</url>
+    </release>
+
+    <release version="0.6.1" date="2017-01-11">
+      <description>
+        <ul>
+          <li>Fixed some bugs in multiplayer</li>
+          <li>Fixed CMake 2.x configuration issues</li>
+          <li>Minor bugfixes</li>
+        </ul>
+      </description>
+      <url type="details">https://github.com/mmatyas/openblok/releases/tag/v0.6.1</url>
+    </release>
+
+    <release version="0.6.0" date="2016-12-27">
+      <description>
+        <ul>
+          <li>Added multiple game modes</li>
+          <li>Added dynamic line clear scoring to Marathon mode</li>
+          <li>Added music and sound effect mute option</li>
+          <li>Added battle garbage sound effect</li>
+          <li>Optimizations</li>
+          <li>Major source code refactoring</li>
+          <li>Minor bugfixes</li>
+        </ul>
+      </description>
+      <url type="details">https://github.com/mmatyas/openblok/releases/tag/v0.6.0</url>
+    </release>
   </releases>
 </component>
