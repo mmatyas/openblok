@@ -20,25 +20,25 @@ install:
   - mkdir %LIBDIR%
   - cd %TEMP%
   # Download SDL2
-  - appveyor DownloadFile https://www.libsdl.org/release/SDL2-devel-2.0.5-VC.zip
-  - appveyor DownloadFile https://www.libsdl.org/projects/SDL_image/release/SDL2_image-devel-2.0.1-VC.zip
-  - appveyor DownloadFile https://www.libsdl.org/projects/SDL_mixer/release/SDL2_mixer-devel-2.0.1-VC.zip
-  - appveyor DownloadFile https://www.libsdl.org/projects/SDL_ttf/release/SDL2_ttf-devel-2.0.14-VC.zip
+  - appveyor DownloadFile https://www.libsdl.org/release/SDL2-devel-2.30.3-VC.zip
+  - appveyor DownloadFile https://www.libsdl.org/projects/SDL_image/release/SDL2_image-devel-2.8.2-VC.zip
+  - appveyor DownloadFile https://www.libsdl.org/projects/SDL_mixer/release/SDL2_mixer-devel-2.8.0-VC.zip
+  - appveyor DownloadFile https://www.libsdl.org/projects/SDL_ttf/release/SDL2_ttf-devel-2.22.0-VC.zip
   # Extract files
-  - 7z x SDL2-devel-2.0.5-VC.zip > nul
-  - 7z x SDL2_image-devel-2.0.1-VC.zip > nul
-  - 7z x SDL2_mixer-devel-2.0.1-VC.zip > nul
-  - 7z x SDL2_ttf-devel-2.0.14-VC.zip > nul
+  - 7z x SDL2-devel-2.30.3-VC.zip > nul
+  - 7z x SDL2_image-devel-2.8.2-VC.zip > nul
+  - 7z x SDL2_mixer-devel-2.8.0-VC.zip > nul
+  - 7z x SDL2_ttf-devel-2.22.0-VC.zip > nul
   # Set up includes
-  - copy SDL2-2.0.5\include\* %INCLUDEDIR% > nul
-  - copy SDL2_image-2.0.1\include\* %INCLUDEDIR% > nul
-  - copy SDL2_mixer-2.0.1\include\* %INCLUDEDIR% > nul
-  - copy SDL2_ttf-2.0.14\include\* %INCLUDEDIR% > nul
+  - copy SDL2-2.30.3\include\* %INCLUDEDIR% > nul
+  - copy SDL2_image-2.8.2\include\* %INCLUDEDIR% > nul
+  - copy SDL2_mixer-2.8.0\include\* %INCLUDEDIR% > nul
+  - copy SDL2_ttf-2.22.0\include\* %INCLUDEDIR% > nul
   # Set up libs
-  - copy SDL2-2.0.5\lib\x86\* %LIBDIR% > nul
-  - copy SDL2_image-2.0.1\lib\x86\* %LIBDIR% > nul
-  - copy SDL2_mixer-2.0.1\lib\x86\* %LIBDIR% > nul
-  - copy SDL2_ttf-2.0.14\lib\x86\* %LIBDIR% > nul
+  - copy SDL2-2.30.3\lib\x86\* %LIBDIR% > nul
+  - copy SDL2_image-2.8.2\lib\x86\* %LIBDIR% > nul
+  - copy SDL2_mixer-2.8.0\lib\x86\* %LIBDIR% > nul
+  - copy SDL2_ttf-2.22.0\lib\x86\* %LIBDIR% > nul
 
 before_build:
   - cd %APPVEYOR_BUILD_FOLDER%
