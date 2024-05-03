@@ -25,6 +25,8 @@
 #include "system/Paths.h"
 #include "system/util/MakeUnique.h"
 
+#include "SDL_main.h"
+
 #include <algorithm>
 #include <chrono>
 #include <memory>
@@ -35,7 +37,7 @@
 const std::string LOG_MAIN = "main";
 const std::string LOG_HELP = "help";
 
-int main(int argc, const char** argv)
+int main(int argc, char* argv[])
 {
     Log::info(LOG_MAIN) << "OpenBlok, created by Mátyás Mustoha, " << game_version << "\n";
 
