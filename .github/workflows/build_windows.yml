@@ -15,7 +15,7 @@ jobs:
       - name: Install prebuilt dependencies
         run: curl -L 'https://github.com/mmatyas/openblok/releases/download/v0.6.0/windep.tar.xz' | sudo tar xJf - -C /opt/
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: 'recursive'
 
@@ -38,7 +38,7 @@ jobs:
           (cd install && rm libFLAC* libmod* libopus* libtiff* libwebp*)
           mv install openblok && zip -r openblok.zip openblok
       - name: Upload artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: windows
           path: openblok.zip

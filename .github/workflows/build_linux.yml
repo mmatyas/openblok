@@ -19,7 +19,7 @@ jobs:
           libsdl2-mixer-dev
           libsdl2-ttf-dev
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: 'recursive'
 
@@ -39,7 +39,7 @@ jobs:
         run: ./etc/appimage/travis.sh
         if: matrix.build == 'Release'
       - name: Upload artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: linux
           path: /home/runner/out
