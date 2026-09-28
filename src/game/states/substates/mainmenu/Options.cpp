@@ -358,9 +358,12 @@ void Options::findThemeDirs(const std::string& base_path, std::vector<std::strin
         if (!entry.is_directory())
             continue;
 
+        // themes are referred to by their directory name, see ThemeConfig::set_theme_dir
         const fs::path config_path = entry.path() / "theme.cfg";
-        if (fs::exists(config_path) && fs::is_regular_file(config_path))
-            found_themes.push_back(entry.path().string());
+        const std::string dir_name = entry.path().filename().string();
+        if (fs::exists(config_path) && fs::is_regular_file(config_path)
+            && std::find(found_themes.begin(), found_themes.end(), dir_name) == found_themes.end())
+            found_themes.push_back(dir_name);
     }
 }
 
