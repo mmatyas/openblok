@@ -44,7 +44,14 @@ Base::~Base() = default;
 
 void Base::reloadTheme(MainMenuState& parent, AppContext& app)
 {
-    Log::info("init") << "Theme: '" << app.sysconfig().theme_dir_name << "'\n";
+    auto& theme_dir_name = app.sysconfig().theme_dir_name;
+    while (theme_dir_name.size() > 1 && theme_dir_name.back() == '/')
+        theme_dir_name.pop_back();
+    const auto last_slash = theme_dir_name.find_last_of('/');
+    if (last_slash != std::string::npos)
+        theme_dir_name = theme_dir_name.substr(last_slash + 1);
+
+    Log::info("init") << "Theme: '" << theme_dir_name << "'\n";
     app.theme() = ThemeConfigFile::load(app.sysconfig().theme_dir_name);
 
     reloadGameAssets(app);
