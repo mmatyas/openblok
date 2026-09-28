@@ -44,7 +44,6 @@ Base::~Base() = default;
 
 void Base::reloadTheme(MainMenuState& parent, AppContext& app)
 {
-    // older builds saved the full path of the theme, keep only the directory name
     auto& theme_dir_name = app.sysconfig().theme_dir_name;
     while (theme_dir_name.size() > 1 && theme_dir_name.back() == '/')
         theme_dir_name.pop_back();
